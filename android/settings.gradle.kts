@@ -1,3 +1,6 @@
+import org.gradle.api.initialization.resolve.RepositoriesMode
+import java.net.URI
+
 pluginManagement {
     repositories {
         google()
@@ -16,4 +19,5 @@ dependencyResolutionManagement {
 
 rootProject.name = "android"
 include(":app")
-include(":capacitor-cordova-android-plugins")
+include(":capacitor-android")
+project(":capacitor-android").projectDir = file("capacitor-android")
