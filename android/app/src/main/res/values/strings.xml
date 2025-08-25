@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">udry 共享雨傘</string>
+    <string name="title_activity_main">udry 共享雨傘</string>
+    <string name="package_name">com.udry.app</string>
+    <string name="custom_url_scheme">com.udry.app</string>
+</resources>
