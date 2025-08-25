@@ -6,33 +6,38 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.5.0'
-        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23"
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
     }
 }
 
-// This block provides the necessary Android configuration to all sub-projects,
-// including Capacitor plugins. This is the correct way to solve the
-// 'compileSdkVersion is not specified' error.
+allprojects {
+    // empty
+}
+
 subprojects {
-    project.plugins.whenPluginAdded { plugin ->
-        if (plugin.class.name.startsWith("com.android")) {
-            project.android {
-                compileSdkVersion 34
-                defaultConfig {
-                    minSdkVersion 22
-                    targetSdkVersion 34
+    // This block applies the following configuration to all sub-projects (app, capacitor-android, etc.)
+    // It ensures that all modules, including third-party plugins, are built with the same, consistent Android SDK versions.
+    // The 'if' condition prevents this from being applied to the non-Android root project.
+    if (project.plugins.hasPlugin('com.android.application') || project.plugins.hasPlugin('com.android.library')) {
+        android {
+            compileSdkVersion 34
+            defaultConfig {
+                minSdkVersion 22
+                targetSdkVersion 34
+                testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+            }
+            buildTypes {
+                release {
+                    minifyEnabled false
+                    proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
                 }
-                buildToolsVersion "34.0.0"
             }
         }
     }
 }
 
-allprojects {
-    // Workaround for https://github.com/bazelbuild/bazel/issues/14329
-    // TODO: Remove when issue is resolved
-    tasks.withType(JavaCompile) {
-        options.compilerArgs.add("-Xlint:all")
-        options.compilerArgs.add("-Werror")
-    }
+task clean(type: Delete) {
+    delete rootProject.buildDir
 }
