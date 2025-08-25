@@ -1,0 +1,10 @@
+{
+  "name": "Umbrella Share",
+  "short_name": "Umbrella Share",
+  "description": "Smart umbrella sharing service. Find and rent umbrellas near you.",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#F0F2FA",
+  "theme_color": "#3F51B5",
+  "icons": []
+}

@@ -1,0 +1,424 @@
+
+"use client";
+
+import { useEffect, useState, useRef, useCallback } from "react";
+import { useRouter } from "next/navigation";
+import { useAuth, useStalls } from "@/contexts/auth-context";
+import { useToast } from "@/hooks/use-toast";
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { Loader2, AlertTriangle, ArrowLeft, Umbrella, TimerIcon, CheckCircle, Bluetooth, QrCode, CameraOff } from "lucide-react";
+import Link from "next/link";
+import type { Stall } from '@/lib/types';
+import { Html5Qrcode } from "html5-qrcode";
+import { cn } from "@/lib/utils";
+
+const QR_READER_REGION_ID = "qr-reader-region-return";
+const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
+const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
+const RETURN_UMBRELLA_BASE_PARM = 3000000;
+
+type ReturnStep = 'idle' | 'initializing_scanner' | 'scanning' | 'scan_complete';
+type BluetoothState = 'idle' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
+
+const bluetoothStateMessages: Record<BluetoothState, string> = {
+  idle: "Ready to start.",
+  requesting_device: "Searching for your machine. Please select it from the Bluetooth pop-up...",
+  connecting: "Connecting to machine...",
+  getting_token: "Connected. Authenticating with machine...",
+  getting_command: "Authenticated. Getting return command from server...",
+  sending_command: "Sending return command to machine...",
+  success: "Return command sent! Please place your umbrella in the slot.",
+  error: "An error occurred."
+};
+
+export default function ReturnUmbrellaPage() {
+  const { activeRental, endRental, isLoadingRental, logMachineEvent } = useAuth();
+  const { stalls, isLoadingStalls } = useStalls();
+  const router = useRouter();
+  const { toast } = useToast();
+
+  const [returnStep, setReturnStep] = useState<ReturnStep>('idle');
+  const [scannedStall, setScannedStall] = useState<Stall | null>(null);
+  const [bluetoothState, setBluetoothState] = useState<BluetoothState>('idle');
+  const [bluetoothError, setBluetoothError] = useState<string | null>(null);
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [elapsedTime, setElapsedTime] = useState<string>('');
+  const [qrError, setQrError] = useState<string|null>(null);
+  
+  const bluetoothDeviceRef = useRef<BluetoothDevice | null>(null);
+  const tokCharacteristicRef = useRef<BluetoothRemoteGATTCharacteristic | null>(null);
+  const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
+  const isProcessingScan = useRef(false);
+  
+  const isProcessingBluetooth = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
+
+  useEffect(() => {
+    if (!isLoadingRental && !activeRental && !isProcessingBluetooth) {
+      toast({
+        title: "No Active Rental",
+        description: "You do not have an active rental to return.",
+        variant: "destructive",
+      });
+      router.replace("/"); 
+    }
+  }, [activeRental, isLoadingRental, router, toast, isProcessingBluetooth]);
+
+  useEffect(() => {
+    if (!activeRental) return;
+    const calculateElapsedTime = () => {
+      if (!activeRental?.startTime) return;
+      const now = Date.now();
+      const elapsedMilliseconds = now - activeRental.startTime;
+      const hours = Math.floor(elapsedMilliseconds / (1000 * 60 * 60));
+      const minutes = Math.floor((elapsedMilliseconds % (1000 * 60 * 60)) / (1000 * 60));
+      const seconds = Math.floor((elapsedMilliseconds % (1000 * 60)) / 1000);
+      setElapsedTime(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+    };
+    const intervalId = setInterval(calculateElapsedTime, 1000);
+    calculateElapsedTime();
+    return () => clearInterval(intervalId);
+  }, [activeRental]);
+
+  const stopScanner = useCallback(async () => {
+    if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+      try {
+        await html5QrCodeRef.current.stop();
+        console.log("Return Page: QR Scanner stopped successfully.");
+      } catch (err) {
+        console.warn("Return Page: Failed to stop QR scanner gracefully:", err);
+      }
+    }
+  }, []);
+
+  const onScanSuccess = useCallback(async (decodedText: string) => {
+    if (isProcessingScan.current) return;
+    isProcessingScan.current = true;
+    
+    await stopScanner();
+
+    const trimmedText = decodedText.trim();
+    const urlParts = trimmedText.split('/');
+    const dvidFromUrl = urlParts[urlParts.length - 1];
+    
+    const foundStall = stalls.find(s => s.dvid === dvidFromUrl);
+    
+    if (foundStall) {
+      toast({ title: "Stall Identified!", description: `Ready to return to ${foundStall.name}.` });
+      setScannedStall(foundStall);
+      setReturnStep('scan_complete');
+    } else {
+      toast({ variant: "destructive", title: "Invalid QR Code", description: `Scanned code did not match a known stall. Scanned: ${dvidFromUrl}` });
+      setScannedStall(null);
+      setReturnStep('idle');
+      isProcessingScan.current = false; 
+    }
+  }, [stopScanner, stalls, toast]);
+
+  const startScanner = useCallback(() => {
+    if (isProcessingScan.current || returnStep === 'scanning') return;
+    
+    setReturnStep('initializing_scanner');
+    setQrError(null);
+    isProcessingScan.current = false;
+
+    setTimeout(() => {
+        if (!html5QrCodeRef.current) {
+          html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID, { verbose: false });
+        }
+        setReturnStep('scanning');
+        html5QrCodeRef.current.start(
+          { facingMode: "environment" },
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          onScanSuccess,
+          (errorMessage) => { /* Ignore errors */ }
+        ).catch(err => {
+          setQrError("Failed to start QR scanner. Please ensure camera permissions are enabled.");
+          setReturnStep('idle');
+        });
+    }, 100);
+  }, [onScanSuccess, returnStep]);
+
+  const handleGattServerDisconnected = useCallback(() => {
+    toast({ variant: "destructive", title: "Bluetooth Disconnected", description: "The device connection was lost." });
+    if(scannedStall) logMachineEvent({ stallId: scannedStall.id, type: 'error', message: 'Bluetooth GATT Server Disconnected during return process.' });
+    tokCharacteristicRef.current = null;
+    bluetoothDeviceRef.current = null;
+    setBluetoothState('idle');
+  }, [toast, scannedStall, logMachineEvent]);
+
+  const handleTokNotification = useCallback(async (event: Event) => {
+    const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
+    const value = characteristic.value;
+    if (!value || !scannedStall) return;
+
+    const decoder = new TextDecoder('utf-8');
+    const receivedString = decoder.decode(value).trim();
+    console.log(`[U-Dry Return] Notification Received: "${receivedString}"`);
+    logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
+
+    if (receivedString.startsWith("TOK:")) {
+      const tokenValue = receivedString.substring(4).trim();
+      if (/^\d{6}$/.test(tokenValue)) {
+        console.log(`[U-Dry Return] Parsed Token: ${tokenValue}`);
+        setBluetoothState('getting_command');
+        
+        try {
+          const slotNum = scannedStall.nextActionSlot;
+          const parmValue = (RETURN_UMBRELLA_BASE_PARM + slotNum).toString();
+          const cmdType = '1';
+
+          const backendResponse = await fetch('/api/admin/unlock-physical-machine', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dvid: scannedStall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType }),
+          });
+          const result = await backendResponse.json();
+
+          if (!backendResponse.ok || !result.success || !result.unlockDataString) {
+            const errorMsg = result.message || `Failed to get return command.`;
+            logMachineEvent({ stallId: scannedStall.id, type: 'error', message: `Vendor API Error on Return: ${errorMsg}` });
+            throw new Error(errorMsg);
+          }
+          
+          setBluetoothState('sending_command');
+          const commandToSend = `CMD:${result.unlockDataString}\r\n`;
+          await tokCharacteristicRef.current?.writeValue(new TextEncoder().encode(commandToSend));
+          logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Return Umbrella)` });
+          console.log(`[U-Dry Return] Return command sent to machine.`);
+          
+          setShowSuccessDialog(true);
+          setBluetoothState('success');
+
+        } catch (error: any) {
+          console.error("[U-Dry Return] Error during server command fetch or BT write:", error);
+          const errorMsg = error.message || "Unknown error during command phase.";
+          setBluetoothError(errorMsg);
+          setBluetoothState('error');
+          logMachineEvent({ stallId: scannedStall.id, type: 'error', message: `Failed to get/send return command: ${errorMsg}` });
+        }
+      } else {
+         const errorMsg = `Invalid token format received: ${tokenValue}`;
+         setBluetoothError(errorMsg);
+         setBluetoothState('error');
+         logMachineEvent({ stallId: scannedStall.id, type: 'error', message: errorMsg });
+      }
+    } else if (receivedString.startsWith("CMD:")) {
+      console.log(`[U-Dry Return] Machine acknowledged command with: ${receivedString}`);
+    } else if (receivedString.startsWith("REPET:")) {
+      const errorMsg = "Machine Error: This return action has already been processed. Please try again or select a different slot if possible.";
+      console.error(`[U-Dry Return] Received REPET error: ${receivedString}`);
+      setBluetoothError(errorMsg);
+      setBluetoothState('error');
+      toast({ variant: "destructive", title: "Duplicate Action Error", description: errorMsg, duration: 8000 });
+    }
+  }, [scannedStall, toast, logMachineEvent]);
+
+  useEffect(() => {
+    if (showSuccessDialog && activeRental && scannedStall) {
+      const timer = setTimeout(() => {
+        toast({
+          title: "Umbrella Return Confirmed!",
+          description: `Your umbrella rental has been successfully returned to ${scannedStall.name}.`,
+        });
+        endRental(scannedStall.id);
+        router.push('/');
+        setShowSuccessDialog(false);
+      }, 3000);
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessDialog, activeRental, scannedStall, endRental, router, toast]);
+
+  const handleReturnViaBluetooth = async () => {
+    if (isProcessingBluetooth || !scannedStall) return;
+
+    if (!navigator.bluetooth) {
+      const errorMsg = "Web Bluetooth API not available. Use a compatible browser (e.g., Chrome, Edge).";
+      setBluetoothError(errorMsg);
+      setBluetoothState('error');
+      logMachineEvent({ stallId: scannedStall.id, type: 'error', message: errorMsg });
+      return;
+    }
+    
+    setBluetoothError(null);
+    setBluetoothState('requesting_device');
+    logMachineEvent({ stallId: scannedStall.id, type: 'info', message: 'User initiated return. Starting Bluetooth connection...' });
+
+    try {
+      const device = await navigator.bluetooth.requestDevice({
+        filters: [
+            { services: [UTEK_SERVICE_UUID] },
+            { name: scannedStall.btName }
+        ],
+        optionalServices: [UTEK_SERVICE_UUID]
+      });
+      bluetoothDeviceRef.current = device;
+      device.addEventListener('gattserverdisconnected', handleGattServerDisconnected);
+      
+      setBluetoothState('connecting');
+      const server = await device.gatt?.connect();
+      if (!server) throw new Error("Failed to connect to GATT server.");
+      logMachineEvent({ stallId: scannedStall.id, type: 'info', message: `Connected to device: ${device.name || 'Unknown'}` });
+
+      const service = await server.getPrimaryService(UTEK_SERVICE_UUID);
+      const characteristic = await service.getCharacteristic(UTEK_CHARACTERISTIC_UUID);
+      tokCharacteristicRef.current = characteristic;
+      
+      setBluetoothState('getting_token');
+      await characteristic.startNotifications();
+      characteristic.addEventListener('characteristicvaluechanged', handleTokNotification);
+      
+      await characteristic.writeValue(new TextEncoder().encode("TOK\r\n"));
+      logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: 'Sent Signal: "TOK\\r\\n"' });
+    } catch (error: any) {
+      let errorMsg = error.message || "An unknown Bluetooth error occurred.";
+      if (error.name === "NotFoundError") errorMsg = "No compatible Bluetooth device found or selection was cancelled.";
+      setBluetoothError(errorMsg);
+      setBluetoothState('error');
+      logMachineEvent({ stallId: scannedStall.id, type: 'error', message: `Bluetooth Connection Error: ${errorMsg}` });
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      stopScanner();
+      if(bluetoothDeviceRef.current?.gatt?.connected) {
+        bluetoothDeviceRef.current.gatt.disconnect();
+      }
+    };
+  }, [stopScanner]);
+
+  if (isLoadingRental || isLoadingStalls || !activeRental) {
+    return (
+      <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)]">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        <p className="mt-4 text-muted-foreground">Loading rental details...</p>
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] py-8 px-4">
+       <AlertDialog open={showSuccessDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader className="items-center">
+            <AlertDialogTitle className="flex items-center text-xl text-primary">
+              <Umbrella className="mr-2 h-8 w-8" /> Please Return Your Umbrella Now
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
+              Place the umbrella securely into the opened slot to complete the return.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+
+      <Card className="w-full max-w-md shadow-xl">
+        <CardHeader>
+           <Link href="/" className="flex items-center text-sm text-primary hover:underline mb-4">
+            <ArrowLeft className="h-4 w-4 mr-1" /> Back to Map / Cancel Return
+          </Link>
+          <CardTitle className="text-2xl font-bold text-primary flex items-center">
+            <Umbrella className="h-6 w-6 mr-2" /> Return Umbrella
+          </CardTitle>
+          <CardDescription>
+            Returning umbrella from: <span className="font-semibold">{activeRental.stallName}</span>
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div className="p-4 bg-secondary/30 rounded-md text-center">
+            <p className="text-sm text-muted-foreground">Time Elapsed:</p>
+            <p className="text-2xl font-bold text-accent flex items-center justify-center">
+              <TimerIcon className="mr-2 h-6 w-6" /> {elapsedTime}
+            </p>
+          </div>
+          
+          <div 
+            id={QR_READER_REGION_ID}
+            className={cn("w-full aspect-square bg-black rounded-md", returnStep !== 'scanning' && "hidden")}
+          />
+          
+          {returnStep === 'initializing_scanner' && (
+            <div className="w-full aspect-square bg-muted rounded-md flex items-center justify-center">
+              <div className="text-center text-muted-foreground">
+                <Loader2 className="h-8 w-8 mx-auto animate-spin mb-2" />
+                <p>Starting Camera...</p>
+              </div>
+            </div>
+          )}
+
+          {qrError && (
+             <Alert variant="destructive">
+              <CameraOff className="h-4 w-4" />
+              <AlertTitle>QR Scan Error</AlertTitle>
+              <AlertDescription>{qrError}</AlertDescription>
+            </Alert>
+          )}
+
+          {bluetoothError && (
+            <Alert variant="destructive">
+              <AlertTriangle className="h-4 w-4" />
+              <AlertTitle>Bluetooth Error</AlertTitle>
+              <AlertDescription>{bluetoothError}</AlertDescription>
+            </Alert>
+          )}
+
+          {isProcessingBluetooth && (
+            <div className="text-center p-4 bg-primary/10 rounded-lg">
+              <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
+              <p className="text-sm text-primary font-medium">{bluetoothStateMessages[bluetoothState]}</p>
+            </div>
+          )}
+          
+          {bluetoothState === 'success' && (
+             <div className="text-center p-4 bg-green-100 rounded-lg">
+              <CheckCircle className="h-8 w-8 mx-auto text-green-600 mb-3" />
+              <p className="text-sm text-green-700 font-medium">{bluetoothStateMessages.success}</p>
+            </div>
+          )}
+
+          {returnStep === 'scan_complete' && scannedStall && !isProcessingBluetooth && bluetoothState !== 'success' && (
+            <Alert>
+                <CheckCircle className="h-4 w-4 text-green-600"/>
+                <AlertTitle>Stall Identified: {scannedStall.name}</AlertTitle>
+                <AlertDescription>
+                    Ready to connect and return.
+                </AlertDescription>
+            </Alert>
+          )}
+        </CardContent>
+         <CardFooter className="flex-col space-y-2">
+            {returnStep === 'idle' && (
+              <Button onClick={startScanner} className="w-full">
+                <QrCode className="mr-2 h-5 w-5" /> Scan Stall to Begin Return
+              </Button>
+            )}
+            {returnStep === 'scanning' && (
+              <Button onClick={async () => {
+                  await stopScanner();
+                  setReturnStep('idle');
+              }} variant="outline" className="w-full">
+                Cancel Scan
+              </Button>
+            )}
+            {returnStep === 'scan_complete' && !isProcessingBluetooth && bluetoothState !== 'success' && (
+              <>
+              <Button onClick={handleReturnViaBluetooth} className="w-full">
+                <Bluetooth className="mr-2 h-5 w-5" /> Connect & Return to {scannedStall?.name}
+              </Button>
+              <Button onClick={() => {
+                  setReturnStep('idle');
+                  setScannedStall(null);
+                  isProcessingScan.current = false;
+                }} variant="outline" className="w-full">
+                Scan a Different Stall
+              </Button>
+              </>
+            )}
+        </CardFooter>
+      </Card>
+    </div>
+  );
+}

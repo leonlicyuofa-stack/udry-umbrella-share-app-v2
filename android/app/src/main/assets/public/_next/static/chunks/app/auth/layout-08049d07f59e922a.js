@@ -1,0 +1,6 @@
+(self.webpackChunk_N_E=self.webpackChunk_N_E||[]).push([[4738],{8493:function(e,t,n){Promise.resolve().then(n.t.bind(n,5250,23)),Promise.resolve().then(n.bind(n,6994)),Promise.resolve().then(n.bind(n,6210))},9580:function(e,t,n){"use strict";n.d(t,{Z:function(){return r}});/**
+ * @license lucide-react v0.356.0 - ISC
+ *
+ * This source code is licensed under the ISC license.
+ * See the LICENSE file in the root directory of this source tree.
+ */let r=(0,n(843).Z)("LoaderCircle",[["path",{d:"M21 12a9 9 0 1 1-6.219-8.56",key:"13zald"}]])},6994:function(e,t,n){"use strict";n.r(t),n.d(t,{AuthRedirector:function(){return a}});var r=n(7437),i=n(6210),s=n(9580),u=n(7907),c=n(2265);function a(e){let{children:t}=e,{user:n,isReady:a}=(0,i.useAuth)(),o=(0,u.useRouter)(),l=(0,u.useSearchParams)();return((0,c.useEffect)(()=>{if(a&&n){let e=l.get("redirect")||"/";o.replace(e)}},[n,a,o,l]),!a||a&&n)?(0,r.jsx)("div",{className:"flex items-center justify-center min-h-[300px]",children:(0,r.jsx)(s.Z,{className:"h-12 w-12 animate-spin text-primary"})}):(0,r.jsx)(r.Fragment,{children:t})}}},function(e){e.O(0,[4358,139,7192,5596,5250,7992,6210,2971,8069,1744],function(){return e(e.s=8493)}),_N_E=e.O()}]);

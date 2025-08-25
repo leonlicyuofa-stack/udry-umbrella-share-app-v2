@@ -1,0 +1,60 @@
+
+// src/app/api/admin/test-firestore-write/route.ts
+import { NextRequest, NextResponse } from 'next/server';
+import { initializeApp, getApps, getApp, cert } from 'firebase-admin/app';
+import { getFirestore } from 'firebase-admin/firestore';
+
+// IMPORTANT: Service account key setup
+// In a real production app, this key should be stored securely (e.g., Google Secret Manager)
+// and not be in the source code. For this diagnostic test, we use environment variables.
+const serviceAccount = {
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  // Use a fallback of an empty string if the env var is not set
+  privateKey: (process.env.FIREBASE_PRIVATE_KEY || '').replace(/\\n/g, '\n'),
+  clientEmail: process.env.FIREBASE_CLIENT_EMAIL,
+};
+
+const isFirebaseAdminConfigured = serviceAccount.projectId && serviceAccount.privateKey && serviceAccount.clientEmail;
+
+const getAdminServices = () => {
+    // This function should only be called if isFirebaseAdminConfigured is true
+    if (getApps().length === 0) {
+        initializeApp({
+            credential: cert(serviceAccount as any) // Cast to any to satisfy cert()
+        });
+    }
+    const db = getFirestore();
+    return { db };
+};
+
+export async function POST(request: NextRequest) {
+    if (!isFirebaseAdminConfigured) {
+        console.warn("[API /test-firestore-write] Firebase Admin SDK is not configured. This is expected if server-only variables (FIREBASE_PRIVATE_KEY, FIREBASE_CLIENT_EMAIL) are not set. Test skipped.");
+        return NextResponse.json({
+            success: false, // Indicates the write did not happen
+            message: "Skipped: Firebase Admin SDK credentials are not configured on the server.",
+        }, { status: 200 }); // Return 200 OK because this is an expected state, not a server error.
+    }
+
+    try {
+        const { db } = getAdminServices();
+        const testDocRef = db.collection('diagnostics-server').doc();
+        await testDocRef.set({
+            timestamp: new Date(),
+            source: 'server-api-route',
+            message: 'Write successful'
+        });
+        await testDocRef.delete();
+
+        return NextResponse.json({
+            success: true,
+            message: "Server-side write and delete to /diagnostics-server successful.",
+        });
+    } catch (error: any) {
+        console.error("[API /test-firestore-write] Error during server-side write test:", error);
+        return NextResponse.json({
+            success: false,
+            message: `Server-side write failed: ${error.message}`,
+        }, { status: 500 });
+    }
+}

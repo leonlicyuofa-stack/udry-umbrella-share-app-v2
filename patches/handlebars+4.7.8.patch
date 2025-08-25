@@ -1,0 +1,20 @@
+diff --git a/node_modules/handlebars/lib/index.js b/node_modules/handlebars/lib/index.js
+index 592518f..8015b82 100644
+--- a/node_modules/handlebars/lib/index.js
++++ b/node_modules/handlebars/lib/index.js
+@@ -1,5 +1,5 @@
+ // lib/index.js
+-
++/*
+ const require = (
+   // eslint-disable-next-line no-undef
+   typeof __webpack_require__ === 'function' ? __webpack_require__ : require
+@@ -10,6 +10,7 @@ const require = (
+     : () => {};
+ require.extensions = require.extensions || {};
+ require.extensions['.json'] = require.extensions['.json'] || (() => ({}));
++*/
+ 
+ // Create a simple Handlebars only distribution
+ //
+
