@@ -1,5 +1,15 @@
+
+// This file is used to hold properties that are shared between projects
 ext {
-    // This file is kept for compatibility with some Capacitor plugins.
-    // However, we are moving towards defining versions in libs.versions.toml
-    // and hardcoding SDK versions in build.gradle files where necessary.
+    minSdkVersion = 22
+    compileSdkVersion = 34
+    targetSdkVersion = 34
+    androidxAppCompatVersion = '1.6.1'
+    androidxCoordinatorLayoutVersion = '1.2.0'
+    androidxCoreVersion = '1.12.0'
+    androidxFragmentVersion = '1.6.2'
+    junitVersion = '4.13.2'
+    androidxJunitVersion = '1.1.5'
+    androidxEspressoCoreVersion = '3.5.1'
+    cordovaAndroidVersion = '10.1.1'
 }
