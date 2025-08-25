@@ -1,6 +1,4 @@
-
-// The settings.gradle.kts file is used to specify which sub-projects to include in a build.
-
+// Top-level settings file where you can configure the plugins and repositories that are used in your project.
 pluginManagement {
     repositories {
         google()
@@ -17,7 +15,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "udry-umbrella-share-app"
+rootProject.name = "android"
 include(":app")
-include(":capacitor-android")
-project(":capacitor-android").projectDir = file("./capacitor-android")
+include(":capacitor-cordova-android-plugins")
