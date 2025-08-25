@@ -1,8 +1,9 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 apply plugin: 'com.android.application'
 
 android {
     namespace "com.getcapacitor.app"
-    compileSdkVersion rootProject.ext.compileSdkVersion
+    compileSdk 34
     defaultConfig {
         applicationId "com.getcapacitor.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -11,8 +12,8 @@ android {
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
-             // Files and dirs to omit from the packaged assets dir, modified by Cordova.
-            ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
+             // Files and dirs to omit from the APK bundle
+            ignoreAssetsPattern "!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~"
         }
     }
     buildTypes {
@@ -33,13 +34,6 @@ dependencies {
     implementation project(':capacitor-cordova-android-plugins')
 }
 
-apply from: 'capacitor.build.gradle'
-
-try {
-    def servicesJSON = file('google-services.json')
-    if (servicesJSON.text) {
-        apply plugin: 'com.google.gms.google-services'
-    }
-} catch(Exception e) {
-    logger.info("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
+if (hasProperty('postBuildExtras')) {
+    postBuildExtras()
 }
