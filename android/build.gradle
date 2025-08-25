@@ -1,38 +1,38 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext {
-        kotlin_version = '1.9.23'
-    }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:8.5.0'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.23'
     }
 }
 
-allprojects {
-    //
-}
-
+// This block provides the necessary Android configuration to all sub-projects,
+// including Capacitor plugins. This is the correct way to solve the
+// 'compileSdkVersion is not specified' error.
 subprojects {
-    project.configurations.all {
-        resolutionStrategy.eachDependency { details ->
-            if (details.requested.group == 'androidx.appcompat') {
-                details.useVersion "1.6.1"
-            }
-            if (details.requested.group == 'androidx.core') {
-                details.useVersion "1.12.0"
+    project.plugins.whenPluginAdded { plugin ->
+        if (plugin.class.name.startsWith("com.android")) {
+            project.android {
+                compileSdkVersion 34
+                defaultConfig {
+                    minSdkVersion 22
+                    targetSdkVersion 34
+                }
+                buildToolsVersion "34.0.0"
             }
         }
     }
 }
 
-task clean(type: Delete) {
-    delete rootProject.buildDir
+allprojects {
+    // Workaround for https://github.com/bazelbuild/bazel/issues/14329
+    // TODO: Remove when issue is resolved
+    tasks.withType(JavaCompile) {
+        options.compilerArgs.add("-Xlint:all")
+        options.compilerArgs.add("-Werror")
+    }
 }
