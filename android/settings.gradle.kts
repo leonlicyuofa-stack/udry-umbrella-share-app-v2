@@ -1,4 +1,3 @@
-// Top-level settings file where you can configure the plugins and repositories that are used in your project.
 pluginManagement {
     repositories {
         google()
