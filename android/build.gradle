@@ -1,43 +1,33 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        androidxAppCompatVersion = '1.6.1'
-        androidxCoordinatorLayoutVersion = '1.2.0'
-        androidxCoreVersion = '1.12.0'
-        androidxFragmentVersion = '1.6.2'
-        junitVersion = '4.13.2'
-        androidxJunitVersion = '1.1.5'
-        androidxEspressoCoreVersion = '3.5.1'
-        cordovaAndroidVersion = '10.1.1'
+        kotlin_version = '1.9.23'
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.2.1'
+        classpath 'com.android.tools.build:gradle:8.5.0'
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+
+        // NOTE: Do not place your application dependencies here; they belong
+        // in the individual module build.gradle files
     }
 }
 
 allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
+    //
 }
 
-// This new block provides the necessary Android configuration to all sub-projects.
-// This is the standard way to fix the "compileSdkVersion is not specified" error for plugins.
 subprojects {
-    afterEvaluate { project ->
-        if (project.hasProperty('android')) {
-            android {
-                compileSdkVersion 34
-                buildToolsVersion "34.0.0"
-                defaultConfig {
-                    minSdkVersion 22
-                    targetSdkVersion 34
-                }
+    project.configurations.all {
+        resolutionStrategy.eachDependency { details ->
+            if (details.requested.group == 'androidx.appcompat') {
+                details.useVersion "1.6.1"
+            }
+            if (details.requested.group == 'androidx.core') {
+                details.useVersion "1.12.0"
             }
         }
     }
