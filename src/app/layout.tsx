@@ -5,6 +5,7 @@ import type { Metadata, Viewport } from 'next';
 import { AuthProvider } from '@/contexts/auth-context';
 import { LanguageProvider } from '@/contexts/language-context';
 import { SignUpSuccessDialog } from '@/components/auth/sign-up-success-dialog';
+import { DeepLinkHandler } from '@/components/deep-link-handler';
 
 export const metadata: Metadata = {
   title: 'U-Dry - Smart Umbrella Sharing',
@@ -31,6 +32,7 @@ export default function RootLayout({
       <body>
         <LanguageProvider>
           <AuthProvider>
+            <DeepLinkHandler />
             <div className="flex min-h-screen flex-col">
               {children}
             </div>
