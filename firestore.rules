@@ -1,32 +1,37 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Stalls are public information for the map
+    // Allow public read access for stalls so anyone can see them on the map.
+    // Deny all write access to prevent unauthorized modification.
     match /stalls/{stallId} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
+      allow write: if false;
     }
 
-    // Users can read/write their own data. Admins can read/write any user data.
+    // Secure user data. Users can only read and write their own document.
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
-      allow read, write: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
     }
 
-    // Rental history can only be created by authenticated users. Admins can read all rental history.
+    // Allow users to write new rental history documents.
+    // For simplicity in this stage, we are not restricting read access.
+    // In a production app, reads would be restricted to the user and admins.
     match /rentals/{rentalId} {
-      allow read: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
-      allow create: if request.auth != null;
+        allow read: if request.auth != null;
+        allow create: if request.auth != null;
+        allow update, delete: if false; // Prevent modification after creation
     }
 
-    // Processed Stripe payments are write-only for security (written by cloud functions)
-    // Admins can read them for debugging purposes.
+    // Secure processed payment records.
     match /processed_stripe_payments/{sessionId} {
-        allow read: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
-        allow write: if false; // Only backend functions can write here
+        allow read, write: if false; // No client access
+    }
+
+    // Secure machine event logs.
+    match /machine_logs/{logId} {
+        allow read, write: if false; // No client access
     }
   }
 }
