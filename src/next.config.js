@@ -1,6 +1,5 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  output: 'export',
   webpack: (config, { isServer }) => {
     if (isServer) {
       // These packages are required by Firebase but depend on browser APIs.
