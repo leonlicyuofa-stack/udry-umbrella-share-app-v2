@@ -6,16 +6,17 @@ import { useAuth } from '@/contexts/auth-context';
 import { collection, getDocs, type Firestore, writeBatch, doc, getDoc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, CheckCircle, AlertTriangle, XCircle, ShieldQuestion, Server, UserCheck, Database, Layers, UploadCloud, UserSearch } from 'lucide-react';
+import { Loader2, CheckCircle, AlertTriangle, XCircle, ShieldQuestion, Server, UserCheck, Database, Layers, UploadCloud, UserSearch, Smartphone, Wifi, Bluetooth, Camera } from 'lucide-react';
 import Link from 'next/link';
 import { initializeFirebaseServices } from '@/lib/firebase';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { useToast } from '@/hooks/use-toast';
 import { mockStalls } from '@/lib/mock-data';
 import { GeoPoint } from 'firebase/firestore';
+import { Separator } from '@/components/ui/separator';
 
 
-type Status = 'pending' | 'success' | 'error';
+type Status = 'pending' | 'success' | 'error' | 'untested';
 
 interface CheckResult {
   status: Status;
@@ -31,6 +32,7 @@ const StatusIndicator = ({ status, message, data }: CheckResult) => {
           {status === 'pending' && <Loader2 className="h-5 w-5 animate-spin text-muted-foreground" />}
           {status === 'success' && <CheckCircle className="h-5 w-5 text-green-500" />}
           {status === 'error' && <XCircle className="h-5 w-5 text-destructive" />}
+          {status === 'untested' && <ShieldQuestion className="h-5 w-5 text-muted-foreground" />}
         </div>
         <p className={`font-medium ${status === 'error' ? 'text-destructive' : ''} ${status === 'pending' ? 'text-muted-foreground' : ''}`}>
           {message}
@@ -54,9 +56,15 @@ export default function DiagPage() {
   const [firestoreStallsCheck, setFirestoreStallsCheck] = useState<CheckResult>({ status: 'pending', message: 'Checking public read access for "stalls"...' });
   const [isSeeding, setIsSeeding] = useState(false);
 
-  // New states for our admin permission hypotheses tests
+  // States for admin permission checks
   const [adminRecordCheck, setAdminRecordCheck] = useState<CheckResult>({ status: 'pending', message: '1. Checking for your specific admin record...' });
   const [adminListCheck, setAdminListCheck] = useState<CheckResult>({ status: 'pending', message: '2. Listing all documents in the "admins" collection...' });
+
+  // States for new iOS Readiness checks
+  const [isCheckingIos, setIsCheckingIos] = useState(false);
+  const [cameraCheck, setCameraCheck] = useState<CheckResult>({ status: 'untested', message: 'Camera API access' });
+  const [bluetoothCheck, setBluetoothCheck] = useState<CheckResult>({ status: 'untested', message: 'Bluetooth API access' });
+  const [connectivityCheck, setConnectivityCheck] = useState<CheckResult>({ status: 'untested', message: 'External API Connectivity (UTEK)' });
 
   const handleSeedDatabase = async () => {
     const services = initializeFirebaseServices();
@@ -82,6 +90,47 @@ export default function DiagPage() {
       setIsSeeding(false);
     }
   };
+
+  const runIosChecks = async () => {
+    setIsCheckingIos(true);
+    
+    // 1. Camera Check
+    setCameraCheck({ status: 'pending', message: 'Checking Camera API...'});
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+        setCameraCheck({ status: 'success', message: 'Camera API (getUserMedia) is available.' });
+    } else {
+        setCameraCheck({ status: 'error', message: 'Camera API (getUserMedia) is NOT available in this environment.' });
+    }
+
+    // 2. Bluetooth Check
+    setBluetoothCheck({ status: 'pending', message: 'Checking Bluetooth API...'});
+    if (navigator.bluetooth) {
+        setBluetoothCheck({ status: 'success', message: 'Web Bluetooth API is available.' });
+    } else {
+        setBluetoothCheck({ status: 'error', message: 'Web Bluetooth API is NOT available. This is expected in many environments (like non-secure origins or standard iOS WebViews without specific configuration).' });
+    }
+
+    // 3. Connectivity Check
+    setConnectivityCheck({ status: 'pending', message: 'Checking UTEK API connectivity...'});
+    try {
+        // We use our own API route as a proxy to avoid CORS issues in the browser.
+        const response = await fetch('/api/admin/unlock-physical-machine', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ test: true }), // Send a test payload
+        });
+        if (response.status === 400) { // A 400 Bad Request is a success for this test, as it means our server responded.
+             setConnectivityCheck({ status: 'success', message: 'Successfully connected to our server proxy for UTEK API.' });
+        } else {
+             throw new Error(`Server responded with status: ${response.status}`);
+        }
+    } catch (error: any) {
+        setConnectivityCheck({ status: 'error', message: `Failed to connect to our server proxy for UTEK API: ${error.message}` });
+    }
+
+    setIsCheckingIos(false);
+  };
+
 
   useEffect(() => {
     const runChecks = async () => {
@@ -124,7 +173,9 @@ export default function DiagPage() {
         return;
       }
 
-      // --- Hypothesis Test #1: Check for specific admin document ---
+      setAdminRecordCheck({ status: 'pending', message: '1. Checking for your specific admin record...' });
+      setAdminListCheck({ status: 'pending', message: '2. Listing all documents in the "admins" collection...' });
+
       try {
         const adminDocRef = doc(services.db, 'admins', user.uid);
         const docSnap = await getDoc(adminDocRef);
@@ -137,7 +188,6 @@ export default function DiagPage() {
         setAdminRecordCheck({ status: 'error', message: `Error checking for your admin document: ${error.message}` });
       }
 
-      // --- Hypothesis Test #2: List all documents in admins collection ---
       try {
         const adminsCollectionRef = collection(services.db, 'admins');
         const querySnapshot = await getDocs(adminsCollectionRef);
@@ -166,10 +216,27 @@ export default function DiagPage() {
             Application Diagnostic Panel
           </CardTitle>
           <CardDescription>
-            This page performs live checks on critical application systems to diagnose issues.
+            This page performs live checks on critical application systems to diagnose issues. Run the iOS checks from the simulator/device.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+          
+          <div className="space-y-4 p-4 border rounded-lg bg-secondary/30">
+            <h2 className="text-lg font-semibold flex items-center"><Smartphone className="mr-2 h-5 w-5 text-accent"/> iOS Readiness Checks</h2>
+             <p className="text-sm text-muted-foreground">
+               Run these tests from the iOS simulator or a real device to check for native compatibility issues.
+             </p>
+             <Button onClick={runIosChecks} disabled={isCheckingIos}>
+              {isCheckingIos ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Smartphone className="mr-2 h-4 w-4"/>}
+               Run iOS Checks
+             </Button>
+             <Separator />
+             <div className="space-y-4">
+                <StatusIndicator {...cameraCheck} />
+                <StatusIndicator {...bluetoothCheck} />
+                <StatusIndicator {...connectivityCheck} />
+             </div>
+          </div>
 
           <div className="space-y-4 p-4 border rounded-lg">
             <h2 className="text-lg font-semibold flex items-center"><UserSearch className="mr-2 h-5 w-5 text-accent"/> Admin Permission Checks</h2>
