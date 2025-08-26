@@ -51,6 +51,7 @@
     "@vis.gl/react-google-maps": "^0.7.1",
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
+    "dotenv": "^16.4.5",
     "firebase": "^10.8.1",
     "genkit": "^1.0.0",
     "html5-qrcode": "^2.3.8",

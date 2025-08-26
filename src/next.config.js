@@ -1,20 +1,11 @@
 /** @type {import('next').NextConfig} */
+
+// Load environment variables from the root .env file
+require('dotenv').config({ path: '../.env' });
+
 const nextConfig = {
-  webpack: (config, { isServer }) => {
-    if (isServer) {
-      // These packages are required by Firebase but depend on browser APIs.
-      // We mark them as external so they are not bundled on the server.
-      config.externals.push(
-        'encoding',
-        'firebase/app',
-        'firebase/auth',
-        'firebase/firestore',
-        'firebase/functions',
-        'firebase/storage'
-      );
-    }
-    return config;
-  },
+  // Your existing Next.js configuration can go here.
+  // For now, we only need to ensure the .env file is loaded.
 };
 
 module.exports = nextConfig;
