@@ -3,6 +3,12 @@
   "appId": "com.udry.app",
   "appName": "udry 共享雨傘 ",
   "webDir": "out",
+  "server": {
+    "hostname": "udry-app-dev.firebaseapp.com",
+    "allowNavigation": [
+      "udry-app-dev.firebaseapp.com"
+    ]
+  },
   "android": {
     "allowMixedContent": true
   }
