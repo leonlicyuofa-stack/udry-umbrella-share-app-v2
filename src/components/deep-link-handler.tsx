@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect } from 'react';
-import { App, type PluginListenerHandle } from '@capacitor/app';
+import { App } from '@capacitor/app';
+import type { PluginListenerHandle } from '@capacitor/core';
 import { useRouter } from 'next/navigation';
 
 export const DeepLinkHandler = () => {
