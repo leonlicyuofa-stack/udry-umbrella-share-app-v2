@@ -128,7 +128,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setFirebaseServices(services);
     setIsFirebaseError(false);
+    
+    // --- START: TEST 1 MODIFICATION ---
+    // This is the temporary change. We are bypassing the real auth check.
+    console.log("[DEBUG] Bypassing onAuthStateChanged for Test 1.");
+    setIsReady(true);
+    setFirebaseUser(null);
+    setFirestoreUser(null);
+    setActiveRental(null);
+    setIsLoadingRental(false);
 
+    // The original code is commented out below.
+    /*
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
       setFirebaseUser(user);
       if (!user) {
@@ -142,6 +153,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => {
       unsubscribeAuth();
     };
+    */
+    // --- END: TEST 1 MODIFICATION ---
+
   }, [toast]);
 
   useEffect(() => {
