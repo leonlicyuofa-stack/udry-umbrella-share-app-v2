@@ -6,31 +6,25 @@ const { onRequest } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions");
 const Stripe = require("stripe");
 
-// --- Robust, Global Initialization ---
-let db;
-let stripe;
-let adminApp;
+// --- Safe, Global Initialization ---
+// It's safe to initialize the admin app here as it's a lightweight setup.
+// We will get db and stripe instances inside the functions themselves ("lazy initialization").
+admin.initializeApp();
+let stripe; // Will be initialized on first use
 
-try {
-    if (!admin.apps.length) {
-        adminApp = admin.initializeApp();
-    } else {
-        adminApp = admin.app();
-    }
-    db = admin.firestore();
-    logger.info("Firebase Admin SDK initialized successfully in global scope.");
-    
-    const stripeKey = (process.env.STRIPE_SECRET_KEY || '').replace(/\s/g, '');
-
-    if (!stripeKey) {
-        logger.warn("WARNING: Stripe secret key is not available. Stripe functionality will be disabled.");
-    } else {
+// Lazy initializer for Stripe
+const getStripe = () => {
+    if (!stripe) {
+        const stripeKey = (process.env.STRIPE_SECRET_KEY || '').replace(/\s/g, '');
+        if (!stripeKey) {
+            logger.warn("Stripe secret key is not available. Stripe functionality will be disabled.");
+            return null;
+        }
         stripe = new Stripe(stripeKey);
-        logger.info("Stripe SDK initialized successfully in global scope.");
+        logger.info("Stripe SDK initialized on first use.");
     }
-} catch (error) {
-    logger.error(`FATAL: Failed to initialize services in global scope. Error: ${error.message}`);
-}
+    return stripe;
+};
 
 exports.setAdminClaim = onCall(async (request) => {
     // Only the currently logged-in admin can make themselves an admin.
@@ -53,9 +47,10 @@ exports.setAdminClaim = onCall(async (request) => {
 
 exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
     logger.info("--- createStripeCheckoutSession function triggered ---");
+    const stripeInstance = getStripe();
 
-    if (!stripe) {
-        logger.error("STEP 1 FAILED: Stripe SDK is not initialized. Ensure STRIPE_SECRET_KEY is set and valid.");
+    if (!stripeInstance) {
+        logger.error("STEP 1 FAILED: Stripe SDK could not be initialized. Ensure STRIPE_SECRET_KEY is set and valid.");
         throw new HttpsError('internal', 'The server is missing critical payment processing configuration.');
     }
     logger.info("Step 1 SUCCESS: Stripe SDK appears to be initialized.");
@@ -89,7 +84,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
 
     try {
         logger.info("Step 6: Attempting to create Stripe checkout session...");
-        const session = await stripe.checkout.sessions.create({
+        const session = await stripeInstance.checkout.sessions.create({
             payment_method_types: ['card'],
             line_items: [{
                 price_data: {
@@ -131,8 +126,10 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
  */
 exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
+    const stripeInstance = getStripe();
+    const db = admin.firestore();
     
-    if (!stripe) {
+    if (!stripeInstance) {
         logger.error("Step 1 FAILED: Stripe SDK is not initialized. Check startup logs and ensure STRIPE_SECRET_KEY is set.");
         throw new HttpsError('internal', 'The server is missing critical payment processing configuration.');
     }
@@ -172,7 +169,7 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
         let session;
         try {
             logger.info(`Step 5: Attempting to retrieve session '${sessionId}' from Stripe...`);
-            session = await stripe.checkout.sessions.retrieve(sessionId);
+            session = await stripeInstance.checkout.sessions.retrieve(sessionId);
             logger.info(`Step 5 SUCCESS: Successfully retrieved session from Stripe.`);
         } catch (stripeError) {
             logger.error(`Step 5 FAILED: Error retrieving session from Stripe: ${stripeError.message}`);
