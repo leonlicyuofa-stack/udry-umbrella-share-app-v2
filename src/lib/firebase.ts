@@ -1,8 +1,8 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
-import { getFirestore, type Firestore } from 'firebase/firestore';
-import { getFunctions, type Functions } from 'firebase/functions';
+import { getAuth, type Auth, connectAuthEmulator } from 'firebase/auth';
+import { getFirestore, type Firestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getFunctions, type Functions, connectFunctionsEmulator } from 'firebase/functions';
 
 // This configuration is now read from environment variables to ensure flexibility.
 export const firebaseConfig = {
@@ -78,6 +78,7 @@ export interface FirebaseServices {
 
 
 let services: FirebaseServices | null = null;
+let emulatorsConnected = false; // Add a flag to prevent multiple connections
 
 /**
  * Initializes Firebase services using a singleton pattern. This function can be safely
@@ -104,6 +105,21 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     const db = getFirestore(app);
     const auth = getAuth(app);
     const functions = getFunctions(app);
+
+    // --- NEW: Connect to Emulators in Development ---
+    // This code only runs in the browser during development.
+    if (typeof window !== 'undefined' && window.location.hostname === "localhost" && !emulatorsConnected) {
+      console.log("Connecting to local Firebase emulators...");
+      // For Capacitor on iOS, the hostname is localhost, but the ports need to be specified with the computer's IP.
+      // However, for simplicity and standard web dev, we'll use localhost.
+      // If direct device testing is needed, this might need adjustment to the host machine's IP.
+      connectAuthEmulator(auth, "http://localhost:9099", { disableWarnings: true });
+      connectFirestoreEmulator(db, 'localhost', 8080);
+      connectFunctionsEmulator(functions, 'localhost', 5001);
+      emulatorsConnected = true;
+      console.log("Successfully connected to emulators.");
+    }
+    // --- END NEW SECTION ---
     
     // Cache the services for subsequent calls.
     services = { app, auth, db, functions };
