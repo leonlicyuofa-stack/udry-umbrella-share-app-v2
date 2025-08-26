@@ -32,6 +32,25 @@ try {
     logger.error(`FATAL: Failed to initialize services in global scope. Error: ${error.message}`);
 }
 
+exports.setAdminClaim = onCall(async (request) => {
+    // Only the currently logged-in admin can make themselves an admin.
+    // This is a simple security measure for this one-time setup function.
+    if (request.auth.token.email !== 'admin@u-dry.com') {
+        throw new HttpsError('permission-denied', 'Only the admin user can call this function.');
+    }
+
+    try {
+        const user = await admin.auth().getUserByEmail('admin@u-dry.com');
+        await admin.auth().setCustomUserClaims(user.uid, { isAdmin: true });
+        logger.info(`Successfully set admin claim for ${user.email}`);
+        return { success: true, message: `Admin claim set for ${user.email}. Please sign out and sign back in.` };
+    } catch (error) {
+        logger.error('Error setting admin claim:', error);
+        throw new HttpsError('internal', `An error occurred: ${error.message}`);
+    }
+});
+
+
 exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
     logger.info("--- createStripeCheckoutSession function triggered ---");
 
