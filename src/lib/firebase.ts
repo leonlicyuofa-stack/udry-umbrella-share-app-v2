@@ -1,8 +1,8 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
-import { getFirestore, type Firestore } from 'firestore';
-import { getFunctions, type Functions } from 'functions';
+import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getFunctions, type Functions } from 'firebase/functions';
 
 // This configuration is now hardcoded to ensure it works reliably in all environments.
 // These are public keys and are safe to be included here. Security is enforced by Firestore rules.
