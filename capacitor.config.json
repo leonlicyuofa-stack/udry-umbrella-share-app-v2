@@ -6,7 +6,8 @@
   "server": {
     "hostname": "udry-app-dev.firebaseapp.com",
     "allowNavigation": [
-      "udry-app-dev.firebaseapp.com"
+      "udry-app-dev.firebaseapp.com",
+      "identitytoolkit.googleapis.com"
     ]
   },
   "android": {
