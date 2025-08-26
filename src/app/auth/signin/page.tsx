@@ -15,7 +15,7 @@ export default function SignInPage() {
     <Card className="shadow-xl">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Welcome Back!</CardTitle>
-        <CardDescription>TESTING Sign in to access your account and manage your U-Dry rentals.</CardDescription>
+        <CardDescription>Sign in to access your account and manage your U-Dry rentals.</CardDescription>
       </CardHeader>
       <CardContent>
         <SignInForm />
