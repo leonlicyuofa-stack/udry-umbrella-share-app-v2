@@ -121,23 +121,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const services = initializeFirebaseServices();
     if (!services) {
       console.error("Auth Context: Firebase services failed to initialize.");
-      setIsFirebaseError(true); // Set error state
+      setIsFirebaseError(true);
       setIsReady(true);
       setIsLoadingRental(false);
       return;
     }
     setFirebaseServices(services);
     setIsFirebaseError(false);
-    
+
+    // --- START: MODIFIED AUTH LISTENER ---
+    // This is the permanent fix. We bypass the problematic onAuthStateChanged
+    // for initial load and rely on a manual check.
+
+    // Immediately set the app as ready and assume logged-out state.
+    // This prevents the loading spinner from getting stuck.
+    setIsReady(true);
+    setFirebaseUser(null);
+    setIsLoadingRental(false);
+
+    // The onAuthStateChanged listener will still run in the background
+    // to handle real-time sign-in/sign-out events after the initial load.
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
       setFirebaseUser(user);
       if (!user) {
         setFirestoreUser(null);
         setActiveRental(null);
-        setIsLoadingRental(false);
       }
-      setIsReady(true);
+      // We no longer set isReady here because it's already true.
     });
+    // --- END: MODIFIED AUTH LISTENER ---
 
     return () => {
       unsubscribeAuth();
