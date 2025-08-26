@@ -1,35 +1,30 @@
-
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Stalls: Allow anyone to read the list of stalls (for the map),
-    // but only authenticated users can create, update, or delete them.
-    // In a real production app, you'd likely restrict writes to admins.
+    // Allow public read access for stalls so the map can load them for anyone.
+    // Writes are restricted to prevent tampering with stall data.
     match /stalls/{stallId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if false; // Protect stall data from public modification
     }
 
-    // Users: A user can only read or write to their own document.
-    // This is a critical security rule.
+    // Users can only read and write their own documents.
     match /users/{userId} {
       allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Rentals: A user can create their own rental history, and can only read
-    // their own rental history. No one can update or delete history.
+    // Completed rental histories can be created by authenticated users.
+    // Reading rental history might be restricted in the future (e.g., only by user or admin).
     match /rentals/{rentalId} {
-      allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow update, delete: if false; // Disallow updates and deletes for record-keeping
+      allow read, create: if request.auth != null;
+      allow update, delete: if false; // Prevent modification of historical records
     }
-
-    // Processed Stripe Payments: Secure collection, no client access.
-    // Only backend functions should interact with this.
-    match /processed_stripe_payments/{paymentId} {
-      allow read, write: if false;
+     // Processed Stripe payments should only be handled by server-side logic (Cloud Functions).
+    // This collection is used for idempotency checks.
+    match /processed_stripe_payments/{sessionId} {
+      allow read, write: if false; // No client-side access
     }
   }
 }
