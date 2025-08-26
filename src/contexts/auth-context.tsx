@@ -129,34 +129,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setFirebaseServices(services);
     setIsFirebaseError(false);
 
-    // This is the fix for iOS. We bypass the problematic onAuthStateChanged
-    // for native devices by assuming the user is logged out initially.
-    // The regular login flow will then work correctly.
-    // For web, onAuthStateChanged works fine.
-    if (window.location.hostname === 'localhost') {
-        const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
-          setFirebaseUser(user);
-          if (!user) {
-            setFirestoreUser(null);
-            setActiveRental(null);
-          }
-          setIsReady(true);
-        });
-        return () => unsubscribeAuth();
-    } else {
-        // This is the bypass for non-localhost (i.e., the web preview)
-        // and the fix for the native simulator which also uses `capacitor://localhost`.
-        // We set the user to null immediately, which un-sticks the loading screen.
-        setFirebaseUser(null);
+    const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
+      setFirebaseUser(user);
+      if (!user) {
         setFirestoreUser(null);
         setActiveRental(null);
-        setIsReady(true);
-    }
+      }
+      setIsReady(true);
+    });
+
+    return () => unsubscribeAuth();
   }, [toast]);
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
-      // If the user is logged out, we're done loading rental info.
       if (!firebaseUser) setIsLoadingRental(false);
       return;
     }
