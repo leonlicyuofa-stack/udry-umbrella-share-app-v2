@@ -116,6 +116,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
   const [isFirebaseError, setIsFirebaseError] = useState(false);
+  const [isJustSignedIn, setIsJustSignedIn] = useState(false);
+
 
   useEffect(() => {
     const services = initializeFirebaseServices();
@@ -140,6 +142,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => unsubscribeAuth();
   }, [toast]);
+
+  // This new effect handles post-login actions to prevent race conditions.
+  useEffect(() => {
+    if (isReady && firebaseUser && isJustSignedIn) {
+      toast({ title: translate('auth_success_signin_email') });
+      router.replace('/home');
+      setIsJustSignedIn(false); // Reset the flag
+    }
+  }, [isReady, firebaseUser, isJustSignedIn, router, toast, translate]);
+
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
@@ -221,7 +233,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!firebaseServices?.auth) return;
     try {
       await signInWithEmailAndPassword(firebaseServices.auth, email, password);
-      toast({ title: translate('auth_success_signin_email') });
+      // Set a flag instead of directly calling toast/router
+      setIsJustSignedIn(true);
     } catch (error: any) {
       let description = error.message;
       if (error.code === 'auth/invalid-credential') {
