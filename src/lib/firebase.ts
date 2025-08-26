@@ -3,6 +3,7 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
+import { Capacitor } from '@capacitor/core';
 
 // This configuration is now hardcoded to ensure it works reliably in all environments.
 // These are public keys and are safe to be included here. Security is enforced by Firestore rules.
@@ -50,8 +51,11 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     
     const db = getFirestore(app);
     // This is the crucial change for Capacitor/native environments
+    // By explicitly passing the Capacitor platform, we ensure Firebase
+    // uses the most robust persistence mechanism for native apps.
     const auth = initializeAuth(app, {
-      persistence: indexedDBLocalPersistence
+      persistence: indexedDBLocalPersistence,
+      platform: Capacitor, // Explicitly provide the Capacitor platform
     });
     const functions = getFunctions(app);
 
