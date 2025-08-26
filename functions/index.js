@@ -7,10 +7,8 @@ const { logger } = require("firebase-functions");
 const Stripe = require("stripe");
 
 // --- Safe, Global Initialization ---
-// It's safe to initialize the admin app here as it's a lightweight setup.
-// We will get db and stripe instances inside the functions themselves ("lazy initialization").
 admin.initializeApp();
-let stripe; // Will be initialized on first use
+let stripe; // Will be initialized lazily
 
 // Lazy initializer for Stripe
 const getStripe = () => {
@@ -26,21 +24,34 @@ const getStripe = () => {
     return stripe;
 };
 
-exports.setAdminClaim = onCall(async (request) => {
-    // Only the currently logged-in admin can make themselves an admin.
-    // This is a simple security measure for this one-time setup function.
+exports.makeAdmin = onCall(async (request) => {
+    // This function adds the caller's UID to a special 'admins' collection.
+    // Security rules on the 'admins' collection can prevent unauthorized execution if needed,
+    // but for this setup, we only expose the tool to the admin user in the UI.
+    if (!request.auth) {
+        throw new HttpsError('unauthenticated', 'You must be logged in to call this function.');
+    }
+    
+    // For initial setup, we allow the 'admin@u-dry.com' user to make themselves an admin.
+    // In a production app, you might lock this down further after first use.
     if (request.auth.token.email !== 'admin@u-dry.com') {
-        throw new HttpsError('permission-denied', 'Only the admin user can call this function.');
+        throw new HttpsError('permission-denied', 'Only the primary admin user can call this function.');
     }
 
+    const adminUid = request.auth.uid;
+    const db = admin.firestore();
+    const adminRef = db.collection('admins').doc(adminUid);
+
     try {
-        const user = await admin.auth().getUserByEmail('admin@u-dry.com');
-        await admin.auth().setCustomUserClaims(user.uid, { isAdmin: true });
-        logger.info(`Successfully set admin claim for ${user.email}`);
-        return { success: true, message: `Admin claim set for ${user.email}. Please sign out and sign back in.` };
+        await adminRef.set({
+            email: request.auth.token.email,
+            addedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        logger.info(`Successfully added ${adminUid} to the admins collection.`);
+        return { success: true, message: `User ${adminUid} is now an administrator. Please sign out and sign back in.` };
     } catch (error) {
-        logger.error('Error setting admin claim:', error);
-        throw new HttpsError('internal', `An error occurred: ${error.message}`);
+        logger.error(`Error adding admin record for UID ${adminUid}:`, error);
+        throw new HttpsError('internal', `An error occurred while setting admin permissions: ${error.message}`);
     }
 });
 
@@ -121,9 +132,6 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
 });
 
-/**
- * A secure, callable Cloud Function to process a Stripe payment and update a user's balance.
- */
 exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
     const stripeInstance = getStripe();
@@ -132,10 +140,6 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
     if (!stripeInstance) {
         logger.error("Step 1 FAILED: Stripe SDK is not initialized. Check startup logs and ensure STRIPE_SECRET_KEY is set.");
         throw new HttpsError('internal', 'The server is missing critical payment processing configuration.');
-    }
-    if (!db) {
-        logger.error("Step 1 FAILED: Firestore (db) is not initialized. Check startup logs.");
-        throw new HttpsError('internal', 'The server is missing critical database configuration.');
     }
     logger.info("Step 1 SUCCESS: Services appear to be initialized.");
 
@@ -240,7 +244,6 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
 });
 
 
-// A simple v1 function for the webhook for stability and simplicity.
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });

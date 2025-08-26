@@ -22,8 +22,9 @@ export default function AdminToolsPage() {
     }
     setIsLoading(true);
     try {
-      const setAdminClaimFunction = httpsCallable(firebaseServices.functions, 'setAdminClaim');
-      const result = await setAdminClaimFunction({ email: user.email });
+      // Renamed function to reflect its new purpose
+      const makeAdminFunction = httpsCallable(firebaseServices.functions, 'makeAdmin');
+      const result = await makeAdminFunction(); // No need to pass data, it uses the caller's context
       const data = result.data as { success?: boolean; message?: string };
 
       if (data.success) {
@@ -55,11 +56,11 @@ export default function AdminToolsPage() {
             <AlertTriangle className="h-4 w-4" />
             <AlertTitle>Important: One-Time Setup</AlertTitle>
             <AlertDescription>
-              To grant yourself full admin permissions, click the button below. This will set a special 'isAdmin' flag on your user account ({user?.email}). This is a necessary first-time setup step.
+              To grant yourself full admin permissions, click the button below. This will add your User ID to a secure 'admins' list in the database, granting you admin rights. This is a necessary first-time setup step.
             </AlertDescription>
           </Alert>
           <p>
-            After clicking, you may need to sign out and sign back in for the new permissions to take full effect.
+            After clicking, you must sign out and sign back in for the new permissions to take full effect.
           </p>
         </CardContent>
         <CardFooter>
