@@ -276,3 +276,7 @@ Aug 26, 2025 11:34:15 AM com.google.cloud.datastore.emulator.firestore.websocket
 INFO: Websocket client disconnected
 Aug 26, 2025 11:42:44 AM com.google.cloud.datastore.emulator.firestore.websocket.WebSocketChannelHandler initChannel
 INFO: Connected to new websocket client
+Aug 26, 2025 3:21:05 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected non-HTTP/2 connection.
+Aug 26, 2025 3:21:06 PM io.gapi.emulators.netty.HttpVersionRoutingHandler channelRead
+INFO: Detected HTTP/2 connection.
