@@ -50,12 +50,10 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     
     const db = getFirestore(app);
-    // This is the crucial change for Capacitor/native environments
-    // By explicitly passing the Capacitor platform, we ensure Firebase
-    // uses the most robust persistence mechanism for native apps.
+    // For Capacitor, we use indexedDBLocalPersistence. 
+    // This is the most robust option for native apps.
     const auth = initializeAuth(app, {
       persistence: indexedDBLocalPersistence,
-      platform: Capacitor, // Explicitly provide the Capacitor platform
     });
     const functions = getFunctions(app);
 
