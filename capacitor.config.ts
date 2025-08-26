@@ -5,14 +5,6 @@ const config: CapacitorConfig = {
   appId: 'com.udry.app',
   appName: 'udry 共享雨傘 ',
   webDir: 'out',
-  server: {
-    url: 'https://udry-app-dev.firebaseapp.com',
-    hostname: 'udry-app-dev.firebaseapp.com',
-    allowNavigation: [
-      "udry-app-dev.firebaseapp.com",
-      "identitytoolkit.googleapis.com"
-    ],
-  },
   android: {
     allowMixedContent: true,
   },
