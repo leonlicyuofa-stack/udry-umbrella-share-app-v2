@@ -1,6 +1,6 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
+import { getAuth, initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
 
@@ -102,7 +102,10 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     
     const db = getFirestore(app);
-    const auth = getAuth(app);
+    // This is the crucial change for Capacitor/native environments
+    const auth = initializeAuth(app, {
+      persistence: indexedDBLocalPersistence
+    });
     const functions = getFunctions(app);
 
     // Cache the services for subsequent calls.
