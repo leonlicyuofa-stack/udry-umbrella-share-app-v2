@@ -1,6 +1,15 @@
-// This file is intentionally blank.
-// The presence of this file can sometimes interfere with Next.js's default
-// environment variable loading strategy. By having it blank, we ensure
-// that the hardcoded configuration in `src/lib/firebase.ts` is used
-// reliably across all environments, which has proven to be the most
-// stable solution for this specific project setup.
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  // This is the crucial line that tells Next.js to build a static site
+  // into the 'out' directory, which is required by Capacitor.
+  output: 'export',
+
+  // This is also required for Capacitor. The default Next.js Image Optimization API
+  // requires a server, which doesn't exist in a static export for a mobile app.
+  // This setting ensures images work correctly in the native build.
+  images: {
+    unoptimized: true,
+  },
+};
+
+module.exports = nextConfig;
