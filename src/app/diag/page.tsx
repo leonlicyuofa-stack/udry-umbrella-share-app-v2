@@ -9,11 +9,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter }
 import { Button } from '@/components/ui/button';
 import { Loader2, CheckCircle, AlertTriangle, XCircle, ShieldQuestion, Server, UserCheck, Database, Layers, UploadCloud } from 'lucide-react';
 import Link from 'next/link';
-import { initializeFirebaseServices, firebaseConfig } from '@/lib/firebase';
+import { initializeFirebaseServices } from '@/lib/firebase';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { getApp, getApps, initializeApp } from 'firebase/app';
-import { getAuth } from 'firebase/auth';
-import { getFunctions } from 'firebase/functions';
 import { useToast } from '@/hooks/use-toast';
 import { mockStalls } from '@/lib/mock-data';
 import { GeoPoint } from 'firebase/firestore';
@@ -42,13 +39,11 @@ const StatusIndicator = ({ status, message }: CheckResult) => {
 };
 
 export default function DiagPage() {
-  const { user, isReady: isAuthReady } = useAuth();
+  const { user, isReady: isAuthReady, firebaseServices: authContextServices } = useAuth();
   const { toast } = useToast();
   
   // Granular Firebase Core Checks
-  const [firebaseConfigCheck, setFirebaseConfigCheck] = useState<CheckResult>({ status: 'pending', message: '1. Checking for Firebase config variables...' });
-  const [firebaseAppCheck, setFirebaseAppCheck] = useState<CheckResult>({ status: 'pending', message: '2. Checking Firebase App initialization...' });
-  const [firebaseServicesCheck, setFirebaseServicesCheck] = useState<CheckResult>({ status: 'pending', message: '3. Checking individual Firebase services...' });
+  const [firebaseCoreCheck, setFirebaseCoreCheck] = useState<CheckResult>({ status: 'pending', message: '1. Checking Firebase core services initialization...' });
   
   const [authCheck, setAuthCheck] = useState<CheckResult>({ status: 'pending', message: 'Checking authentication status...' });
   const [firestoreStallsCheck, setFirestoreStallsCheck] = useState<CheckResult>({ status: 'pending', message: 'Checking public read access for "stalls"...' });
@@ -96,55 +91,24 @@ export default function DiagPage() {
 
   useEffect(() => {
     const runChecks = async () => {
-      // 1. Test Firebase Configuration Presence
-      if (firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.apiKey !== "YOUR_KEY_HERE") {
-        setFirebaseConfigCheck({ status: 'success', message: '1. Firebase environment variables are present.' });
-      } else {
-        setFirebaseConfigCheck({ status: 'error', message: '1. Firebase environment variables are missing or are placeholders. Check your .env.local file and ensure all NEXT_PUBLIC_FIREBASE_* keys are set.' });
-        setFirebaseAppCheck({ status: 'error', message: '2. Skipped: Config is missing.' });
-        setFirebaseServicesCheck({ status: 'error', message: '3. Skipped: Config is missing.' });
-        setFirestoreStallsCheck({ status: 'error', message: 'Skipped: Firebase init failed.' });
-        setFirestoreUsersCheck({ status: 'error', message: 'Skipped: Firebase init failed.' });
-        setFunctionsCheck({ status: 'error', message: 'Skipped: Firebase init failed.' });
-        return; // Stop checks if config is missing
-      }
-
-      // 2. Test Firebase App Initialization
-      let app;
-      try {
-        app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-        if (!app) throw new Error("initializeApp returned null or undefined.");
-        setFirebaseAppCheck({ status: 'success', message: '2. Firebase App initialized successfully.' });
-      } catch (error: any) {
-        setFirebaseAppCheck({ status: 'error', message: `2. Firebase App initialization failed: ${error.message}` });
-        setFirebaseServicesCheck({ status: 'error', message: '3. Skipped: App init failed.' });
-        setFirestoreStallsCheck({ status: 'error', message: 'Skipped: Firebase init failed.' });
-        setFirestoreUsersCheck({ status: 'error', message: 'Skipped: Firebase init failed.' });
-        setFunctionsCheck({ status: 'error', message: 'Skipped: Firebase init failed.' });
-        return;
-      }
-
-      // 3. Test Individual Service Initialization
-      let db: Firestore;
-      try {
-        const auth = getAuth(app);
-        const functions = getFunctions(app);
-        const services = initializeFirebaseServices(); // This also gets Firestore
-        if (!services || !services.db) throw new Error("initializeFirebaseServices returned null or did not contain a db instance.");
-        db = services.db;
-        setFirebaseServicesCheck({ status: 'success', message: '3. Auth, Firestore, and Functions services initialized.' });
+      // Use the reliable, centralized Firebase initialization
+      const services = initializeFirebaseServices();
+      
+      // 1. Test Firebase Core Initialization
+      if (services && services.app && services.auth && services.db && services.functions) {
+        setFirebaseCoreCheck({ status: 'success', message: '1. Firebase core services (App, Auth, Firestore, Functions) initialized successfully via centralized method.' });
         setFunctionsCheck({ status: 'success', message: 'Cloud Functions client is initialized. Ready to call deployed functions.' });
-      } catch (error: any) {
-        setFirebaseServicesCheck({ status: 'error', message: `3. Failed to get individual services: ${error.message}` });
-        setFirestoreStallsCheck({ status: 'error', message: 'Skipped: Service init failed.' });
-        setFirestoreUsersCheck({ status: 'error', message: 'Skipped: Service init failed.' });
-        setFunctionsCheck({ status: 'error', message: 'Skipped: Service init failed.' });
-        return;
+      } else {
+        setFirebaseCoreCheck({ status: 'error', message: '1. Firebase core services failed to initialize. Check your hardcoded configuration in `src/lib/firebase.ts`.' });
+        setFirestoreStallsCheck({ status: 'error', message: 'Skipped: Firebase init failed.' });
+        setFirestoreUsersCheck({ status: 'error', message: 'Skipped: Firebase init failed.' });
+        setFunctionsCheck({ status: 'error', message: 'Skipped: Firebase init failed.' });
+        return; // Stop checks if core services failed
       }
-
-      // 4. Test Firestore Read (Stalls)
+      
+      // 2. Test Firestore Read (Stalls)
       try {
-        const stallsCollectionRef = collection(db, 'stalls');
+        const stallsCollectionRef = collection(services.db, 'stalls');
         await getDocs(stallsCollectionRef);
         setFirestoreStallsCheck({ status: 'success', message: 'Successfully connected and read from "stalls" collection (Public Access OK).' });
       } catch (error: any) {
@@ -154,7 +118,6 @@ export default function DiagPage() {
         }
         setFirestoreStallsCheck({ status: 'error', message: errorMessage });
       }
-      
     };
 
     runChecks();
@@ -235,9 +198,7 @@ export default function DiagPage() {
 
           <div className="space-y-4 p-4 border rounded-lg">
             <h2 className="text-lg font-semibold flex items-center"><Server className="mr-2 h-5 w-5"/> Firebase Core</h2>
-            <StatusIndicator {...firebaseConfigCheck} />
-            <StatusIndicator {...firebaseAppCheck} />
-            <StatusIndicator {...firebaseServicesCheck} />
+            <StatusIndicator {...firebaseCoreCheck} />
           </div>
           
           <div className="space-y-4 p-4 border rounded-lg">

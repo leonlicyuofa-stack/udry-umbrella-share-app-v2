@@ -1,39 +1,30 @@
+
 rules_version = '2';
 
 service cloud.firestore {
   match /databases/{database}/documents {
-    
+
     // Stalls are public information for the map.
     match /stalls/{stallId} {
       allow read: if true;
-      // Write access should be restricted to admins.
-      allow write: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
+      // Write access should be restricted to admin functions (not client).
+      allow write: if false; 
     }
 
-    // Users collection
+    // Users can manage their own data.
+    // The admin user can list all user documents for the admin panel.
     match /users/{userId} {
-      // Allow a user to get or update their OWN document.
       allow get, update: if request.auth != null && request.auth.uid == userId;
-      // Allow the ADMIN to list all users for the dashboard.
-      // Use UID for the admin check for robustness. This is the UID for admin@u-dry.com
-      allow list: if request.auth != null && request.auth.uid == '9bRM5aIHafcEMjoG3E0aNy7n6Xn1';
-      // Prevent users from creating their own documents directly with arbitrary UIDs.
+      allow list: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
+      // Prevent non-admins from creating other user documents
       allow create: if request.auth != null && request.auth.uid == userId;
     }
-    
-    // Rentals collection (historical data)
-    match /rentals/{rentalId} {
-      // Only the admin can list all rental histories for analytics.
-      allow list: if request.auth != null && request.auth.uid == '9bRM5aIHafcEMjoG3E0aNy7n6Xn1';
-      // No one should be able to read or write individual rental history documents directly.
-      // They are created by the backend/user actions.
-      allow read, write: if false;
-    }
 
-    // Processed Stripe Payments (internal use)
-     match /processed_stripe_payments/{sessionId} {
-      // Only backend functions should be able to interact with this.
-      allow read, write: if false;
+    // Rental history should only be listable by the admin user for now.
+    // In the future, rules could be added to allow users to see their own history.
+    match /rentals/{rentalId} {
+      allow read, write: if false; // Users cannot directly read/write history
+      allow list: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
     }
   }
 }
