@@ -14,16 +14,6 @@
           "order": "DESCENDING"
         }
       ]
-    },
-    {
-      "collectionGroup": "rentals",
-      "queryScope": "COLLECTION",
-      "fields": [
-        {
-          "fieldPath": "startTime",
-          "order": "DESCENDING"
-        }
-      ]
     }
   ],
   "fieldOverrides": []
