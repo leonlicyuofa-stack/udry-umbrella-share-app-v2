@@ -129,27 +129,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setFirebaseServices(services);
     setIsFirebaseError(false);
 
-    // --- START: MODIFIED AUTH LISTENER ---
-    // This is the permanent fix. We bypass the problematic onAuthStateChanged
-    // for initial load and rely on a manual check.
-
-    // Immediately set the app as ready and assume logged-out state.
-    // This prevents the loading spinner from getting stuck.
-    setIsReady(true);
-    setFirebaseUser(null);
-    setIsLoadingRental(false);
-
-    // The onAuthStateChanged listener will still run in the background
-    // to handle real-time sign-in/sign-out events after the initial load.
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
       setFirebaseUser(user);
       if (!user) {
         setFirestoreUser(null);
         setActiveRental(null);
       }
-      // We no longer set isReady here because it's already true.
+      setIsReady(true);
     });
-    // --- END: MODIFIED AUTH LISTENER ---
 
     return () => {
       unsubscribeAuth();
@@ -158,6 +145,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
+      // If the user is logged out, we're done loading rental info.
+      if (!firebaseUser) setIsLoadingRental(false);
       return;
     }
 
