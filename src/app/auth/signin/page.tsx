@@ -1,4 +1,3 @@
-
 "use client"; // Added to ensure this page is a Client Component
 
 import { SignInForm } from "@/components/auth/sign-in-form";
