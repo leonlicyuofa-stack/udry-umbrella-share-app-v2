@@ -11,12 +11,12 @@ const config: CapacitorConfig = {
   ios: {
     appendUserAgent: "Firebase/Auth",
     contentInset: "always",
-    server: {
-      allowNavigation: [
-        "identitytoolkit.googleapis.com"
-      ]
-    }
   },
+  server: {
+    allowNavigation: [
+      "identitytoolkit.googleapis.com"
+    ]
+  }
 };
 
 export default config;
