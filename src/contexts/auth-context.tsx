@@ -238,7 +238,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!firebaseServices?.auth) return;
     try {
       await firebaseSignOut(firebaseServices.auth);
-      router.push('/');
+      router.push('/auth/signin');
       toast({ title: translate('auth_success_signout') });
     } catch (error: any) {
       toast({ variant: 'destructive', title: translate('auth_error_signout_failed'), description: error.message });

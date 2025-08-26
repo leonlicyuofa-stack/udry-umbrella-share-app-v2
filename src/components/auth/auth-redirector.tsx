@@ -16,7 +16,7 @@ export function AuthRedirector({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     // Once auth state is ready and we confirm there IS a user, redirect them away from the auth pages.
     if (isReady && user) {
-      const redirectUrl = searchParams.get('redirect') || '/';
+      const redirectUrl = searchParams.get('redirect') || '/home';
       router.replace(redirectUrl);
     }
   }, [user, isReady, router, searchParams]);

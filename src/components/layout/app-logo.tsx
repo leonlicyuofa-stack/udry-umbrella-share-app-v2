@@ -1,5 +1,6 @@
 import { cn } from '@/lib/utils';
 import type { HTMLAttributes } from 'react';
+import Link from 'next/link';
 
 interface AppLogoProps extends HTMLAttributes<HTMLDivElement> {
   containerClassName?: string;

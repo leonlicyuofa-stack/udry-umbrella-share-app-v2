@@ -234,7 +234,7 @@ export default function AdminPage() {
       <Alert variant="destructive" className="max-w-lg mx-auto">
         <AlertTriangle className="h-5 w-5" /><AlertTitle className="text-xl font-semibold">{translate('admin_access_denied_title')}</AlertTitle><AlertDescription className="mt-2">{translate('admin_access_denied_desc')}</AlertDescription>
       </Alert>
-      <Button asChild className="mt-6"><Link href="/" className="flex items-center"><Home className="mr-2 h-4 w-4" /> {translate('admin_go_to_homepage_button')}</Link></Button>
+      <Button asChild className="mt-6"><Link href="/home" className="flex items-center"><Home className="mr-2 h-4 w-4" /> {translate('admin_go_to_homepage_button')}</Link></Button>
     </div>
   );
   
@@ -401,11 +401,9 @@ export default function AdminPage() {
       </section>
 
       <div className="text-center mt-8">
-        <Button asChild variant="outline"><Link href="/" className="flex items-center"><Home className="mr-2 h-4 w-4" /> {translate('admin_go_to_homepage_button')}</Link></Button>
+        <Button asChild variant="outline"><Link href="/home" className="flex items-center"><Home className="mr-2 h-4 w-4" /> {translate('admin_go_to_homepage_button')}</Link></Button>
       </div>
     </div>
     </>
   );
 }
-
-    

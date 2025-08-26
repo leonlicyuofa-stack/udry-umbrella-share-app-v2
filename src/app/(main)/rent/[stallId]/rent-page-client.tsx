@@ -44,7 +44,7 @@ export default function RentPageClient() {
           <CardContent>
             <p>The requested umbrella stall could not be found or is not deployed.</p>
             <Button asChild variant="link" className="mt-4">
-              <Link href="/" className="flex items-center">
+              <Link href="/home" className="flex items-center">
                 <ArrowLeft className="h-4 w-4 mr-1" />
                 Back to Map
               </Link>

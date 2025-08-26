@@ -62,7 +62,7 @@ export default function ReturnUmbrellaPage() {
         description: "You do not have an active rental to return.",
         variant: "destructive",
       });
-      router.replace("/"); 
+      router.replace("/home"); 
     }
   }, [activeRental, isLoadingRental, router, toast, isProcessingBluetooth]);
 
@@ -224,7 +224,7 @@ export default function ReturnUmbrellaPage() {
           description: `Your umbrella rental has been successfully returned to ${scannedStall.name}.`,
         });
         endRental(scannedStall.id);
-        router.push('/');
+        router.push('/home');
         setShowSuccessDialog(false);
       }, 3000);
 
@@ -317,7 +317,7 @@ export default function ReturnUmbrellaPage() {
 
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader>
-           <Link href="/" className="flex items-center text-sm text-primary hover:underline mb-4">
+           <Link href="/home" className="flex items-center text-sm text-primary hover:underline mb-4">
             <ArrowLeft className="h-4 w-4 mr-1" /> Back to Map / Cancel Return
           </Link>
           <CardTitle className="text-2xl font-bold text-primary flex items-center">

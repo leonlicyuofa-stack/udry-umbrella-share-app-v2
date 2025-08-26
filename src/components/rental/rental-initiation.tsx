@@ -57,7 +57,7 @@ export function RentalInitiation({ stall }: RentalInitiationProps) {
         description: "You already have an active rental. Please end it before starting a new one.",
         variant: "destructive",
       });
-      router.replace('/');
+      router.replace('/home');
     }
   }, [activeRental, isUnlocking, router, toast]);
 
@@ -152,7 +152,7 @@ export function RentalInitiation({ stall }: RentalInitiationProps) {
           startTime: Date.now(),
           isFree: !!isFirstRental,
         });
-        router.push('/');
+        router.push('/home');
         setShowSuccessDialog(false);
       }, 3000);
 
@@ -284,7 +284,7 @@ export function RentalInitiation({ stall }: RentalInitiationProps) {
               </Link>
             </Button>
             <Button variant="outline" asChild className="mt-2 w-full">
-                <Link href="/">
+                <Link href="/home">
                     <ArrowLeft className="mr-1 h-4 w-4" /> Back to Map
                 </Link>
             </Button>
@@ -314,7 +314,7 @@ export function RentalInitiation({ stall }: RentalInitiationProps) {
 
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader>
-          <Link href="/" className="flex items-center text-sm text-primary hover:underline mb-4">
+          <Link href="/home" className="flex items-center text-sm text-primary hover:underline mb-4">
             <ArrowLeft className="h-4 w-4 mr-1" />
             Back to Map
           </Link>

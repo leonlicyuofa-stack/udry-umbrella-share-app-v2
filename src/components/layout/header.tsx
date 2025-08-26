@@ -1,3 +1,4 @@
+
 "use client";
 
 import Link from 'next/link';
@@ -31,7 +32,7 @@ const NavItem: React.FC<NavItemProps> = ({ href, icon, label }) => {
         isActive ? "text-primary" : "text-muted-foreground hover:text-foreground"
       )}
     >
-      <Link href="/" className="flex items-center gap-1 sm:gap-2">
+      <Link href={href} className="flex items-center gap-1 sm:gap-2">
         {icon}
         <span className="hidden sm:inline">{label}</span>
       </Link>
@@ -49,11 +50,11 @@ export function Header() {
       <header className="sticky top-0 z-40 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container flex h-16 items-center">
           <div className="mr-auto flex items-center">
-            <Link href="/" aria-label="U-Dry Home" className="mr-6 flex items-center space-x-2">
+            <Link href="/home" aria-label="U-Dry Home" className="mr-6 flex items-center space-x-2">
                 <AppLogo />
             </Link>
             <nav className="hidden items-center space-x-1 lg:flex">
-              <NavItem href="/" icon={<MapPin size={18} />} label={translate('map')} />
+              <NavItem href="/home" icon={<MapPin size={18} />} label={translate('map')} />
               <NavItem href="/guide" icon={<BookOpenText size={18} />} label={translate('guide')} />
             </nav>
           </div>
