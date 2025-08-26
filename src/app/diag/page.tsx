@@ -1,3 +1,4 @@
+
 // src/app/diag/page.tsx
 "use client";
 
