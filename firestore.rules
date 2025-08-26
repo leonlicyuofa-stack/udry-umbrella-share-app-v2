@@ -3,30 +3,36 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Stalls are public for map display. Only admin can modify them.
+    // Stalls are public information for the map.
     match /stalls/{stallId} {
       allow read: if true;
+      // Write access should be restricted to admins.
       allow write: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
     }
 
-    // Users can read/write their own data. Admin can list all users for the dashboard.
+    // Users collection
     match /users/{userId} {
-      // Allows a user to get or update their own document.
+      // Allow a user to get or update their OWN document.
       allow get, update: if request.auth != null && request.auth.uid == userId;
-      // Allows the admin user to list all documents in the collection.
-      allow list: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
-      // Allows any authenticated user to create their own user document upon sign-up.
-      allow create: if request.auth != null;
-    }
-
-    // Rental history is private. Only admin can list all rentals for the dashboard.
-    match /rentals/{rentalId} {
-      allow list, read: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
-      // Note: Write access is handled by backend functions, so client-side write is not needed here.
+      // Allow the ADMIN to list all users for the dashboard.
+      // Use UID for the admin check for robustness. This is the UID for admin@u-dry.com
+      allow list: if request.auth != null && request.auth.uid == '9bRM5aIHafcEMjoG3E0aNy7n6Xn1';
+      // Prevent users from creating their own documents directly with arbitrary UIDs.
+      allow create: if request.auth != null && request.auth.uid == userId;
     }
     
-    // Processed Stripe payments should not be client-readable.
-    match /processed_stripe_payments/{paymentId} {
+    // Rentals collection (historical data)
+    match /rentals/{rentalId} {
+      // Only the admin can list all rental histories for analytics.
+      allow list: if request.auth != null && request.auth.uid == '9bRM5aIHafcEMjoG3E0aNy7n6Xn1';
+      // No one should be able to read or write individual rental history documents directly.
+      // They are created by the backend/user actions.
+      allow read, write: if false;
+    }
+
+    // Processed Stripe Payments (internal use)
+     match /processed_stripe_payments/{sessionId} {
+      // Only backend functions should be able to interact with this.
       allow read, write: if false;
     }
   }
