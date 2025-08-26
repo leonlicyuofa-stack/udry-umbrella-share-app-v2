@@ -4,33 +4,31 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Stalls: Publicly readable, but only admins can write.
-    // This allows the map to load for all users.
+    // Stalls: Allow anyone to read the list of stalls (for the map),
+    // but only authenticated users can create, update, or delete them.
+    // In a real production app, you'd likely restrict writes to admins.
     match /stalls/{stallId} {
       allow read: if true;
-      allow write: if request.auth != null && request.auth.token.email == 'admin@u-dry.com';
+      allow write: if request.auth != null;
     }
 
-    // Users: Can only be read or written by the authenticated user themselves, or by an admin.
+    // Users: A user can only read or write to their own document.
+    // This is a critical security rule.
     match /users/{userId} {
-      allow read, write: if request.auth != null && (request.auth.uid == userId || request.auth.token.email == 'admin@u-dry.com');
+      allow read, write: if request.auth != null && request.auth.uid == userId;
     }
 
-    // Rentals (History): Can only be created by the user. Readable by the user or an admin. Cannot be updated or deleted.
+    // Rentals: A user can create their own rental history, and can only read
+    // their own rental history. No one can update or delete history.
     match /rentals/{rentalId} {
-      allow read: if request.auth != null && (request.resource.data.userId == request.auth.uid || request.auth.token.email == 'admin@u-dry.com');
       allow create: if request.auth != null && request.resource.data.userId == request.auth.uid;
-      allow update, delete: if false;
-    }
-    
-    // Processed Payments: Internal collection, should not be client-accessible for reads.
-    // Creation is handled by backend functions.
-    match /processed_stripe_payments/{sessionId} {
-      allow read, write: if false;
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow update, delete: if false; // Disallow updates and deletes for record-keeping
     }
 
-    // Default deny all other collections
-    match /{document=**} {
+    // Processed Stripe Payments: Secure collection, no client access.
+    // Only backend functions should interact with this.
+    match /processed_stripe_payments/{paymentId} {
       allow read, write: if false;
     }
   }
