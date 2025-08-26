@@ -24,60 +24,6 @@ export interface FirebaseServices {
   functions: Functions;
 }
 
-// --- START: COMPREHENSIVE DIAGNOSTIC TEST ---
-// This block runs immediately when the file is imported on the client-side.
-// It is independent of React hooks and will log directly to the browser console.
-(function runDiagnostics() {
-    // This function will be called on the client side when the app starts
-    // and will log diagnostics to the browser console.
-    if (typeof window === 'undefined') return; // Don't run on the server
-
-    setTimeout(() => {
-        const styleSuccess = "color: green; font-weight: bold;";
-        const styleFailure = "color: red; font-weight: bold;";
-        const styleInfo = "color: blue; font-weight: bold;";
-
-        console.log(`%c--- STARTING FIREBASE CLIENT DIAGNOSTICS ---`, styleInfo);
-
-        // Test 1: Check for Environment Variables
-        const isFirebaseConfigured = firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.apiKey !== "YOUR_KEY_HERE";
-        if (isFirebaseConfigured) {
-            console.log("%c[DIAGNOSTIC] PASSED: Firebase config variables are present.", styleSuccess);
-        } else {
-            console.error("%c[DIAGNOSTIC] FAILED: Firebase config is not fully set in environment variables (check .env file).", styleFailure);
-            console.log('Current Config:', firebaseConfig);
-            return; // Stop if config is missing
-        }
-
-        // Test 2: Attempt to Initialize Firebase App
-        let app;
-        try {
-            app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-            if (!app) throw new Error("initializeApp() did not return a valid app object.");
-            console.log(`%c[DIAGNOSTIC] PASSED: Firebase App initialized successfully for project: ${app.options.projectId}`, styleSuccess);
-        } catch (error: any) {
-            console.error("%c[DIAGNOSTIC] FAILED: Firebase App initialization failed.", styleFailure, error.message);
-            return; // Stop if app fails to initialize
-        }
-
-        // Test 3: Attempt to get individual services
-        try {
-            const auth = getAuth(app);
-            const db = getFirestore(app);
-            const functions = getFunctions(app);
-            if (!auth || !db || !functions) throw new Error("One or more services (Auth, Firestore, Functions) returned null or undefined.");
-            console.log("%c[DIAGNOSTIC] PASSED: Successfully got references to Auth, Firestore, and Functions services.", styleSuccess);
-        } catch (error: any) {
-            console.error("%c[DIAGNOSTIC] FAILED: Could not get individual Firebase services.", styleFailure, error.message);
-            return;
-        }
-        
-        console.log(`%c--- FIREBASE CLIENT DIAGNOSTICS COMPLETE ---`, styleInfo);
-    }, 0);
-})();
-// --- END: COMPREHENSIVE DIAGNOSTIC TEST ---
-
-
 let services: FirebaseServices | null = null;
 
 /**
@@ -94,7 +40,7 @@ export function initializeFirebaseServices(): FirebaseServices | null {
   const isFirebaseConfigured = firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.apiKey !== "YOUR_KEY_HERE";
 
   if (!isFirebaseConfigured) {
-    // The diagnostic test above will have already logged a detailed error.
+    console.error("Firebase config is not fully set. Check the firebaseConfig object in firebase.ts");
     return null;
   }
 
@@ -113,7 +59,7 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     services = { app, auth, db, functions };
     return services;
   } catch (error) {
-    // The diagnostic test above will have already logged a detailed error.
+    console.error("Error during Firebase service initialization:", error);
     return null;
   }
 }
