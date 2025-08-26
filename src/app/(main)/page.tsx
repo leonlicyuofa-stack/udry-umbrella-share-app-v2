@@ -1,20 +1,37 @@
 // src/app/(main)/page.tsx
-import { MapPageClient } from '@/components/map/map-page-client';
-import type { Metadata } from 'next';
+"use client";
 
-// Since this is the main landing page, we can set metadata here.
-export const metadata: Metadata = {
-  title: 'Find a Stall - U-Dry',
-  description: 'Find nearby U-Dry umbrella stalls and check real-time availability.',
-};
+import { useAuth } from '@/contexts/auth-context';
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { Loader2 } from 'lucide-react';
 
-// This is the main landing page of the application.
-// It is a Server Component that renders the client-side map component.
-export default function MainPage() {
-  // The py-8 (padding-top/bottom) and px-4 (padding-left/right) classes are added here to fix the layout.
+// This is the new root page of the application.
+// Its only job is to redirect the user to the correct page
+// based on their authentication status.
+export default function RootRedirectPage() {
+  const { user, isReady } = useAuth();
+  const router = useRouter();
+
+  useEffect(() => {
+    // Wait until the authentication state is ready.
+    if (!isReady) {
+      return;
+    }
+
+    // If the user is logged in, redirect them to the main map page.
+    if (user) {
+      router.replace('/home');
+    } else {
+      // If the user is not logged in, send them to the sign-in page.
+      router.replace('/auth/signin');
+    }
+  }, [user, isReady, router]);
+
+  // Render a loading spinner while the redirect is happening.
   return (
-    <div className="container mx-auto px-4 py-8 space-y-8">
-      <MapPageClient />
+    <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)]">
+      <Loader2 className="h-12 w-12 animate-spin text-primary" />
     </div>
   );
 }
