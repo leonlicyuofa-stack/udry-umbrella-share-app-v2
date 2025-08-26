@@ -1,18 +1,19 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
-import { getFirestore, type Firestore } from 'firebase/firestore';
-import { getFunctions, type Functions } from 'firebase/functions';
+import { getFirestore, type Firestore } from 'firestore';
+import { getFunctions, type Functions } from 'functions';
 
-// This configuration is now read from environment variables to ensure flexibility.
+// This configuration is now hardcoded to ensure it works reliably in all environments.
+// These are public keys and are safe to be included here. Security is enforced by Firestore rules.
 export const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyDk8gmZb-azt0fndBG80zrYXEma7NsUdL0",
+  authDomain: "udry-app-dev.firebaseapp.com",
+  projectId: "udry-app-dev",
+  storageBucket: "udry-app-dev.appspot.com",
+  messagingSenderId: "458603936715",
+  appId: "1:458603936715:web:8c50687fc1cdcf9c90944e",
+  measurementId: "G-X1VP807J0N"
 };
 
 

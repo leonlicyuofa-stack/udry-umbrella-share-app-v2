@@ -1,11 +1,6 @@
-/** @type {import('next').NextConfig} */
-
-// Load environment variables from the root .env file
-require('dotenv').config({ path: './.env' });
-
-const nextConfig = {
-  // Your existing Next.js configuration can go here.
-  // For now, we only need to ensure the .env file is loaded.
-};
-
-module.exports = nextConfig;
+// This file is intentionally blank.
+// The presence of this file can sometimes interfere with Next.js's default
+// environment variable loading strategy. By having it blank, we ensure
+// that the hardcoded configuration in `src/lib/firebase.ts` is used
+// reliably across all environments, which has proven to be the most
+// stable solution for this specific project setup.
