@@ -3,16 +3,20 @@
 
 import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
-import { collection, getDocs, type Firestore } from 'firebase/firestore';
+import { collection, getDocs, type Firestore, writeBatch, doc } from 'firebase/firestore';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, CheckCircle, AlertTriangle, XCircle, ShieldQuestion, Server, UserCheck, Database, Layers } from 'lucide-react';
+import { Loader2, CheckCircle, AlertTriangle, XCircle, ShieldQuestion, Server, UserCheck, Database, Layers, UploadCloud } from 'lucide-react';
 import Link from 'next/link';
 import { initializeFirebaseServices, firebaseConfig } from '@/lib/firebase';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { getApp, getApps, initializeApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
 import { getFunctions } from 'firebase/functions';
+import { useToast } from '@/hooks/use-toast';
+import { mockStalls } from '@/lib/mock-data';
+import { GeoPoint } from 'firebase/firestore';
+
 
 type Status = 'pending' | 'success' | 'error';
 
@@ -38,6 +42,7 @@ const StatusIndicator = ({ status, message }: CheckResult) => {
 
 export default function DiagPage() {
   const { user, isReady: isAuthReady } = useAuth();
+  const { toast } = useToast();
   
   // Granular Firebase Core Checks
   const [firebaseConfigCheck, setFirebaseConfigCheck] = useState<CheckResult>({ status: 'pending', message: '1. Checking for Firebase config variables...' });
@@ -48,6 +53,45 @@ export default function DiagPage() {
   const [firestoreStallsCheck, setFirestoreStallsCheck] = useState<CheckResult>({ status: 'pending', message: 'Checking public read access for "stalls"...' });
   const [firestoreUsersCheck, setFirestoreUsersCheck] = useState<CheckResult>({ status: 'pending', message: 'Checking admin read access for "users"...' });
   const [functionsCheck, setFunctionsCheck] = useState<CheckResult>({ status: 'pending', message: 'Checking Cloud Functions client initialization...' });
+  
+  const [isSeeding, setIsSeeding] = useState(false);
+
+  const handleSeedDatabase = async () => {
+    const services = initializeFirebaseServices();
+    if (!services) {
+      toast({ variant: "destructive", title: "Firebase Not Initialized", description: "Cannot connect to database to seed data." });
+      return;
+    }
+    setIsSeeding(true);
+    try {
+      const batch = writeBatch(services.db);
+      
+      mockStalls.forEach(stallData => {
+        // The document ID will be the stall's DVID
+        const stallDocRef = doc(services.db, 'stalls', stallData.dvid);
+        
+        // Convert the lat/lng object to a Firestore GeoPoint
+        const locationGeoPoint = new GeoPoint(stallData.location.latitude, stallData.location.longitude);
+        
+        const dataToSet = {
+          ...stallData,
+          location: locationGeoPoint, // Replace plain object with GeoPoint
+        };
+        
+        batch.set(stallDocRef, dataToSet);
+      });
+
+      await batch.commit();
+      toast({ title: "Database Seeded!", description: `Successfully added ${mockStalls.length} stall documents.` });
+
+    } catch (error: any) {
+      toast({ variant: "destructive", title: "Seeding Failed", description: error.message });
+      console.error("Error seeding database:", error);
+    } finally {
+      setIsSeeding(false);
+    }
+  };
+
 
   useEffect(() => {
     const runChecks = async () => {
@@ -172,10 +216,22 @@ export default function DiagPage() {
             Application Diagnostic Panel
           </CardTitle>
           <CardDescription>
-            This page performs live checks on critical application systems. Use this to diagnose issues after a crash or before a build.
+            This page performs live checks on critical application systems. Use this to diagnose issues.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
+
+          <div className="space-y-4 p-4 border rounded-lg bg-secondary/30">
+            <h2 className="text-lg font-semibold flex items-center"><UploadCloud className="mr-2 h-5 w-5 text-accent"/> Database Seeding</h2>
+             <p className="text-sm text-muted-foreground">
+               If the map is stuck loading on a fresh project, it's likely because your Firestore database is empty. Click this button once to populate it with the initial stall data.
+             </p>
+             <Button onClick={handleSeedDatabase} disabled={isSeeding}>
+              {isSeeding ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <Database className="mr-2 h-4 w-4"/>}
+               Seed "stalls" Collection
+             </Button>
+          </div>
+
           <div className="space-y-4 p-4 border rounded-lg">
             <h2 className="text-lg font-semibold flex items-center"><Server className="mr-2 h-5 w-5"/> Firebase Core</h2>
             <StatusIndicator {...firebaseConfigCheck} />
