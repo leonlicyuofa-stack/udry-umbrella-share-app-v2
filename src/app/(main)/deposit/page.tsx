@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -84,7 +85,6 @@ export default function DepositPage() {
       try {
           if (selectedMethod === 'stripe') {
               const createStripeCheckoutSession = httpsCallable(firebaseServices.functions, 'createStripeCheckoutSession');
-              // We no longer need to pass the client origin.
               const result = await createStripeCheckoutSession({ 
                 amount: paymentAmount, 
                 paymentType
