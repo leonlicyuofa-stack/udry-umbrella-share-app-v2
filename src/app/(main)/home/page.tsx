@@ -10,6 +10,8 @@ export const metadata: Metadata = {
 };
 
 // This is the new main landing page for authenticated users.
+// The ScrollArea component now wraps the content to ensure it is scrollable
+// on all devices, especially within the Capacitor webview.
 export default function HomePage() {
   return (
     <ScrollArea className="h-[calc(100vh-4rem)]">
