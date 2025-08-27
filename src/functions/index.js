@@ -1,20 +1,26 @@
 // functions/index.js
 const functions = require("firebase-functions");
-const admin = require("firebase-admin");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
-const { onRequest } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions");
-const Stripe = require("stripe");
 
 // --- Safe, Global Initialization ---
-// It's safe to initialize the admin app here as it's a lightweight setup.
-// We will get db and stripe instances inside the functions themselves ("lazy initialization").
-admin.initializeApp();
-let stripe; // Will be initialized on first use
+let adminApp; // Will be initialized lazily
+let stripe; // Will be initialized lazily
+
+// Lazy initializer for Firebase Admin SDK
+const getAdminApp = () => {
+    if (!adminApp) {
+        const admin = require("firebase-admin");
+        adminApp = admin.initializeApp();
+        logger.info("Firebase Admin SDK initialized on first use.");
+    }
+    return adminApp;
+};
 
 // Lazy initializer for Stripe
 const getStripe = () => {
     if (!stripe) {
+        const Stripe = require("stripe");
         const stripeKey = (process.env.STRIPE_SECRET_KEY || '').replace(/\s/g, '');
         if (!stripeKey) {
             logger.warn("Stripe secret key is not available. Stripe functionality will be disabled.");
@@ -26,21 +32,32 @@ const getStripe = () => {
     return stripe;
 };
 
-exports.setAdminClaim = onCall(async (request) => {
-    // Only the currently logged-in admin can make themselves an admin.
-    // This is a simple security measure for this one-time setup function.
+exports.makeAdmin = onCall(async (request) => {
+    const admin = require("firebase-admin");
+    getAdminApp(); // Ensure admin is initialized
+
+    if (!request.auth) {
+        throw new HttpsError('unauthenticated', 'You must be logged in to call this function.');
+    }
+    
     if (request.auth.token.email !== 'admin@u-dry.com') {
-        throw new HttpsError('permission-denied', 'Only the admin user can call this function.');
+        throw new HttpsError('permission-denied', 'Only the primary admin user can call this function.');
     }
 
+    const adminUid = request.auth.uid;
+    const db = admin.firestore();
+    const adminRef = db.collection('admins').doc(adminUid);
+
     try {
-        const user = await admin.auth().getUserByEmail('admin@u-dry.com');
-        await admin.auth().setCustomUserClaims(user.uid, { isAdmin: true });
-        logger.info(`Successfully set admin claim for ${user.email}`);
-        return { success: true, message: `Admin claim set for ${user.email}. Please sign out and sign back in.` };
+        await adminRef.set({
+            email: request.auth.token.email,
+            addedAt: admin.firestore.FieldValue.serverTimestamp()
+        });
+        logger.info(`Successfully added ${adminUid} to the admins collection.`);
+        return { success: true, message: `User ${adminUid} is now an administrator. Please sign out and sign back in.` };
     } catch (error) {
-        logger.error('Error setting admin claim:', error);
-        throw new HttpsError('internal', `An error occurred: ${error.message}`);
+        logger.error(`Error adding admin record for UID ${adminUid}:`, error);
+        throw new HttpsError('internal', `An error occurred while setting admin permissions: ${error.message}`);
     }
 });
 
@@ -61,9 +78,9 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info(`Step 2 SUCCESS: Authentication check passed for user UID: ${request.auth.uid}`);
 
-    const { amount, paymentType, origin } = request.data;
+    const { amount, paymentType } = request.data;
     const userId = request.auth.uid;
-    logger.info(`Step 3: Received data - UserID: ${userId}, Amount: ${amount}, PaymentType: ${paymentType}, Origin: ${origin}`);
+    logger.info(`Step 3: Received data - UserID: ${userId}, Amount: ${amount}, PaymentType: ${paymentType}`);
 
     if (!amount || typeof amount !== 'number' || amount <= 0) {
         logger.error(`STEP 4 FAILED: Invalid amount provided: ${amount}`);
@@ -73,14 +90,10 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
         logger.error(`STEP 4 FAILED: Invalid paymentType provided: ${paymentType}`);
         throw new HttpsError('invalid-argument', 'A valid paymentType must be provided.');
     }
-    if (!origin || typeof origin !== 'string') {
-        logger.error(`STEP 4 FAILED: Invalid or missing origin URL from client: ${origin}`);
-        throw new HttpsError('invalid-argument', 'A valid origin URL must be provided from the client.');
-    }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
-    const YOUR_DOMAIN = origin;
-    logger.info(`Step 5: Using domain for redirect URLs provided by client: ${YOUR_DOMAIN}`);
+    const APP_CALLBACK_URL = 'udryapp';
+    logger.info(`Step 5: Using universal app callback URL: ${APP_CALLBACK_URL}`);
 
     try {
         logger.info("Step 6: Attempting to create Stripe checkout session...");
@@ -100,8 +113,8 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${YOUR_DOMAIN}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${YOUR_DOMAIN}/payment/cancel`,
+            success_url: `${APP_CALLBACK_URL}://payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${APP_CALLBACK_URL}://payment/cancel`,
             metadata: {
                 userId: userId,
                 paymentType: paymentType,
@@ -121,21 +134,16 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
 });
 
-/**
- * A secure, callable Cloud Function to process a Stripe payment and update a user's balance.
- */
 exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
+    const admin = require("firebase-admin");
+    getAdminApp(); // Ensure admin is initialized
     const stripeInstance = getStripe();
     const db = admin.firestore();
     
     if (!stripeInstance) {
         logger.error("Step 1 FAILED: Stripe SDK is not initialized. Check startup logs and ensure STRIPE_SECRET_KEY is set.");
         throw new HttpsError('internal', 'The server is missing critical payment processing configuration.');
-    }
-    if (!db) {
-        logger.error("Step 1 FAILED: Firestore (db) is not initialized. Check startup logs.");
-        throw new HttpsError('internal', 'The server is missing critical database configuration.');
     }
     logger.info("Step 1 SUCCESS: Services appear to be initialized.");
 
@@ -240,7 +248,6 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
 });
 
 
-// A simple v1 function for the webhook for stability and simplicity.
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
