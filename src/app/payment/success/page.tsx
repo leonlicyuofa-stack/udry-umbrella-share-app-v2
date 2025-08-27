@@ -42,6 +42,7 @@ function PaymentSuccessContent() {
     const handleRedirectToApp = () => {
         const sessionId = searchParams.get('session_id');
         // This is the deep link that tells the native app to open.
+        // It brings the session ID along so the app can verify if needed.
         window.location.href = `udry://payment/success?session_id=${sessionId}`;
         
         // This is a fallback for desktop browsers where the deep link won't work.
