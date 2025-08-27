@@ -129,7 +129,7 @@ export default function DepositPage() {
   if (!hasDeposit) {
     return (
        <div className="container mx-auto py-8 px-4 max-w-2xl relative">
-        <Badge variant="outline" className="absolute top-4 right-4">v1</Badge>
+        <Badge variant="outline" className="absolute top-4 right-4">v2</Badge>
         <Card className="shadow-xl">
           <CardHeader>
             <CardTitle className="text-3xl font-bold text-primary flex items-center">
@@ -191,7 +191,7 @@ export default function DepositPage() {
   // RENDER ADD BALANCE VIEW
   return (
     <div className="container mx-auto py-8 px-4 max-w-2xl relative">
-      <Badge variant="outline" className="absolute top-4 right-4">v1</Badge>
+      <Badge variant="outline" className="absolute top-4 right-4">v2</Badge>
       <Card className="shadow-xl">
         <CardHeader>
           <CardTitle className="text-3xl font-bold text-primary flex items-center">
