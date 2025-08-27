@@ -15,18 +15,16 @@ export const DeepLinkHandler = () => {
     const setupListener = async () => {
       handle = await App.addListener('appUrlOpen', (event) => {
         // Example URL: udry://payment/success?session_id=...
-        // Example URL: udry://diag
+        // The goal is to navigate to the in-app page /payment/success
         const url = new URL(event.url);
         
-        // We are interested in the part after the `udry:` scheme.
-        // The `hostname` gives the first part (e.g., 'payment' or 'diag')
-        // The `pathname` gives the rest (e.g., '/success')
-        // The search params gives the query string (e.g., '?session_id=...')
-        const path = `${url.hostname}${url.pathname}${url.search}`;
+        // The full path including search parameters
+        const pathWithSearch = `${url.pathname}${url.search}`;
 
-        if (path) {
-          // Use the Next.js router to navigate to the correct page
-          router.push(`/${path}`);
+        if (pathWithSearch) {
+          // The hostname from udry://hostname/ is the first part of our path
+          const finalPath = `/${url.hostname}${pathWithSearch}`;
+          router.push(finalPath);
         }
       });
     };
