@@ -92,7 +92,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
-    const APP_CALLBACK_URL = 'udryapp';
+    const APP_CALLBACK_URL = 'udry';
     logger.info(`Step 5: Using universal app callback URL: ${APP_CALLBACK_URL}`);
 
     try {
