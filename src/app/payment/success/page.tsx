@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useRef, Suspense } from 'react';
@@ -42,9 +41,11 @@ function PaymentSuccessContent() {
 
     const handleRedirectToApp = () => {
         const sessionId = searchParams.get('session_id');
+        // This is the deep link that tells the native app to open.
         window.location.href = `udry://payment/success?session_id=${sessionId}`;
         
-        // Fallback for desktop browsers
+        // This is a fallback for desktop browsers where the deep link won't work.
+        // It will navigate to the homepage after a short delay.
         setTimeout(() => {
             router.push('/home');
         }, 1000);
@@ -59,9 +60,12 @@ function PaymentSuccessContent() {
              setStatus('error');
              return;
         }
-
+        
+        // We need to make sure a user is signed in on this web page
+        // before we can finalize the payment on their behalf.
         const unsubscribe = onAuthStateChanged(services.auth, (user) => {
             if (user) {
+                // Once we have a user, proceed with finalization.
                 if (hasProcessed.current) return;
                 hasProcessed.current = true;
 
@@ -111,6 +115,8 @@ function PaymentSuccessContent() {
                 };
                 processPaymentWithRetries(sessionId);
             } else {
+                // If no user is signed in on the web page, we can't finalize.
+                // This can happen due to browser privacy settings.
                 setErrorMessage("You must be signed in to finalize a payment. Please open the app and sign in.");
                 setStatus('error');
             }
@@ -210,4 +216,3 @@ export default function PaymentSuccessPage() {
         </Suspense>
     )
 }
-
