@@ -19,10 +19,12 @@ const config: CapacitorConfig = {
   },
   plugins: {
     App: {
-      iosScheme: "com.udry.app",
-      androidScheme: "com.udry.app"
+      iosScheme: "udryapp",
+      androidScheme: "udryapp"
     }
   }
 };
 
 export default config;
+
+    

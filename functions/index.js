@@ -92,7 +92,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
-    const APP_CALLBACK_URL = 'com.udry.app';
+    const APP_CALLBACK_URL = 'udryapp';
     logger.info(`Step 5: Using universal app callback URL: ${APP_CALLBACK_URL}`);
 
     try {
@@ -252,3 +252,5 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
 });
+
+    
