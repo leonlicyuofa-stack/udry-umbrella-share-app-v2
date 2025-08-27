@@ -1,10 +1,7 @@
 // functions/index.js
 const functions = require("firebase-functions");
-const admin = require("firebase-admin");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
-const { onRequest } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions");
-const Stripe = require("stripe");
 
 // --- Safe, Global Initialization ---
 let adminApp; // Will be initialized lazily
@@ -13,6 +10,7 @@ let stripe; // Will be initialized lazily
 // Lazy initializer for Firebase Admin SDK
 const getAdminApp = () => {
     if (!adminApp) {
+        const admin = require("firebase-admin");
         adminApp = admin.initializeApp();
         logger.info("Firebase Admin SDK initialized on first use.");
     }
@@ -22,6 +20,7 @@ const getAdminApp = () => {
 // Lazy initializer for Stripe
 const getStripe = () => {
     if (!stripe) {
+        const Stripe = require("stripe");
         const stripeKey = (process.env.STRIPE_SECRET_KEY || '').replace(/\s/g, '');
         if (!stripeKey) {
             logger.warn("Stripe secret key is not available. Stripe functionality will be disabled.");
@@ -34,17 +33,13 @@ const getStripe = () => {
 };
 
 exports.makeAdmin = onCall(async (request) => {
+    const admin = require("firebase-admin");
     getAdminApp(); // Ensure admin is initialized
 
-    // This function adds the caller's UID to a special 'admins' collection.
-    // Security rules on the 'admins' collection can prevent unauthorized execution if needed,
-    // but for this setup, we only expose the tool to the admin user in the UI.
     if (!request.auth) {
         throw new HttpsError('unauthenticated', 'You must be logged in to call this function.');
     }
     
-    // For initial setup, we allow the 'admin@u-dry.com' user to make themselves an admin.
-    // In a production app, you might lock this down further after first use.
     if (request.auth.token.email !== 'admin@u-dry.com') {
         throw new HttpsError('permission-denied', 'Only the primary admin user can call this function.');
     }
@@ -83,7 +78,6 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info(`Step 2 SUCCESS: Authentication check passed for user UID: ${request.auth.uid}`);
 
-    // The 'origin' parameter is no longer needed as we use a universal deep link.
     const { amount, paymentType } = request.data;
     const userId = request.auth.uid;
     logger.info(`Step 3: Received data - UserID: ${userId}, Amount: ${amount}, PaymentType: ${paymentType}`);
@@ -98,7 +92,6 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
-    // This is the custom URL scheme for the app. It works for both iOS and Android.
     const APP_CALLBACK_URL = 'com.udry.app';
     logger.info(`Step 5: Using universal app callback URL: ${APP_CALLBACK_URL}`);
 
@@ -120,7 +113,6 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            // Use the custom URL scheme for redirects
             success_url: `${APP_CALLBACK_URL}://payment/success?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${APP_CALLBACK_URL}://payment/cancel`,
             metadata: {
@@ -144,6 +136,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
 
 exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
+    const admin = require("firebase-admin");
     getAdminApp(); // Ensure admin is initialized
     const stripeInstance = getStripe();
     const db = admin.firestore();
