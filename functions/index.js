@@ -252,5 +252,3 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
 });
-
-    
