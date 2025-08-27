@@ -13,12 +13,14 @@ export const DeepLinkHandler = () => {
 
     const setupListener = async () => {
       handle = await App.addListener('appUrlOpen', (event) => {
-        // Example URL: udry://diag
+        // Example URL: udryapp://payment/success?session_id=...
+        // Example URL: udryapp://diag
         const url = new URL(event.url);
         
-        // We are interested in the part after the `udry:` scheme.
-        // The `hostname` property will give us 'diag'
-        const path = url.hostname;
+        // We are interested in the part after the `udryapp:` scheme.
+        // The `hostname` gives the first part (e.g., 'payment' or 'diag')
+        // The `pathname` gives the rest (e.g., '/success')
+        const path = `${url.hostname}${url.pathname}`;
 
         if (path) {
           // Use the Next.js router to navigate to the correct page
