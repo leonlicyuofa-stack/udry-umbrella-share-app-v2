@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, AlertTriangle, CheckCircle, XCircle, HardDrive, Database, UserCheck, ArrowRight, Home, Server } from 'lucide-react';
+import { Loader2, AlertTriangle, CheckCircle, XCircle, HardDrive, Database, UserCheck, ArrowRight, Home, Server, Link as LinkIcon } from 'lucide-react';
 import { initializeFirebaseServices } from '@/lib/firebase';
 import { collection, getDocs, doc, setDoc, writeBatch } from 'firebase/firestore';
 import Link from 'next/link';
@@ -12,6 +12,8 @@ import { useToast } from '@/hooks/use-toast';
 import { mockStalls } from '@/lib/mock-data';
 import type { Stall } from '@/lib/types';
 import { GeoPoint } from 'firebase/firestore';
+import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
+
 
 type CheckStatus = 'pending' | 'success' | 'error';
 
@@ -132,6 +134,35 @@ export default function DiagPage() {
               ))
             )}
           </div>
+
+          <Card className="bg-secondary/50">
+            <CardHeader>
+                <CardTitle className="text-lg flex items-center">
+                    <LinkIcon className="mr-2 h-5 w-5"/>
+                    Deep Link Sanity Check
+                </CardTitle>
+                <CardDescription>
+                    This test helps isolate if the app's URL scheme (udry://) is working correctly, independent of Stripe.
+                </CardDescription>
+            </CardHeader>
+            <CardContent>
+               <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Instructions</AlertTitle>
+                <AlertDescription>
+                  Click the button below. If the app closes and re-opens to the homepage, the deep link is working. If you get an error (e.g., "address invalid"), the app is not configured correctly.
+                </AlertDescription>
+              </Alert>
+            </CardContent>
+            <CardFooter>
+                 <Button asChild>
+                    <a href="udry://home">
+                        Test udry://home Link
+                    </a>
+                </Button>
+            </CardFooter>
+          </Card>
+
 
           <Card className="bg-secondary/50">
             <CardHeader>
