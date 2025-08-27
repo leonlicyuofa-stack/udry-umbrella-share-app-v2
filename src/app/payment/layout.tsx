@@ -2,19 +2,24 @@ import type React from 'react';
 import { Suspense } from 'react';
 import { Loader2 } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { AppLogo } from '@/components/layout/app-logo';
+import Link from 'next/link';
 
-// This is a Server Component layout. It handles the static parts of the page.
-export default function PaymentLayout({
+// This layout is now ONLY for the EXTERNAL redirect page.
+// It ensures it doesn't get the main app header.
+export default function ExternalPaymentLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    // This outer div provides a separate layout for the payment pages,
-    // ensuring they don't get the main app Header.
     <div className="flex min-h-screen flex-col items-center justify-center bg-secondary/30 p-4">
+       <div className="absolute top-6 left-6">
+        <Link href="/" aria-label="U-Dry Home">
+           <AppLogo />
+        </Link>
+      </div>
       <div className="w-full max-w-lg">
-        {/* Suspense boundary is crucial for components that use client-side hooks like useSearchParams */}
         <Suspense fallback={
           <Card className="w-full max-w-lg text-center shadow-xl">
             <CardHeader>

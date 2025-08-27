@@ -13,18 +13,18 @@ export const DeepLinkHandler = () => {
 
     const setupListener = async () => {
       handle = await App.addListener('appUrlOpen', (event) => {
-        // Example URL: udry://payment/success?session_id=...
-        // The goal is to navigate to the in-app page /payment/success
+        // Example URL: udry://payment/success?session_id=cs_test_...
         const url = new URL(event.url);
         
-        // The full path including search parameters
+        // We want to navigate to the in-app path: /payment/success?session_id=...
         const pathWithSearch = `${url.pathname}${url.search}`;
 
-        if (pathWithSearch) {
-          // The hostname from udry://hostname/ is the first part of our path
-          const finalPath = `/${url.hostname}${pathWithSearch}`;
-          router.push(finalPath);
-        }
+        // The hostname from udry://hostname/ is the first part of our path
+        // e.g. udry://payment/success -> pathname is /success, hostname is 'payment'
+        const finalPath = `/${url.hostname}${pathWithSearch}`;
+        
+        console.log(`Deep link received: ${event.url}. Navigating to internal path: ${finalPath}`);
+        router.push(finalPath);
       });
     };
 

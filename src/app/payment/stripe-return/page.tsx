@@ -4,7 +4,6 @@ import { useEffect, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Loader2 } from 'lucide-react';
-import Link from 'next/link';
 
 function StripeReturnContent() {
   const searchParams = useSearchParams();
@@ -14,11 +13,11 @@ function StripeReturnContent() {
     const sessionId = searchParams.get('session_id');
     if (sessionId) {
       // This page is now just a bridge. It immediately redirects to the
-      // actual success page, which will handle the finalization.
+      // external success page, which will then trigger the deep link.
       router.replace(`/payment/success?session_id=${sessionId}`);
     } else {
-      // If there's no session ID, just go home. This is a safety measure.
-      router.replace('/home');
+      // If there's no session ID, send to an external cancel page.
+      router.replace('/payment/cancel');
     }
   }, [searchParams, router]);
 
