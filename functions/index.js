@@ -1,4 +1,3 @@
-
 // functions/index.js
 const functions = require("firebase-functions");
 const admin = require("firebase-admin");
@@ -8,8 +7,17 @@ const { logger } = require("firebase-functions");
 const Stripe = require("stripe");
 
 // --- Safe, Global Initialization ---
-admin.initializeApp();
+let adminApp; // Will be initialized lazily
 let stripe; // Will be initialized lazily
+
+// Lazy initializer for Firebase Admin SDK
+const getAdminApp = () => {
+    if (!adminApp) {
+        adminApp = admin.initializeApp();
+        logger.info("Firebase Admin SDK initialized on first use.");
+    }
+    return adminApp;
+};
 
 // Lazy initializer for Stripe
 const getStripe = () => {
@@ -26,6 +34,8 @@ const getStripe = () => {
 };
 
 exports.makeAdmin = onCall(async (request) => {
+    getAdminApp(); // Ensure admin is initialized
+
     // This function adds the caller's UID to a special 'admins' collection.
     // Security rules on the 'admins' collection can prevent unauthorized execution if needed,
     // but for this setup, we only expose the tool to the admin user in the UI.
@@ -134,6 +144,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
 
 exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
+    getAdminApp(); // Ensure admin is initialized
     const stripeInstance = getStripe();
     const db = admin.firestore();
     
