@@ -16,6 +16,12 @@ const config: CapacitorConfig = {
     allowNavigation: [
       "identitytoolkit.googleapis.com"
     ]
+  },
+  plugins: {
+    App: {
+      iosScheme: "com.udry.app",
+      androidScheme: "com.udry.app"
+    }
   }
 };
 
