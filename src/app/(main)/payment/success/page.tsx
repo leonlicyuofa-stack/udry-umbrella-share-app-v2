@@ -42,15 +42,23 @@ function InternalPaymentSuccessContent() {
     };
 
     useEffect(() => {
-        if (!isReady) return; // Wait for the auth context to be ready
-
-        const sessionId = searchParams.get('session_id');
+        // Wait until the auth state is fully resolved (isReady is true)
+        if (!isReady) return; 
         
-        // We can now safely check for the user object from the context.
+        // Now that isReady is true, we can safely check for the user object.
+        // If there's no user, it's a genuine auth error.
+        if (!user) {
+            setErrorMessage("Authentication session not found. Please try the payment process again from the beginning.");
+            setStatus('error');
+            return;
+        }
+
+        // If we have a user and services, proceed with payment finalization.
         if (user && firebaseServices) {
             if (hasProcessed.current) return;
             hasProcessed.current = true;
 
+            const sessionId = searchParams.get('session_id');
             if (!sessionId) {
                 toast({
                     title: "Invalid Access",
@@ -96,14 +104,11 @@ function InternalPaymentSuccessContent() {
                 }
             };
             processPaymentWithRetries(sessionId);
-        } else if (isReady && !user) {
-            // This case should ideally not happen if deep linking works, but it's a good fallback.
-            setErrorMessage("Authentication session not found. Please try the payment process again from the beginning.");
-            setStatus('error');
         }
     }, [isReady, user, router, searchParams, toast, firebaseServices]);
     
-    if (status === 'processing' || status === 'idle' || !isReady) {
+    // Show a generic loading state while waiting for the auth context to be ready.
+    if (!isReady || status === 'processing' || status === 'idle') {
          return (
             <Card className="w-full max-w-lg text-center shadow-xl">
                 <CardHeader>
