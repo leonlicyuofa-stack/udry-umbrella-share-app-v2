@@ -92,10 +92,10 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
-    // CRITICAL CHANGE: Point to a live, standard HTTPS URL that acts as a bridge.
-    // Replace with your actual deployed app URL. For Firebase App Hosting, it's typically https://<your-project-id>.web.app
+    // CRITICAL CHANGE: We now point directly to the app's deep link.
+    const APP_DEEP_LINK_BASE_URL = 'udry://payment/success'; 
     const LIVE_APP_BASE_URL = 'https://udry-app-dev.web.app'; 
-    logger.info(`Step 5: Using live app base URL: ${LIVE_APP_BASE_URL}`);
+    logger.info(`Step 5: Using deep link base URL: ${APP_DEEP_LINK_BASE_URL}`);
 
     try {
         logger.info("Step 6: Attempting to create Stripe checkout session...");
@@ -115,7 +115,8 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${LIVE_APP_BASE_URL}/payment/stripe-return?session_id={CHECKOUT_SESSION_ID}`,
+            // Corrected URL: Point directly to the app's deep link.
+            success_url: `${APP_DEEP_LINK_BASE_URL}?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
                 userId: userId,
