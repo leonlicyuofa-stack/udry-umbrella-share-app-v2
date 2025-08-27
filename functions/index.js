@@ -72,9 +72,10 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info(`Step 2 SUCCESS: Authentication check passed for user UID: ${request.auth.uid}`);
 
-    const { amount, paymentType, origin } = request.data;
+    // The 'origin' parameter is no longer needed as we use a universal deep link.
+    const { amount, paymentType } = request.data;
     const userId = request.auth.uid;
-    logger.info(`Step 3: Received data - UserID: ${userId}, Amount: ${amount}, PaymentType: ${paymentType}, Origin: ${origin}`);
+    logger.info(`Step 3: Received data - UserID: ${userId}, Amount: ${amount}, PaymentType: ${paymentType}`);
 
     if (!amount || typeof amount !== 'number' || amount <= 0) {
         logger.error(`STEP 4 FAILED: Invalid amount provided: ${amount}`);
@@ -84,14 +85,11 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
         logger.error(`STEP 4 FAILED: Invalid paymentType provided: ${paymentType}`);
         throw new HttpsError('invalid-argument', 'A valid paymentType must be provided.');
     }
-    if (!origin || typeof origin !== 'string') {
-        logger.error(`STEP 4 FAILED: Invalid or missing origin URL from client: ${origin}`);
-        throw new HttpsError('invalid-argument', 'A valid origin URL must be provided from the client.');
-    }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
-    const YOUR_DOMAIN = origin;
-    logger.info(`Step 5: Using domain for redirect URLs provided by client: ${YOUR_DOMAIN}`);
+    // This is the custom URL scheme for the app. It works for both iOS and Android.
+    const APP_CALLBACK_URL = 'com.udry.app';
+    logger.info(`Step 5: Using universal app callback URL: ${APP_CALLBACK_URL}`);
 
     try {
         logger.info("Step 6: Attempting to create Stripe checkout session...");
@@ -111,8 +109,9 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${YOUR_DOMAIN}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
-            cancel_url: `${YOUR_DOMAIN}/payment/cancel`,
+            // Use the custom URL scheme for redirects
+            success_url: `${APP_CALLBACK_URL}://payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            cancel_url: `${APP_CALLBACK_URL}://payment/cancel`,
             metadata: {
                 userId: userId,
                 paymentType: paymentType,

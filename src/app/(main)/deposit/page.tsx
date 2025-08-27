@@ -84,11 +84,10 @@ export default function DepositPage() {
       try {
           if (selectedMethod === 'stripe') {
               const createStripeCheckoutSession = httpsCallable(firebaseServices.functions, 'createStripeCheckoutSession');
-              const clientOrigin = window.location.origin; // Get the client's URL
+              // We no longer need to pass the client origin.
               const result = await createStripeCheckoutSession({ 
                 amount: paymentAmount, 
-                paymentType,
-                origin: clientOrigin // Pass it to the function
+                paymentType
               });
               const data = result.data as { success: boolean, id?: string, message?: string };
 

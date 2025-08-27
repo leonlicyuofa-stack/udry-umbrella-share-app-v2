@@ -5,5 +5,11 @@
   "webDir": "out",
   "android": {
     "allowMixedContent": true
+  },
+  "plugins": {
+    "App": {
+      "iosScheme": "com.udry.app",
+      "androidScheme": "com.udry.app"
+    }
   }
 }
