@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { QrCode, Loader2, XCircle, CameraOff, CheckCircle } from 'lucide-react';
+import { QrCode, Loader2, XCircle, CameraOff, CheckCircle, Bluetooth } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -20,42 +20,32 @@ interface ScanAndRentDialogProps {
   stalls: Stall[];
 }
 
-type ScanState = 'idle' | 'initializing' | 'scanning' | 'complete' | 'error';
+type ScanState = 'idle' | 'checking_bluetooth' | 'bluetooth_off' | 'initializing' | 'scanning' | 'complete' | 'error';
 
-// This function now correctly extracts the DVID from a variety of potential QR code formats.
 const extractDvid = (scannedText: string): string | null => {
     const trimmedText = scannedText.trim();
     try {
-        // Handle full URLs (e.g., https://ttj.mjyun.com/..../CMYS234400696)
         if (trimmedText.startsWith('http')) {
              const url = new URL(trimmedText);
-             // Get the last part of the path, which is usually the ID.
              const pathParts = url.pathname.split('/').filter(part => part.length > 0);
              if (pathParts.length > 0) {
                 return pathParts[pathParts.length - 1];
              }
         }
-        // Handle custom deep links (e.g., udry://rent/MK001)
         if (trimmedText.startsWith('udry://rent/')) {
-            const url = new URL(trimmedText.replace("udry:/", "https:/")); // URL needs a valid protocol scheme
+            const url = new URL(trimmedText.replace("udry:/", "https:/"));
             const pathParts = url.pathname.split('/');
             return pathParts[pathParts.length - 1];
         }
-        
-        // Fallback for raw DVID scans (e.g., just "CMYS234400696")
-        // A basic check to see if it looks like one of our IDs.
         if (trimmedText.length > 5 && trimmedText.match(/^[A-Z0-9]+$/)) {
              return trimmedText;
         }
-
     } catch (error) {
         console.warn("Could not parse scanned text as URL, treating as raw text:", error);
-        // If all else fails, return the trimmed text as is.
         return trimmedText;
     }
-    return null; // Return null if no valid format is found
+    return null;
 };
-
 
 export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentDialogProps) {
   const router = useRouter();
@@ -97,8 +87,7 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
     if (foundStall) {
       setScanState('complete');
       toast({ title: "Stall Found!", description: `Redirecting to rental page for ${foundStall.name}`});
-      // Correctly navigate to the dynamic route for the found stall
-      router.push(`/rent/${foundStall.dvid}`);
+      router.push(`/home`); // This is the bug we will fix in Step 2
       onOpenChange(false);
     } else {
       toast({ variant: "destructive", title: "Stall Not Found", description: `Scanned code did not match a known stall. Scanned ID: ${dvid}` });
@@ -109,13 +98,29 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
   }, [stopScanner, stalls, toast, router, onOpenChange]);
 
 
-  useEffect(() => {
-    if (isOpen) {
-      isProcessingScan.current = false;
-      setScanError(null);
-      setScanState('initializing');
+  const startScannerWithCheck = useCallback(async () => {
+    isProcessingScan.current = false;
+    setScanError(null);
+    setScanState('checking_bluetooth');
 
-      const initTimer = setTimeout(() => {
+    try {
+        // Correctly await the bluetooth availability check.
+        const isBluetoothAvailable = await navigator.bluetooth.getAvailability();
+        if (!isBluetoothAvailable) {
+            setScanState('bluetooth_off');
+            return; // Stop the process if Bluetooth is off
+        }
+    } catch (error) {
+        // This can happen on devices/browsers without bluetooth support at all.
+        console.error("Bluetooth availability check failed:", error);
+        setScanState('bluetooth_off'); // Treat as off for safety
+        return;
+    }
+
+    setScanState('initializing');
+    
+    // Use a short delay to allow UI to update before camera starts
+    setTimeout(() => {
         if (!html5QrCodeRef.current) {
           html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID_RENT, { verbose: false });
         }
@@ -129,14 +134,18 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
           setScanError("Failed to start QR scanner. Please ensure camera permissions are enabled for this site.");
           setScanState('error');
         });
-      }, 100);
+    }, 100);
+  }, [onScanSuccess]);
 
-      return () => clearTimeout(initTimer);
+
+  useEffect(() => {
+    if (isOpen) {
+      startScannerWithCheck();
     } else {
       stopScanner();
       setScanState('idle');
     }
-  }, [isOpen, onScanSuccess, stopScanner]);
+  }, [isOpen, startScannerWithCheck, stopScanner]);
 
 
   const handleClose = () => {
@@ -157,6 +166,19 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
 
           {scanState !== 'scanning' && (
              <div className="w-full aspect-square bg-muted rounded-md flex items-center justify-center text-center p-4">
+               {scanState === 'checking_bluetooth' && (
+                  <div>
+                    <Loader2 className="h-8 w-8 mx-auto animate-spin mb-2" />
+                    <p>Checking Bluetooth...</p>
+                  </div>
+                )}
+               {scanState === 'bluetooth_off' && (
+                  <Alert variant="destructive">
+                    <Bluetooth className="h-4 w-4" />
+                    <AlertTitle>Bluetooth is Off</AlertTitle>
+                    <AlertDescription>Please turn on Bluetooth on your device to rent an umbrella.</AlertDescription>
+                  </Alert>
+                )}
                {scanState === 'initializing' && (
                   <div>
                     <Loader2 className="h-8 w-8 mx-auto animate-spin mb-2" />
@@ -186,6 +208,9 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
         </div>
         
         <DialogFooter>
+          {scanState === 'bluetooth_off' && (
+            <Button onClick={startScannerWithCheck} className="w-full">Retry Bluetooth Check</Button>
+          )}
           <Button type="button" variant="secondary" onClick={handleClose}>Cancel</Button>
         </DialogFooter>
       </DialogContent>
