@@ -288,7 +288,15 @@ export function MapDisplay() {
           </div>
         )}
       </div>
-      <ScanAndRentDialog isOpen={isScanDialogOpen} onOpenChange={setIsScanDialogOpen} stalls={stalls} />
+      <ScanAndRentDialog 
+        isOpen={isScanDialogOpen} 
+        onOpenChange={setIsScanDialogOpen} 
+        stalls={stalls}
+        onStallScanned={(stall) => {
+          setIsScanDialogOpen(false); // Close the scanner
+          setStallForRentalDialog(stall); // Open the rental dialog
+        }}
+      />
       <RentalInitiationDialog 
         stall={stallForRentalDialog} 
         isOpen={!!stallForRentalDialog} 
@@ -301,6 +309,3 @@ export function MapDisplay() {
     </>
   );
 }
-
-
-    

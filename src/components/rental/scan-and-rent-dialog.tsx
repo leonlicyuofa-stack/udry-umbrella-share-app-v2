@@ -5,7 +5,6 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { QrCode, Loader2, XCircle, CameraOff, CheckCircle, AlertTriangle } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Html5Qrcode } from "html5-qrcode";
@@ -18,6 +17,7 @@ interface ScanAndRentDialogProps {
   isOpen: boolean;
   onOpenChange: (isOpen: boolean) => void;
   stalls: Stall[];
+  onStallScanned: (stall: Stall) => void;
 }
 
 type ScanState = 'idle' | 'initializing' | 'scanning' | 'complete' | 'error';
@@ -48,8 +48,7 @@ const extractDvid = (scannedText: string): string | null => {
     return null;
 };
 
-export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentDialogProps) {
-  const router = useRouter();
+export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned }: ScanAndRentDialogProps) {
   const { toast } = useToast();
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   
@@ -87,20 +86,15 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
     
     if (foundStall) {
       setScanState('complete');
-      // --- TEST IMPLEMENTATION ---
-      // This is the hardcoded part for our test.
-      // No matter what is scanned, we force navigation to a known pre-built page.
-      toast({ title: "Stall Scan OK!", description: `TEST: Forcing redirect to MK001...`});
-      router.push(`/rent/MK001`);
-      onOpenChange(false);
-      // --- END TEST IMPLEMENTATION ---
+      toast({ title: "Stall Identified!", description: `Preparing to rent from ${foundStall.name}.`});
+      onStallScanned(foundStall);
     } else {
       toast({ variant: "destructive", title: "Stall Not Found", description: `Scanned code did not match a known stall. Scanned ID: ${dvid}` });
       setScanState('error');
       setScanError(`No stall found with the ID "${dvid}". Please scan a valid U-Dry QR code.`);
       isProcessingScan.current = false;
     }
-  }, [stopScanner, stalls, toast, router, onOpenChange]);
+  }, [stopScanner, stalls, toast, onStallScanned]);
 
 
   const startScanner = useCallback(() => {
@@ -132,6 +126,7 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
     } else {
       stopScanner();
       setScanState('idle');
+      isProcessingScan.current = false;
     }
   }, [isOpen, startScanner, stopScanner]);
 
@@ -163,7 +158,7 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
                 {scanState === 'complete' && (
                   <div>
                     <CheckCircle className="h-10 w-10 mx-auto text-green-500 mb-2" />
-                    <p>Scan successful, redirecting...</p>
+                    <p>Scan successful, opening rental screen...</p>
                   </div>
                 )}
                 {scanState === 'error' && (
@@ -183,6 +178,9 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
         </div>
         
         <DialogFooter>
+          {scanState === 'error' && (
+            <Button type="button" variant="outline" onClick={startScanner}>Try Scanning Again</Button>
+          )}
           <Button type="button" variant="secondary" onClick={handleClose}>Cancel</Button>
         </DialogFooter>
       </DialogContent>
