@@ -222,15 +222,16 @@ export default function RentPageClient() {
     );
   }
 
-  if (!stall) {
+  if (stall === null) {
     return (
-      <div className="flex flex-col items-center justify-center h-full text-center">
-        <Card className="w-full max-w-md">
+      <div className="flex flex-col items-center justify-center h-full text-center p-4">
+        <Card className="w-full max-w-md shadow-lg">
           <CardHeader>
             <CardTitle className="text-destructive">Stall Not Found</CardTitle>
           </CardHeader>
           <CardContent>
-            <p>The requested umbrella stall could not be found or is not deployed.</p>
+            <p>The stall ID from the QR code could not be found in our records, or the stall is not currently deployed.</p>
+            <p className="text-sm text-muted-foreground mt-2">Scanned ID: {stallId}</p>
             <Button asChild variant="link" className="mt-4">
               <Link href="/home" className="flex items-center">
                 <ArrowLeft className="h-4 w-4 mr-1" />
