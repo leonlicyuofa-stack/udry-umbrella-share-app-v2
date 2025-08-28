@@ -1,9 +1,10 @@
+
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { QrCode, Loader2, XCircle, CameraOff, CheckCircle } from 'lucide-react';
+import { QrCode, Loader2, XCircle, CameraOff, CheckCircle, AlertTriangle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -86,9 +87,13 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
     
     if (foundStall) {
       setScanState('complete');
-      toast({ title: "Stall Found!", description: `Redirecting to rental page for ${foundStall.name}`});
-      router.push(`/rent/${foundStall.dvid}`);
+      // --- TEST IMPLEMENTATION ---
+      // This is the hardcoded part for our test.
+      // No matter what is scanned, we force navigation to a known pre-built page.
+      toast({ title: "Stall Scan OK!", description: `TEST: Forcing redirect to MK001...`});
+      router.push(`/rent/MK001`);
       onOpenChange(false);
+      // --- END TEST IMPLEMENTATION ---
     } else {
       toast({ variant: "destructive", title: "Stall Not Found", description: `Scanned code did not match a known stall. Scanned ID: ${dvid}` });
       setScanState('error');
