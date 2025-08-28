@@ -146,13 +146,27 @@ export function RentalInitiation({ stall }: RentalInitiationProps) {
     const isFirstRental = user.hasHadFirstFreeRental === false;
     if (!isFirstRental && (!user.balance || user.balance <= 0)) { toast({ title: "Insufficient Balance", description: "Please add funds to your account.", variant: "destructive" }); router.push('/deposit'); return; }
 
-    // --- Step 1: Check Bluetooth ---
+    // --- Step 1: Check Bluetooth API and Availability ---
     setRentalStep('checking_bluetooth');
     if (!navigator.bluetooth) {
       setStepError("Web Bluetooth API not available. Use a compatible browser (e.g., Chrome) and ensure the page is served securely.");
       setRentalStep('error');
       return;
     }
+
+    try {
+        const isBluetoothAvailable = await navigator.bluetooth.getAvailability();
+        if (!isBluetoothAvailable) {
+            setStepError("Bluetooth is turned off. Please turn on Bluetooth in your device settings to connect to the machine.");
+            setRentalStep('error');
+            return;
+        }
+    } catch (error) {
+        setStepError("Could not check Bluetooth status. Please ensure permissions are granted.");
+        setRentalStep('error');
+        return;
+    }
+
 
     // --- Step 2: Start Camera Scan ---
     setRentalStep('scanning');
