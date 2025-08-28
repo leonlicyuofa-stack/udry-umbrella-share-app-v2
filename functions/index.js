@@ -1,3 +1,4 @@
+
 // functions/index.js
 const functions = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
@@ -92,8 +93,10 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
+    // CRITICAL CHANGE: We now point directly to the app's deep link.
+    const APP_DEEP_LINK_BASE_URL = 'udry://payment/success'; 
     const LIVE_APP_BASE_URL = 'https://udry-app-dev.web.app'; 
-    logger.info(`Step 5: Using live app base URL: ${LIVE_APP_BASE_URL}`);
+    logger.info(`Step 5: Using deep link base URL: ${APP_DEEP_LINK_BASE_URL}`);
 
     try {
         logger.info("Step 6: Attempting to create Stripe checkout session...");
@@ -113,8 +116,9 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            // Corrected URL: Point to the final success page on the live web app.
-            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}`,
+            // Corrected URL: Point directly to the app's deep link.
+            // We pass the UID here to solve the session persistence issue on the client.
+            success_url: `${APP_DEEP_LINK_BASE_URL}?session_id={CHECKOUT_SESSION_ID}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
                 userId: userId,
@@ -196,6 +200,7 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
             throw new HttpsError('failed-precondition', 'Stripe session not paid.');
         }
         if (metadataUserId !== userId) {
+            logger.error(`CRITICAL SECURITY CHECK FAILED: Caller UID (${userId}) does not match Stripe metadata UID (${metadataUserId}).`);
             throw new HttpsError('permission-denied', 'User ID does not match session metadata.');
         }
         if (!paymentType || !['deposit', 'balance'].includes(paymentType)) {
@@ -253,3 +258,5 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
 });
+
+    
