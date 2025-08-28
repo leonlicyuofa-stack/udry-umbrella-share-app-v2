@@ -26,27 +26,34 @@ type ScanState = 'idle' | 'initializing' | 'scanning' | 'complete' | 'error';
 const extractDvid = (scannedText: string): string | null => {
     const trimmedText = scannedText.trim();
     try {
+        // Handle full URLs (e.g., https://ttj.mjyun.com/..../CMYS234400696)
+        if (trimmedText.startsWith('http')) {
+             const url = new URL(trimmedText);
+             // Get the last part of the path, which is usually the ID.
+             const pathParts = url.pathname.split('/').filter(part => part.length > 0);
+             if (pathParts.length > 0) {
+                return pathParts[pathParts.length - 1];
+             }
+        }
+        // Handle custom deep links (e.g., udry://rent/MK001)
         if (trimmedText.startsWith('udry://rent/')) {
             const url = new URL(trimmedText.replace("udry:/", "https:/")); // URL needs a valid protocol scheme
             const pathParts = url.pathname.split('/');
             return pathParts[pathParts.length - 1];
         }
         
-        if (trimmedText.startsWith('http')) {
-             const url = new URL(trimmedText);
-             const pathParts = url.pathname.split('/');
-             if (pathParts[pathParts.length - 2] === 'rent') {
-                return pathParts[pathParts.length - 1];
-             }
+        // Fallback for raw DVID scans (e.g., just "CMYS234400696")
+        // A basic check to see if it looks like one of our IDs.
+        if (trimmedText.length > 5 && trimmedText.match(/^[A-Z0-9]+$/)) {
+             return trimmedText;
         }
-        
-        // Fallback for raw DVID scans
-        return trimmedText;
 
     } catch (error) {
-        console.warn("Could not parse scanned text as URL, treating as raw DVID:", error);
+        console.warn("Could not parse scanned text as URL, treating as raw text:", error);
+        // If all else fails, return the trimmed text as is.
         return trimmedText;
     }
+    return null; // Return null if no valid format is found
 };
 
 
