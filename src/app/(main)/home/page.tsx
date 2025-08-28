@@ -15,7 +15,7 @@ export const metadata: Metadata = {
 // on all devices, especially within the Capacitor webview.
 export default function HomePage() {
   return (
-    <ScrollArea className={cn("h-[calc(100vh-4rem)]", "border-4 border-blue-500")}>
+    <ScrollArea className="h-full">
       <div className="container mx-auto px-4 py-8 space-y-8">
         <MapPageClient />
       </div>

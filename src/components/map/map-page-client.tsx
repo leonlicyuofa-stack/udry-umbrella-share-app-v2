@@ -64,7 +64,7 @@ export function MapPageClient() {
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
       <div className="container mx-auto px-4 py-8 space-y-8">
         <section>
-          <Card className={cn("shadow-lg", "border-4 border-green-500")}>
+          <Card className={cn("shadow-lg")}>
             <CardHeader>
               <CardTitle className="text-3xl font-bold text-primary">{translate('find_an_umbrella_title')}</CardTitle>
               <CardDescription>
