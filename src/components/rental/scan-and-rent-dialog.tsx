@@ -3,7 +3,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { QrCode, Loader2, XCircle, CameraOff, CheckCircle, Bluetooth } from 'lucide-react';
+import { QrCode, Loader2, XCircle, CameraOff, CheckCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
@@ -19,7 +19,7 @@ interface ScanAndRentDialogProps {
   stalls: Stall[];
 }
 
-type ScanState = 'idle' | 'checking_bluetooth' | 'bluetooth_off' | 'initializing' | 'scanning' | 'complete' | 'error';
+type ScanState = 'idle' | 'initializing' | 'scanning' | 'complete' | 'error';
 
 const extractDvid = (scannedText: string): string | null => {
     const trimmedText = scannedText.trim();
@@ -36,12 +36,13 @@ const extractDvid = (scannedText: string): string | null => {
             const pathParts = url.pathname.split('/');
             return pathParts[pathParts.length - 1];
         }
+        // Fallback for simple ID strings
         if (trimmedText.length > 5 && trimmedText.match(/^[A-Z0-9]+$/)) {
              return trimmedText;
         }
     } catch (error) {
         console.warn("Could not parse scanned text as URL, treating as raw text:", error);
-        return trimmedText;
+        return trimmedText; // Treat as raw if URL parsing fails
     }
     return null;
 };
@@ -97,23 +98,9 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
   }, [stopScanner, stalls, toast, router, onOpenChange]);
 
 
-  const startScannerWithCheck = useCallback(async () => {
+  const startScanner = useCallback(() => {
     isProcessingScan.current = false;
     setScanError(null);
-    setScanState('checking_bluetooth');
-
-    try {
-        const isBluetoothAvailable = await navigator.bluetooth.getAvailability();
-        if (!isBluetoothAvailable) {
-            setScanState('bluetooth_off');
-            return;
-        }
-    } catch (error) {
-        console.error("Bluetooth availability check failed:", error);
-        setScanState('bluetooth_off');
-        return;
-    }
-
     setScanState('initializing');
     
     setTimeout(() => {
@@ -136,12 +123,12 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
 
   useEffect(() => {
     if (isOpen) {
-      startScannerWithCheck();
+      startScanner();
     } else {
       stopScanner();
       setScanState('idle');
     }
-  }, [isOpen, startScannerWithCheck, stopScanner]);
+  }, [isOpen, startScanner, stopScanner]);
 
 
   const handleClose = () => {
@@ -162,19 +149,6 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
 
           {scanState !== 'scanning' && (
              <div className="w-full aspect-square bg-muted rounded-md flex items-center justify-center text-center p-4">
-               {scanState === 'checking_bluetooth' && (
-                  <div>
-                    <Loader2 className="h-8 w-8 mx-auto animate-spin mb-2" />
-                    <p>Checking Bluetooth...</p>
-                  </div>
-                )}
-               {scanState === 'bluetooth_off' && (
-                  <Alert variant="destructive">
-                    <Bluetooth className="h-4 w-4" />
-                    <AlertTitle>Bluetooth is Off</AlertTitle>
-                    <AlertDescription>Please turn on Bluetooth on your device to rent an umbrella.</AlertDescription>
-                  </Alert>
-                )}
                {scanState === 'initializing' && (
                   <div>
                     <Loader2 className="h-8 w-8 mx-auto animate-spin mb-2" />
@@ -204,9 +178,6 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
         </div>
         
         <DialogFooter>
-          {scanState === 'bluetooth_off' && (
-            <Button onClick={startScannerWithCheck} className="w-full">Retry Bluetooth Check</Button>
-          )}
           <Button type="button" variant="secondary" onClick={handleClose}>Cancel</Button>
         </DialogFooter>
       </DialogContent>
