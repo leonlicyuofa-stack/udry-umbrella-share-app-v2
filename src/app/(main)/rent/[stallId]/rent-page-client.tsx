@@ -1,8 +1,7 @@
-
 // src/app/(main)/rent/[stallId]/rent-page-client.tsx
 "use client";
 
-import { RentalInitiation } from '@/components/rental/rental-initiation';
+import { RentalStallDetails } from '@/components/rental/rental-initiation'; // Renamed for clarity
 import { useStalls } from '@/contexts/auth-context';
 import { useParams } from 'next/navigation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,15 +10,16 @@ import { Button } from '@/components/ui/button';
 import { ArrowLeft, Loader2 } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import type { Stall } from '@/lib/types';
+import { ScanAndRentDialog } from '@/components/rental/scan-and-rent-dialog'; // Import the dialog
 
 export default function RentPageClient() {
   const { stallId } = useParams<{ stallId: string }>();
   const { stalls, isLoadingStalls } = useStalls(); 
   const [stall, setStall] = useState<Stall | null | undefined>(undefined);
+  const [isScanDialogOpen, setIsScanDialogOpen] = useState(false); // State to control the dialog
 
   useEffect(() => {
     if (!isLoadingStalls) {
-      // Corrected from s.id to s.dvid, which is the actual unique identifier
       const foundStall = stalls.find(s => s.dvid === stallId);
       setStall(foundStall || null);
     }
@@ -55,6 +55,16 @@ export default function RentPageClient() {
     );
   }
 
-  // The component now handles the full rental flow internally
-  return <RentalInitiation stall={stall} />;
+  // The component now renders the stall details and the scan dialog.
+  // The RentalStallDetails component's button will open the dialog.
+  return (
+    <>
+      <RentalStallDetails stall={stall} onScanClick={() => setIsScanDialogOpen(true)} />
+      <ScanAndRentDialog 
+        isOpen={isScanDialogOpen} 
+        onOpenChange={setIsScanDialogOpen} 
+        stalls={stalls} 
+      />
+    </>
+  );
 }
