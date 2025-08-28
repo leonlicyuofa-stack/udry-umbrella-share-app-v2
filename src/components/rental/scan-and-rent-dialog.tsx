@@ -22,28 +22,30 @@ interface ScanAndRentDialogProps {
 
 type ScanState = 'idle' | 'initializing' | 'scanning' | 'complete' | 'error';
 
+// This function now correctly extracts the DVID from a variety of potential QR code formats.
 const extractDvid = (scannedText: string): string | null => {
     const trimmedText = scannedText.trim();
     try {
-        if (trimmedText.startsWith('com.udry.app://')) {
-            const url = new URL(trimmedText);
+        if (trimmedText.startsWith('udry://rent/')) {
+            const url = new URL(trimmedText.replace("udry:/", "https:/")); // URL needs a valid protocol scheme
             const pathParts = url.pathname.split('/');
-            if (pathParts.length > 1 && pathParts[1] === 'rent') {
-                return pathParts[pathParts.length - 1];
-            }
+            return pathParts[pathParts.length - 1];
         }
         
         if (trimmedText.startsWith('http')) {
              const url = new URL(trimmedText);
              const pathParts = url.pathname.split('/');
-             return pathParts[pathParts.length - 1];
+             if (pathParts[pathParts.length - 2] === 'rent') {
+                return pathParts[pathParts.length - 1];
+             }
         }
         
+        // Fallback for raw DVID scans
         return trimmedText;
 
     } catch (error) {
-        console.error("Error parsing scanned text:", error);
-        return null;
+        console.warn("Could not parse scanned text as URL, treating as raw DVID:", error);
+        return trimmedText;
     }
 };
 
@@ -52,7 +54,6 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
   const router = useRouter();
   const { toast } = useToast();
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
-  const scannedStallIdRef = useRef<string | null>(null);
   
   const [scanState, setScanState] = useState<ScanState>('idle');
   const [scanError, setScanError] = useState<string | null>(null);
@@ -60,10 +61,9 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
   const isProcessingScan = useRef(false);
 
   const stopScanner = useCallback(async () => {
-    if (html5QrCodeRef.current && html5QrCodeRef.current.isScanning) {
+    if (html5QrCodeRef.current?.isScanning) {
       try {
         await html5QrCodeRef.current.stop();
-        console.log("Scan & Rent Dialog: QR Scanner stopped successfully.");
       } catch (err) {
         console.warn("Scan & Rent Dialog: Failed to stop QR scanner gracefully.", err);
       }
@@ -88,32 +88,23 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
     const foundStall = stalls.find(s => s.dvid === dvid);
     
     if (foundStall) {
-      scannedStallIdRef.current = foundStall.id;
       setScanState('complete');
+      toast({ title: "Stall Found!", description: `Redirecting to rental page for ${foundStall.name}`});
+      // Correctly navigate to the dynamic route for the found stall
+      router.push(`/rent/${foundStall.dvid}`);
+      onOpenChange(false);
     } else {
-      toast({ variant: "destructive", title: "Invalid QR Code", description: `Scanned code did not match a known stall. Scanned DVID: ${dvid}` });
-      setScanState('idle'); 
+      toast({ variant: "destructive", title: "Stall Not Found", description: `Scanned code did not match a known stall. Scanned ID: ${dvid}` });
+      setScanState('error');
+      setScanError(`No stall found with the ID "${dvid}". Please scan a valid U-Dry QR code.`);
       isProcessingScan.current = false;
     }
-  }, [stopScanner, stalls, toast]);
+  }, [stopScanner, stalls, toast, router, onOpenChange]);
 
-  useEffect(() => {
-    if (scanState === 'complete' && scannedStallIdRef.current) {
-      const stallId = scannedStallIdRef.current;
-      const stall = stalls.find(s => s.id === stallId);
-      const navTimer = setTimeout(() => {
-        toast({ title: "Stall Found!", description: `Redirecting to rental page for ${stall?.name || 'the selected stall'}`});
-        router.push(`/rent/${stallId}`);
-        onOpenChange(false);
-      }, 50);
-      return () => clearTimeout(navTimer);
-    }
-  }, [scanState, router, toast, onOpenChange, stalls]);
 
   useEffect(() => {
     if (isOpen) {
       isProcessingScan.current = false;
-      scannedStallIdRef.current = null;
       setScanError(null);
       setScanState('initializing');
 
@@ -140,38 +131,22 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
     }
   }, [isOpen, onScanSuccess, stopScanner]);
 
-  useEffect(() => {
-    return () => {
-      stopScanner();
-    };
-  }, [stopScanner]);
+
+  const handleClose = () => {
+    stopScanner().then(() => onOpenChange(false));
+  };
+
 
   return (
-    <Dialog open={isOpen} onOpenChange={(open) => {
-        if (!open) {
-            stopScanner().then(() => onOpenChange(false));
-        } else {
-            onOpenChange(true);
-        }
-    }}>
+    <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center">
-            <QrCode className="mr-2 h-5 w-5"/> Scan to Rent
-          </DialogTitle>
-          <DialogDescription>
-            Point your camera at the QR code on any U-Dry machine to begin the rental process.
-          </DialogDescription>
+          <DialogTitle className="flex items-center"><QrCode className="mr-2 h-5 w-5"/> Scan to Rent</DialogTitle>
+          <DialogDescription>Point your camera at the QR code on any U-Dry machine to begin.</DialogDescription>
         </DialogHeader>
         
         <div className="py-4 space-y-4">
-          <div 
-            id={QR_READER_REGION_ID_RENT}
-            className={cn(
-                "w-full aspect-square bg-black rounded-md", 
-                scanState !== 'scanning' && "hidden"
-            )}
-          />
+          <div id={QR_READER_REGION_ID_RENT} className={cn("w-full aspect-square bg-black rounded-md", scanState !== 'scanning' && "hidden")} />
 
           {scanState !== 'scanning' && (
              <div className="w-full aspect-square bg-muted rounded-md flex items-center justify-center text-center p-4">
@@ -189,19 +164,22 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
                 )}
                 {scanState === 'error' && (
                   <Alert variant="destructive">
-                    <CameraOff className="h-4 w-4" />
-                    <AlertTitle>Camera Error</AlertTitle>
+                    <XCircle className="h-4 w-4" />
+                    <AlertTitle>Scan Failed</AlertTitle>
                     <AlertDescription>{scanError}</AlertDescription>
                   </Alert>
+                )}
+                {scanState === 'idle' && (
+                  <div className="text-muted-foreground">
+                    <p>Scanner is idle.</p>
+                  </div>
                 )}
              </div>
           )}
         </div>
         
         <DialogFooter>
-          <Button type="button" variant="secondary" onClick={() => onOpenChange(false)}>
-            Cancel
-          </Button>
+          <Button type="button" variant="secondary" onClick={handleClose}>Cancel</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

@@ -55,6 +55,6 @@ export default function RentPageClient() {
     );
   }
 
-  // The stalls prop is no longer needed here as the component fetches its own data
+  // The component now handles the full rental flow internally
   return <RentalInitiation stall={stall} />;
 }

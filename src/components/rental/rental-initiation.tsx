@@ -4,29 +4,32 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Stall } from "@/lib/types";
-import { ArrowLeft, MapPin, Umbrella, Loader2, AlertTriangle, LogIn, CheckCircle, Smartphone, Bluetooth, XCircle, BluetoothConnected, BluetoothSearching } from "lucide-react";
+import { ArrowLeft, MapPin, Umbrella, Loader2, AlertTriangle, LogIn, CheckCircle, Smartphone, Bluetooth, XCircle, BluetoothConnected, BluetoothSearching, QrCode, Camera } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { useAuth, useStalls } from "@/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context";
+import { Html5Qrcode } from "html5-qrcode";
+import { cn } from "@/lib/utils";
 
-// Bluetooth Constants
+const QR_READER_REGION_ID_RENT = "qr-reader-region-rent-initiation";
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
 const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
 const GET_UMBRELLA_BASE_PARM = 2000000;
 
-type UnlockState = 'idle' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
+type RentalStep = 'idle' | 'checking_bluetooth' | 'scanning' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
 
-const unlockStateMessages: Record<UnlockState, string> = {
+const rentalStepMessages: Record<RentalStep, string> = {
   idle: "Ready to start.",
-  requesting_device: "Searching for your machine. Please select it from the Bluetooth pop-up...",
+  checking_bluetooth: "Checking Bluetooth status...",
+  scanning: "Scanning QR Code...",
   connecting: "Connecting to machine...",
-  getting_token: "Connected. Authenticating with machine...",
-  getting_command: "Authenticated. Getting unlock command from server...",
-  sending_command: "Sending unlock command to machine...",
+  getting_token: "Connected. Authenticating...",
+  getting_command: "Authenticated. Getting unlock command...",
+  sending_command: "Sending unlock command...",
   success: "Unlock command sent! Please take your umbrella.",
   error: "An error occurred."
 };
@@ -37,176 +40,76 @@ interface RentalInitiationProps {
 
 export function RentalInitiation({ stall }: RentalInitiationProps) {
   const { user, loading: authLoading, useFirstFreeRental, activeRental, startRental, logMachineEvent } = useAuth();
-  const { stalls } = useStalls();
   const router = useRouter();
   const { toast } = useToast();
   
-  const [unlockState, setUnlockState] = useState<UnlockState>('idle');
-  const [bluetoothError, setBluetoothError] = useState<string | null>(null);
+  const [rentalStep, setRentalStep] = useState<RentalStep>('idle');
+  const [stepError, setStepError] = useState<string | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
 
   const bluetoothDeviceRef = useRef<BluetoothDevice | null>(null);
   const tokCharacteristicRef = useRef<BluetoothRemoteGATTCharacteristic | null>(null);
+  const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
+  const isProcessingScan = useRef(false);
   
-  const isUnlocking = unlockState !== 'idle' && unlockState !== 'success' && unlockState !== 'error';
+  const isProcessing = rentalStep !== 'idle' && rentalStep !== 'success' && rentalStep !== 'error';
 
   useEffect(() => {
-    if (activeRental && !isUnlocking) {
-      toast({
-        title: "Rental In Progress",
-        description: "You already have an active rental. Please end it before starting a new one.",
-        variant: "destructive",
-      });
+    if (activeRental && !isProcessing) {
+      toast({ title: "Rental In Progress", description: "You already have an active rental.", variant: "destructive" });
       router.replace('/home');
     }
-  }, [activeRental, isUnlocking, router, toast]);
+  }, [activeRental, isProcessing, router, toast]);
 
-  const handleGattServerDisconnected = useCallback(() => {
-    toast({ variant: "destructive", title: "Bluetooth Disconnected", description: "The device connection was lost." });
-    logMachineEvent({ stallId: stall.id, type: 'error', message: 'Bluetooth GATT Server Disconnected during rental process.' });
+  const stopScanner = useCallback(async () => {
+    if (html5QrCodeRef.current?.isScanning) {
+      try {
+        await html5QrCodeRef.current.stop();
+      } catch (err) {
+        console.warn("Failed to stop QR scanner gracefully:", err);
+      }
+    }
+  }, []);
+
+  const resetState = useCallback(() => {
+    stopScanner();
+    const device = bluetoothDeviceRef.current;
+    if(device?.gatt?.connected) device.gatt.disconnect();
     tokCharacteristicRef.current = null;
     bluetoothDeviceRef.current = null;
-    setUnlockState('idle');
-  }, [toast, logMachineEvent, stall.id]);
-  
-  const handleTokNotification = useCallback(async (event: Event) => {
-    const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
-    const value = characteristic.value;
-    if (!value) return;
+    setRentalStep('idle');
+    setStepError(null);
+  }, [stopScanner]);
 
-    const decoder = new TextDecoder('utf-8');
-    const receivedString = decoder.decode(value).trim();
-    console.log(`[U-Dry Rent] Notification Received: "${receivedString}"`);
-    logMachineEvent({ stallId: stall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
+  const onScanSuccess = useCallback(async (decodedText: string) => {
+    if (isProcessingScan.current) return;
+    isProcessingScan.current = true;
+    await stopScanner();
 
-    if (receivedString.startsWith("TOK:")) {
-      const tokenValue = receivedString.substring(4).trim();
-      if (/^\d{6}$/.test(tokenValue)) {
-        console.log(`[U-Dry Rent] Parsed Token: ${tokenValue}`);
-        setUnlockState('getting_command');
-        
-        try {
-          const slotNum = stall.nextActionSlot;
-          const parmValue = (GET_UMBRELLA_BASE_PARM + slotNum).toString();
-          const cmdType = '1';
+    const urlParts = decodedText.trim().split('/');
+    const dvidFromUrl = urlParts[urlParts.length - 1];
 
-          // This part would ideally be a secure server-side call in a real app
-          // For this project, we simulate it via an API route for realism.
-          const backendResponse = await fetch('/api/admin/unlock-physical-machine', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dvid: stall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType }),
-          });
-          const result = await backendResponse.json();
-
-          if (!backendResponse.ok || !result.success || !result.unlockDataString) {
-            const errorMsg = result.message || `Failed to get unlock command.`;
-            logMachineEvent({ stallId: stall.id, type: 'error', message: `Vendor API Error on Rent: ${errorMsg}`});
-            throw new Error(errorMsg);
-          }
-          
-          setUnlockState('sending_command');
-          const commandToSend = `CMD:${result.unlockDataString}\r\n`;
-          await tokCharacteristicRef.current?.writeValue(new TextEncoder().encode(commandToSend));
-          logMachineEvent({ stallId: stall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Get Umbrella)`});
-
-          console.log(`[U-Dry Rent] Unlock command sent to machine.`);
-          
-          setShowSuccessDialog(true);
-          setUnlockState('success');
-
-        } catch (error: any) {
-          console.error("[U-Dry Rent] Error during server command fetch or BT write:", error);
-          const errorMsg = error.message || "Unknown error during command phase.";
-          setBluetoothError(errorMsg);
-          setUnlockState('error');
-          logMachineEvent({ stallId: stall.id, type: 'error', message: `Failed to get/send command: ${errorMsg}`});
-        }
-      } else {
-         const errorMsg = `Invalid token format received: ${tokenValue}`;
-         setBluetoothError(errorMsg);
-         setUnlockState('error');
-         logMachineEvent({ stallId: stall.id, type: 'error', message: errorMsg });
-      }
-    } else if (receivedString.startsWith("CMD:")) {
-      console.log(`[U-Dry Rent] Machine acknowledged command with: ${receivedString}`);
-    } else if (receivedString.startsWith("REPET:")) {
-      const errorMsg = "Machine Error: This rental action has already been processed. Please try again or select a different slot if possible.";
-      console.error(`[U-Dry Rent] Received REPET error: ${receivedString}`);
-      setBluetoothError(errorMsg);
-      setUnlockState('error');
-      toast({ variant: "destructive", title: "Duplicate Action Error", description: errorMsg, duration: 8000 });
-    }
-  }, [stall, toast, logMachineEvent]);
-
-  useEffect(() => {
-    if (showSuccessDialog) {
-      const isFirstRental = user && user.hasHadFirstFreeRental === false;
-      const timer = setTimeout(() => {
-        if (isFirstRental) {
-            useFirstFreeRental();
-        }
-        startRental({
-          stallId: stall.id,
-          stallName: stall.name,
-          startTime: Date.now(),
-          isFree: !!isFirstRental,
-        });
-        router.push('/home');
-        setShowSuccessDialog(false);
-      }, 3000);
-
-      return () => clearTimeout(timer);
-    }
-  }, [showSuccessDialog, startRental, router, stall.id, stall.name, user, useFirstFreeRental]);
-
-  const handleUnlock = async () => {
-    if (isUnlocking || activeRental) return;
-    if (!user) {
-       toast({ title: "Authentication Error", description: "You must be logged in to rent.", variant: "destructive" });
-       router.push(`/auth/signin?redirect=/rent/${stall.id}`);
-       return;
-    }
-    if (stall.availableUmbrellas <= 0) {
-      toast({ title: "No Umbrellas Available", description: "Sorry, there are no umbrellas available at this stall.", variant: "destructive" });
-      return;
-    }
-    if (!user.deposit || user.deposit < 100) {
-        toast({ title: "Deposit Required", description: "A HK$100 deposit is required to rent.", variant: "destructive", duration: 7000 });
-        router.push('/deposit');
-        return;
-    }
-    const isFirstRental = user.hasHadFirstFreeRental === false;
-    if (!isFirstRental && (!user.balance || user.balance <= 0)) {
-        toast({ title: "Insufficient Balance", description: "Your spendable balance is HK$0. Please add funds.", variant: "destructive", duration: 7000 });
-        router.push('/deposit');
-        return;
-    }
-
-    if (!navigator.bluetooth) {
-      const errorMsg = "Web Bluetooth API not available. Use a compatible browser (e.g., Chrome, Edge) and ensure page is served via HTTPS or localhost.";
-      setBluetoothError(errorMsg);
-      setUnlockState('error');
-      logMachineEvent({ stallId: stall.id, type: 'error', message: errorMsg});
+    if (dvidFromUrl !== stall.dvid) {
+      setStepError(`Incorrect stall. You scanned a machine with ID ${dvidFromUrl}, but you need to scan the one for ${stall.name}.`);
+      setRentalStep('error');
+      isProcessingScan.current = false;
       return;
     }
     
-    setBluetoothError(null);
-    setUnlockState('requesting_device');
-    logMachineEvent({ stallId: stall.id, type: 'info', message: 'User initiated rental. Starting Bluetooth connection...'});
+    setRentalStep('connecting');
+    logMachineEvent({ stallId: stall.id, type: 'info', message: 'QR scan matched. Starting Bluetooth connection...'});
 
     try {
       const device = await navigator.bluetooth.requestDevice({
-        filters: [
-          { services: [UTEK_SERVICE_UUID] },
-          { name: stall.btName }
-        ],
+        filters: [{ services: [UTEK_SERVICE_UUID] }, { name: stall.btName }],
         optionalServices: [UTEK_SERVICE_UUID]
       });
       bluetoothDeviceRef.current = device;
-      device.addEventListener('gattserverdisconnected', handleGattServerDisconnected);
+      device.addEventListener('gattserverdisconnected', () => {
+        setStepError("Bluetooth device disconnected unexpectedly.");
+        setRentalStep('error');
+      });
       
-      setUnlockState('connecting');
       const server = await device.gatt?.connect();
       if (!server) throw new Error("Failed to connect to GATT server.");
       logMachineEvent({ stallId: stall.id, type: 'info', message: `Connected to device: ${device.name || 'Unknown'}`});
@@ -215,7 +118,7 @@ export function RentalInitiation({ stall }: RentalInitiationProps) {
       const characteristic = await service.getCharacteristic(UTEK_CHARACTERISTIC_UUID);
       tokCharacteristicRef.current = characteristic;
       
-      setUnlockState('getting_token');
+      setRentalStep('getting_token');
       await characteristic.startNotifications();
       characteristic.addEventListener('characteristicvaluechanged', handleTokNotification);
       
@@ -225,74 +128,136 @@ export function RentalInitiation({ stall }: RentalInitiationProps) {
     } catch (error: any) {
       let errorMsg = error.message || "An unknown Bluetooth error occurred.";
       if (error.name === "NotFoundError") errorMsg = "No compatible Bluetooth device found or selection was cancelled.";
-      setBluetoothError(errorMsg);
-      setUnlockState('error');
+      setStepError(errorMsg);
+      setRentalStep('error');
       logMachineEvent({ stallId: stall.id, type: 'error', message: `Bluetooth Connection Error: ${errorMsg}`});
     }
-  };
-  
-  const handleDisconnectAndReset = () => {
-    const device = bluetoothDeviceRef.current;
-    if(device?.gatt?.connected) {
-        device.gatt.disconnect();
+
+  }, [stopScanner, stall, logMachineEvent]);
+
+  const startScanAndRentProcess = async () => {
+    if (isProcessing || activeRental) return;
+    setStepError(null);
+
+    // --- Pre-flight Checks ---
+    if (!user) { router.push(`/auth/signin?redirect=/rent/${stall.id}`); return; }
+    if (stall.availableUmbrellas <= 0) { toast({ title: "No Umbrellas Available", variant: "destructive" }); return; }
+    if (!user.deposit || user.deposit < 100) { toast({ title: "Deposit Required", description: "A HK$100 deposit is required.", variant: "destructive" }); router.push('/deposit'); return; }
+    const isFirstRental = user.hasHadFirstFreeRental === false;
+    if (!isFirstRental && (!user.balance || user.balance <= 0)) { toast({ title: "Insufficient Balance", description: "Please add funds to your account.", variant: "destructive" }); router.push('/deposit'); return; }
+
+    // --- Step 1: Check Bluetooth ---
+    setRentalStep('checking_bluetooth');
+    if (!navigator.bluetooth) {
+      setStepError("Web Bluetooth API not available. Use a compatible browser (e.g., Chrome) and ensure the page is served securely.");
+      setRentalStep('error');
+      return;
     }
-    tokCharacteristicRef.current = null;
-    bluetoothDeviceRef.current = null;
-    setUnlockState('idle');
-    setBluetoothError(null);
+
+    // --- Step 2: Start Camera Scan ---
+    setRentalStep('scanning');
+    isProcessingScan.current = false;
+    
+    setTimeout(() => {
+      if (!html5QrCodeRef.current) {
+        html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID_RENT, { verbose: false });
+      }
+      html5QrCodeRef.current.start(
+        { facingMode: "environment" },
+        { fps: 10, qrbox: { width: 250, height: 250 } },
+        onScanSuccess,
+        () => { /* Ignore errors */ }
+      ).catch(err => {
+        setStepError("Failed to start QR scanner. Please ensure camera permissions are enabled.");
+        setRentalStep('error');
+      });
+    }, 100);
   };
   
-  useEffect(() => {
-    const device = bluetoothDeviceRef.current;
-    const characteristic = tokCharacteristicRef.current;
-    return () => {
-      if (characteristic) {
-        characteristic.removeEventListener('characteristicvaluechanged', handleTokNotification);
-      }
-       if (device) {
-        device.removeEventListener('gattserverdisconnected', handleGattServerDisconnected);
-        if (device.gatt?.connected) {
-          device.gatt.disconnect();
+  const handleTokNotification = useCallback(async (event: Event) => {
+    const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
+    const value = characteristic.value;
+    if (!value) return;
+
+    const decoder = new TextDecoder('utf-8');
+    const receivedString = decoder.decode(value).trim();
+    logMachineEvent({ stallId: stall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
+
+    if (receivedString.startsWith("TOK:")) {
+      const tokenValue = receivedString.substring(4).trim();
+      if (/^\d{6}$/.test(tokenValue)) {
+        setRentalStep('getting_command');
+        try {
+          const slotNum = stall.nextActionSlot;
+          const parmValue = (GET_UMBRELLA_BASE_PARM + slotNum).toString();
+          const cmdType = '1';
+          const backendResponse = await fetch('/api/admin/unlock-physical-machine', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ dvid: stall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType }),
+          });
+          const result = await backendResponse.json();
+          if (!backendResponse.ok || !result.success || !result.unlockDataString) throw new Error(result.message || `Failed to get unlock command.`);
+          
+          setRentalStep('sending_command');
+          const commandToSend = `CMD:${result.unlockDataString}\r\n`;
+          await tokCharacteristicRef.current?.writeValue(new TextEncoder().encode(commandToSend));
+          logMachineEvent({ stallId: stall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Get Umbrella)`});
+          
+          setShowSuccessDialog(true);
+          setRentalStep('success');
+        } catch (error: any) {
+          setStepError(error.message || "Unknown error during command phase.");
+          setRentalStep('error');
+          logMachineEvent({ stallId: stall.id, type: 'error', message: `Failed to get/send command: ${error.message}`});
         }
+      } else {
+         setStepError(`Invalid token format received: ${tokenValue}`);
+         setRentalStep('error');
       }
-    };
-  }, [handleGattServerDisconnected, handleTokNotification]);
+    } else if (receivedString.startsWith("REPET:")) {
+      const errorMsg = "Machine Error: This action has already been processed. Please try again.";
+      setStepError(errorMsg);
+      setRentalStep('error');
+      toast({ variant: "destructive", title: "Duplicate Action Error", description: errorMsg, duration: 8000 });
+    }
+  }, [stall, toast, logMachineEvent]);
 
-  if (authLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)]">
-        <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        <p className="mt-4 text-muted-foreground">Loading account status...</p>
-      </div>
-    );
-  }
+  useEffect(() => {
+    if (showSuccessDialog) {
+      const isFirstRental = user && user.hasHadFirstFreeRental === false;
+      const timer = setTimeout(() => {
+        if (isFirstRental) useFirstFreeRental();
+        startRental({ stallId: stall.id, stallName: stall.name, startTime: Date.now(), isFree: !!isFirstRental });
+        router.push('/home');
+        setShowSuccessDialog(false);
+      }, 3000);
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessDialog, startRental, router, stall, user, useFirstFreeRental]);
 
-  if (!user) {
-    return (
-      <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)] py-8 px-4">
-        <Card className="w-full max-w-md shadow-xl text-center">
-          <CardHeader>
-            <CardTitle className="text-destructive flex items-center justify-center">
-              <AlertTriangle className="mr-2 h-6 w-6" /> Authentication Required
-            </CardTitle>
-            <CardDescription>You need to be logged in to rent an umbrella.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <Button asChild className="mt-4 w-full">
-              <Link href={`/auth/signin?redirect=/rent/${stall.id}`} className="flex items-center">
-                <LogIn className="mr-2 h-4 w-4" /> Sign In to Rent
-              </Link>
-            </Button>
-            <Button variant="outline" asChild className="mt-2 w-full">
-                <Link href="/home">
-                    <ArrowLeft className="mr-1 h-4 w-4" /> Back to Map
-                </Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
+  useEffect(() => { return () => { stopScanner() }}, [stopScanner]);
+
+  if (authLoading) return (
+    <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)]">
+      <Loader2 className="h-12 w-12 animate-spin text-primary" /><p className="mt-4 text-muted-foreground">Loading account status...</p>
+    </div>
+  );
+
+  if (!user) return (
+    <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)] py-8 px-4">
+      <Card className="w-full max-w-md shadow-xl text-center">
+        <CardHeader>
+          <CardTitle className="text-destructive flex items-center justify-center"><AlertTriangle className="mr-2 h-6 w-6" /> Authentication Required</CardTitle>
+          <CardDescription>You need to be logged in to rent an umbrella.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <Button asChild className="mt-4 w-full"><Link href={`/auth/signin?redirect=/rent/${stall.id}`} className="flex items-center"><LogIn className="mr-2 h-4 w-4" /> Sign In to Rent</Link></Button>
+          <Button variant="outline" asChild className="mt-2 w-full"><Link href="/home"><ArrowLeft className="mr-1 h-4 w-4" /> Back to Map</Link></Button>
+        </CardContent>
+      </Card>
+    </div>
+  );
 
   const canRent = user.deposit && user.deposit >= 100 && stall.availableUmbrellas > 0;
 
@@ -301,97 +266,66 @@ export function RentalInitiation({ stall }: RentalInitiationProps) {
       <AlertDialog open={showSuccessDialog}>
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
-            <AlertDialogTitle className="flex items-center text-xl text-green-600">
-              <CheckCircle className="mr-2 h-8 w-8" />
-              Unlock Command Sent!
-            </AlertDialogTitle>
-            <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
-              Please take your umbrella. Your rental is starting.
-            </AlertDialogDescription>
+            <AlertDialogTitle className="flex items-center text-xl text-green-600"><CheckCircle className="mr-2 h-8 w-8" /> Unlock Command Sent!</AlertDialogTitle>
+            <AlertDialogDescription className="text-lg text-center py-4 text-foreground">Please take your umbrella. Your rental is starting.</AlertDialogDescription>
           </AlertDialogHeader>
         </AlertDialogContent>
       </AlertDialog>
 
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader>
-          <Link href="/home" className="flex items-center text-sm text-primary hover:underline mb-4">
-            <ArrowLeft className="h-4 w-4 mr-1" />
-            Back to Map
-          </Link>
-          <CardTitle className="text-2xl font-bold text-primary flex items-center">
-            <Umbrella className="h-6 w-6 mr-2" /> Rent from {stall.name}
-          </CardTitle>
-          <CardDescription className="flex items-center">
-            <MapPin className="h-4 w-4 mr-1 text-muted-foreground" /> {stall.address}
-          </CardDescription>
+          <Link href="/home" className="flex items-center text-sm text-primary hover:underline mb-4"><ArrowLeft className="h-4 w-4 mr-1" />Back to Map</Link>
+          <CardTitle className="text-2xl font-bold text-primary flex items-center"><Umbrella className="h-6 w-6 mr-2" /> Rent from {stall.name}</CardTitle>
+          <CardDescription className="flex items-center"><MapPin className="h-4 w-4 mr-1 text-muted-foreground" /> {stall.address}</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           
           <div className="space-y-4">
-            {bluetoothError && (
+            {stepError && (
               <Alert variant="destructive">
-                <BluetoothSearching className="h-4 w-4" />
-                <AlertTitle>Bluetooth Error</AlertTitle>
-                <AlertDescription>{bluetoothError}</AlertDescription>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{stepError}</AlertDescription>
               </Alert>
             )}
 
-            {!canRent && (
+            {!canRent && rentalStep === 'idle' && (
                 <Alert variant="destructive">
                     <AlertTriangle className="h-4 w-4"/>
                     <AlertTitle>Cannot Rent</AlertTitle>
-                    <AlertDescription>
-                        {stall.availableUmbrellas <= 0 
-                            ? "There are no umbrellas available at this stall."
-                            : "A HK$100 deposit is required. Please add a deposit from your account page."
-                        }
-                    </AlertDescription>
+                    <AlertDescription>{stall.availableUmbrellas <= 0 ? "No umbrellas available at this stall." : "A HK$100 deposit is required."}</AlertDescription>
                 </Alert>
             )}
 
-            {isUnlocking && (
+            {isProcessing && (
               <div className="text-center p-4 bg-primary/10 rounded-lg">
                 <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
-                <p className="text-sm text-primary font-medium">{unlockStateMessages[unlockState]}</p>
-              </div>
-            )}
-            
-            {unlockState === 'success' && (
-               <div className="text-center p-4 bg-green-100 rounded-lg">
-                <CheckCircle className="h-8 w-8 mx-auto text-green-600 mb-3" />
-                <p className="text-sm text-green-700 font-medium">{unlockStateMessages.success}</p>
+                <p className="text-sm text-primary font-medium">{rentalStepMessages[rentalStep]}</p>
               </div>
             )}
           </div>
+          
+          <div id={QR_READER_REGION_ID_RENT} className={cn("w-full aspect-square bg-black rounded-md", rentalStep !== 'scanning' && "hidden")} />
 
-          <div>
-            <h4 className="font-semibold">Availability:</h4>
-            <p className={stall.availableUmbrellas > 0 ? "text-green-600" : "text-red-600"}>
-              {stall.availableUmbrellas} / {stall.totalUmbrellas} umbrellas available
-            </p>
-          </div>
-          <div>
-            <h4 className="font-semibold">Rental Terms:</h4>
-            <ul className="list-disc list-inside text-sm text-muted-foreground">
-              <li>Minimum HK$100 refundable security deposit required on account to rent.</li>
-              <li>First rental is free!</li>
-              <li>After first rental: HK$5 per hour.</li>
-              <li>Daily charge capped at HK$25 (for each 24-hour period).</li>
-              <li>Return to any U-Dry stall.</li>
-              <li>Deposit will be forfeited if umbrella is not returned within 3 days (72 hours).</li>
-            </ul>
-          </div>
+          {rentalStep === 'idle' && (
+            <div>
+              <h4 className="font-semibold">Availability:</h4>
+              <p className={stall.availableUmbrellas > 0 ? "text-green-600" : "text-red-600"}>{stall.availableUmbrellas} / {stall.totalUmbrellas} umbrellas available</p>
+            </div>
+          )}
+
         </CardContent>
         <CardFooter className="flex-col space-y-2">
-            {!isUnlocking && unlockState !== 'success' && (
-              <Button onClick={handleUnlock} disabled={!canRent} className="w-full">
-                  <Bluetooth className="mr-2 h-5 w-5" /> Connect & Unlock Umbrella
+            {rentalStep === 'idle' && (
+              <Button onClick={startScanAndRentProcess} disabled={!canRent} className="w-full">
+                  <QrCode className="mr-2 h-5 w-5" /> Scan QR Code to Rent
               </Button>
             )}
-             {unlockState === 'error' && (
-              <Button onClick={handleDisconnectAndReset} variant="outline" className="w-full">
-                  Try Again
-              </Button>
+             {rentalStep === 'error' && (
+              <Button onClick={resetState} variant="outline" className="w-full">Try Again</Button>
+            )}
+             {rentalStep === 'scanning' && (
+              <Button onClick={resetState} variant="destructive" className="w-full">Cancel Scan</Button>
             )}
         </CardFooter>
       </Card>
