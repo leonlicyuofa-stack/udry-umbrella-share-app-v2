@@ -1,10 +1,10 @@
-// src/components/rental/rental-initiation.tsx - Renamed to RentalStallDetails internally
+// src/components/rental/rental-initiation.tsx
 "use client";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import type { Stall } from "@/lib/types";
-import { ArrowLeft, MapPin, Umbrella, LogIn, AlertTriangle, QrCode } from "lucide-react";
+import { ArrowLeft, MapPin, Umbrella, AlertTriangle, Bluetooth, Loader2, XCircle } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/contexts/auth-context";
@@ -12,22 +12,29 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 interface RentalStallDetailsProps {
   stall: Stall;
-  onScanClick: () => void;
+  onConnectClick: () => void;
+  isProcessing: boolean;
+  bluetoothState: string;
+  bluetoothStateMessage: string;
+  bluetoothError: string | null;
 }
 
-// This component has been simplified to ONLY display stall information
-// and trigger the scan dialog via a callback. All complex logic has been removed.
-export function RentalStallDetails({ stall, onScanClick }: RentalStallDetailsProps) {
+export function RentalStallDetails({ 
+  stall, 
+  onConnectClick, 
+  isProcessing,
+  bluetoothState,
+  bluetoothStateMessage,
+  bluetoothError
+}: RentalStallDetailsProps) {
   const { user, loading: authLoading } = useAuth();
   const router = useRouter();
   
   if (authLoading) {
-    // This is unlikely to be seen as the parent page has a loader, but it's good practice.
     return null; 
   }
 
   if (!user) {
-    // Redirect to sign-in if the user is not authenticated
     router.replace(`/auth/signin?redirect=/rent/${stall.id}`);
     return null;
   }
@@ -37,7 +44,6 @@ export function RentalStallDetails({ stall, onScanClick }: RentalStallDetailsPro
   const hasBalance = user.balance && user.balance > 0;
   const hasUmbrellas = stall.availableUmbrellas > 0;
   
-  // Determine if the user can rent based on all conditions
   const canRent = hasUmbrellas && hasDeposit && (isFirstRental || hasBalance);
 
   let cannotRentReason = '';
@@ -90,10 +96,26 @@ export function RentalStallDetails({ stall, onScanClick }: RentalStallDetailsPro
              </AlertDescription>
           </Alert>
 
+          {isProcessing && (
+             <div className="text-center p-4 bg-primary/10 rounded-lg">
+              <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
+              <p className="text-sm text-primary font-medium">{bluetoothStateMessage}</p>
+            </div>
+          )}
+
+          {bluetoothState === 'error' && bluetoothError && (
+             <Alert variant="destructive">
+              <XCircle className="h-4 w-4" />
+              <AlertTitle>Connection Failed</AlertTitle>
+              <AlertDescription>{bluetoothError}</AlertDescription>
+            </Alert>
+          )}
+
         </CardContent>
         <CardFooter className="flex-col space-y-2">
-          <Button onClick={onScanClick} disabled={!canRent} className="w-full">
-            <QrCode className="mr-2 h-5 w-5" /> Scan & Rent
+          <Button onClick={onConnectClick} disabled={!canRent || isProcessing} className="w-full">
+            {isProcessing ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Bluetooth className="mr-2 h-5 w-5" />}
+            {isProcessing ? bluetoothStateMessage : "Connect & Rent"}
           </Button>
         </CardFooter>
       </Card>
