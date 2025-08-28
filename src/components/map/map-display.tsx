@@ -12,6 +12,7 @@ import { useToast } from "@/hooks/use-toast";
 import { ScanAndRentDialog } from '@/components/rental/scan-and-rent-dialog';
 import { useStalls } from '@/contexts/auth-context'; // Import useStalls
 import { defaultMapCenter } from '@/lib/mock-data';
+import { RentalInitiationDialog } from '@/components/rental/rental-initiation-dialog';
 
 // --- User-provided SVG Icon ---
 const UmbrellaMapIcon = () => (
@@ -74,7 +75,8 @@ export function MapDisplay() {
   const { toast } = useToast();
   const { stalls, isLoadingStalls } = useStalls(); // Get stalls from the new hook
 
-  const [selectedStall, setSelectedStall] = useState<Stall | null>(null);
+  const [selectedMapStall, setSelectedMapStall] = useState<Stall | null>(null);
+  const [stallForRentalDialog, setStallForRentalDialog] = useState<Stall | null>(null);
   const [clientMapId, setClientMapId] = useState<string | null>(null);
   
   const [currentMapCenter, setCurrentMapCenter] = useState<google.maps.LatLngLiteral>(defaultMapCenter);
@@ -97,14 +99,14 @@ export function MapDisplay() {
   }, []);
 
   const handleMarkerClick = useCallback((stall: Stall) => {
-    setSelectedStall(stall);
+    setSelectedMapStall(stall);
     if (stall.location) {
       setCurrentMapCenter({ lat: stall.location.latitude, lng: stall.location.longitude });
     }
   }, []);
 
   const handleInfoWindowClose = useCallback(() => {
-    setSelectedStall(null);
+    setSelectedMapStall(null);
   }, []);
 
   const handleLocateMe = () => {
@@ -206,26 +208,26 @@ export function MapDisplay() {
              <Marker position={userPosition} title="Your Location" />
           )}
 
-          {selectedStall && selectedStall.location && (
+          {selectedMapStall && selectedMapStall.location && (
             <InfoWindow
-              position={{ lat: selectedStall.location.latitude, lng: selectedStall.location.longitude }}
+              position={{ lat: selectedMapStall.location.latitude, lng: selectedMapStall.location.longitude }}
               onCloseClick={handleInfoWindowClose}
               minWidth={320}
             >
               <Card className="border-none shadow-none">
                 <CardHeader className="p-4">
                   <CardTitle className="text-lg text-primary flex items-center">
-                    <MapPinIcon className="h-5 w-5 mr-2" /> {selectedStall.name}
+                    <MapPinIcon className="h-5 w-5 mr-2" /> {selectedMapStall.name}
                   </CardTitle>
-                  <CardDescription className="text-xs">{selectedStall.address}</CardDescription>
+                  <CardDescription className="text-xs">{selectedMapStall.address}</CardDescription>
                 </CardHeader>
                 <CardContent className="p-4 pt-0 space-y-2">
                   <div>
                     <p className="text-sm font-medium flex items-center">
                       <Umbrella className="h-4 w-4 mr-2 text-green-600" />
                       Available Umbrellas:
-                      <span className={`font-bold ml-1 ${selectedStall.availableUmbrellas > 0 ? 'text-green-600' : 'text-red-600'}`}>
-                        {selectedStall.availableUmbrellas} / {selectedStall.totalUmbrellas}
+                      <span className={`font-bold ml-1 ${selectedMapStall.availableUmbrellas > 0 ? 'text-green-600' : 'text-red-600'}`}>
+                        {selectedMapStall.availableUmbrellas} / {selectedMapStall.totalUmbrellas}
                       </span>
                     </p>
                   </div>
@@ -233,24 +235,25 @@ export function MapDisplay() {
                     <p className="text-sm font-medium flex items-center">
                        <CornerDownLeft className="h-4 w-4 mr-2 text-blue-600" />
                       Available Return Slots:
-                      <span className={`font-bold ml-1 ${selectedStall.totalUmbrellas - selectedStall.availableUmbrellas > 0 ? 'text-blue-600' : 'text-orange-600'}`}>
-                        {selectedStall.totalUmbrellas - selectedStall.availableUmbrellas} / {selectedStall.totalUmbrellas}
+                      <span className={`font-bold ml-1 ${selectedMapStall.totalUmbrellas - selectedMapStall.availableUmbrellas > 0 ? 'text-blue-600' : 'text-orange-600'}`}>
+                        {selectedMapStall.totalUmbrellas - selectedMapStall.availableUmbrellas} / {selectedMapStall.totalUmbrellas}
                       </span>
                     </p>
                   </div>
                   <Button 
-                    asChild 
+                    onClick={() => {
+                      setStallForRentalDialog(selectedMapStall);
+                      setSelectedMapStall(null); // Close info window
+                    }}
                     className="w-full mt-2" 
                     size="sm"
-                    disabled={selectedStall.availableUmbrellas === 0}
+                    disabled={selectedMapStall.availableUmbrellas === 0}
                   >
-                    <Link href={`/rent/${selectedStall.dvid}`}>
-                      Rent Umbrella
-                      <Umbrella className="ml-2 h-4 w-4" />
-                    </Link>
+                    Rent Umbrella
+                    <Umbrella className="ml-2 h-4 w-4" />
                   </Button>
-                  {selectedStall.availableUmbrellas === 0 && <p className="text-xs text-destructive mt-1 text-center">No umbrellas available to rent at this stall.</p>}
-                  {selectedStall.totalUmbrellas - selectedStall.availableUmbrellas === 0 && <p className="text-xs text-orange-600 mt-1 text-center">No empty slots to return an umbrella.</p>}
+                  {selectedMapStall.availableUmbrellas === 0 && <p className="text-xs text-destructive mt-1 text-center">No umbrellas available to rent at this stall.</p>}
+                  {selectedMapStall.totalUmbrellas - selectedMapStall.availableUmbrellas === 0 && <p className="text-xs text-orange-600 mt-1 text-center">No empty slots to return an umbrella.</p>}
                 </CardContent>
               </Card>
             </InfoWindow>
@@ -286,6 +289,18 @@ export function MapDisplay() {
         )}
       </div>
       <ScanAndRentDialog isOpen={isScanDialogOpen} onOpenChange={setIsScanDialogOpen} stalls={stalls} />
+      <RentalInitiationDialog 
+        stall={stallForRentalDialog} 
+        isOpen={!!stallForRentalDialog} 
+        onOpenChange={(isOpen) => {
+          if (!isOpen) {
+            setStallForRentalDialog(null);
+          }
+        }} 
+      />
     </>
   );
 }
+
+
+    
