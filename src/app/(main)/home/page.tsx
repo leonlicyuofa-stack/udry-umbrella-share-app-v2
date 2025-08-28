@@ -2,6 +2,7 @@
 import { MapPageClient } from '@/components/map/map-page-client';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import type { Metadata } from 'next';
+import { cn } from '@/lib/utils';
 
 // Metadata for the new logged-in homepage.
 export const metadata: Metadata = {
@@ -14,7 +15,7 @@ export const metadata: Metadata = {
 // on all devices, especially within the Capacitor webview.
 export default function HomePage() {
   return (
-    <ScrollArea className="h-[calc(100vh-4rem)]">
+    <ScrollArea className={cn("h-[calc(100vh-4rem)]", "border-4 border-blue-500")}>
       <div className="container mx-auto px-4 py-8 space-y-8">
         <MapPageClient />
       </div>

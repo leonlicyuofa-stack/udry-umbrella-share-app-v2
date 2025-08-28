@@ -8,6 +8,7 @@ import { Info, AlertTriangle } from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useLanguage } from '@/contexts/language-context';
 import { APIProvider } from '@vis.gl/react-google-maps';
+import { cn } from '@/lib/utils';
 
 function GoogleMapsConfigError() {
   const { translate } = useLanguage();
@@ -63,7 +64,7 @@ export function MapPageClient() {
     <APIProvider apiKey={process.env.NEXT_PUBLIC_GOOGLE_MAPS_API_KEY!}>
       <div className="container mx-auto px-4 py-8 space-y-8">
         <section>
-          <Card className="shadow-lg">
+          <Card className={cn("shadow-lg", "border-4 border-green-500")}>
             <CardHeader>
               <CardTitle className="text-3xl font-bold text-primary">{translate('find_an_umbrella_title')}</CardTitle>
               <CardDescription>

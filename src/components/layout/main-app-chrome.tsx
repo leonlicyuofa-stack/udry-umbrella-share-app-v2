@@ -4,6 +4,7 @@
 import { Header } from '@/components/layout/header';
 import { RentalTimer } from '@/components/rental/rental-timer';
 import { useAuth } from '@/contexts/auth-context';
+import { cn } from '@/lib/utils';
 
 // This is a client component that wraps the main part of the application.
 // It ensures that the Header and RentalTimer are only shown on pages
@@ -14,7 +15,7 @@ export function MainAppChrome({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      <main className="flex-1">
+      <main className={cn("flex-1", "border-4 border-red-500")}>
         {children}
       </main>
       {/* The rental timer will only show up if there is an active rental */}
