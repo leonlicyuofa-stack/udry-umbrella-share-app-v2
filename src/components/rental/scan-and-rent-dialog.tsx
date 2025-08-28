@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useEffect, useRef, useCallback } from 'react';
@@ -87,7 +86,7 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
     if (foundStall) {
       setScanState('complete');
       toast({ title: "Stall Found!", description: `Redirecting to rental page for ${foundStall.name}`});
-      router.push(`/home`); // This is the bug we will fix in Step 2
+      router.push(`/rent/${foundStall.dvid}`);
       onOpenChange(false);
     } else {
       toast({ variant: "destructive", title: "Stall Not Found", description: `Scanned code did not match a known stall. Scanned ID: ${dvid}` });
@@ -104,22 +103,19 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls }: ScanAndRentD
     setScanState('checking_bluetooth');
 
     try {
-        // Correctly await the bluetooth availability check.
         const isBluetoothAvailable = await navigator.bluetooth.getAvailability();
         if (!isBluetoothAvailable) {
             setScanState('bluetooth_off');
-            return; // Stop the process if Bluetooth is off
+            return;
         }
     } catch (error) {
-        // This can happen on devices/browsers without bluetooth support at all.
         console.error("Bluetooth availability check failed:", error);
-        setScanState('bluetooth_off'); // Treat as off for safety
+        setScanState('bluetooth_off');
         return;
     }
 
     setScanState('initializing');
     
-    // Use a short delay to allow UI to update before camera starts
     setTimeout(() => {
         if (!html5QrCodeRef.current) {
           html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID_RENT, { verbose: false });
