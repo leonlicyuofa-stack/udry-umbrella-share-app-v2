@@ -6,7 +6,6 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, ArrowRight, Loader2, AlertTriangle, Terminal, RefreshCw } from 'lucide-react';
-import Link from 'next/link';
 import { useToast } from '@/hooks/use-toast';
 import { httpsCallable } from 'firebase/functions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -18,7 +17,7 @@ function InternalPaymentSuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
-    const { firebaseServices } = useAuth();
+    const { user, isReady, firebaseServices } = useAuth();
     
     const [status, setStatus] = useState<UpdateStatus>('idle');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -37,10 +36,19 @@ function InternalPaymentSuccessContent() {
     };
 
     useEffect(() => {
-        if (hasProcessed.current || !firebaseServices) return;
+        // Wait until auth is ready and we have the necessary services.
+        if (!isReady || hasProcessed.current || !firebaseServices) return;
+        
+        // This effect might run multiple times, but hasProcessed.current will stop it after the first run.
+        if (isReady && !user) {
+             setErrorMessage("Authentication session not found. Please sign in and try again.");
+             setStatus('error');
+             hasProcessed.current = true; // Mark as processed to prevent re-running
+             return;
+        }
 
         const sessionId = searchParams.get('session_id');
-        const uid = searchParams.get('uid'); // Get the UID from the URL
+        const uid = searchParams.get('uid'); 
 
         if (!sessionId || !uid) {
             toast({
@@ -51,11 +59,18 @@ function InternalPaymentSuccessContent() {
             router.replace('/home');
             return;
         }
+
+        if (user && user.uid !== uid) {
+            setErrorMessage("Security check failed: The logged-in user does not match the payment link user.");
+            setStatus('error');
+            hasProcessed.current = true;
+            return;
+        }
         
         hasProcessed.current = true;
         processPayment(sessionId, uid);
 
-    }, [firebaseServices, router, searchParams, toast]);
+    }, [isReady, user, firebaseServices, router, searchParams, toast]);
 
 
     const processPayment = async (sessionId: string, uid: string) => {
@@ -66,19 +81,10 @@ function InternalPaymentSuccessContent() {
         }
         setStatus('processing');
         try {
-            // Note: The cloud function still uses the *authenticated caller's UID* for security.
-            // The UID in the URL is for client-side confirmation and matching, but the
-            // real security check happens on the server based on who is calling the function.
-            // However, due to the persistence issue, we are now passing the UID explicitly.
-            // A more secure implementation would pass a one-time token. For this app's purpose,
-            // we will pass the UID and rely on Stripe's metadata for the primary server-side check.
             const finalizeStripePayment = httpsCallable(firebaseServices.functions, 'finalizeStripePayment');
             
-            // The callable function will use the *currently authenticated user* on the cloud function instance.
-            // Since our app user is the one triggering this flow, this is secure.
-            // The UID from the URL is primarily for client-side state management if needed, but the
-            // critical security validation (matching Stripe metadata UID to caller UID) happens in the function.
-            const result = await finalizeStripePayment({ sessionId });
+            // Pass the uid from the URL to the function for a server-side security check.
+            const result = await finalizeStripePayment({ sessionId, uid });
             const data = result.data as { success: boolean, message: string };
             if (!data.success) throw new Error(data.message || 'Failed to process payment session.');
             
@@ -104,7 +110,7 @@ function InternalPaymentSuccessContent() {
         }
     };
     
-    if (status === 'idle' || status === 'processing') {
+    if (status === 'idle' || status === 'processing' || !isReady) {
          return (
             <Card className="w-full max-w-lg text-center shadow-xl">
                 <CardHeader>
@@ -192,5 +198,3 @@ export default function InternalPaymentSuccessPage() {
         </div>
     )
 }
-
-    

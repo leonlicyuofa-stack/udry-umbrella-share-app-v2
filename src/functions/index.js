@@ -92,7 +92,6 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
-    // CRITICAL CHANGE: We now point directly to the app's deep link.
     const APP_DEEP_LINK_BASE_URL = 'udry://payment/success'; 
     const LIVE_APP_BASE_URL = 'https://udry-app-dev.web.app'; 
     logger.info(`Step 5: Using deep link base URL: ${APP_DEEP_LINK_BASE_URL}`);
@@ -115,8 +114,8 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            // Corrected URL: Point directly to the app's deep link.
-            success_url: `${APP_DEEP_LINK_BASE_URL}?session_id={CHECKOUT_SESSION_ID}`,
+            // CORRECTED: Using backticks (`) to allow variable interpolation for userId
+            success_url: `${APP_DEEP_LINK_BASE_URL}?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
                 userId: userId,
@@ -158,15 +157,24 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
         }
         logger.info(`Step 2 SUCCESS: Authentication check passed for user UID: ${request.auth.uid}`);
         
-        const { sessionId } = request.data;
-        const userId = request.auth.uid;
+        const { sessionId, uid } = request.data; // Now expecting uid as well
+        const callerUserId = request.auth.uid;
 
-        logger.info("Step 3: Validating sessionId input...");
+        logger.info("Step 3: Validating sessionId and uid input...");
         if (!sessionId || typeof sessionId !== 'string') {
-            logger.error(`Step 3 FAILED: Request from user ${userId} has a missing or invalid sessionId.`);
+            logger.error(`Step 3 FAILED: Request from user ${callerUserId} has a missing or invalid sessionId.`);
             throw new HttpsError('invalid-argument', 'The function must be called with a valid "sessionId".');
         }
-        logger.info(`Step 3 SUCCESS: Session ID received: ${sessionId}`);
+        if (!uid || typeof uid !== 'string') {
+            logger.error(`Step 3 FAILED: Request from user ${callerUserId} has a missing or invalid uid.`);
+            throw new HttpsError('invalid-argument', 'The function must be called with a valid "uid".');
+        }
+        if (callerUserId !== uid) {
+            logger.error(`CRITICAL SECURITY CHECK FAILED: Caller UID (${callerUserId}) does not match deep link UID (${uid}).`);
+            throw new HttpsError('permission-denied', 'Caller ID does not match the user ID from the payment link.');
+        }
+
+        logger.info(`Step 3 SUCCESS: Session ID received: ${sessionId} for user ${uid}`);
 
         logger.info("Step 4: Checking for prior processing of this payment...");
         const paymentRef = db.collection('processed_stripe_payments').doc(sessionId);
@@ -197,7 +205,8 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
         if (session.payment_status !== 'paid') {
             throw new HttpsError('failed-precondition', 'Stripe session not paid.');
         }
-        if (metadataUserId !== userId) {
+        if (metadataUserId !== callerUserId) {
+            logger.error(`CRITICAL SECURITY CHECK FAILED: Caller UID (${callerUserId}) does not match Stripe metadata UID (${metadataUserId}).`);
             throw new HttpsError('permission-denied', 'User ID does not match session metadata.');
         }
         if (!paymentType || !['deposit', 'balance'].includes(paymentType)) {
@@ -208,7 +217,7 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
         }
         logger.info(`Step 6 SUCCESS: Session data validated.`);
 
-        const userDocRef = db.collection('users').doc(userId);
+        const userDocRef = db.collection('users').doc(callerUserId);
         
         logger.info(`Step 7: Starting Firestore transaction to update user balance...`);
         await db.runTransaction(async (transaction) => {
@@ -230,16 +239,16 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
             }
             
             transaction.set(paymentRef, {
-                userId: userId,
+                userId: callerUserId,
                 processedAt: admin.firestore.FieldValue.serverTimestamp(),
                 amount: amountNum,
                 paymentType: paymentType,
             });
         });
 
-        logger.info(`Step 7 SUCCESS: Firestore transaction completed for user ${userId}.`);
+        logger.info(`Step 7 SUCCESS: Firestore transaction completed for user ${callerUserId}.`);
         logger.info("--- finalizeStripePayment function finished successfully ---");
-        return { success: true, message: `Successfully updated ${paymentType} for user ${userId}.` };
+        return { success: true, message: `Successfully updated ${paymentType} for user ${callerUserId}.` };
 
     } catch (error) {
         logger.error(`--- CRITICAL ERROR in finalizeStripePayment --- : ${error.message}`);
