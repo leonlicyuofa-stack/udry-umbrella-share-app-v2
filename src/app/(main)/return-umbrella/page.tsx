@@ -55,6 +55,7 @@ export default function ReturnUmbrellaPage() {
   const connectedDeviceIdRef = useRef<string | null>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const isProcessingScan = useRef(false);
+  const isIntentionalDisconnect = useRef(false);
   
   const isProcessingBluetooth = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
   const bluetoothStateMessages = getBluetoothStateMessages(scannedStall);
@@ -239,6 +240,7 @@ export default function ReturnUmbrellaPage() {
 
   useEffect(() => {
     if (showSuccessDialog && activeRental && scannedStall) {
+      isIntentionalDisconnect.current = true;
       const timer = setTimeout(() => {
         toast({
           title: "Umbrella Return Confirmed!",
@@ -255,6 +257,7 @@ export default function ReturnUmbrellaPage() {
 
   const handleReturnViaBluetooth = async () => {
     if (isProcessingBluetooth || !scannedStall) return;
+    isIntentionalDisconnect.current = false;
     setBluetoothError(null);
     setReturnStep('connecting');
     setBluetoothState('initializing');
@@ -271,6 +274,7 @@ export default function ReturnUmbrellaPage() {
       
       setBluetoothState('connecting');
       await BleClient.connect(device.deviceId, (deviceId) => {
+        if (isIntentionalDisconnect.current) return;
         disconnectFromDevice();
         toast({ variant: "destructive", title: "Bluetooth Disconnected", description: "The device connection was lost." });
         setBluetoothState('idle');
@@ -300,6 +304,7 @@ export default function ReturnUmbrellaPage() {
 
   useEffect(() => {
     return () => {
+      isIntentionalDisconnect.current = true;
       stopScanner();
       disconnectFromDevice();
     };
@@ -440,5 +445,3 @@ export default function ReturnUmbrellaPage() {
     </div>
   );
 }
-
-    

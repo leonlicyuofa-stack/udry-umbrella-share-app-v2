@@ -48,6 +48,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const [connectionStep, setConnectionStep] = useState<ConnectionStep>('pre_confirmation');
   
   const connectedDeviceIdRef = useRef<string | null>(null);
+  const isIntentionalDisconnect = useRef(false);
   
   const isProcessing = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
   const bluetoothStateMessages = getBluetoothStateMessages(stall);
@@ -66,6 +67,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   useEffect(() => {
     // Reset state when the dialog is closed or the stall changes
     if (!isOpen) {
+      isIntentionalDisconnect.current = true;
       setBluetoothState('idle');
       setBluetoothError(null);
       setConnectionStep('pre_confirmation');
@@ -122,6 +124,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           await startRental({ stallId: stall.id, stallName: stall.name, startTime: Date.now(), isFree });
           if(isFree) await useFirstFreeRental();
           
+          isIntentionalDisconnect.current = true;
           setBluetoothState('success');
           toast({ title: 'Rental Started!', description: `Your umbrella from ${stall.name} should be released.`});
           onOpenChange(false);
@@ -153,6 +156,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
 
   const handleConnectAndRent = async () => {
     if (!stall) return;
+    isIntentionalDisconnect.current = false;
     setBluetoothError(null);
     setBluetoothState('initializing');
     logMachineEvent({ stallId: stall.id, type: 'info', message: 'User initiated rental. Starting Bluetooth connection...' });
@@ -169,6 +173,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       setBluetoothState('connecting');
       
       await BleClient.connect(device.deviceId, (deviceId) => {
+        if (isIntentionalDisconnect.current) return;
         disconnectFromDevice();
         toast({ variant: 'destructive', title: 'Bluetooth Disconnected' });
         setBluetoothState('idle');
