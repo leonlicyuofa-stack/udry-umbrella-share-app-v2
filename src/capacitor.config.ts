@@ -20,7 +20,7 @@ const config: CapacitorConfig = {
     ]
   },
   plugins: {
-    App: {
+    "Capacitor-App": {
       iosScheme: "udry",
       androidScheme: "udry"
     }
@@ -28,3 +28,4 @@ const config: CapacitorConfig = {
 };
 
 export default config;
+
