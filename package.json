@@ -10,7 +10,8 @@
     "lint": "next lint",
     "android:sync": "npx cap sync android",
     "android:prepare": "echo \"sdk.dir=C:\\\\Users\\\\udry-app-dev\\\\AppData\\\\Local\\\\Android\\\\Sdk\" > android/local.properties",
-    "android:build:release": "cd android && ./gradlew assembleRelease"
+    "android:build:release": "cd android && ./gradlew assembleRelease",
+    "ios:clean-sync": "npm run build && npx cap sync ios"
   },
   "workspaces": [
     "functions"
