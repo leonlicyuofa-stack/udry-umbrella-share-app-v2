@@ -1,3 +1,4 @@
+
 // src/components/rental/rental-initiation-dialog.tsx
 "use client";
 
@@ -63,6 +64,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   }, []);
 
   useEffect(() => {
+    // Reset state when the dialog is closed or the stall changes
     if (!isOpen) {
       setBluetoothState('idle');
       setBluetoothError(null);
@@ -70,6 +72,14 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       disconnectFromDevice();
     }
   }, [isOpen, disconnectFromDevice]);
+
+  // Reset state when a new stall is passed in while dialog is already open
+  useEffect(() => {
+      setBluetoothState('idle');
+      setBluetoothError(null);
+      setConnectionStep('pre_confirmation');
+  }, [stall]);
+
 
   const handleTokNotification = useCallback(async (value: DataView) => {
     const receivedString = dataViewToText(value).trim();
@@ -214,7 +224,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           <AlertTitle>Connection Step</AlertTitle>
           <AlertDescription>
             Your phone will ask for permission to connect. In the list that appears, please find and select the device with this exact name:
-            <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-lg text-center text-primary tracking-widest">
+            <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-lg text-center text-green-600 font-bold tracking-widest">
               {stall.btName || "Device Name Not Found"}
             </div>
             If you do not see this name, please cancel and try again.

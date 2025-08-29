@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet } from 'lucide-react';
+import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { Stall, User, RentalHistory } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
@@ -35,6 +35,7 @@ export default function AdminPage() {
   
   const [newStallName, setNewStallName] = useState('');
   const [newStallDvid, setNewStallDvid] = useState('');
+  const [newStallBtName, setNewStallBtName] = useState('');
   const [newStallAddress, setNewStallAddress] = useState('');
   const [newStallCapacity, setNewStallCapacity] = useState('');
   const [newStallLat, setNewStallLat] = useState('');
@@ -44,6 +45,7 @@ export default function AdminPage() {
   const [editingStallId, setEditingStallId] = useState<string | null>(null);
   const [editedStallName, setEditedStallName] = useState('');
   const [editedStallDvid, setEditedStallDvid] = useState('');
+  const [editedBtName, setEditedBtName] = useState('');
   const [editedStallAddress, setEditedStallAddress] = useState('');
   const [editedStallLat, setEditedStallLat] = useState<number>(0);
   const [editedStallLng, setEditedStallLng] = useState<number>(0);
@@ -109,7 +111,7 @@ export default function AdminPage() {
     if (!firebaseServices?.db) return;
     setIsRegistering(true);
 
-    if (!newStallName || !newStallDvid || !newStallAddress || !newStallCapacity || !newStallLat || !newStallLng) {
+    if (!newStallName || !newStallDvid || !newStallBtName || !newStallAddress || !newStallCapacity || !newStallLat || !newStallLng) {
       toast({ variant: "destructive", title: "Missing Information", description: "Please fill out all fields to register a machine." });
       setIsRegistering(false);
       return;
@@ -139,12 +141,12 @@ export default function AdminPage() {
         totalUmbrellas: capacity,
         nextActionSlot: 1, 
         isDeployed: false, 
-        btName: `UDRY-${newStallDvid.slice(0,10)}`
+        btName: newStallBtName
       };
       const stallDocRef = doc(firebaseServices.db, 'stalls', stallDoc.dvid);
       await setDoc(stallDocRef, stallDoc);
       toast({ title: "Machine Registered", description: `Machine ${stallDoc.name} has been added.` });
-      setNewStallName(''); setNewStallDvid(''); setNewStallAddress(''); setNewStallCapacity(''); setNewStallLat(''); setNewStallLng('');
+      setNewStallName(''); setNewStallDvid(''); setNewStallAddress(''); setNewStallCapacity(''); setNewStallLat(''); setNewStallLng(''); setNewStallBtName('');
     } catch (error: any) {
       toast({ variant: "destructive", title: "Registration Failed", description: error.message });
       console.error("Error adding stall: ", error);
@@ -161,6 +163,7 @@ export default function AdminPage() {
       await firestoreUpdateDoc(stallDocRef, {
         name: editedStallName,
         dvid: editedStallDvid,
+        btName: editedBtName,
         address: editedStallAddress,
         location: new GeoPoint(editedStallLat, editedStallLng),
         nextActionSlot: editedNextActionSlot,
@@ -341,7 +344,8 @@ export default function AdminPage() {
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-1"><Label htmlFor="stall-name">Stall Name</Label><Input id="stall-name" placeholder="e.g., TST Office" value={newStallName} onChange={(e) => setNewStallName(e.target.value)} disabled={isRegistering} /></div>
                 <div className="space-y-1"><Label htmlFor="stall-dvid">Machine DVID (Serial #)</Label><Input id="stall-dvid" placeholder="e.g., CMYS234400559" value={newStallDvid} onChange={(e) => setNewStallDvid(e.target.value)} disabled={isRegistering} /></div>
-                <div className="md:col-span-2 space-y-1"><Label htmlFor="stall-address">Address</Label><Input id="stall-address" placeholder="e.g., 123 Nathan Road" value={newStallAddress} onChange={(e) => setNewStallAddress(e.target.value)} disabled={isRegistering} /></div>
+                <div className="space-y-1"><Label htmlFor="stall-btname">Bluetooth Device Name</Label><Input id="stall-btname" placeholder="e.g., UDRY-MK001 or CDKJ" value={newStallBtName} onChange={(e) => setNewStallBtName(e.target.value)} disabled={isRegistering} /></div>
+                <div className="space-y-1"><Label htmlFor="stall-address">Address</Label><Input id="stall-address" placeholder="e.g., 123 Nathan Road" value={newStallAddress} onChange={(e) => setNewStallAddress(e.target.value)} disabled={isRegistering} /></div>
                 <div className="space-y-1"><Label htmlFor="stall-lat">Latitude</Label><Input id="stall-lat" type="number" step="any" placeholder="e.g., 22.3193" value={newStallLat} onChange={(e) => setNewStallLat(e.target.value)} disabled={isRegistering} /></div>
                 <div className="space-y-1"><Label htmlFor="stall-lng">Longitude</Label><Input id="stall-lng" type="number" step="any" placeholder="e.g., 114.1694" value={newStallLng} onChange={(e) => setNewStallLng(e.target.value)} disabled={isRegistering} /></div>
                 <div className="md:col-span-2 space-y-1"><Label htmlFor="stall-capacity">Total Umbrella Capacity</Label><Input id="stall-capacity" type="number" placeholder="e.g., 20" value={newStallCapacity} onChange={(e) => setNewStallCapacity(e.target.value)} disabled={isRegistering} /></div>
@@ -367,6 +371,7 @@ export default function AdminPage() {
                         <CardContent className="space-y-4">
                           <div className="space-y-1"><Label htmlFor={`edit-name-${stall.dvid}`}>Stall Name</Label><Input id={`edit-name-${stall.dvid}`} value={editedStallName} onChange={e => setEditedStallName(e.target.value)} /></div>
                           <div className="space-y-1"><Label htmlFor={`edit-dvid-${stall.dvid}`}>Machine DVID</Label><Input id={`edit-dvid-${stall.dvid}`} value={editedStallDvid} onChange={e => setEditedStallDvid(e.target.value)} /></div>
+                          <div className="space-y-1"><Label htmlFor={`edit-btname-${stall.dvid}`}>Bluetooth Device Name</Label><Input id={`edit-btname-${stall.dvid}`} value={editedBtName} onChange={e => setEditedBtName(e.target.value)} /></div>
                           <div className="space-y-1"><Label htmlFor={`edit-address-${stall.dvid}`}>Address</Label><Input id={`edit-address-${stall.dvid}`} value={editedStallAddress} onChange={e => setEditedStallAddress(e.target.value)} /></div>
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1"><Label htmlFor={`edit-lat-${stall.dvid}`}>Latitude</Label><Input id={`edit-lat-${stall.dvid}`} type="number" value={editedStallLat} onChange={e => setEditedStallLat(parseFloat(e.target.value) || 0)} step="any" /></div>
@@ -380,14 +385,14 @@ export default function AdminPage() {
                      </>
                    ) : (
                      <>
-                      <CardHeader><div className="flex justify-between items-start"><div><CardTitle className="text-lg">{stall.name}</CardTitle><CardDescription className="flex items-center gap-4 mt-1"><span className="flex items-center"><Hash className="mr-1 h-3 w-3" /> DVID: {stall.dvid}</span><span className="flex items-center"><Building className="mr-1 h-3 w-3" /> {stall.address}</span></CardDescription></div><Badge variant={stall.isDeployed ? 'default' : 'secondary'}>{stall.isDeployed ? 'Deployed' : 'Not Deployed'}</Badge></div></CardHeader>
+                      <CardHeader><div className="flex justify-between items-start"><div><CardTitle className="text-lg">{stall.name}</CardTitle><CardDescription className="flex items-center flex-wrap gap-x-4 gap-y-1 mt-1"><span className="flex items-center"><Hash className="mr-1 h-3 w-3" /> DVID: {stall.dvid}</span><span className="flex items-center"><Bluetooth className="mr-1 h-3 w-3" /> BT Name: {stall.btName || 'Not Set'}</span><span className="flex items-center"><Building className="mr-1 h-3 w-3" /> {stall.address}</span></CardDescription></div><Badge variant={stall.isDeployed ? 'default' : 'secondary'}>{stall.isDeployed ? 'Deployed' : 'Not Deployed'}</Badge></div></CardHeader>
                       <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-x-4 gap-y-2 text-sm">
                         <p className="flex items-center"><ListTree className="mr-1 h-4 w-4" /> {translate('admin_stall_available_umbrellas_label')} <span className="font-semibold ml-1">{stall.availableUmbrellas} / {stall.totalUmbrellas}</span></p>
                         <p className="flex items-center"><Zap className="mr-2 h-4 w-4 text-purple-500"/> Next Action Slot: <span className="font-semibold ml-1">{stall.nextActionSlot}</span></p>
                       </CardContent>
                       <CardFooter className="gap-2 flex-wrap">
                         <Button variant={stall.isDeployed ? 'destructive' : 'default'} size="sm" onClick={() => handleToggleDeploy(stall)} disabled={togglingDeployId === stall.dvid}>{togglingDeployId === stall.dvid ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : stall.isDeployed ? <CloudOff className="mr-2 h-4 w-4" /> : <CloudUpload className="mr-2 h-4 w-4" />} {stall.isDeployed ? 'Un-deploy' : 'Deploy'}</Button>
-                        <Button variant="outline" size="sm" onClick={() => { setEditingStallId(stall.dvid); setEditedStallName(stall.name); setEditedStallDvid(stall.dvid); setEditedStallAddress(stall.address); setEditedStallLat(stall.location?.latitude || 0); setEditedStallLng(stall.location?.longitude || 0); setEditedNextActionSlot(stall.nextActionSlot); }}>
+                        <Button variant="outline" size="sm" onClick={() => { setEditingStallId(stall.dvid); setEditedStallName(stall.name); setEditedStallDvid(stall.dvid); setEditedBtName(stall.btName); setEditedStallAddress(stall.address); setEditedStallLat(stall.location?.latitude || 0); setEditedStallLng(stall.location?.longitude || 0); setEditedNextActionSlot(stall.nextActionSlot); }}>
                           <Edit className="mr-2 h-4 w-4" />{translate('admin_stall_edit_button')}
                         </Button>
                       </CardFooter>
