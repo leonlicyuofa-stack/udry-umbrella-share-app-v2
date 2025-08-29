@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -14,6 +15,7 @@ import type { Stall } from '@/lib/types';
 import { Html5Qrcode } from "html5-qrcode";
 import { cn } from "@/lib/utils";
 import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/bluetooth-le/dist/esm';
+import { httpsCallable } from 'firebase/functions';
 
 const QR_READER_REGION_ID = "qr-reader-region-return";
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
@@ -36,7 +38,7 @@ const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, 
 });
 
 export default function ReturnUmbrellaPage() {
-  const { activeRental, endRental, isLoadingRental, logMachineEvent } = useAuth();
+  const { user, activeRental, endRental, isLoadingRental, logMachineEvent, firebaseServices } = useAuth();
   const { stalls, isLoadingStalls } = useStalls();
   const router = useRouter();
   const { toast } = useToast();
@@ -173,7 +175,7 @@ export default function ReturnUmbrellaPage() {
 
   const handleTokNotification = useCallback(async (value: DataView) => {
     const receivedString = dataViewToText(value).trim();
-    if (!scannedStall) return;
+    if (!scannedStall || !firebaseServices) return;
 
     logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
 
@@ -185,26 +187,23 @@ export default function ReturnUmbrellaPage() {
         setBluetoothState('getting_command');
         
         try {
-          // Use the dynamic slot number from the stall object
           const slotNum = scannedStall.nextActionSlot || 1;
           const parmValue = (RETURN_UMBRELLA_BASE_PARM + slotNum).toString();
           const cmdType = '1';
 
-          const backendResponse = await fetch('/api/admin/unlock-physical-machine', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dvid: scannedStall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType }),
-          });
-          const result = await backendResponse.json();
+          // Use the correct, deployed Cloud Function
+          const unlockPhysicalMachine = httpsCallable(firebaseServices.functions, 'unlockPhysicalMachine');
+          const result = await unlockPhysicalMachine({ dvid: scannedStall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType });
+          const data = result.data as { success: boolean; unlockDataString?: string; message?: string; };
 
-          if (!backendResponse.ok || !result.success || !result.unlockDataString) {
-            const errorMsg = result.message || `Failed to get return command.`;
-            logMachineEvent({ stallId: scannedStall.id, type: 'error', message: `Vendor API Error on Return: ${errorMsg}` });
+          if (!data.success || !data.unlockDataString) {
+            const errorMsg = data.message || `Failed to get return command.`;
+            logMachineEvent({ stallId: scannedStall.id, type: 'error', message: `Cloud Function Error on Return: ${errorMsg}` });
             throw new Error(errorMsg);
           }
           
           setBluetoothState('sending_command');
-          const commandToSend = `CMD:${result.unlockDataString}\r\n`;
+          const commandToSend = `CMD:${data.unlockDataString}\r\n`;
           const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
           await BleClient.writeWithoutResponse(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
 
@@ -222,7 +221,7 @@ export default function ReturnUmbrellaPage() {
           logMachineEvent({ stallId: scannedStall.id, type: 'error', message: `Failed to get/send return command: ${errorMsg}` });
         }
       } else {
-         const errorMsg = `Invalid token format received: ${fullToken}`;
+         const errorMsg = `Invalid token format received: The string did not match the expected pattern. Received: "${fullToken}"`;
          setBluetoothError(errorMsg);
          setBluetoothState('error');
          logMachineEvent({ stallId: scannedStall.id, type: 'error', message: errorMsg });
@@ -236,7 +235,7 @@ export default function ReturnUmbrellaPage() {
       setBluetoothState('error');
       toast({ variant: "destructive", title: "Duplicate Action Error", description: errorMsg, duration: 8000 });
     }
-  }, [scannedStall, toast, logMachineEvent]);
+  }, [scannedStall, toast, logMachineEvent, firebaseServices]);
 
   useEffect(() => {
     if (showSuccessDialog && activeRental && scannedStall) {
