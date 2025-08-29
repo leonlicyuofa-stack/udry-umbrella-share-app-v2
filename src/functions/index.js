@@ -160,9 +160,10 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
-    const APP_DEEP_LINK_BASE_URL = 'udry://payment/success'; 
+    // **FIXED LOGIC**: Use the live web app URL for the success redirect.
+    // This provides an intermediary page that will then deep link back to the app.
     const LIVE_APP_BASE_URL = 'https://udry-app-dev.web.app'; 
-    logger.info(`Step 5: Using deep link base URL: ${APP_DEEP_LINK_BASE_URL}`);
+    logger.info(`Step 5: Using web app base URL: ${LIVE_APP_BASE_URL}`);
 
     try {
         logger.info("Step 6: Attempting to create Stripe checkout session...");
@@ -182,7 +183,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${APP_DEEP_LINK_BASE_URL}?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
+            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
                 userId: userId,
@@ -331,28 +332,43 @@ exports.endRentalTransaction = onCall(async (request) => {
     const admin = require("firebase-admin");
     const db = getAdminApp().firestore();
 
+    // Step 1: Authentication Check
     if (!request.auth) {
+        logger.error("[Cloud Function] Authentication check failed: No auth context.");
         throw new HttpsError('unauthenticated', 'You must be logged in to end a rental.');
     }
-
-    const { returnedToStallId, activeRentalData } = request.data;
     const userId = request.auth.uid;
+    logger.info(`[Cloud Function] Starting endRental for user: ${userId}`);
 
-    if (!returnedToStallId || !activeRentalData) {
-        throw new HttpsError('invalid-argument', 'Missing required data for ending a rental.');
+    // Step 2: Input Validation
+    const { returnedToStallId, activeRentalData } = request.data;
+    logger.info("[Cloud Function] Received data:", { returnedToStallId, hasActiveRental: !!activeRentalData });
+
+    if (!returnedToStallId) {
+        logger.error(`[Cloud Function] Validation failed for user ${userId}: returnedToStallId is missing.`);
+        throw new HttpsError('invalid-argument', 'Missing returnedToStallId.');
+    }
+    if (!activeRentalData || typeof activeRentalData !== 'object') {
+        logger.error(`[Cloud Function] Validation failed for user ${userId}: activeRentalData is missing or not an object.`);
+        throw new HttpsError('invalid-argument', 'Missing or invalid activeRentalData.');
+    }
+    if (typeof activeRentalData.startTime !== 'number' || typeof activeRentalData.stallId !== 'string') {
+        logger.error(`[Cloud Function] Validation failed for user ${userId}: activeRentalData is malformed.`);
+        throw new HttpsError('invalid-argument', 'Malformed activeRentalData.');
     }
     
     try {
-        const userDocRef = db.collection('users').doc(userId);
+        // Step 3: Fetch Stall Information
         const returnedStallDocRef = db.collection('stalls').doc(returnedToStallId);
-        const newRentalHistoryDocRef = db.collection('rentals').doc();
-
         const returnedStallSnap = await returnedStallDocRef.get();
-        if (!returnedStallSnap.exists()) {
+        if (!returnedStallSnap.exists) {
+            logger.error(`[Cloud Function] Stall lookup failed for user ${userId}: Stall ${returnedToStallId} not found.`);
             throw new HttpsError('not-found', 'Return stall not found.');
         }
         const returnedStall = returnedStallSnap.data();
+        logger.info(`[Cloud Function] Successfully fetched return stall data for ${returnedStall.name}`);
 
+        // Step 4: Cost Calculation
         const endTime = Date.now();
         const durationHours = (endTime - activeRentalData.startTime) / (1000 * 60 * 60);
 
@@ -360,7 +376,7 @@ exports.endRentalTransaction = onCall(async (request) => {
         const DAILY_CAP = 25;
         let calculatedCost = 0;
 
-        if (activeRentalData.isFree) {
+        if (activeRentalData.isFree === true) { // Explicitly check for true
             calculatedCost = 0;
         } else if (durationHours > 72) {
             calculatedCost = 100; // Forfeit deposit
@@ -371,12 +387,17 @@ exports.endRentalTransaction = onCall(async (request) => {
             calculatedCost = (fullDays * DAILY_CAP) + cappedRemainingCost;
         }
         const finalCost = Math.min(calculatedCost, 100);
+        logger.info(`[Cloud Function] Calculated final cost for user ${userId}: ${finalCost} (Duration: ${durationHours.toFixed(2)} hours)`);
 
+        // Step 5: Prepare Database Documents
+        const userDocRef = db.collection('users').doc(userId);
+        const newRentalHistoryDocRef = db.collection('rentals').doc();
+        
         const rentalHistory = {
             rentalId: newRentalHistoryDocRef.id,
             userId: userId,
             stallId: activeRentalData.stallId,
-            stallName: activeRentalData.stallName,
+            stallName: activeRentalData.stallName || 'Unknown',
             startTime: activeRentalData.startTime,
             isFree: activeRentalData.isFree || false,
             endTime,
@@ -387,7 +408,8 @@ exports.endRentalTransaction = onCall(async (request) => {
             logs: activeRentalData.logs || [],
         };
         
-        // Use a batch to perform all writes atomically
+        // Step 6: Execute Atomic Batch Write
+        logger.info(`[Cloud Function] Preparing to commit batch write for user ${userId}.`);
         const batch = db.batch();
         batch.set(newRentalHistoryDocRef, rentalHistory);
         batch.update(userDocRef, { 
@@ -401,14 +423,15 @@ exports.endRentalTransaction = onCall(async (request) => {
 
         await batch.commit();
 
-        logger.info(`Successfully ended rental for user ${userId}. Cost: ${finalCost}`);
+        logger.info(`[Cloud Function] SUCCESS: Batch write completed. Rental ended for user ${userId}. Cost: ${finalCost}`);
         return { success: true, message: 'Rental ended successfully.' };
 
     } catch (error) {
-        logger.error(`Error in endRentalTransaction for user ${userId}:`, error);
+        logger.error(`[Cloud Function] CRITICAL ERROR in endRentalTransaction for user ${userId}:`, error);
         if (error instanceof HttpsError) {
-            throw error;
+            throw error; // Re-throw HttpsError directly
         }
+        // For unexpected errors, wrap them in a generic internal error
         throw new HttpsError('internal', 'An unexpected server error occurred while ending the rental.');
     }
 });
@@ -418,3 +441,4 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
 });
+    
