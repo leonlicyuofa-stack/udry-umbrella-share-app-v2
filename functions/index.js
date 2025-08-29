@@ -204,90 +204,74 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
 });
 
-exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
+exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public" }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
     const admin = require("firebase-admin");
-    getAdminApp(); // Ensure admin is initialized
+    getAdminApp();
     const stripeInstance = getStripe();
     const db = admin.firestore();
-    
+
     if (!stripeInstance) {
-        logger.error("Step 1 FAILED: Stripe SDK is not initialized. Check startup logs and ensure STRIPE_SECRET_KEY is set.");
+        logger.error("Step 1 FAILED: Stripe SDK is not initialized.");
         throw new HttpsError('internal', 'The server is missing critical payment processing configuration.');
     }
     logger.info("Step 1 SUCCESS: Services appear to be initialized.");
 
     try {
-        logger.info("Step 2: Checking authentication...");
-        if (!request.auth) {
-            logger.warn("Step 2 FAILED: User is not authenticated.");
-            throw new HttpsError('unauthenticated', 'The function must be called while authenticated.');
-        }
-        logger.info(`Step 2 SUCCESS: Authentication check passed for user UID: ${request.auth.uid}`);
-        
-        const { sessionId, uid } = request.data; // Now expecting uid as well
-        const callerUserId = request.auth.uid;
+        const { sessionId, uid } = request.data;
+        logger.info(`Step 2: Received data - SessionID: ${sessionId}, UID: ${uid}`);
 
-        logger.info("Step 3: Validating sessionId and uid input...");
-        if (!sessionId || typeof sessionId !== 'string') {
-            logger.error(`Step 3 FAILED: Request from user ${callerUserId} has a missing or invalid sessionId.`);
-            throw new HttpsError('invalid-argument', 'The function must be called with a valid "sessionId".');
-        }
-        if (!uid || typeof uid !== 'string') {
-            logger.error(`Step 3 FAILED: Request from user ${callerUserId} has a missing or invalid uid.`);
-            throw new HttpsError('invalid-argument', 'The function must be called with a valid "uid".');
-        }
-        if (callerUserId !== uid) {
-            logger.error(`CRITICAL SECURITY CHECK FAILED: Caller UID (${callerUserId}) does not match deep link UID (${uid}).`);
-            throw new HttpsError('permission-denied', 'Caller ID does not match the user ID from the payment link.');
+        if (!sessionId || !uid) {
+            logger.error(`Step 2 FAILED: Missing sessionId or uid.`);
+            throw new HttpsError('invalid-argument', 'The function must be called with a "sessionId" and "uid".');
         }
 
-        logger.info(`Step 3 SUCCESS: Session ID received: ${sessionId} for user ${uid}`);
-
-        logger.info("Step 4: Checking for prior processing of this payment...");
+        logger.info("Step 3: Checking for prior processing of this payment...");
         const paymentRef = db.collection('processed_stripe_payments').doc(sessionId);
         const paymentDoc = await paymentRef.get();
         if (paymentDoc.exists) {
-            logger.info(`Step 4 SUCCESS: Idempotency check passed. Payment for session ${sessionId} has already been processed.`);
+            logger.info(`Step 3 SUCCESS: Idempotency check passed. Payment for session ${sessionId} has already been processed.`);
             return { success: true, message: "Payment already processed." };
         }
-        logger.info(`Step 4 SUCCESS: This is a new payment session.`);
+        logger.info(`Step 3 SUCCESS: This is a new payment session.`);
 
         let session;
         try {
-            logger.info(`Step 5: Attempting to retrieve session '${sessionId}' from Stripe...`);
+            logger.info(`Step 4: Attempting to retrieve session '${sessionId}' from Stripe...`);
             session = await stripeInstance.checkout.sessions.retrieve(sessionId);
-            logger.info(`Step 5 SUCCESS: Successfully retrieved session from Stripe.`);
+            logger.info(`Step 4 SUCCESS: Successfully retrieved session from Stripe.`);
         } catch (stripeError) {
-            logger.error(`Step 5 FAILED: Error retrieving session from Stripe: ${stripeError.message}`);
+            logger.error(`Step 4 FAILED: Error retrieving session from Stripe: ${stripeError.message}`);
             if (stripeError.type === 'StripeInvalidRequestError') {
                 throw new HttpsError('not-found', 'Stripe session not found.');
             }
             throw new HttpsError('internal', `A Stripe error occurred: ${stripeError.message}`);
         }
         
-        logger.info("Step 6: Validating retrieved session data...");
+        logger.info("Step 5: Validating retrieved session data and performing security check...");
         const { userId: metadataUserId, paymentType, amount } = session.metadata;
         const amountNum = parseFloat(amount);
         
         if (session.payment_status !== 'paid') {
             throw new HttpsError('failed-precondition', 'Stripe session not paid.');
         }
-        if (metadataUserId !== callerUserId) {
-            logger.error(`CRITICAL SECURITY CHECK FAILED: Caller UID (${callerUserId}) does not match Stripe metadata UID (${metadataUserId}).`);
+
+        if (metadataUserId !== uid) {
+            logger.error(`CRITICAL SECURITY CHECK FAILED: URL UID (${uid}) does not match Stripe metadata UID (${metadataUserId}).`);
             throw new HttpsError('permission-denied', 'User ID does not match session metadata.');
         }
+        
         if (!paymentType || !['deposit', 'balance'].includes(paymentType)) {
             throw new HttpsError('invalid-argument', 'Invalid paymentType in session metadata.');
         }
         if (isNaN(amountNum) || amountNum <= 0) {
             throw new HttpsError('invalid-argument', 'Invalid amount in session metadata.');
         }
-        logger.info(`Step 6 SUCCESS: Session data validated.`);
+        logger.info(`Step 5 SUCCESS: Session data and security check passed.`);
 
-        const userDocRef = db.collection('users').doc(callerUserId);
+        const userDocRef = db.collection('users').doc(uid); // Use uid from URL
         
-        logger.info(`Step 7: Starting Firestore transaction to update user balance...`);
+        logger.info(`Step 6: Starting Firestore transaction to update user balance...`);
         await db.runTransaction(async (transaction) => {
             const freshPaymentDoc = await transaction.get(paymentRef);
             if (freshPaymentDoc.exists) {
@@ -307,16 +291,16 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
             }
             
             transaction.set(paymentRef, {
-                userId: callerUserId,
+                userId: uid,
                 processedAt: admin.firestore.FieldValue.serverTimestamp(),
                 amount: amountNum,
                 paymentType: paymentType,
             });
         });
 
-        logger.info(`Step 7 SUCCESS: Firestore transaction completed for user ${callerUserId}.`);
+        logger.info(`Step 6 SUCCESS: Firestore transaction completed for user ${uid}.`);
         logger.info("--- finalizeStripePayment function finished successfully ---");
-        return { success: true, message: `Successfully updated ${paymentType} for user ${callerUserId}.` };
+        return { success: true, message: `Successfully updated ${paymentType} for user ${uid}.` };
 
     } catch (error) {
         logger.error(`--- CRITICAL ERROR in finalizeStripePayment --- : ${error.message}`);
@@ -441,4 +425,5 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
 });
+    
     

@@ -9,7 +9,7 @@ import { CheckCircle, ArrowRight, Loader2, AlertTriangle, Terminal, RefreshCw } 
 import { useToast } from '@/hooks/use-toast';
 import { httpsCallable } from 'firebase/functions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { useAuth } from '@/contexts/auth-context';
+import { initializeFirebaseServices } from '@/lib/firebase'; // Import directly
 
 type UpdateStatus = 'idle' | 'processing' | 'success' | 'error';
 
@@ -17,7 +17,7 @@ function InternalPaymentSuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
-    const { isReady, firebaseServices } = useAuth(); // Removed user from here
+    const [firebaseServices, setFirebaseServices] = useState(initializeFirebaseServices());
     
     const [status, setStatus] = useState<UpdateStatus>('idle');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -36,7 +36,7 @@ function InternalPaymentSuccessContent() {
     };
 
     useEffect(() => {
-        if (!isReady || hasProcessed.current || !firebaseServices) return;
+        if (hasProcessed.current || !firebaseServices) return;
         
         const sessionId = searchParams.get('session_id');
         const uid = searchParams.get('uid'); 
@@ -54,7 +54,7 @@ function InternalPaymentSuccessContent() {
         hasProcessed.current = true;
         processPayment(sessionId, uid);
 
-    }, [isReady, firebaseServices, router, searchParams, toast]);
+    }, [firebaseServices, router, searchParams, toast]);
 
 
     const processPayment = async (sessionId: string, uid: string) => {
@@ -65,7 +65,6 @@ function InternalPaymentSuccessContent() {
         }
         setStatus('processing');
         try {
-            // This function is now callable without being authenticated
             const finalizeStripePayment = httpsCallable(firebaseServices.functions, 'finalizeStripePayment');
             
             const result = await finalizeStripePayment({ sessionId, uid });
@@ -94,7 +93,7 @@ function InternalPaymentSuccessContent() {
         }
     };
     
-    if (status === 'idle' || status === 'processing' || !isReady) {
+    if (status === 'idle' || status === 'processing') {
          return (
             <Card className="w-full max-w-lg text-center shadow-xl">
                 <CardHeader>
@@ -185,3 +184,5 @@ export default function InternalPaymentSuccessPage() {
         </div>
     )
 }
+
+    
