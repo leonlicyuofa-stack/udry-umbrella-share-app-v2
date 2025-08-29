@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Info, ArrowRight } from 'lucide-react';
+import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Info, ArrowRight, Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
 import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/bluetooth-le/dist/esm';
 
@@ -278,6 +278,19 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         </DialogHeader>
 
         <div className="py-4 space-y-6">
+          <Alert variant="destructive">
+            <AlertTriangle className="h-4 w-4" />
+            <AlertTitle>Developer Diagnostic Tool</AlertTitle>
+            <AlertDescription>
+              Click the button below to test if the backend API is reachable. This will help diagnose deployment issues.
+              <Button asChild variant="link" className="p-0 h-auto ml-1">
+                <a href="/api/ping" target="_blank" rel="noopener noreferrer">
+                  Test Backend Endpoint <LinkIcon className="ml-1 h-3 w-3" />
+                </a>
+              </Button>
+            </AlertDescription>
+          </Alert>
+
           {!canRent && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
