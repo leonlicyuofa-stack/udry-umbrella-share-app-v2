@@ -113,7 +113,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           const commandToSend = `CMD:${result.unlockDataString}\r\n`;
           const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
 
-          await BleClient.write(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
+          await BleClient.writeWithoutResponse(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
           logMachineEvent({ stallId: stall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Get Umbrella)` });
 
           const isFree = user?.hasHadFirstFreeRental === false;
@@ -187,7 +187,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
 
       const commandToSend = "TOK\r\n";
       const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
-      await BleClient.write(device.deviceId, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
+      await BleClient.writeWithoutResponse(device.deviceId, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
       
       logMachineEvent({ stallId: stall.id, type: 'sent', message: 'Sent Signal: "TOK\\r\\n"' });
     } catch (error: any) {
