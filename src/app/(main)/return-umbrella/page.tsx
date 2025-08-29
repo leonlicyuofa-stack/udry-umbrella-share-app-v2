@@ -14,6 +14,7 @@ import Link from "next/link";
 import type { Stall } from '@/lib/types';
 import { Html5Qrcode } from "html5-qrcode";
 import { cn } from "@/lib/utils";
+import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/ble';
 
 const QR_READER_REGION_ID = "qr-reader-region-return";
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
@@ -21,10 +22,11 @@ const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
 const RETURN_UMBRELLA_BASE_PARM = 3000000;
 
 type ReturnStep = 'idle' | 'initializing_scanner' | 'scanning' | 'scan_complete';
-type BluetoothState = 'idle' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
+type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
 
 const bluetoothStateMessages: Record<BluetoothState, string> = {
   idle: "Ready to start.",
+  initializing: "Initializing Bluetooth...",
   requesting_device: "Searching for your machine. Please select it from the Bluetooth pop-up...",
   connecting: "Connecting to machine...",
   getting_token: "Connected. Authenticating with machine...",
@@ -49,8 +51,7 @@ export default function ReturnUmbrellaPage() {
   const [qrError, setQrError] = useState<string|null>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   
-  const bluetoothDeviceRef = useRef<BluetoothDevice | null>(null);
-  const tokCharacteristicRef = useRef<BluetoothRemoteGATTCharacteristic | null>(null);
+  const connectedDeviceIdRef = useRef<string | null>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const isProcessingScan = useRef(false);
   
@@ -159,22 +160,21 @@ export default function ReturnUmbrellaPage() {
     }, 100);
   }, [onScanSuccess, returnStep]);
 
-  const handleGattServerDisconnected = useCallback(() => {
-    toast({ variant: "destructive", title: "Bluetooth Disconnected", description: "The device connection was lost." });
-    if(scannedStall) logMachineEvent({ stallId: scannedStall.id, type: 'error', message: 'Bluetooth GATT Server Disconnected during return process.' });
-    tokCharacteristicRef.current = null;
-    bluetoothDeviceRef.current = null;
-    setBluetoothState('idle');
-  }, [toast, scannedStall, logMachineEvent]);
+  const disconnectFromDevice = useCallback(async () => {
+    if (connectedDeviceIdRef.current) {
+      try {
+        await BleClient.disconnect(connectedDeviceIdRef.current);
+      } catch(e) {
+        // Ignore
+      }
+      connectedDeviceIdRef.current = null;
+    }
+  }, []);
 
-  const handleTokNotification = useCallback(async (event: Event) => {
-    const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
-    const value = characteristic.value;
-    if (!value || !scannedStall) return;
+  const handleTokNotification = useCallback(async (value: DataView) => {
+    const receivedString = dataViewToText(value).trim();
+    if (!scannedStall) return;
 
-    const decoder = new TextDecoder('utf-8');
-    const receivedString = decoder.decode(value).trim();
-    console.log(`[U-Dry Return] Notification Received: "${receivedString}"`);
     logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
 
     if (receivedString.startsWith("TOK:")) {
@@ -203,7 +203,9 @@ export default function ReturnUmbrellaPage() {
           
           setBluetoothState('sending_command');
           const commandToSend = `CMD:${result.unlockDataString}\r\n`;
-          await tokCharacteristicRef.current?.writeValue(new TextEncoder().encode(commandToSend));
+          const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
+          await BleClient.write(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
+
           logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Return Umbrella)` });
           console.log(`[U-Dry Return] Return command sent to machine.`);
           
@@ -252,48 +254,39 @@ export default function ReturnUmbrellaPage() {
 
   const handleReturnViaBluetooth = async () => {
     if (isProcessingBluetooth || !scannedStall) return;
-
-    if (!navigator.bluetooth) {
-      const errorMsg = "Web Bluetooth API not available. Use a compatible browser (e.g., Chrome, Edge).";
-      setBluetoothError(errorMsg);
-      setBluetoothState('error');
-      logMachineEvent({ stallId: scannedStall.id, type: 'error', message: errorMsg });
-      return;
-    }
-    
     setBluetoothError(null);
-    setBluetoothState('requesting_device');
+    setBluetoothState('initializing');
     logMachineEvent({ stallId: scannedStall.id, type: 'info', message: 'User initiated return. Starting Bluetooth connection...' });
 
     try {
-      const device = await navigator.bluetooth.requestDevice({
-        filters: [
-            { services: [UTEK_SERVICE_UUID] },
-            { name: scannedStall.btName }
-        ],
-        optionalServices: [UTEK_SERVICE_UUID]
+      await BleClient.initialize();
+      setBluetoothState('requesting_device');
+      
+      const device = await BleClient.requestDevice({
+        services: [UTEK_SERVICE_UUID],
+        name: scannedStall.btName
       });
-      bluetoothDeviceRef.current = device;
-      device.addEventListener('gattserverdisconnected', handleGattServerDisconnected);
+      connectedDeviceIdRef.current = device.deviceId;
       
       setBluetoothState('connecting');
-      const server = await device.gatt?.connect();
-      if (!server) throw new Error("Failed to connect to GATT server.");
+      await BleClient.connect(device.deviceId, (deviceId) => {
+        disconnectFromDevice();
+        toast({ variant: "destructive", title: "Bluetooth Disconnected", description: "The device connection was lost." });
+        setBluetoothState('idle');
+      });
       logMachineEvent({ stallId: scannedStall.id, type: 'info', message: `Connected to device: ${device.name || 'Unknown'}` });
 
-      const service = await server.getPrimaryService(UTEK_SERVICE_UUID);
-      const characteristic = await service.getCharacteristic(UTEK_CHARACTERISTIC_UUID);
-      tokCharacteristicRef.current = characteristic;
-      
       setBluetoothState('getting_token');
-      await characteristic.startNotifications();
-      characteristic.addEventListener('characteristicvaluechanged', handleTokNotification);
+      await BleClient.startNotifications(device.deviceId, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, handleTokNotification);
       
-      await characteristic.writeValue(new TextEncoder().encode("TOK\r\n"));
+      const commandToSend = "TOK\r\n";
+      const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
+      await BleClient.write(device.deviceId, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
+
       logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: 'Sent Signal: "TOK\\r\\n"' });
     } catch (error: any) {
       let errorMsg = error.message || "An unknown Bluetooth error occurred.";
-      if (error.name === "NotFoundError") errorMsg = "No compatible Bluetooth device found or selection was cancelled.";
+      if (error.message && error.message.includes('cancelled')) errorMsg = "No compatible Bluetooth device found or selection was cancelled.";
       setBluetoothError(errorMsg);
       setBluetoothState('error');
       logMachineEvent({ stallId: scannedStall.id, type: 'error', message: `Bluetooth Connection Error: ${errorMsg}` });
@@ -303,11 +296,9 @@ export default function ReturnUmbrellaPage() {
   useEffect(() => {
     return () => {
       stopScanner();
-      if(bluetoothDeviceRef.current?.gatt?.connected) {
-        bluetoothDeviceRef.current.gatt.disconnect();
-      }
+      disconnectFromDevice();
     };
-  }, [stopScanner]);
+  }, [stopScanner, disconnectFromDevice]);
 
   if (isLoadingRental || isLoadingStalls || !activeRental) {
     return (

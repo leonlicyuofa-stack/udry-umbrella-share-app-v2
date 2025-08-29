@@ -12,15 +12,17 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Terminal } from 'lucide-react';
 import Link from 'next/link';
+import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/ble';
 
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
 const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
 const GET_UMBRELLA_BASE_PARM = 1000000;
 
-type BluetoothState = 'idle' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
+type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
 
 const bluetoothStateMessages: Record<BluetoothState, string> = {
   idle: "Ready to connect.",
+  initializing: "Initializing Bluetooth...",
   requesting_device: "Searching for machine. Please select it from the Bluetooth pop-up...",
   connecting: "Connecting to machine...",
   getting_token: "Connected. Authenticating...",
@@ -43,53 +45,33 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const [bluetoothState, setBluetoothState] = useState<BluetoothState>('idle');
   const [bluetoothError, setBluetoothError] = useState<string | null>(null);
   
-  // State for diagnostic info
-  const [diagInfo, setDiagInfo] = useState({ isSecure: false, href: 'Checking...' });
-
-  const bluetoothDeviceRef = useRef<BluetoothDevice | null>(null);
-  const tokCharacteristicRef = useRef<BluetoothRemoteGATTCharacteristic | null>(null);
-
+  const connectedDeviceIdRef = useRef<string | null>(null);
+  
   const isProcessing = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
 
-  useEffect(() => {
-    // This effect runs when the dialog opens to capture diagnostic info.
-    if (isOpen) {
-      setDiagInfo({
-        isSecure: window.isSecureContext,
-        href: window.location.href,
-      });
+  const disconnectFromDevice = useCallback(async () => {
+    if (connectedDeviceIdRef.current) {
+      try {
+        await BleClient.disconnect(connectedDeviceIdRef.current);
+      } catch(e) {
+        // Ignore errors on disconnect
+      }
+      connectedDeviceIdRef.current = null;
     }
-  }, [isOpen]);
-
+  }, []);
 
   useEffect(() => {
-    // Reset state when the dialog is closed or the stall changes
     if (!isOpen) {
       setBluetoothState('idle');
       setBluetoothError(null);
-      if (bluetoothDeviceRef.current?.gatt?.connected) {
-        bluetoothDeviceRef.current.gatt.disconnect();
-      }
-      bluetoothDeviceRef.current = null;
-      tokCharacteristicRef.current = null;
+      disconnectFromDevice();
     }
-  }, [isOpen]);
+  }, [isOpen, disconnectFromDevice]);
 
-  const handleGattServerDisconnected = useCallback(() => {
-    toast({ variant: "destructive", title: "Bluetooth Disconnected", description: "The device connection was lost." });
-    if(stall) logMachineEvent({ stallId: stall.id, type: 'error', message: 'Bluetooth GATT Server Disconnected during rental process.' });
-    tokCharacteristicRef.current = null;
-    bluetoothDeviceRef.current = null;
-    setBluetoothState('idle');
-  }, [toast, stall, logMachineEvent]);
+  const handleTokNotification = useCallback(async (value: DataView) => {
+    const receivedString = dataViewToText(value).trim();
+    if (!stall) return;
 
-  const handleTokNotification = useCallback(async (event: Event) => {
-    const characteristic = event.target as BluetoothRemoteGATTCharacteristic;
-    const value = characteristic.value;
-    if (!value || !stall) return;
-
-    const decoder = new TextDecoder('utf-8');
-    const receivedString = decoder.decode(value).trim();
     logMachineEvent({ stallId: stall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
 
     if (receivedString.startsWith("TOK:")) {
@@ -117,7 +99,10 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           
           setBluetoothState('sending_command');
           const commandToSend = `CMD:${result.unlockDataString}\r\n`;
-          await tokCharacteristicRef.current?.writeValue(new TextEncoder().encode(commandToSend));
+          // Convert string to DataView
+          const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
+
+          await BleClient.write(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
           logMachineEvent({ stallId: stall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Get Umbrella)` });
 
           const isFree = user?.hasHadFirstFreeRental === false;
@@ -153,43 +138,46 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const handleConnectAndRent = async () => {
     if (!stall) return;
     setBluetoothError(null);
-    setBluetoothState('requesting_device');
+    setBluetoothState('initializing');
     logMachineEvent({ stallId: stall.id, type: 'info', message: 'User initiated rental. Starting Bluetooth connection...' });
 
     try {
-      if (!navigator.bluetooth) {
-        throw new Error("Web Bluetooth is not available on this device or browser. Please use a compatible browser like Chrome.");
-      }
+      await BleClient.initialize();
+      setBluetoothState('requesting_device');
       
-      const device = await navigator.bluetooth.requestDevice({
-        filters: [
-            { services: [UTEK_SERVICE_UUID] },
-            { name: stall.btName }
-        ],
-        optionalServices: [UTEK_SERVICE_UUID]
+      const device = await BleClient.requestDevice({
+        services: [UTEK_SERVICE_UUID],
+        name: stall.btName,
       });
-      bluetoothDeviceRef.current = device;
-      device.addEventListener('gattserverdisconnected', handleGattServerDisconnected);
-      
-      setBluetoothState('connecting');
-      const server = await device.gatt?.connect();
-      if (!server) throw new Error("Failed to connect to GATT server.");
-      logMachineEvent({ stallId: stall.id, type: 'info', message: `Connected to device: ${device.name || 'Unknown'}` });
 
-      const service = await server.getPrimaryService(UTEK_SERVICE_UUID);
-      const characteristic = await service.getCharacteristic(UTEK_CHARACTERISTIC_UUID);
-      tokCharacteristicRef.current = characteristic;
+      connectedDeviceIdRef.current = device.deviceId;
+      setBluetoothState('connecting');
       
+      await BleClient.connect(device.deviceId, (deviceId) => {
+        disconnectFromDevice();
+        toast({ variant: 'destructive', title: 'Bluetooth Disconnected' });
+        setBluetoothState('idle');
+      });
+
+      logMachineEvent({ stallId: stall.id, type: 'info', message: `Connected to device: ${device.name || 'Unknown'}` });
       setBluetoothState('getting_token');
-      await characteristic.startNotifications();
-      characteristic.addEventListener('characteristicvaluechanged', handleTokNotification);
       
-      await characteristic.writeValue(new TextEncoder().encode("TOK\r\n"));
+      await BleClient.startNotifications(
+        device.deviceId,
+        UTEK_SERVICE_UUID,
+        UTEK_CHARACTERISTIC_UUID,
+        handleTokNotification
+      );
+
+      const commandToSend = "TOK\r\n";
+      const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
+      await BleClient.write(device.deviceId, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
+      
       logMachineEvent({ stallId: stall.id, type: 'sent', message: 'Sent Signal: "TOK\\r\\n"' });
     } catch (error: any) {
       let errorMsg = error.message || "An unknown Bluetooth error occurred.";
-      if (error.name === "NotFoundError") {
-        errorMsg = "Your bluetooth might be off, please check and try again, if the issue persists please contact service suport";
+       if (error.message && error.message.includes('cancelled')) {
+        errorMsg = "Device selection was cancelled.";
       }
       setBluetoothError(errorMsg);
       setBluetoothState('error');
@@ -224,16 +212,6 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         </DialogHeader>
 
         <div className="py-4 space-y-6">
-          {/* --- DIAGNOSTIC INFO BOX --- */}
-          <Alert variant="default" className="bg-yellow-50 border-yellow-200">
-            <Terminal className="h-4 w-4 text-yellow-600" />
-            <AlertTitle className="text-yellow-800">Diagnostic Info (Temporary)</AlertTitle>
-            <AlertDescription className="text-yellow-700 text-xs">
-              <p><strong>Is Secure Context:</strong> {diagInfo.isSecure ? 'true' : 'false'}</p>
-              <p><strong>Current URL:</strong> {diagInfo.href}</p>
-            </AlertDescription>
-          </Alert>
-
           {!canRent && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
