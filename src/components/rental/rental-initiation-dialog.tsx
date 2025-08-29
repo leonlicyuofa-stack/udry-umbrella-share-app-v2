@@ -22,7 +22,7 @@ type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connectin
 const bluetoothStateMessages: Record<BluetoothState, string> = {
   idle: "Ready to connect.",
   initializing: "Initializing Bluetooth...",
-  requesting_device: "Searching for the machine. Please select the U-Dry device from the system pop-up...",
+  requesting_device: "Searching for machine. Please select the U-Dry device from the system pop-up...",
   connecting: "Connecting to the machine...",
   getting_token: "Connected. Authenticating...",
   getting_command: "Authenticated. Getting unlock command...",
@@ -156,6 +156,9 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         toast({ variant: 'destructive', title: 'Bluetooth Disconnected' });
         setBluetoothState('idle');
       });
+
+      // Add a small delay to allow service discovery to complete
+      await new Promise(resolve => setTimeout(resolve, 300));
 
       logMachineEvent({ stallId: stall.id, type: 'info', message: `Connected to device: ${device.name || 'Unknown'}` });
       setBluetoothState('getting_token');
