@@ -26,12 +26,12 @@ type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connectin
 const bluetoothStateMessages: Record<BluetoothState, string> = {
   idle: "Ready to start.",
   initializing: "Initializing Bluetooth...",
-  requesting_device: "Searching for your machine. Please select it from the Bluetooth pop-up...",
-  connecting: "Connecting to machine...",
-  getting_token: "Connected. Authenticating with machine...",
-  getting_command: "Authenticated. Getting return command from server...",
+  requesting_device: "Searching for the machine. Please select the U-Dry device from the system pop-up...",
+  connecting: "Connecting to the machine...",
+  getting_token: "Connected. Authenticating...",
+  getting_command: "Authenticated. Getting return command...",
   sending_command: "Sending return command to machine...",
-  success: "Return command sent! Please place your umbrella in the slot.",
+  success: "Command sent! Please place your umbrella in the slot.",
   error: "An error occurred."
 };
 
@@ -263,7 +263,6 @@ export default function ReturnUmbrellaPage() {
       
       const device = await BleClient.requestDevice({
         services: [UTEK_SERVICE_UUID],
-        name: scannedStall.btName
       });
       connectedDeviceIdRef.current = device.deviceId;
       

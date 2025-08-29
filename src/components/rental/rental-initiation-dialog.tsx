@@ -22,8 +22,8 @@ type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connectin
 const bluetoothStateMessages: Record<BluetoothState, string> = {
   idle: "Ready to connect.",
   initializing: "Initializing Bluetooth...",
-  requesting_device: "Searching for machine. Please select it from the Bluetooth pop-up...",
-  connecting: "Connecting to machine...",
+  requesting_device: "Searching for the machine. Please select the U-Dry device from the system pop-up...",
+  connecting: "Connecting to the machine...",
   getting_token: "Connected. Authenticating...",
   getting_command: "Authenticated. Getting unlock command...",
   sending_command: "Sending unlock command to machine...",
@@ -146,7 +146,6 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       
       const device = await BleClient.requestDevice({
         services: [UTEK_SERVICE_UUID],
-        name: stall.btName,
       });
 
       connectedDeviceIdRef.current = device.deviceId;
