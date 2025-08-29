@@ -3,37 +3,38 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Allow public read access to the list of stalls
+    // Helper function to check if the requesting user's UID exists in the /admins collection.
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Stalls: Publicly readable by anyone, but only writable by admins.
     match /stalls/{stallId} {
       allow read: if true;
-      allow write: if false; // Protect against client-side writes
+      allow write: if isAdmin();
     }
 
-    // Admins can list and read all user documents
+    // Users: Users can read and update their own data. Admins can update any user's data (e.g., to reset a rental).
     match /users/{userId} {
-      allow read, get: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null && request.auth.uid == userId;
-      allow list: if exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      allow read, update: if request.auth.uid == userId || isAdmin();
+      allow create: if request.auth.uid == userId;
+    }
+    
+    // Admins collection can only be modified by server-side functions, not by clients.
+    match /admins/{adminId} {
+      allow read, write: if false;
     }
 
-    // Admins can list and read all rental history documents
+    // Rentals: Users can create their own rental history. Only admins can read all rental histories.
     match /rentals/{rentalId} {
-      allow read, list: if exists(/databases/$(database)/documents/admins/$(request.auth.uid));
-      allow create, update: if request.auth != null; // Allow users to create their own rentals
+      allow read: if isAdmin();
+      allow create: if request.auth.uid == request.resource.data.userId;
+      allow update, delete: if false; // Prevent modification of history
     }
-    
-    // Admins collection:
-    // Allow any logged-in user to see who is an admin. This is safe.
-    // Only allow admins to write to this collection (future proofing).
-    match /admins/{adminId} {
-      allow read: if request.auth != null;
-      allow write: if exists(/databases/$(database)/documents/admins/$(request.auth.uid));
-    }
-    
-    // Processed payments can be created, but not read by clients.
+
+    // Processed Payments: These should only be written by server-side functions.
     match /processed_stripe_payments/{paymentId} {
-      allow read, write: if false;
+       allow read, write: if false;
     }
   }
 }
