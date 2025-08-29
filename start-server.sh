@@ -1,9 +1,5 @@
 #!/bin/bash
-# Start Firebase emulators in the background.
-firebase emulators:start --only auth,firestore --project=udry-app-dev --import=./firebase-export --export-on-exit=./firebase-export &
-
-# Wait for a few seconds to give the emulators time to initialize.
-sleep 5
+# This script no longer starts Firebase emulators to ensure connection to the live production database.
 
 # Start the Next.js server in the foreground.
-npm run start:next
+npm run dev
