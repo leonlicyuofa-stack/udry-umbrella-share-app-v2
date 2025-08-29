@@ -11,7 +11,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth } from 'lucide-react';
+import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { Stall, User, RentalHistory } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +23,15 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table"
+
 
 const ADMIN_EMAIL = "admin@u-dry.com";
 
@@ -215,6 +224,8 @@ export default function AdminPage() {
   const totalSpendableBalance = allUsers.reduce((sum, user) => sum + (user.balance || 0), 0);
   const totalUmbrellasCount = stalls.reduce((sum, s) => sum + s.totalUmbrellas, 0);
 
+  const sortedRentalHistory = rentalHistories.sort((a, b) => (b.endTime || 0) - (a.endTime || 0));
+
 
   if (!isReady || isLoadingStalls) return (
     <div className="flex flex-col items-center justify-center h-[calc(100vh-10rem)]">
@@ -303,6 +314,54 @@ export default function AdminPage() {
                     {adminDataError && <p className="text-xs text-destructive mt-1">{adminDataError}</p>}
                 </CardContent>
             </Card>
+          </CardContent>
+        </Card>
+      </section>
+
+       <section>
+        <Card className="shadow-lg">
+          <CardHeader>
+              <CardTitle className="text-2xl flex items-center"><Clock className="mr-2 h-6 w-6 text-primary" /> Recent Activities</CardTitle>
+              <CardDescription>A log of the last 10 completed rentals.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            {isLoadingAdminData ? (
+               <div className="flex justify-center items-center h-24">
+                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
+               </div>
+            ) : rentalHistories.length === 0 ? (
+               <p className="text-muted-foreground text-center">No completed rentals yet.</p>
+            ) : (
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>User</TableHead>
+                      <TableHead>Action</TableHead>
+                      <TableHead>Stall</TableHead>
+                      <TableHead>Time</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {sortedRentalHistory.slice(0, 10).map((rental, index) => {
+                       const user = userMap.get(rental.userId);
+                       const time = rental.endTime ? new Date(rental.endTime).toLocaleString() : 'N/A';
+                       return (
+                           <TableRow key={index}>
+                                <TableCell>
+                                    <div className="font-medium">{user?.email || 'Unknown User'}</div>
+                                    <div className="text-xs text-muted-foreground font-mono">{rental.userId}</div>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge variant="secondary">Return</Badge>
+                                </TableCell>
+                                <TableCell>{rental.returnedToStallName}</TableCell>
+                                <TableCell>{time}</TableCell>
+                           </TableRow>
+                       );
+                    })}
+                  </TableBody>
+                </Table>
+            )}
           </CardContent>
         </Card>
       </section>
@@ -412,3 +471,5 @@ export default function AdminPage() {
     </>
   );
 }
+
+    
