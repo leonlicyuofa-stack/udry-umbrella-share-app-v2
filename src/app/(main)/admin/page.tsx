@@ -11,11 +11,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock, UserSearch, Search } from 'lucide-react';
+import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock, UserSearch, Search, MinusCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { Stall, User, RentalHistory, ActiveRental, RentalLog } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { GeoPoint, collection, getDocs, doc, updateDoc as firestoreUpdateDoc, setDoc, query, where, Timestamp } from 'firebase/firestore';
+import { GeoPoint, collection, getDocs, doc, updateDoc as firestoreUpdateDoc, setDoc, query, where, Timestamp, increment } from 'firebase/firestore';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Accordion,
@@ -44,7 +44,6 @@ type ActivityLog = {
     rentalDetails: RentalHistory | ActiveRental;
 };
 
-// --- New Type for User Lookup Results ---
 type UserSearchResult = {
   user: User;
   rentalHistory: RentalHistory[];
@@ -85,11 +84,14 @@ export default function AdminPage() {
   const [uidToReset, setUidToReset] = useState('');
   const [isResettingUser, setIsResettingUser] = useState(false);
   
-  // --- New State for User Lookup ---
   const [searchEmail, setSearchEmail] = useState('');
   const [isSearching, setIsSearching] = useState(false);
   const [searchResult, setSearchResult] = useState<UserSearchResult>(null);
   const [searchError, setSearchError] = useState<string | null>(null);
+  
+  const [adjustmentAmount, setAdjustmentAmount] = useState('');
+  const [isAdjustingBalance, setIsAdjustingBalance] = useState(false);
+
 
   const isSuperAdminUser = user?.email?.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim();
   const deployedStallsCount = stalls.filter(s => s.isDeployed).length;
@@ -100,42 +102,41 @@ export default function AdminPage() {
     }
   }, [user, isReady, router]);
 
-  // Data Fetching Test Logic
+  const fetchAdminData = useCallback(async () => {
+    if (!firebaseServices?.db || !isSuperAdminUser) {
+      setIsLoadingAdminData(false);
+      return;
+    }
+    setIsLoadingAdminData(true);
+    setAdminDataError(null);
+    try {
+      const usersCollectionRef = collection(firebaseServices.db, 'users');
+      const usersSnapshot = await getDocs(usersCollectionRef);
+      const usersData = usersSnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() })) as User[];
+      setAllUsers(usersData);
+
+      const rentalsCollectionRef = collection(firebaseServices.db, 'rentals');
+      const rentalsSnapshot = await getDocs(rentalsCollectionRef);
+      const rentalsData = rentalsSnapshot.docs.map(doc => doc.data()) as RentalHistory[];
+      setRentalHistories(rentalsData);
+
+    } catch (error: any) {
+      console.error("Error fetching admin data:", error);
+      if (error.code === 'permission-denied') {
+        setAdminDataError("Permission Denied: Check your Firestore security rules for admin access.");
+      } else {
+        setAdminDataError(`An error occurred: ${error.message}`);
+      }
+    } finally {
+      setIsLoadingAdminData(false);
+    }
+  }, [firebaseServices, isSuperAdminUser]);
+
   useEffect(() => {
-    const fetchAdminData = async () => {
-      if (!firebaseServices?.db || !isSuperAdminUser) {
-        setIsLoadingAdminData(false);
-        return;
-      }
-      setIsLoadingAdminData(true);
-      setAdminDataError(null);
-      try {
-        const usersCollectionRef = collection(firebaseServices.db, 'users');
-        const usersSnapshot = await getDocs(usersCollectionRef);
-        const usersData = usersSnapshot.docs.map(doc => ({ uid: doc.id, ...doc.data() })) as User[];
-        setAllUsers(usersData);
-
-        const rentalsCollectionRef = collection(firebaseServices.db, 'rentals');
-        const rentalsSnapshot = await getDocs(rentalsCollectionRef);
-        const rentalsData = rentalsSnapshot.docs.map(doc => doc.data()) as RentalHistory[];
-        setRentalHistories(rentalsData);
-
-      } catch (error: any) {
-        console.error("Error fetching admin data:", error);
-        if (error.code === 'permission-denied') {
-          setAdminDataError("Permission Denied: Check your Firestore security rules for admin access.");
-        } else {
-          setAdminDataError(`An error occurred: ${error.message}`);
-        }
-      } finally {
-        setIsLoadingAdminData(false);
-      }
-    };
-
     if (isReady && user) {
         fetchAdminData();
     }
-  }, [isReady, user, isSuperAdminUser, firebaseServices]);
+  }, [isReady, user, fetchAdminData]);
   
   const handleRegisterStall = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -187,8 +188,8 @@ export default function AdminPage() {
     }
   };
   
-  const handleSearchUser = async (e: React.FormEvent) => {
-      e.preventDefault();
+  const handleSearchUser = async (e?: React.FormEvent) => {
+      e?.preventDefault();
       if (!firebaseServices?.db || !searchEmail) return;
 
       setIsSearching(true);
@@ -196,7 +197,6 @@ export default function AdminPage() {
       setSearchResult(null);
 
       try {
-        // 1. Find user by email
         const usersRef = collection(firebaseServices.db, 'users');
         const qUser = query(usersRef, where("email", "==", searchEmail.trim()));
         const userSnapshot = await getDocs(qUser);
@@ -209,13 +209,12 @@ export default function AdminPage() {
         const foundUserDoc = userSnapshot.docs[0];
         const foundUser = { uid: foundUserDoc.id, ...foundUserDoc.data() } as User;
 
-        // 2. Find their rental history
         const rentalsRef = collection(firebaseServices.db, 'rentals');
         const qRentals = query(rentalsRef, where("userId", "==", foundUser.uid));
         const rentalSnapshot = await getDocs(qRentals);
 
         const rentalHistory = rentalSnapshot.docs.map(doc => doc.data() as RentalHistory)
-          .sort((a, b) => b.startTime - a.startTime); // Sort by most recent first
+          .sort((a, b) => b.startTime - a.startTime);
 
         setSearchResult({
           user: foundUser,
@@ -228,6 +227,40 @@ export default function AdminPage() {
       } finally {
         setIsSearching(false);
       }
+  };
+  
+  const handleBalanceAdjustment = async (type: 'add' | 'deduct') => {
+    if (!firebaseServices?.db || !searchResult?.user.uid) return;
+
+    const amount = parseFloat(adjustmentAmount);
+    if (isNaN(amount) || amount <= 0) {
+        toast({ variant: "destructive", title: "Invalid Amount", description: "Please enter a valid positive number." });
+        return;
+    }
+
+    setIsAdjustingBalance(true);
+    try {
+        const userDocRef = doc(firebaseServices.db, 'users', searchResult.user.uid);
+        const adjustmentValue = type === 'add' ? amount : -amount;
+
+        await firestoreUpdateDoc(userDocRef, {
+            balance: increment(adjustmentValue)
+        });
+
+        toast({ title: "Balance Updated", description: `Successfully ${type === 'add' ? 'added' : 'deducted'} HK$${amount.toFixed(2)}.` });
+        
+        // Refresh user data in the search result
+        const updatedUserDoc = await getDoc(userDocRef);
+        if(updatedUserDoc.exists()) {
+           setSearchResult(prev => prev ? { ...prev, user: { uid: updatedUserDoc.id, ...updatedUserDoc.data() } as User } : null);
+        }
+        setAdjustmentAmount('');
+
+    } catch (error: any) {
+        toast({ variant: "destructive", title: "Update Failed", description: error.message });
+    } finally {
+        setIsAdjustingBalance(false);
+    }
   };
 
   const handleSaveStallDetails = async () => {
@@ -280,7 +313,6 @@ export default function AdminPage() {
   };
 
   // --- DERIVED STATS & DATA ---
-  const userMap = new Map(allUsers.map(u => [u.uid, u]));
   const activeRentalsCount = allUsers.filter(u => u.activeRental).length;
   const totalUsersCount = allUsers.length;
   const totalCompletedRentals = rentalHistories.length;
@@ -457,6 +489,43 @@ export default function AdminPage() {
                        <p><strong>Deposit:</strong> HK${(searchResult.user.deposit || 0).toFixed(2)}</p>
                        <p><strong>Balance:</strong> HK${(searchResult.user.balance || 0).toFixed(2)}</p>
                        <p><strong>First Free Rental Used:</strong> {searchResult.user.hasHadFirstFreeRental ? 'Yes' : 'No'}</p>
+                    </CardContent>
+                  </Card>
+
+                  <Card>
+                    <CardHeader>
+                        <CardTitle className="text-lg">Balance Adjustment</CardTitle>
+                        <CardDescription>Manually add or deduct from the user's spendable balance.</CardDescription>
+                    </CardHeader>
+                    <CardContent>
+                         <div className="flex flex-col sm:flex-row gap-2 items-center">
+                           <Input 
+                            type="number"
+                            placeholder="e.g., 5.00"
+                            value={adjustmentAmount}
+                            onChange={(e) => setAdjustmentAmount(e.target.value)}
+                            disabled={isAdjustingBalance}
+                           />
+                           <div className="flex gap-2 w-full sm:w-auto">
+                             <Button 
+                                onClick={() => handleBalanceAdjustment('add')} 
+                                disabled={isAdjustingBalance || !adjustmentAmount}
+                                className="flex-1"
+                             >
+                               {isAdjustingBalance ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <PlusCircle className="mr-2 h-4 w-4" />}
+                               Add
+                             </Button>
+                             <Button 
+                                onClick={() => handleBalanceAdjustment('deduct')} 
+                                disabled={isAdjustingBalance || !adjustmentAmount}
+                                variant="destructive"
+                                className="flex-1"
+                             >
+                               {isAdjustingBalance ? <Loader2 className="mr-2 h-4 w-4 animate-spin"/> : <MinusCircle className="mr-2 h-4 w-4" />}
+                               Deduct
+                             </Button>
+                           </div>
+                         </div>
                     </CardContent>
                   </Card>
 
@@ -677,3 +746,4 @@ export default function AdminPage() {
     </>
   );
 }
+
