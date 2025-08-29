@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -399,7 +398,7 @@ export default function ReturnUmbrellaPage() {
                 <AlertTitle>Connection Step</AlertTitle>
                 <AlertDescription>
                   Your phone will ask for permission to connect. Please select the device with this exact name:
-                  <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-lg text-center text-green-600 font-bold tracking-widest">
+                  <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-3xl text-center text-green-600 font-bold">
                     {scannedStall.btName || "Device Name Not Found"}
                   </div>
                    If you do not see this name, please cancel and try again.
