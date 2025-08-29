@@ -123,20 +123,6 @@ export default function AccountBalancePage() {
             )}
           </CardContent>
         </Card>
-
-        <Card className="shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-primary flex items-center">
-              <History className="mr-3 h-6 w-6"/> {translate('balance_transaction_history_label')}
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-muted-foreground text-center py-4">
-              {translate('balance_transaction_history_placeholder')}
-            </p>
-            <p className="text-xs text-muted-foreground mt-2">{translate('balance_rental_terms_note')}</p>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
