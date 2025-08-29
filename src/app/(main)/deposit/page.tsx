@@ -27,7 +27,6 @@ export default function DepositPage() {
   const router = useRouter();
   
   const [amount, setAmount] = useState('50');
-  const [customAmount, setCustomAmount] = useState('');
   const [selectedMethod, setSelectedMethod] = useState<string | null>(null);
   const [isProcessingPayment, setIsProcessingPayment] = useState(false);
 
@@ -115,7 +114,7 @@ export default function DepositPage() {
   const handleDepositPayment = () => handlePayment(100, 'deposit');
 
   const handleAddBalancePayment = () => {
-    const finalAmount = parseFloat(amount === 'custom' ? customAmount : amount);
+    const finalAmount = parseFloat(amount);
     if (isNaN(finalAmount) || finalAmount <= 0) {
         toast({ title: "Invalid Amount", description: "Please enter a valid positive amount.", variant: "destructive"});
         return;
@@ -205,8 +204,8 @@ export default function DepositPage() {
         <CardContent className="space-y-8">
           <div>
             <Label className="text-lg font-semibold">{translate('add_balance_amount_label')}</Label>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-2">
-              {['25', '50', '100', 'custom'].map(value => (
+            <div className="grid grid-cols-3 gap-4 mt-2">
+              {['25', '50', '100'].map(value => (
                 <Button
                   key={value}
                   variant={amount === value ? 'default' : 'outline'}
@@ -214,25 +213,10 @@ export default function DepositPage() {
                   className="h-14 text-lg"
                   disabled={isProcessingPayment}
                 >
-                  {value === 'custom' ? translate('add_balance_custom_amount') : `HK$${value}`}
+                  {`HK$${value}`}
                 </Button>
               ))}
             </div>
-             {amount === 'custom' && (
-                <div className="mt-4">
-                    <Label htmlFor="custom-amount-input">{translate('add_balance_enter_custom_amount')}</Label>
-                    <Input
-                        id="custom-amount-input"
-                        type="number"
-                        placeholder="e.g., 30"
-                        value={customAmount}
-                        onChange={(e) => setCustomAmount(e.target.value)}
-                        className="mt-1 h-12 text-lg"
-                        min="1"
-                        disabled={isProcessingPayment}
-                    />
-                </div>
-            )}
           </div>
 
           <div className="space-y-4">
@@ -260,7 +244,7 @@ export default function DepositPage() {
           <Button
             className="w-full text-lg py-6 bg-accent hover:bg-accent/90 text-accent-foreground"
             onClick={handleAddBalancePayment}
-            disabled={!selectedMethod || isProcessingPayment || (amount === 'custom' && (!customAmount || parseFloat(customAmount) <= 0))}
+            disabled={!selectedMethod || isProcessingPayment}
           >
             {isProcessingPayment && <Loader2 className="mr-2 h-5 w-5 animate-spin" />}
             {translate('add_balance_proceed_button')}
