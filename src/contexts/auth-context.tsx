@@ -319,45 +319,84 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const endRental = async (returnedToStallId: string) => {
-    if (!firebaseUser || !activeRental || !firebaseServices?.db) return;
-    
-    const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
-    const returnedStallDocRef = doc(firebaseServices.db, 'stalls', returnedToStallId);
-    
-    const returnedStallSnap = await getDoc(returnedStallDocRef);
-    if (!returnedStallSnap.exists()) {
-        toast({ variant: "destructive", title: "Return Failed", description: "Could not find the stall to return to." });
-        return;
+    console.log("--- [endRental] Function Started ---");
+    if (!firebaseUser || !activeRental || !firebaseServices?.db) {
+      console.error("[endRental] Pre-condition failed:", { firebaseUser, activeRental, firebaseServices });
+      return;
     }
-    const returnedStall = returnedStallSnap.data() as Stall;
     
-    const endTime = Date.now();
-    const durationHours = (endTime - activeRental.startTime) / (1000 * 60 * 60);
-    const finalCost = activeRental.isFree ? 0 : Math.min(100, Math.ceil(durationHours) * 5);
+    try {
+      const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
+      const returnedStallDocRef = doc(firebaseServices.db, 'stalls', returnedToStallId);
+      
+      const returnedStallSnap = await getDoc(returnedStallDocRef);
+      if (!returnedStallSnap.exists()) {
+          toast({ variant: "destructive", title: "Return Failed", description: "Could not find the stall to return to." });
+          console.error("[endRental] Returned stall document not found:", returnedToStallId);
+          return;
+      }
+      const returnedStall = returnedStallSnap.data() as Stall;
+      
+      const endTime = Date.now();
+      const durationHours = (endTime - activeRental.startTime) / (1000 * 60 * 60);
+      
+      // Cost calculation logic
+      const HOURLY_RATE = 5;
+      const DAILY_CAP = 25;
+      let calculatedCost = 0;
+      if (!activeRental.isFree) {
+        if (durationHours > 72) {
+          calculatedCost = 100; // Forfeit deposit
+        } else {
+          const fullDays = Math.floor(durationHours / 24);
+          const remainingHours = durationHours % 24;
+          calculatedCost = (fullDays * DAILY_CAP) + Math.min(Math.ceil(remainingHours) * HOURLY_RATE, DAILY_CAP);
+        }
+      }
+      const finalCost = Math.min(calculatedCost, 100);
 
-    const newRentalHistoryDocRef = doc(collection(firebaseServices.db, 'rentals'));
-    
-    const rentalHistory: RentalHistory = {
-        ...activeRental,
-        rentalId: newRentalHistoryDocRef.id,
+      const newRentalHistoryDocRef = doc(collection(firebaseServices.db, 'rentals'));
+      
+      const rentalHistory: RentalHistory = {
+          rentalId: newRentalHistoryDocRef.id,
+          userId: firebaseUser.uid,
+          stallId: activeRental.stallId,
+          stallName: activeRental.stallName,
+          startTime: activeRental.startTime,
+          isFree: activeRental.isFree,
+          endTime,
+          durationHours,
+          finalCost,
+          returnedToStallId,
+          returnedToStallName: returnedStall.name,
+          logs: activeRental.logs || [], 
+      };
+
+      // --- DIAGNOSTIC LOGGING ---
+      console.log("[endRental] Data before commit:", {
         userId: firebaseUser.uid,
-        endTime,
-        durationHours,
-        finalCost,
-        returnedToStallId,
-        returnedToStallName: returnedStall.name,
-        logs: activeRental.logs || [], 
-    };
-    
-    const batch = writeBatch(firebaseServices.db);
-    batch.set(newRentalHistoryDocRef, rentalHistory);
-    batch.update(userDocRef, { activeRental: null, balance: increment(-finalCost) }); 
-    batch.update(returnedStallDocRef, {
-      availableUmbrellas: increment(1),
-      nextActionSlot: increment(1)
-    });
-    
-    await batch.commit();
+        returnedToStallId: returnedToStallId,
+        returnedStallName: returnedStall.name,
+        durationHours: durationHours,
+        finalCost: finalCost,
+        isFree: activeRental.isFree,
+        rentalHistoryObject: rentalHistory
+      });
+      
+      const batch = writeBatch(firebaseServices.db);
+      batch.set(newRentalHistoryDocRef, rentalHistory);
+      batch.update(userDocRef, { activeRental: null, balance: increment(-finalCost) }); 
+      batch.update(returnedStallDocRef, {
+        availableUmbrellas: increment(1),
+        nextActionSlot: increment(1)
+      });
+      
+      await batch.commit();
+      console.log("--- [endRental] Batch commit successful ---");
+    } catch (error) {
+      console.error("--- [endRental] CRITICAL ERROR during execution ---", error);
+      toast({ variant: "destructive", title: "Return Processing Error", description: "Could not finalize the return. Please contact support." });
+    }
   };
   
   const logMachineEvent = async ({ stallId, type, message }: { stallId?: string; type: MachineLog['type']; message: string; }) => {

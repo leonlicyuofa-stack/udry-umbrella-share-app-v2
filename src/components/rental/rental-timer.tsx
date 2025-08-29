@@ -8,7 +8,6 @@ import { Button } from '@/components/ui/button';
 import { TimerIcon, Umbrella, AlertTriangle, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
-import { DebugStatus } from '@/components/debug/DebugStatus';
 
 const CUSTOMER_SERVICE_NUMBER = "1-800-UDRY-HLP"; // Placeholder
 
