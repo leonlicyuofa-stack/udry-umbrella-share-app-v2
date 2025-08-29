@@ -34,7 +34,7 @@ const getStripe = () => {
 };
 
 // --- NEW UNLOCK MACHINE FUNCTION ---
-exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (request) => {
+exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"], invoker: "public" }, async (request) => {
     logger.info("--- unlockPhysicalMachine function triggered ---");
 
     const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
