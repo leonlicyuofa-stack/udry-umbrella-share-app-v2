@@ -360,7 +360,7 @@ exports.endRentalTransaction = onCall(async (request) => {
         // Step 3: Fetch Stall Information
         const returnedStallDocRef = db.collection('stalls').doc(returnedToStallId);
         const returnedStallSnap = await returnedStallDocRef.get();
-        if (!returnedStallSnap.exists()) {
+        if (!returnedStallSnap.exists) {
             logger.error(`[Cloud Function] Stall lookup failed for user ${userId}: Stall ${returnedToStallId} not found.`);
             throw new HttpsError('not-found', 'Return stall not found.');
         }
@@ -440,3 +440,4 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
 });
+    
