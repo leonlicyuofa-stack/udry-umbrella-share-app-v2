@@ -22,16 +22,24 @@ export function RentalTimer() {
   const [totalElapsedHoursState, setTotalElapsedHoursState] = useState<number>(0);
 
   useEffect(() => {
+    // If the rental ends or is loading, clear everything and stop.
     if (isLoadingRental || !activeRental || !activeRental.startTime) {
       setElapsedTime('');
       setCalculatedCharge(0);
       setWarningMessage(null);
       setShowMaxChargeMessage(false);
       setTotalElapsedHoursState(0);
-      return;
+      return; // Exit the effect
     }
 
+    // This interval will run every second to update the timer.
     const intervalId = setInterval(() => {
+      // Double-check activeRental on each tick in case it becomes null
+      if (!activeRental || !activeRental.startTime) {
+          clearInterval(intervalId);
+          return;
+      }
+      
       const now = Date.now();
       const startTime = activeRental.startTime;
       if (typeof startTime !== 'number' || isNaN(startTime)) { // Guard against NaN
@@ -95,8 +103,9 @@ export function RentalTimer() {
 
     }, 1000);
 
+    // This is the cleanup function that runs when the component unmounts or dependencies change.
     return () => clearInterval(intervalId);
-  }, [activeRental, isLoadingRental]);
+  }, [activeRental, isLoadingRental]); // The effect re-runs whenever activeRental changes.
 
   // Stricter check: Do not render anything if there isn't a valid active rental with a start time.
   if (!activeRental || !activeRental.startTime) {
