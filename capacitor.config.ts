@@ -14,11 +14,13 @@ const config: CapacitorConfig = {
   },
   server: {
     allowNavigation: [
-      "identitytoolkit.googleapis.com"
+      "identitytoolkit.googleapis.com",
+      "*.stripe.com",
+      "udry-app-dev.web.app"
     ]
   },
   plugins: {
-    App: {
+    "Capacitor-App": {
       iosScheme: "udry",
       androidScheme: "udry"
     }
@@ -26,5 +28,3 @@ const config: CapacitorConfig = {
 };
 
 export default config;
-
-    
