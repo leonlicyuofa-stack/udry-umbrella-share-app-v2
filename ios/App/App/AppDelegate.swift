@@ -9,32 +9,33 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         // Override point for customization after application launch.
-        
-        // This is the crucial addition.
-        // We are asking for media capture permissions right after the app launches.
-        // This ensures the WebView has the necessary permissions before any web code tries to access the camera.
-        WKWebView.self.requestMediaCapturePermission(for: .all, granted: { (granted) in
-            if !granted {
-                print("User did not grant media capture permission.")
+
+        // --- Start U-DRY Custom Permission Logic ---
+        // This is necessary to grant camera and microphone permissions to the WebView
+        // for features like QR code scanning to work correctly in the native iOS app.
+        if #available(iOS 15.0, *) {
+            DispatchQueue.main.async {
+                // Access the main view controller provided by Capacitor
+                guard let viewController = self.window?.rootViewController as? CAPBridgeViewController else {
+                    print("Could not find CAPBridgeViewController")
+                    return
+                }
+
+                // Access the webView from the view controller
+                guard let webView = viewController.bridge?.webView else {
+                    print("Could not find the webView")
+                    return
+                }
+                
+                // Correctly call the permission request on the webView's websiteDataStore
+                webView.configuration.websiteDataStore.requestMediaCapturePermission(for: .all, grantedBy: .user) { decision in
+                    print("Media capture permission decision: \(decision)")
+                }
             }
-        })
+        }
+        // --- End U-DRY Custom Permission Logic ---
 
         return true
-    }
-
-    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
-        // Called when the app was launched with a url. Feel free to add your own implementation.
-        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
-    }
-
-    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        // Called when the app was launched with an activity, including Universal Links.
-        // Feel free to add your own implementation here.
-        return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
-    }
-
-    override func remoteControlReceived(with event: UIEvent?) {
-        super.remoteControlReceived(with: event)
     }
 
     func applicationWillResignActive(_ application: UIApplication) {
@@ -55,16 +56,21 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Restart any tasks that were paused (or not yet started) while the application was inactive. If the application was previously in the background, optionally refresh the user interface.
     }
 
+
+
     func applicationWillTerminate(_ application: UIApplication) {
         // Called when the application is about to terminate. Save data if appropriate. See also applicationDidEnterBackground:.
     }
 
-    func application(_ application: UIApplication, didRegisterForRemoteNotificationsWithDeviceToken deviceToken: Data) {
-        NotificationCenter.default.post(name: .capacitorDidRegisterForRemoteNotifications, object: deviceToken)
+    func application(_ app: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey: Any] = [:]) -> Bool {
+        // Called when the app was launched with a url. Feel free to add your own implementation.
+        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
-    func application(_ application: UIApplication, didFailToRegisterForRemoteNotificationsWithError error: Error) {
-        NotificationCenter.default.post(name: .capacitorDidFailToRegisterForRemoteNotifications, object: error)
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        // Called when the app was launched with an activity, including Universal Links.
+        // Feel free to add your own implementation here.
+        return ApplicationDelegateProxy.shared.application(application, continue: userActivity, restorationHandler: restorationHandler)
     }
 
 }
