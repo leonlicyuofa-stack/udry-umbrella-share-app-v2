@@ -1,4 +1,3 @@
-
 // src/components/rental/rental-initiation-dialog.tsx
 "use client";
 
@@ -12,7 +11,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Terminal } from 'lucide-react';
 import Link from 'next/link';
-import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/ble';
+import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/bluetooth-le/dist/esm';
 
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
 const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";

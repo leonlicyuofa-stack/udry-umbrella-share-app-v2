@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useRef, useCallback } from "react";
@@ -14,7 +13,7 @@ import Link from "next/link";
 import type { Stall } from '@/lib/types';
 import { Html5Qrcode } from "html5-qrcode";
 import { cn } from "@/lib/utils";
-import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/ble';
+import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/bluetooth-le/dist/esm';
 
 const QR_READER_REGION_ID = "qr-reader-region-return";
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
