@@ -15,7 +15,7 @@ import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-communi
 
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
 const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
-const GET_UMBRELLA_BASE_PARM = 1000000;
+const GET_UMBRELLA_BASE_PARM = 2000000;
 
 type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
 type ConnectionStep = 'pre_confirmation' | 'connecting' | 'error';
