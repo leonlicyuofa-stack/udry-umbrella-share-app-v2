@@ -7,18 +7,15 @@ import crypto from 'crypto';
 // It securely communicates with the UTEK (machine vendor) API.
 
 // Ensure these are set in your .env.local file
-const PARTNER_ID = process.env.NEXT_PUBLIC_UTEK_API_PARTNER_ID;
-const API_SECRET_KEY = process.env.UTEK_API_SECRET_KEY;
-const UTEK_API_ENDPOINT = 'http://api.utek.com.cn:8000/api/v2/unlock';
+// These values are based on the user-provided working URL.
+const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
+const UTEK_APP_ID = process.env.NEXT_PUBLIC_UTEK_APP_ID || '684c01f3144cc';
+const UTEK_KEY = process.env.UTEK_API_KEY || '684c01f314508';
 
-function generateSign(partnerId: string, secretKey: string, timestamp: string): string {
-    const stringToSign = `${partnerId}${timestamp}${secretKey}`;
-    return crypto.createHash('md5').update(stringToSign).digest('hex');
-}
 
 export async function POST(request: Request) {
-    if (!PARTNER_ID || !API_SECRET_KEY) {
-        return NextResponse.json({ success: false, message: 'Server is missing critical machine API configuration.' }, { status: 500 });
+    if (!UTEK_APP_ID || !UTEK_KEY) {
+        return NextResponse.json({ success: false, message: 'Server is missing critical machine API configuration (APP_ID or KEY).' }, { status: 500 });
     }
 
     try {
@@ -29,29 +26,26 @@ export async function POST(request: Request) {
             return NextResponse.json({ success: false, message: 'Invalid request: Missing required parameters.' }, { status: 400 });
         }
 
-        const timestamp = Math.floor(Date.now() / 1000).toString();
-        const sign = generateSign(PARTNER_ID, API_SECRET_KEY, timestamp);
-
-        const apiRequestBody = {
-            partner_id: PARTNER_ID,
-            dvid: dvid,
-            tok: tok,
-            parm: parm,
-            cmd_type: cmd_type,
-            ts: timestamp,
-            sign: sign,
-        };
-
-        const response = await fetch(UTEK_API_ENDPOINT, {
-            method: 'POST',
+        // Construct the URL with query parameters, as per the new method.
+        const url = new URL(UTEK_API_ENDPOINT);
+        url.searchParams.append('dvid', dvid);
+        url.searchParams.append('appid', UTEK_APP_ID);
+        url.searchParams.append('key', UTEK_KEY);
+        url.searchParams.append('cmd_type', cmd_type);
+        url.searchParams.append('parm', parm);
+        url.searchParams.append('tok', tok);
+        
+        // Make the GET request to the vendor's API.
+        const response = await fetch(url.toString(), {
+            method: 'GET',
             headers: {
                 'Content-Type': 'application/json',
             },
-            body: JSON.stringify(apiRequestBody),
         });
 
         const responseData = await response.json();
-
+        
+        // The success condition from the vendor's documentation is `ret === 0`.
         if (responseData.ret !== 0) {
             // Forward the error message from the UTEK API
             return NextResponse.json({ success: false, message: `Machine API Error: ${responseData.msg} (Code: ${responseData.ret})` }, { status: 400 });
