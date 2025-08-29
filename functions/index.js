@@ -160,9 +160,10 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
-    const APP_DEEP_LINK_BASE_URL = 'udry://payment/success'; 
+    // **FIXED LOGIC**: Use the live web app URL for the success redirect.
+    // This provides an intermediary page that will then deep link back to the app.
     const LIVE_APP_BASE_URL = 'https://udry-app-dev.web.app'; 
-    logger.info(`Step 5: Using deep link base URL: ${APP_DEEP_LINK_BASE_URL}`);
+    logger.info(`Step 5: Using web app base URL: ${LIVE_APP_BASE_URL}`);
 
     try {
         logger.info("Step 6: Attempting to create Stripe checkout session...");
@@ -182,7 +183,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${APP_DEEP_LINK_BASE_URL}?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
+            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
                 userId: userId,
