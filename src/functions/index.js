@@ -2,7 +2,7 @@
 const functions = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions");
-const fetch = require("node-fetch"); // Use a specific version of fetch
+const fetch = require("node-fetch");
 
 // --- Safe, Global Initialization ---
 let adminApp; // Will be initialized lazily
@@ -34,13 +34,12 @@ const getStripe = () => {
 };
 
 // --- NEW UNLOCK MACHINE FUNCTION ---
-exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (request) => {
+exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"], invoker: "public" }, async (request) => {
     logger.info("--- unlockPhysicalMachine function triggered ---");
 
     const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
     const UTEK_APP_ID = process.env.NEXT_PUBLIC_UTEK_APP_ID || '684c01f3144cc';
-    // Use the secret manager for the API key
-    const UTEK_KEY = process.env.UTEK_API_KEY || '684c01f314508';
+    const UTEK_KEY = process.env.UTEK_API_KEY;
 
     if (!UTEK_APP_ID || !UTEK_KEY) {
         logger.error("Server is missing critical machine API configuration (APP_ID or KEY).");
@@ -53,7 +52,7 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
         logger.error("Invalid request: Missing required parameters.", { dvid, tok, parm, cmd_type });
         throw new HttpsError('invalid-argument', 'Invalid request: Missing required parameters.');
     }
-     logger.info(`Step 1: Received data - DVID: ${dvid}, Token: ${tok}, Param: ${parm}, CmdType: ${cmd_type}`);
+    logger.info(`Step 1: Received data - DVID: ${dvid}, Token: ${tok}, Param: ${parm}, CmdType: ${cmd_type}`);
 
 
     try {
@@ -77,7 +76,11 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
         const responseData = await response.json();
         logger.info("Step 3: Received response from vendor API.", { responseData });
 
-        if (responseData.ret !== 0) {
+        // **MODIFIED LOGIC:** Check for success more flexibly.
+        // A successful response might have ret: 0 OR msg: "success" but no ret code.
+        const isSuccess = responseData.ret === 0 || (responseData.msg === 'success' && typeof responseData.ret === 'undefined');
+
+        if (!isSuccess) {
             const detailedErrorMessage = `Machine API Error: ${responseData.msg} (Code: ${responseData.ret})`;
             logger.error(`Vendor API returned an error: ${detailedErrorMessage}`);
             throw new HttpsError('internal', detailedErrorMessage);
@@ -179,7 +182,6 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            // CORRECTED: Using backticks (`) to allow variable interpolation for userId
             success_url: `${APP_DEEP_LINK_BASE_URL}?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
@@ -321,6 +323,93 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
             throw error;
         }
         throw new HttpsError('internal', `An unexpected error occurred: ${error.message}`);
+    }
+});
+
+
+exports.endRentalTransaction = onCall(async (request) => {
+    const admin = require("firebase-admin");
+    const db = getAdminApp().firestore();
+
+    if (!request.auth) {
+        throw new HttpsError('unauthenticated', 'You must be logged in to end a rental.');
+    }
+
+    const { returnedToStallId, activeRentalData } = request.data;
+    const userId = request.auth.uid;
+
+    if (!returnedToStallId || !activeRentalData) {
+        throw new HttpsError('invalid-argument', 'Missing required data for ending a rental.');
+    }
+    
+    try {
+        const userDocRef = db.collection('users').doc(userId);
+        const returnedStallDocRef = db.collection('stalls').doc(returnedToStallId);
+        const newRentalHistoryDocRef = db.collection('rentals').doc();
+
+        const returnedStallSnap = await returnedStallDocRef.get();
+        if (!returnedStallSnap.exists()) {
+            throw new HttpsError('not-found', 'Return stall not found.');
+        }
+        const returnedStall = returnedStallSnap.data();
+
+        const endTime = Date.now();
+        const durationHours = (endTime - activeRentalData.startTime) / (1000 * 60 * 60);
+
+        const HOURLY_RATE = 5;
+        const DAILY_CAP = 25;
+        let calculatedCost = 0;
+
+        if (activeRentalData.isFree) {
+            calculatedCost = 0;
+        } else if (durationHours > 72) {
+            calculatedCost = 100; // Forfeit deposit
+        } else {
+            const fullDays = Math.floor(durationHours / 24);
+            const remainingHours = durationHours % 24;
+            const cappedRemainingCost = Math.min(Math.ceil(remainingHours) * HOURLY_RATE, DAILY_CAP);
+            calculatedCost = (fullDays * DAILY_CAP) + cappedRemainingCost;
+        }
+        const finalCost = Math.min(calculatedCost, 100);
+
+        const rentalHistory = {
+            rentalId: newRentalHistoryDocRef.id,
+            userId: userId,
+            stallId: activeRentalData.stallId,
+            stallName: activeRentalData.stallName,
+            startTime: activeRentalData.startTime,
+            isFree: activeRentalData.isFree || false,
+            endTime,
+            durationHours,
+            finalCost,
+            returnedToStallId,
+            returnedToStallName: returnedStall.name,
+            logs: activeRentalData.logs || [],
+        };
+        
+        // Use a batch to perform all writes atomically
+        const batch = db.batch();
+        batch.set(newRentalHistoryDocRef, rentalHistory);
+        batch.update(userDocRef, { 
+            activeRental: null, 
+            balance: admin.firestore.FieldValue.increment(-finalCost) 
+        });
+        batch.update(returnedStallDocRef, { 
+            availableUmbrellas: admin.firestore.FieldValue.increment(1),
+            nextActionSlot: admin.firestore.FieldValue.increment(1) 
+        });
+
+        await batch.commit();
+
+        logger.info(`Successfully ended rental for user ${userId}. Cost: ${finalCost}`);
+        return { success: true, message: 'Rental ended successfully.' };
+
+    } catch (error) {
+        logger.error(`Error in endRentalTransaction for user ${userId}:`, error);
+        if (error instanceof HttpsError) {
+            throw error;
+        }
+        throw new HttpsError('internal', 'An unexpected server error occurred while ending the rental.');
     }
 });
 

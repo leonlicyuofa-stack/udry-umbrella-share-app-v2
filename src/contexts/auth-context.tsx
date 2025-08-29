@@ -25,6 +25,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/language-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle } from 'lucide-react';
+import { httpsCallable } from 'firebase/functions';
 
 interface AuthContextType {
   user: User | null;
@@ -319,83 +320,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const endRental = async (returnedToStallId: string) => {
-    console.log("--- [endRental] Function Started ---");
-    if (!firebaseUser || !activeRental || !firebaseServices?.db) {
-      console.error("[endRental] Pre-condition failed:", { firebaseUser, activeRental, firebaseServices });
+    if (!firebaseUser || !activeRental || !firebaseServices?.functions) {
+      console.error("[endRental] Pre-condition failed: Missing user, active rental, or functions service.");
       return;
     }
-    
+  
     try {
-      const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
-      const returnedStallDocRef = doc(firebaseServices.db, 'stalls', returnedToStallId);
-      
-      const returnedStallSnap = await getDoc(returnedStallDocRef);
-      if (!returnedStallSnap.exists()) {
-          toast({ variant: "destructive", title: "Return Failed", description: "Could not find the stall to return to." });
-          console.error("[endRental] Returned stall document not found:", returnedToStallId);
-          return;
-      }
-      const returnedStall = returnedStallSnap.data() as Stall;
-      
-      const endTime = Date.now();
-      const durationHours = (endTime - activeRental.startTime) / (1000 * 60 * 60);
-      
-      // Cost calculation logic
-      const HOURLY_RATE = 5;
-      const DAILY_CAP = 25;
-      let calculatedCost = 0;
-      if (!activeRental.isFree) {
-        if (durationHours > 72) {
-          calculatedCost = 100; // Forfeit deposit
-        } else {
-          const fullDays = Math.floor(durationHours / 24);
-          const remainingHours = durationHours % 24;
-          calculatedCost = (fullDays * DAILY_CAP) + Math.min(Math.ceil(remainingHours) * HOURLY_RATE, DAILY_CAP);
-        }
-      }
-      const finalCost = Math.min(calculatedCost, 100);
-
-      const newRentalHistoryDocRef = doc(collection(firebaseServices.db, 'rentals'));
-      
-      const rentalHistory: RentalHistory = {
-          rentalId: newRentalHistoryDocRef.id,
-          userId: firebaseUser.uid,
-          stallId: activeRental.stallId,
-          stallName: activeRental.stallName,
-          startTime: activeRental.startTime,
-          isFree: activeRental.isFree,
-          endTime,
-          durationHours,
-          finalCost,
-          returnedToStallId,
-          returnedToStallName: returnedStall.name,
-          logs: activeRental.logs || [], 
-      };
-
-      // --- DIAGNOSTIC LOGGING ---
-      console.log("[endRental] Data before commit:", {
-        userId: firebaseUser.uid,
+      // Call the secure Cloud Function instead of writing to DB directly
+      const endRentalTransaction = httpsCallable(firebaseServices.functions, 'endRentalTransaction');
+      const result = await endRentalTransaction({
         returnedToStallId: returnedToStallId,
-        returnedStallName: returnedStall.name,
-        durationHours: durationHours,
-        finalCost: finalCost,
-        isFree: activeRental.isFree,
-        rentalHistoryObject: rentalHistory
+        // The activeRental object from the context is the source of truth
+        activeRentalData: activeRental 
       });
+
+      const data = result.data as { success: boolean, message?: string };
+      if (!data.success) {
+        throw new Error(data.message || "The server failed to process the return.");
+      }
       
-      const batch = writeBatch(firebaseServices.db);
-      batch.set(newRentalHistoryDocRef, rentalHistory);
-      batch.update(userDocRef, { activeRental: null, balance: increment(-finalCost) }); 
-      batch.update(returnedStallDocRef, {
-        availableUmbrellas: increment(1),
-        nextActionSlot: increment(1)
+      // The local state will update automatically via the onSnapshot listener.
+      // No need to call setActiveRental(null) here.
+      
+    } catch (error: any) {
+      console.error("--- [endRental] CRITICAL ERROR during Cloud Function call ---", error);
+      toast({
+        variant: "destructive",
+        title: "Return Processing Error",
+        description: error.message || "Could not finalize the return. Please contact support."
       });
-      
-      await batch.commit();
-      console.log("--- [endRental] Batch commit successful ---");
-    } catch (error) {
-      console.error("--- [endRental] CRITICAL ERROR during execution ---", error);
-      toast({ variant: "destructive", title: "Return Processing Error", description: "Could not finalize the return. Please contact support." });
     }
   };
   
