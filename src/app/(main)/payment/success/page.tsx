@@ -17,7 +17,7 @@ function InternalPaymentSuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
-    const { user, isReady, firebaseServices } = useAuth();
+    const { isReady, firebaseServices } = useAuth(); // Removed user from here
     
     const [status, setStatus] = useState<UpdateStatus>('idle');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -36,17 +36,8 @@ function InternalPaymentSuccessContent() {
     };
 
     useEffect(() => {
-        // Wait until auth is ready and we have the necessary services.
         if (!isReady || hasProcessed.current || !firebaseServices) return;
         
-        // This effect might run multiple times, but hasProcessed.current will stop it after the first run.
-        if (isReady && !user) {
-             setErrorMessage("Authentication session not found. Please sign in and try again.");
-             setStatus('error');
-             hasProcessed.current = true; // Mark as processed to prevent re-running
-             return;
-        }
-
         const sessionId = searchParams.get('session_id');
         const uid = searchParams.get('uid'); 
 
@@ -59,18 +50,11 @@ function InternalPaymentSuccessContent() {
             router.replace('/home');
             return;
         }
-
-        if (user && user.uid !== uid) {
-            setErrorMessage("Security check failed: The logged-in user does not match the payment link user.");
-            setStatus('error');
-            hasProcessed.current = true;
-            return;
-        }
         
         hasProcessed.current = true;
         processPayment(sessionId, uid);
 
-    }, [isReady, user, firebaseServices, router, searchParams, toast]);
+    }, [isReady, firebaseServices, router, searchParams, toast]);
 
 
     const processPayment = async (sessionId: string, uid: string) => {
@@ -81,9 +65,9 @@ function InternalPaymentSuccessContent() {
         }
         setStatus('processing');
         try {
+            // This function is now callable without being authenticated
             const finalizeStripePayment = httpsCallable(firebaseServices.functions, 'finalizeStripePayment');
             
-            // Pass the uid from the URL to the function for a server-side security check.
             const result = await finalizeStripePayment({ sessionId, uid });
             const data = result.data as { success: boolean, message: string };
             if (!data.success) throw new Error(data.message || 'Failed to process payment session.');
@@ -138,7 +122,7 @@ function InternalPaymentSuccessContent() {
                         </div>
                         <CardTitle className="mt-4 text-2xl font-bold">Payment Successful!</CardTitle>
                         <CardDescription>
-                            Thank you! Your account has been updated.
+                            Thank you! Your account has been updated. The app will now reload to show your new balance.
                         </CardDescription>
                     </>
                 )}
@@ -181,7 +165,10 @@ function InternalPaymentSuccessContent() {
                  )}
             </CardContent>
             <CardFooter>
-                 <Button onClick={() => router.push('/account/balance')} className="w-full">
+                 <Button onClick={() => {
+                     // This deep link will take the user back into the app
+                     window.location.href = `udry://account/balance`;
+                 }} className="w-full">
                     Go to My Wallet <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
             </CardFooter>
