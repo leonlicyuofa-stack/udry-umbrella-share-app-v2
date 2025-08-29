@@ -15,7 +15,6 @@ const config: CapacitorConfig = {
   server: {
     allowNavigation: [
       "identitytoolkit.googleapis.com",
-      "*.stripe.com",
       "udry-app-dev.web.app"
     ]
   },
