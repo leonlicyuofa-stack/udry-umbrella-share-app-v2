@@ -2,7 +2,7 @@
 const functions = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions");
-const fetch = require("node-fetch"); // Use a specific version of fetch
+const fetch = require("node-fetch");
 
 // --- Safe, Global Initialization ---
 let adminApp; // Will be initialized lazily
@@ -39,8 +39,7 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
 
     const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
     const UTEK_APP_ID = process.env.NEXT_PUBLIC_UTEK_APP_ID || '684c01f3144cc';
-    // Use the secret manager for the API key
-    const UTEK_KEY = process.env.UTEK_API_KEY || '684c01f314508';
+    const UTEK_KEY = process.env.UTEK_API_KEY;
 
     if (!UTEK_APP_ID || !UTEK_KEY) {
         logger.error("Server is missing critical machine API configuration (APP_ID or KEY).");
@@ -53,7 +52,7 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
         logger.error("Invalid request: Missing required parameters.", { dvid, tok, parm, cmd_type });
         throw new HttpsError('invalid-argument', 'Invalid request: Missing required parameters.');
     }
-     logger.info(`Step 1: Received data - DVID: ${dvid}, Token: ${tok}, Param: ${parm}, CmdType: ${cmd_type}`);
+    logger.info(`Step 1: Received data - DVID: ${dvid}, Token: ${tok}, Param: ${parm}, CmdType: ${cmd_type}`);
 
 
     try {
@@ -77,7 +76,11 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
         const responseData = await response.json();
         logger.info("Step 3: Received response from vendor API.", { responseData });
 
-        if (responseData.ret !== 0) {
+        // **MODIFIED LOGIC:** Check for success more flexibly.
+        // A successful response might have ret: 0 OR msg: "success" but no ret code.
+        const isSuccess = responseData.ret === 0 || (responseData.msg === 'success' && typeof responseData.ret === 'undefined');
+
+        if (!isSuccess) {
             const detailedErrorMessage = `Machine API Error: ${responseData.msg} (Code: ${responseData.ret})`;
             logger.error(`Vendor API returned an error: ${detailedErrorMessage}`);
             throw new HttpsError('internal', detailedErrorMessage);
@@ -179,7 +182,6 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            // CORRECTED: Using backticks (`) to allow variable interpolation for userId
             success_url: `${APP_DEEP_LINK_BASE_URL}?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
