@@ -245,8 +245,8 @@ export default function ReturnUmbrellaPage() {
           description: `Your umbrella rental has been successfully returned to ${scannedStall.name}.`,
         });
         endRental(scannedStall.id);
-        router.push('/home');
         setShowSuccessDialog(false);
+        router.push('/home');
       }, 3000);
 
       return () => clearTimeout(timer);
@@ -440,3 +440,5 @@ export default function ReturnUmbrellaPage() {
     </div>
   );
 }
+
+    
