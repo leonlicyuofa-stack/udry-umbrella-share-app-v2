@@ -1,3 +1,4 @@
+
 // src/components/rental/rental-initiation-dialog.tsx
 "use client";
 
@@ -9,7 +10,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle } from 'lucide-react';
+import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Terminal } from 'lucide-react';
 import Link from 'next/link';
 
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
@@ -42,10 +43,24 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const [bluetoothState, setBluetoothState] = useState<BluetoothState>('idle');
   const [bluetoothError, setBluetoothError] = useState<string | null>(null);
   
+  // State for diagnostic info
+  const [diagInfo, setDiagInfo] = useState({ isSecure: false, href: 'Checking...' });
+
   const bluetoothDeviceRef = useRef<BluetoothDevice | null>(null);
   const tokCharacteristicRef = useRef<BluetoothRemoteGATTCharacteristic | null>(null);
 
   const isProcessing = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
+
+  useEffect(() => {
+    // This effect runs when the dialog opens to capture diagnostic info.
+    if (isOpen) {
+      setDiagInfo({
+        isSecure: window.isSecureContext,
+        href: window.location.href,
+      });
+    }
+  }, [isOpen]);
+
 
   useEffect(() => {
     // Reset state when the dialog is closed or the stall changes
@@ -209,6 +224,16 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         </DialogHeader>
 
         <div className="py-4 space-y-6">
+          {/* --- DIAGNOSTIC INFO BOX --- */}
+          <Alert variant="default" className="bg-yellow-50 border-yellow-200">
+            <Terminal className="h-4 w-4 text-yellow-600" />
+            <AlertTitle className="text-yellow-800">Diagnostic Info (Temporary)</AlertTitle>
+            <AlertDescription className="text-yellow-700 text-xs">
+              <p><strong>Is Secure Context:</strong> {diagInfo.isSecure ? 'true' : 'false'}</p>
+              <p><strong>Current URL:</strong> {diagInfo.href}</p>
+            </AlertDescription>
+          </Alert>
+
           {!canRent && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />
