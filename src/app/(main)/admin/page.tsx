@@ -13,7 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import type { Stall, User, RentalHistory } from '@/lib/types';
+import type { Stall, User, RentalHistory, ActiveRental } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
 import { GeoPoint, collection, getDocs, doc, updateDoc as firestoreUpdateDoc, setDoc } from 'firebase/firestore';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -34,6 +34,15 @@ import {
 
 
 const ADMIN_EMAIL = "admin@u-dry.com";
+
+type ActivityLog = {
+    type: 'rent' | 'return';
+    user: User;
+    stallName: string;
+    timestamp: number;
+    rentalDetails: RentalHistory | ActiveRental;
+};
+
 
 export default function AdminPage() {
   const { user, isReady, firebaseServices } = useAuth();
@@ -214,7 +223,7 @@ export default function AdminPage() {
     }
   };
 
-  // --- DERIVED STATS ---
+  // --- DERIVED STATS & DATA ---
   const userMap = new Map(allUsers.map(u => [u.uid, u]));
   const activeRentalsCount = allUsers.filter(u => u.activeRental).length;
   const totalUsersCount = allUsers.length;
@@ -224,7 +233,33 @@ export default function AdminPage() {
   const totalSpendableBalance = allUsers.reduce((sum, user) => sum + (user.balance || 0), 0);
   const totalUmbrellasCount = stalls.reduce((sum, s) => sum + s.totalUmbrellas, 0);
 
-  const sortedRentalHistory = rentalHistories.sort((a, b) => (b.endTime || 0) - (a.endTime || 0));
+  const combinedActivityLog = useCallback((): ActivityLog[] => {
+    if (!allUsers.length && !rentalHistories.length) return [];
+
+    const userMap = new Map(allUsers.map(u => [u.uid, u]));
+
+    const returnActivities: ActivityLog[] = rentalHistories.map(rental => ({
+        type: 'return',
+        user: userMap.get(rental.userId) || { uid: rental.userId, email: "Unknown User" },
+        stallName: rental.returnedToStallName,
+        timestamp: rental.endTime,
+        rentalDetails: rental,
+    }));
+
+    const rentActivities: ActivityLog[] = allUsers
+        .filter(user => user.activeRental)
+        .map(user => ({
+            type: 'rent',
+            user: user,
+            stallName: user.activeRental!.stallName,
+            timestamp: user.activeRental!.startTime,
+            rentalDetails: user.activeRental!,
+        }));
+
+    return [...returnActivities, ...rentActivities].sort((a, b) => b.timestamp - a.timestamp);
+  }, [allUsers, rentalHistories]);
+
+  const sortedActivityLog = combinedActivityLog();
 
 
   if (!isReady || isLoadingStalls) return (
@@ -322,15 +357,15 @@ export default function AdminPage() {
         <Card className="shadow-lg">
           <CardHeader>
               <CardTitle className="text-2xl flex items-center"><Clock className="mr-2 h-6 w-6 text-primary" /> Recent Activities</CardTitle>
-              <CardDescription>A log of the last 10 completed rentals.</CardDescription>
+              <CardDescription>A log of the last 10 rentals and returns.</CardDescription>
           </CardHeader>
           <CardContent>
             {isLoadingAdminData ? (
                <div className="flex justify-center items-center h-24">
                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
                </div>
-            ) : rentalHistories.length === 0 ? (
-               <p className="text-muted-foreground text-center">No completed rentals yet.</p>
+            ) : sortedActivityLog.length === 0 ? (
+               <p className="text-muted-foreground text-center">No activities yet.</p>
             ) : (
                 <Table>
                   <TableHeader>
@@ -342,19 +377,22 @@ export default function AdminPage() {
                     </TableRow>
                   </TableHeader>
                   <TableBody>
-                    {sortedRentalHistory.slice(0, 10).map((rental, index) => {
-                       const user = userMap.get(rental.userId);
-                       const time = rental.endTime ? new Date(rental.endTime).toLocaleString() : 'N/A';
+                    {sortedActivityLog.slice(0, 10).map((activity, index) => {
+                       const time = activity.timestamp ? new Date(activity.timestamp).toLocaleString() : 'N/A';
                        return (
                            <TableRow key={index}>
                                 <TableCell>
-                                    <div className="font-medium">{user?.email || 'Unknown User'}</div>
-                                    <div className="text-xs text-muted-foreground font-mono">{rental.userId}</div>
+                                    <div className="font-medium">{activity.user.email || 'Unknown User'}</div>
+                                    <div className="text-xs text-muted-foreground font-mono">{activity.user.uid}</div>
                                 </TableCell>
                                 <TableCell>
-                                    <Badge variant="secondary">Return</Badge>
+                                    {activity.type === 'rent' ? (
+                                        <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">Rent</Badge>
+                                    ) : (
+                                        <Badge variant="secondary">Return</Badge>
+                                    )}
                                 </TableCell>
-                                <TableCell>{rental.returnedToStallName}</TableCell>
+                                <TableCell>{activity.stallName}</TableCell>
                                 <TableCell>{time}</TableCell>
                            </TableRow>
                        );
@@ -471,5 +509,3 @@ export default function AdminPage() {
     </>
   );
 }
-
-    
