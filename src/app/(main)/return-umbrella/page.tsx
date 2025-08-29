@@ -178,15 +178,15 @@ export default function ReturnUmbrellaPage() {
     logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
 
     if (receivedString.startsWith("TOK:")) {
-      const tokenValue = receivedString.substring(4).trim();
-      if (/^\d{6}$/.test(tokenValue)) {
+      const fullToken = receivedString.substring(4).trim();
+      if (/^\d{6}$/.test(fullToken)) {
+        const tokenValue = fullToken.substring(0, 3); // Use only the first 3 digits
         console.log(`[U-Dry Return] Parsed Token: ${tokenValue}`);
         setBluetoothState('getting_command');
         
         try {
           // Use the dynamic slot number from the stall object
           const slotNum = scannedStall.nextActionSlot || 1;
-          // CRITICAL FIX: Ensure the calculated parmValue is a string for the API.
           const parmValue = (RETURN_UMBRELLA_BASE_PARM + slotNum).toString();
           const cmdType = '1';
 
@@ -222,7 +222,7 @@ export default function ReturnUmbrellaPage() {
           logMachineEvent({ stallId: scannedStall.id, type: 'error', message: `Failed to get/send return command: ${errorMsg}` });
         }
       } else {
-         const errorMsg = `Invalid token format received: ${tokenValue}`;
+         const errorMsg = `Invalid token format received: ${fullToken}`;
          setBluetoothError(errorMsg);
          setBluetoothState('error');
          logMachineEvent({ stallId: scannedStall.id, type: 'error', message: errorMsg });

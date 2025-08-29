@@ -87,15 +87,16 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
     logMachineEvent({ stallId: stall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
 
     if (receivedString.startsWith("TOK:")) {
-      const tokenValue = receivedString.substring(4).trim();
-      if (/^\d{6}$/.test(tokenValue)) {
+      const fullToken = receivedString.substring(4).trim();
+      if (/^\d{6}$/.test(fullToken)) {
+        const tokenValue = fullToken.substring(0, 3); // Use only the first 3 digits
         setBluetoothState('getting_command');
         
         try {
           // Use the dynamic slot number from the stall object
           const slotNum = stall.nextActionSlot || 1; 
           const parmValue = (GET_UMBRELLA_BASE_PARM + slotNum).toString();
-          const cmdType = '1'; // CORRECTED: Use '1' for rent command as per user feedback
+          const cmdType = '1';
 
           const backendResponse = await fetch('/api/admin/unlock-physical-machine', {
             method: 'POST',
@@ -133,7 +134,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           logMachineEvent({ stallId: stall.id, type: 'error', message: `Failed to get/send unlock command: ${errorMsg}` });
         }
       } else {
-         const errorMsg = `Invalid token format received: ${tokenValue}`;
+         const errorMsg = `Invalid token format received: ${fullToken}`;
          setBluetoothError(errorMsg);
          setBluetoothState('error');
          setConnectionStep('error');
