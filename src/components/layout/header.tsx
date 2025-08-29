@@ -13,7 +13,6 @@ import { ReportIssueDialog } from '@/components/report/report-issue-dialog';
 import { useState } from 'react';
 import { LanguageSwitcher } from './language-switcher';
 import { useLanguage } from '@/contexts/language-context';
-import { DebugStatus } from '@/components/debug/DebugStatus'; // Import the new debug component
 
 interface NavItemProps {
   href: string;
@@ -61,7 +60,6 @@ export function Header() {
           </div>
 
           <div className="flex items-center justify-end space-x-1 sm:space-x-2">
-            <DebugStatus /> 
             <Button
               variant="ghost"
               onClick={() => setIsReportIssueDialogOpen(true)}

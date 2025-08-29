@@ -8,6 +8,7 @@ import { Button } from '@/components/ui/button';
 import { TimerIcon, Umbrella, AlertTriangle, Phone } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Badge } from '@/components/ui/badge';
+import { DebugStatus } from '@/components/debug/DebugStatus';
 
 const CUSTOMER_SERVICE_NUMBER = "1-800-UDRY-HLP"; // Placeholder
 
@@ -126,9 +127,12 @@ export function RentalTimer() {
             <Umbrella className="h-5 w-5 mr-2" />
             Active Rental
           </CardTitle>
-          <Badge variant={isOverdue ? "destructive" : (activeRental.isFree ? "secondary" : "default")} className="text-xs ml-auto whitespace-nowrap">
-            {activeRental.isFree ? "Free Rental!" : `HK$${calculatedCharge.toFixed(2)}`}
-          </Badge>
+          <div className="flex items-center gap-2">
+            <DebugStatus />
+            <Badge variant={isOverdue ? "destructive" : (activeRental.isFree ? "secondary" : "default")} className="text-xs ml-auto whitespace-nowrap">
+              {activeRental.isFree ? "Free Rental!" : `HK$${calculatedCharge.toFixed(2)}`}
+            </Badge>
+          </div>
         </CardHeader>
         <CardContent className="pt-1 pb-3 px-4 space-y-2">
           <div className="text-sm text-muted-foreground">
