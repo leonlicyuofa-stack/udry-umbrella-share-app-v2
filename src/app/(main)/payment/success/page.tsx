@@ -9,7 +9,7 @@ import { CheckCircle, ArrowRight, Loader2, AlertTriangle, Terminal, RefreshCw } 
 import { useToast } from '@/hooks/use-toast';
 import { httpsCallable } from 'firebase/functions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { initializeFirebaseServices } from '@/lib/firebase'; // Import directly
+import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase'; // Import directly
 
 type UpdateStatus = 'idle' | 'processing' | 'success' | 'error';
 
@@ -17,7 +17,7 @@ function InternalPaymentSuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
-    const [firebaseServices, setFirebaseServices] = useState(initializeFirebaseServices());
+    const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
     
     const [status, setStatus] = useState<UpdateStatus>('idle');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -25,6 +25,17 @@ function InternalPaymentSuccessContent() {
     const [isSessionExpiredError, setIsSessionExpiredError] = useState(false);
     
     const hasProcessed = useRef(false);
+
+    // Initialize Firebase services on component mount
+    useEffect(() => {
+        const services = initializeFirebaseServices();
+        if (services) {
+            setFirebaseServices(services);
+        } else {
+            setErrorMessage("Failed to initialize connection to server.");
+            setStatus('error');
+        }
+    }, []);
 
     const deployCommand = "firebase deploy --only functions";
     const copyDeployCommand = () => {
@@ -184,5 +195,3 @@ export default function InternalPaymentSuccessPage() {
         </div>
     )
 }
-
-    
