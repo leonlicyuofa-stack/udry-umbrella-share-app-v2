@@ -9,7 +9,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Loader2, AlertTriangle, ArrowLeft, Umbrella, TimerIcon, CheckCircle, Bluetooth, QrCode, CameraOff } from "lucide-react";
+import { Loader2, AlertTriangle, ArrowLeft, Umbrella, TimerIcon, CheckCircle, Bluetooth, QrCode, CameraOff, Camera } from "lucide-react";
 import Link from "next/link";
 import type { Stall } from '@/lib/types';
 import { Html5Qrcode } from "html5-qrcode";
@@ -47,6 +47,7 @@ export default function ReturnUmbrellaPage() {
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   const [elapsedTime, setElapsedTime] = useState<string>('');
   const [qrError, setQrError] = useState<string|null>(null);
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
   
   const bluetoothDeviceRef = useRef<BluetoothDevice | null>(null);
   const tokCharacteristicRef = useRef<BluetoothRemoteGATTCharacteristic | null>(null);
@@ -91,6 +92,7 @@ export default function ReturnUmbrellaPage() {
         console.warn("Return Page: Failed to stop QR scanner gracefully:", err);
       }
     }
+    setHasCameraPermission(null);
   }, []);
 
   const onScanSuccess = useCallback(async (decodedText: string) => {
@@ -117,12 +119,28 @@ export default function ReturnUmbrellaPage() {
     }
   }, [stopScanner, stalls, toast]);
 
-  const startScanner = useCallback(() => {
+  const startScanner = useCallback(async () => {
     if (isProcessingScan.current || returnStep === 'scanning') return;
     
     setReturnStep('initializing_scanner');
     setQrError(null);
     isProcessingScan.current = false;
+    setHasCameraPermission(null);
+
+    try {
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+        stream.getTracks().forEach(track => track.stop());
+        setHasCameraPermission(true);
+    } catch (err: any) {
+        let message = "An error occurred while accessing the camera.";
+        if (err.name === "NotAllowedError") {
+            message = "Camera permission denied. Please enable camera access in your browser settings.";
+        }
+        setQrError(message);
+        setReturnStep('idle');
+        setHasCameraPermission(false);
+        return;
+    }
 
     setTimeout(() => {
         if (!html5QrCodeRef.current) {
@@ -344,7 +362,7 @@ export default function ReturnUmbrellaPage() {
             <div className="w-full aspect-square bg-muted rounded-md flex items-center justify-center">
               <div className="text-center text-muted-foreground">
                 <Loader2 className="h-8 w-8 mx-auto animate-spin mb-2" />
-                <p>Starting Camera...</p>
+                <p>Requesting camera access...</p>
               </div>
             </div>
           )}
@@ -352,7 +370,7 @@ export default function ReturnUmbrellaPage() {
           {qrError && (
              <Alert variant="destructive">
               <CameraOff className="h-4 w-4" />
-              <AlertTitle>QR Scan Error</AlertTitle>
+              <AlertTitle>Camera Error</AlertTitle>
               <AlertDescription>{qrError}</AlertDescription>
             </Alert>
           )}

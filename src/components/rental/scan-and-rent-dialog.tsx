@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { QrCode, Loader2, XCircle, CameraOff, CheckCircle, AlertTriangle } from 'lucide-react';
+import { QrCode, Loader2, XCircle, CameraOff, CheckCircle, AlertTriangle, Camera } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Html5Qrcode } from "html5-qrcode";
@@ -54,7 +54,8 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
   
   const [scanState, setScanState] = useState<ScanState>('idle');
   const [scanError, setScanError] = useState<string | null>(null);
-  
+  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+
   const isProcessingScan = useRef(false);
 
   const stopScanner = useCallback(async () => {
@@ -65,6 +66,7 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
         console.warn("Scan & Rent Dialog: Failed to stop QR scanner gracefully.", err);
       }
     }
+    setHasCameraPermission(null);
   }, []);
 
   const onScanSuccess = useCallback(async (decodedText: string) => {
@@ -97,10 +99,37 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
   }, [stopScanner, stalls, toast, onStallScanned]);
 
 
-  const startScanner = useCallback(() => {
+  const startScanner = useCallback(async () => {
     isProcessingScan.current = false;
     setScanError(null);
     setScanState('initializing');
+    setHasCameraPermission(null);
+
+    try {
+      // Check for camera permissions first
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const hasCamera = devices.some(device => device.kind === 'videoinput');
+      if (!hasCamera) {
+        throw new Error("No camera found on this device.");
+      }
+      
+      // Attempt to get a stream to trigger the permission prompt
+      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+      stream.getTracks().forEach(track => track.stop()); // Stop the stream immediately, we just needed the permission
+      setHasCameraPermission(true);
+
+    } catch (err: any) {
+        let message = "An error occurred while accessing the camera.";
+        if (err.name === "NotAllowedError") {
+            message = "Camera permission denied. Please enable camera access in your browser settings.";
+        } else if (err.name === "NotFoundError") {
+            message = "No camera found on this device.";
+        }
+        setScanError(message);
+        setScanState('error');
+        setHasCameraPermission(false);
+        return; // Stop execution if we don't have permission
+    }
     
     setTimeout(() => {
         if (!html5QrCodeRef.current) {
@@ -152,7 +181,7 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
                {scanState === 'initializing' && (
                   <div>
                     <Loader2 className="h-8 w-8 mx-auto animate-spin mb-2" />
-                    <p>Starting Camera...</p>
+                    <p>Requesting camera access...</p>
                   </div>
                 )}
                 {scanState === 'complete' && (
@@ -163,8 +192,8 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
                 )}
                 {scanState === 'error' && (
                   <Alert variant="destructive">
-                    <XCircle className="h-4 w-4" />
-                    <AlertTitle>Scan Failed</AlertTitle>
+                    <CameraOff className="h-4 w-4" />
+                    <AlertTitle>Camera Error</AlertTitle>
                     <AlertDescription>{scanError}</AlertDescription>
                   </Alert>
                 )}
@@ -179,7 +208,7 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
         
         <DialogFooter>
           {scanState === 'error' && (
-            <Button type="button" variant="outline" onClick={startScanner}>Try Scanning Again</Button>
+            <Button type="button" variant="outline" onClick={startScanner}>Try Again</Button>
           )}
           <Button type="button" variant="secondary" onClick={handleClose}>Cancel</Button>
         </DialogFooter>
