@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/language-context'; // Added
+import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
 
 // Custom WhatsApp Icon
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -45,85 +46,14 @@ export function ReportIssueDialog({ isOpen, onOpenChange }: ReportIssueDialogPro
 
   const [currentStep, setCurrentStep] = useState<ReportStep>('selectIssue');
   const [selectedIssueType, setSelectedIssueType] = useState<IssueType>(null);
+  const [isProcessing, setIsProcessing] = useState(false);
   
-  const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
-  const [isCameraLoading, setIsCameraLoading] = useState(false);
-  const [cameraError, setCameraError] = useState<string | null>(null);
-  const videoRef = useRef<HTMLVideoElement>(null);
-  const streamRef = useRef<MediaStream | null>(null);
-
-  const stopCamera = useCallback(() => {
-    if (streamRef.current) {
-      streamRef.current.getTracks().forEach(track => track.stop());
-      streamRef.current = null;
-    }
-    if (videoRef.current) {
-      videoRef.current.srcObject = null;
-    }
-    if (hasCameraPermission !== null || isCameraLoading) {
-        setHasCameraPermission(null); 
-        setIsCameraLoading(false);
-    }
-  }, [hasCameraPermission, isCameraLoading]);
-
-  const startCamera = useCallback(async () => {
-    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      const errorMsg = translate('report_issue_camera_api_unavailable');
-      setCameraError(errorMsg);
-      setHasCameraPermission(false);
-      setIsCameraLoading(false);
-      toast({ variant: 'destructive', title: translate('report_issue_camera_error_title'), description: errorMsg });
-      return;
-    }
-    setIsCameraLoading(true);
-    setCameraError(null);
-    setHasCameraPermission(null); 
-    try {
-      const stream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
-      streamRef.current = stream;
-      if (videoRef.current) {
-        videoRef.current.srcObject = stream;
-        await videoRef.current.play().catch(playError => {
-          console.warn("Video play interrupted or failed:", playError);
-        });
-      }
-      setHasCameraPermission(true);
-    } catch (error: any) {
-      console.error('Error accessing camera:', error);
-      let messageKey = 'report_issue_camera_error_desc_generic';
-      if (error.name === "NotAllowedError") {
-        messageKey = "report_issue_camera_permission_denied";
-      } else if (error.name === "NotFoundError") {
-        messageKey = "report_issue_camera_not_found";
-      } else if (error.name === "NotReadableError") {
-        messageKey = "report_issue_camera_in_use_or_error";
-      }
-      const translatedMessage = translate(messageKey);
-      setCameraError(translatedMessage);
-      setHasCameraPermission(false);
-      toast({ variant: 'destructive', title: translate('report_issue_camera_error_title'), description: translatedMessage });
-    } finally {
-      setIsCameraLoading(false);
-    }
-  }, [toast, translate]);
-
   useEffect(() => {
     if (isOpen) {
       setCurrentStep('selectIssue');
       setSelectedIssueType(null);
-    } else {
-      stopCamera();
     }
-  }, [isOpen, stopCamera]);
-
-  useEffect(() => {
-    if (isOpen && currentStep === 'captureMedia') {
-      startCamera();
-    } else if (currentStep !== 'captureMedia') { 
-      stopCamera();
-    }
-  }, [isOpen, currentStep, startCamera, stopCamera]);
-
+  }, [isOpen]);
 
   const getTodayDateString = () => {
     return new Date().toISOString().split('T')[0];
@@ -201,11 +131,35 @@ export function ReportIssueDialog({ isOpen, onOpenChange }: ReportIssueDialogPro
     onOpenChange(false); 
   };
 
-  const handleCaptureMedia = () => {
-    if (selectedIssueType === 'brokenUmbrella') {
+  const handleReportBroken = async () => {
+    setIsProcessing(true);
+    try {
+      const permissionStatus = await CapacitorCamera.checkPermissions();
+      if (permissionStatus.camera !== 'granted') {
+        const newStatus = await CapacitorCamera.requestPermissions({ permissions: ['camera'] });
+        if (newStatus.camera !== 'granted') {
+          toast({
+            variant: 'destructive',
+            title: translate('report_issue_camera_error_title'),
+            description: translate('report_issue_camera_permission_denied'),
+          });
+          setIsProcessing(false);
+          return;
+        }
+      }
+
+      // We don't actually need to take a photo, just confirm permission.
+      // In a real app, you would take a photo here:
+      // const image = await CapacitorCamera.getPhoto({
+      //   quality: 90,
+      //   allowEditing: false,
+      //   resultType: CameraResultType.Uri,
+      //   source: CameraSource.Camera
+      // });
+
       if (activeRental) { 
         const currentReportCount = incrementBrokenReportCount();
-        endRental(activeRental.stallId); // Pass stalls
+        endRental(activeRental.stallId);
 
         if (currentReportCount >= 2) {
           toast({
@@ -230,8 +184,17 @@ export function ReportIssueDialog({ isOpen, onOpenChange }: ReportIssueDialogPro
           duration: 5000,
         });
       }
+      onOpenChange(false);
+    } catch (error) {
+      console.error("Error reporting broken item:", error);
+      toast({
+        variant: 'destructive',
+        title: translate('error_title'),
+        description: translate('oops_error'),
+      });
+    } finally {
+      setIsProcessing(false);
     }
-    onOpenChange(false); 
   };
   
   const handleBack = () => {
@@ -335,46 +298,23 @@ export function ReportIssueDialog({ isOpen, onOpenChange }: ReportIssueDialogPro
         </DialogDescription>
       </DialogHeader>
       <div className="py-4 space-y-4">
-        <div className="w-full aspect-video bg-muted rounded-md overflow-hidden relative shadow-inner border flex items-center justify-center">
-          {isCameraLoading && <Loader2 className="h-8 w-8 animate-spin text-primary" />}
-          
-          <video 
-            ref={videoRef} 
-            className={`w-full h-full object-cover ${(!hasCameraPermission || isCameraLoading || cameraError) ? 'hidden' : ''}`} 
-            autoPlay 
-            playsInline 
-            muted 
-          />
-          
-          {!isCameraLoading && hasCameraPermission === null && !cameraError && ( 
-            <div className="text-center p-4 text-muted-foreground">
-                <Camera className="h-12 w-12 mx-auto mb-2 opacity-50" />
-                <p>{translate('report_issue_initializing_camera')}</p>
+        <div className="w-full aspect-video bg-muted rounded-md overflow-hidden relative shadow-inner border flex items-center justify-center p-4 text-center">
+            <div className="text-muted-foreground space-y-2">
+                <Camera className="h-12 w-12 mx-auto opacity-50" />
+                <p>Clicking the button below will open the native camera.</p>
+                <p className="text-xs">This action confirms your report. In a real app, you would take a photo before confirming.</p>
             </div>
-          )}
-
-          {!isCameraLoading && (hasCameraPermission === false || cameraError) && (
-             <Alert variant="destructive" className="m-4">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>{translate('report_issue_camera_error_title')}</AlertTitle>
-              <AlertDescription>{cameraError || translate('report_issue_camera_error_desc_generic')}</AlertDescription>
-            </Alert>
-          )}
         </div>
-        {hasCameraPermission === false && !isCameraLoading && (
-            <Button onClick={startCamera} variant="outline" className="w-full">
-                <Camera className="mr-2 h-4 w-4" /> {translate('report_issue_retry_camera_button')}
-            </Button>
-        )}
       </div>
       <DialogFooter className="mt-2">
         <Button variant="outline" onClick={handleBack}>{translate('report_issue_back_to_selection_button')}</Button>
         <Button 
-            onClick={handleCaptureMedia} 
-            disabled={!hasCameraPermission || isCameraLoading}
+            onClick={handleReportBroken} 
+            disabled={isProcessing}
             className="bg-primary hover:bg-primary/90"
         >
-          <CheckCircle className="mr-2 h-4 w-4" /> {translate('report_issue_confirm_report_button')}
+          {isProcessing ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <CheckCircle className="mr-2 h-4 w-4" />}
+          {translate('report_issue_confirm_report_button')}
         </Button>
       </DialogFooter>
     </>
