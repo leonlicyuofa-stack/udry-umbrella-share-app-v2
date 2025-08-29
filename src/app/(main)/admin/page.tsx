@@ -15,7 +15,7 @@ import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, 
 import { useToast } from "@/hooks/use-toast";
 import type { Stall, User, RentalHistory, ActiveRental, RentalLog } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { GeoPoint, collection, getDocs, doc, updateDoc as firestoreUpdateDoc, setDoc, query, where, Timestamp, increment } from 'firebase/firestore';
+import { GeoPoint, collection, getDocs, doc, updateDoc as firestoreUpdateDoc, setDoc, query, where, Timestamp, increment, getDoc } from 'firebase/firestore';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Accordion,
@@ -51,7 +51,7 @@ type UserSearchResult = {
 
 
 export default function AdminPage() {
-  const { user, isReady, firebaseServices } = useAuth();
+  const { user, isReady, firebaseServices } from useAuth();
   const { stalls, isLoadingStalls } = useStalls();
   const router = useRouter();
   const { translate } = useLanguage();
