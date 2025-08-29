@@ -4,7 +4,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { Badge } from '@/components/ui/badge';
 
 export function DebugStatus() {
-  const { activeRental, isLoadingRental } from useAuth();
+  const { activeRental, isLoadingRental } = useAuth();
 
   if (isLoadingRental) {
     return <Badge variant="outline">Loading...</Badge>;
