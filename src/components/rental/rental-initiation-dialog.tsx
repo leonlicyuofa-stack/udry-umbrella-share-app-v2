@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Info, ArrowRight, Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
 import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/bluetooth-le/dist/esm';
+import { httpsCallable } from 'firebase/functions';
 
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
 const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
@@ -39,7 +40,7 @@ interface RentalInitiationDialogProps {
 }
 
 export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalInitiationDialogProps) {
-  const { user, startRental, useFirstFreeRental, logMachineEvent } = useAuth();
+  const { user, startRental, useFirstFreeRental, logMachineEvent, firebaseServices } = useAuth();
   const { toast } = useToast();
   
   const [bluetoothState, setBluetoothState] = useState<BluetoothState>('idle');
@@ -82,7 +83,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
 
   const handleTokNotification = useCallback(async (value: DataView) => {
     const receivedString = dataViewToText(value).trim();
-    if (!stall) return;
+    if (!stall || !firebaseServices) return;
 
     logMachineEvent({ stallId: stall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
 
@@ -98,21 +99,20 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           const parmValue = (GET_UMBRELLA_BASE_PARM + slotNum).toString();
           const cmdType = '1';
 
-          const backendResponse = await fetch('/api/admin/unlock-physical-machine', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ dvid: stall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType }),
-          });
-          const result = await backendResponse.json();
+          // Call the Cloud Function
+          const unlockPhysicalMachine = httpsCallable(firebaseServices.functions, 'unlockPhysicalMachine');
+          const result = await unlockPhysicalMachine({ dvid: stall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType });
+          
+          const data = result.data as { success: boolean; unlockDataString?: string; message?: string; };
 
-          if (!backendResponse.ok || !result.success || !result.unlockDataString) {
-            const errorMsg = result.message || `Failed to get unlock command.`;
-            logMachineEvent({ stallId: stall.id, type: 'error', message: `Vendor API Error on Rent: ${errorMsg}` });
+          if (!data.success || !data.unlockDataString) {
+            const errorMsg = data.message || `Failed to get unlock command.`;
+            logMachineEvent({ stallId: stall.id, type: 'error', message: `Cloud Function Error on Rent: ${errorMsg}` });
             throw new Error(errorMsg);
           }
           
           setBluetoothState('sending_command');
-          const commandToSend = `CMD:${result.unlockDataString}\r\n`;
+          const commandToSend = `CMD:${data.unlockDataString}\r\n`;
           const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
 
           await BleClient.writeWithoutResponse(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
@@ -149,7 +149,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       setConnectionStep('error');
       toast({ variant: "destructive", title: "Duplicate Action Error", description: errorMsg, duration: 8000 });
     }
-  }, [stall, user, startRental, useFirstFreeRental, toast, logMachineEvent, onOpenChange]);
+  }, [stall, user, startRental, useFirstFreeRental, toast, logMachineEvent, onOpenChange, firebaseServices]);
 
   const handleConnectAndRent = async () => {
     if (!stall) return;
@@ -278,19 +278,6 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         </DialogHeader>
 
         <div className="py-4 space-y-6">
-          <Alert variant="destructive">
-            <AlertTriangle className="h-4 w-4" />
-            <AlertTitle>Developer Diagnostic Tool</AlertTitle>
-            <AlertDescription>
-              Click the button below to test if the backend API is reachable. This will help diagnose deployment issues.
-              <Button asChild variant="link" className="p-0 h-auto ml-1">
-                <a href="/api/ping" target="_blank" rel="noopener noreferrer">
-                  Test Backend Endpoint <LinkIcon className="ml-1 h-3 w-3" />
-                </a>
-              </Button>
-            </AlertDescription>
-          </Alert>
-
           {!canRent && (
             <Alert variant="destructive">
               <AlertTriangle className="h-4 w-4" />

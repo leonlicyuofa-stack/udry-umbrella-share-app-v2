@@ -2,6 +2,7 @@
 const functions = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions");
+const fetch = require("node-fetch"); // Use a specific version of fetch
 
 // --- Safe, Global Initialization ---
 let adminApp; // Will be initialized lazily
@@ -31,6 +32,70 @@ const getStripe = () => {
     }
     return stripe;
 };
+
+// --- NEW UNLOCK MACHINE FUNCTION ---
+exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (request) => {
+    logger.info("--- unlockPhysicalMachine function triggered ---");
+
+    const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
+    const UTEK_APP_ID = process.env.NEXT_PUBLIC_UTEK_APP_ID || '684c01f3144cc';
+    // Use the secret manager for the API key
+    const UTEK_KEY = process.env.UTEK_API_KEY || '684c01f314508';
+
+    if (!UTEK_APP_ID || !UTEK_KEY) {
+        logger.error("Server is missing critical machine API configuration (APP_ID or KEY).");
+        throw new HttpsError('internal', 'Server is missing critical machine API configuration.');
+    }
+
+    const { dvid, tok, parm, cmd_type } = request.data;
+
+    if (!dvid || !tok || !parm || !cmd_type) {
+        logger.error("Invalid request: Missing required parameters.", { dvid, tok, parm, cmd_type });
+        throw new HttpsError('invalid-argument', 'Invalid request: Missing required parameters.');
+    }
+     logger.info(`Step 1: Received data - DVID: ${dvid}, Token: ${tok}, Param: ${parm}, CmdType: ${cmd_type}`);
+
+
+    try {
+        const url = new URL(UTEK_API_ENDPOINT);
+        url.searchParams.append('dvid', dvid);
+        url.searchParams.append('appid', UTEK_APP_ID);
+        url.searchParams.append('key', UTEK_KEY);
+        url.searchParams.append('cmd_type', cmd_type);
+        url.searchParams.append('parm', parm);
+        url.searchParams.append('tok', tok);
+
+        logger.info(`Step 2: Sending request to vendor API: ${url.toString()}`);
+
+        const response = await fetch(url.toString(), {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+        
+        const responseData = await response.json();
+        logger.info("Step 3: Received response from vendor API.", { responseData });
+
+        if (responseData.ret !== 0) {
+            const detailedErrorMessage = `Machine API Error: ${responseData.msg} (Code: ${responseData.ret})`;
+            logger.error(`Vendor API returned an error: ${detailedErrorMessage}`);
+            throw new HttpsError('internal', detailedErrorMessage);
+        }
+
+        const unlockDataString = responseData.data;
+        logger.info(`Step 4 SUCCESS: Successfully received unlock data string: "${unlockDataString}"`);
+        return { success: true, unlockDataString: unlockDataString };
+
+    } catch (error) {
+        logger.error(`--- CRITICAL ERROR in unlockPhysicalMachine --- : ${error.message}`);
+        if (error instanceof HttpsError) {
+            throw error;
+        }
+        throw new HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
+    }
+});
+
 
 exports.makeAdmin = onCall(async (request) => {
     const admin = require("firebase-admin");
