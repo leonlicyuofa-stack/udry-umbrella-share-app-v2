@@ -327,6 +327,96 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async
 });
 
 
+exports.endRentalTransaction = onCall(async (request) => {
+    const admin = require("firebase-admin");
+    const db = getAdminApp().firestore();
+
+    if (!request.auth) {
+        throw new HttpsError('unauthenticated', 'You must be logged in to end a rental.');
+    }
+
+    const { returnedToStallId, activeRentalData } = request.data;
+    const userId = request.auth.uid;
+
+    logger.info(`[Cloud Function] Starting endRental for user: ${userId}`, { returnedToStallId, hasActiveRental: !!activeRentalData });
+
+    if (!returnedToStallId || !activeRentalData) {
+        throw new HttpsError('invalid-argument', 'Missing required data for ending a rental.');
+    }
+    
+    try {
+        const userDocRef = db.collection('users').doc(userId);
+        const returnedStallDocRef = db.collection('stalls').doc(returnedToStallId);
+        const newRentalHistoryDocRef = db.collection('rentals').doc();
+
+        const returnedStallSnap = await returnedStallDocRef.get();
+        if (!returnedStallSnap.exists()) {
+            throw new HttpsError('not-found', 'Return stall not found.');
+        }
+        const returnedStall = returnedStallSnap.data();
+
+        const endTime = Date.now();
+        const durationHours = (endTime - activeRentalData.startTime) / (1000 * 60 * 60);
+
+        const HOURLY_RATE = 5;
+        const DAILY_CAP = 25;
+        let calculatedCost = 0;
+
+        if (activeRentalData.isFree) {
+            calculatedCost = 0;
+        } else if (durationHours > 72) {
+            calculatedCost = 100; // Forfeit deposit
+        } else {
+            const fullDays = Math.floor(durationHours / 24);
+            const remainingHours = durationHours % 24;
+            const cappedRemainingCost = Math.min(Math.ceil(remainingHours) * HOURLY_RATE, DAILY_CAP);
+            calculatedCost = (fullDays * DAILY_CAP) + cappedRemainingCost;
+        }
+        const finalCost = Math.min(calculatedCost, 100);
+
+        logger.info(`[Cloud Function] Calculated final cost for user ${userId}: ${finalCost}`);
+
+        const rentalHistory = {
+            rentalId: newRentalHistoryDocRef.id,
+            userId: userId,
+            stallId: activeRentalData.stallId,
+            stallName: activeRentalData.stallName,
+            startTime: activeRentalData.startTime,
+            isFree: activeRentalData.isFree || false,
+            endTime,
+            durationHours,
+            finalCost,
+            returnedToStallId,
+            returnedToStallName: returnedStall.name,
+            logs: activeRentalData.logs || [],
+        };
+        
+        const batch = db.batch();
+        batch.set(newRentalHistoryDocRef, rentalHistory);
+        batch.update(userDocRef, { 
+            activeRental: null, 
+            balance: admin.firestore.FieldValue.increment(-finalCost) 
+        });
+        batch.update(returnedStallDocRef, { 
+            availableUmbrellas: admin.firestore.FieldValue.increment(1),
+            nextActionSlot: admin.firestore.FieldValue.increment(1) 
+        });
+
+        await batch.commit();
+
+        logger.info(`[Cloud Function] Successfully ended rental for user ${userId}. Cost: ${finalCost}`);
+        return { success: true, message: 'Rental ended successfully.' };
+
+    } catch (error) {
+        logger.error(`[Cloud Function] Error in endRentalTransaction for user ${userId}:`, error);
+        if (error instanceof HttpsError) {
+            throw error;
+        }
+        throw new HttpsError('internal', 'An unexpected server error occurred while ending the rental.');
+    }
+});
+
+
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });

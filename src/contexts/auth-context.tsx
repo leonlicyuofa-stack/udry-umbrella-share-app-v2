@@ -319,28 +319,32 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       toast({ title: "Rental Started!", description: `You have rented an umbrella from ${rental.stallName}.` });
   };
 
-  const endRental = async (returnedToStallId: string) => {
+ const endRental = async (returnedToStallId: string) => {
     if (!firebaseUser || !activeRental || !firebaseServices?.functions) {
       console.error("[endRental] Pre-condition failed: Missing user, active rental, or functions service.");
       return;
     }
   
     try {
-      // Call the secure Cloud Function instead of writing to DB directly
       const endRentalTransaction = httpsCallable(firebaseServices.functions, 'endRentalTransaction');
+      
+      // DIAGNOSTIC LOG: Log the data just before sending it to the Cloud Function
+      console.log(`[endRental] Calling Cloud Function with stallId: ${returnedToStallId}`);
+      
       const result = await endRentalTransaction({
         returnedToStallId: returnedToStallId,
-        // The activeRental object from the context is the source of truth
         activeRentalData: activeRental 
       });
 
       const data = result.data as { success: boolean, message?: string };
+      
+      console.log('[endRental] Cloud Function response:', data);
+
       if (!data.success) {
         throw new Error(data.message || "The server failed to process the return.");
       }
       
-      // The local state will update automatically via the onSnapshot listener.
-      // No need to call setActiveRental(null) here.
+      toast({ title: "Return Successful", description: "Your rental has been completed." });
       
     } catch (error: any) {
       console.error("--- [endRental] CRITICAL ERROR during Cloud Function call ---", error);
