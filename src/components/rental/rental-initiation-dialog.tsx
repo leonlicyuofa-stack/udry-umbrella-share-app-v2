@@ -94,9 +94,8 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         try {
           // Use the dynamic slot number from the stall object
           const slotNum = stall.nextActionSlot || 1; 
-          // CRITICAL FIX: Ensure the calculated parmValue is a string for the API.
           const parmValue = (GET_UMBRELLA_BASE_PARM + slotNum).toString();
-          const cmdType = '0';
+          const cmdType = '1'; // CORRECTED: Use '1' for rent command as per user feedback
 
           const backendResponse = await fetch('/api/admin/unlock-physical-machine', {
             method: 'POST',
