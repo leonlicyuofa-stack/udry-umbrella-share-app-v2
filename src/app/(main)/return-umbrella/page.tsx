@@ -184,7 +184,8 @@ export default function ReturnUmbrellaPage() {
         setBluetoothState('getting_command');
         
         try {
-          const slotNum = scannedStall.nextActionSlot;
+          // CORRECTED: Use the dynamic slot number from the stall object
+          const slotNum = scannedStall.nextActionSlot || 1;
           const parmValue = (RETURN_UMBRELLA_BASE_PARM + slotNum).toString();
           const cmdType = '1';
 

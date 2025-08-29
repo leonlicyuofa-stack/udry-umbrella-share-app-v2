@@ -92,7 +92,8 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         setBluetoothState('getting_command');
         
         try {
-          const slotNum = stall.nextActionSlot;
+          // CORRECTED: Use the dynamic slot number from the stall object
+          const slotNum = stall.nextActionSlot || 1; 
           const parmValue = (GET_UMBRELLA_BASE_PARM + slotNum).toString();
           const cmdType = '0';
 
