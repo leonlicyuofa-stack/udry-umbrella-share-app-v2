@@ -51,7 +51,7 @@ type UserSearchResult = {
 
 
 export default function AdminPage() {
-  const { user, isReady, firebaseServices } from useAuth();
+  const { user, isReady, firebaseServices } = useAuth();
   const { stalls, isLoadingStalls } = useStalls();
   const router = useRouter();
   const { translate } = useLanguage();
@@ -746,4 +746,3 @@ export default function AdminPage() {
     </>
   );
 }
-
