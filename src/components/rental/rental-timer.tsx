@@ -127,12 +127,9 @@ export function RentalTimer() {
             <Umbrella className="h-5 w-5 mr-2" />
             Active Rental
           </CardTitle>
-          <div className="flex items-center gap-2">
-            <DebugStatus />
-            <Badge variant={isOverdue ? "destructive" : (activeRental.isFree ? "secondary" : "default")} className="text-xs ml-auto whitespace-nowrap">
-              {activeRental.isFree ? "Free Rental!" : `HK$${calculatedCharge.toFixed(2)}`}
-            </Badge>
-          </div>
+          <Badge variant={isOverdue ? "destructive" : (activeRental.isFree ? "secondary" : "default")} className="text-xs ml-auto whitespace-nowrap">
+            {activeRental.isFree ? "Free Rental!" : `HK$${calculatedCharge.toFixed(2)}`}
+          </Badge>
         </CardHeader>
         <CardContent className="pt-1 pb-3 px-4 space-y-2">
           <div className="text-sm text-muted-foreground">

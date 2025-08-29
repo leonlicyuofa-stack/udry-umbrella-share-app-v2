@@ -13,6 +13,7 @@ import { ReportIssueDialog } from '@/components/report/report-issue-dialog';
 import { useState } from 'react';
 import { LanguageSwitcher } from './language-switcher';
 import { useLanguage } from '@/contexts/language-context';
+import { DebugStatus } from '@/components/debug/DebugStatus';
 
 interface NavItemProps {
   href: string;
@@ -70,6 +71,7 @@ export function Header() {
               <span className="hidden sm:inline">{translate('report_issue')}</span>
             </Button>
             <LanguageSwitcher />
+            <DebugStatus />
             <AuthButton />
           </div>
         </div>
