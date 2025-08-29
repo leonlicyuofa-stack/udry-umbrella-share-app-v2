@@ -11,11 +11,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock } from 'lucide-react';
+import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock, UserSearch, Search } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
-import type { Stall, User, RentalHistory, ActiveRental } from '@/lib/types';
+import type { Stall, User, RentalHistory, ActiveRental, RentalLog } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { GeoPoint, collection, getDocs, doc, updateDoc as firestoreUpdateDoc, setDoc } from 'firebase/firestore';
+import { GeoPoint, collection, getDocs, doc, updateDoc as firestoreUpdateDoc, setDoc, query, where, Timestamp } from 'firebase/firestore';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Accordion,
@@ -31,6 +31,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table"
+import { Separator } from '@/components/ui/separator';
 
 
 const ADMIN_EMAIL = "admin@u-dry.com";
@@ -42,6 +43,12 @@ type ActivityLog = {
     timestamp: number;
     rentalDetails: RentalHistory | ActiveRental;
 };
+
+// --- New Type for User Lookup Results ---
+type UserSearchResult = {
+  user: User;
+  rentalHistory: RentalHistory[];
+} | null;
 
 
 export default function AdminPage() {
@@ -77,6 +84,12 @@ export default function AdminPage() {
 
   const [uidToReset, setUidToReset] = useState('');
   const [isResettingUser, setIsResettingUser] = useState(false);
+  
+  // --- New State for User Lookup ---
+  const [searchEmail, setSearchEmail] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
+  const [searchResult, setSearchResult] = useState<UserSearchResult>(null);
+  const [searchError, setSearchError] = useState<string | null>(null);
 
   const isSuperAdminUser = user?.email?.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim();
   const deployedStallsCount = stalls.filter(s => s.isDeployed).length;
@@ -172,6 +185,49 @@ export default function AdminPage() {
     finally {
       setIsRegistering(false);
     }
+  };
+  
+  const handleSearchUser = async (e: React.FormEvent) => {
+      e.preventDefault();
+      if (!firebaseServices?.db || !searchEmail) return;
+
+      setIsSearching(true);
+      setSearchError(null);
+      setSearchResult(null);
+
+      try {
+        // 1. Find user by email
+        const usersRef = collection(firebaseServices.db, 'users');
+        const qUser = query(usersRef, where("email", "==", searchEmail.trim()));
+        const userSnapshot = await getDocs(qUser);
+
+        if (userSnapshot.empty) {
+          setSearchError(`No user found with the email: ${searchEmail}`);
+          return;
+        }
+
+        const foundUserDoc = userSnapshot.docs[0];
+        const foundUser = { uid: foundUserDoc.id, ...foundUserDoc.data() } as User;
+
+        // 2. Find their rental history
+        const rentalsRef = collection(firebaseServices.db, 'rentals');
+        const qRentals = query(rentalsRef, where("userId", "==", foundUser.uid));
+        const rentalSnapshot = await getDocs(qRentals);
+
+        const rentalHistory = rentalSnapshot.docs.map(doc => doc.data() as RentalHistory)
+          .sort((a, b) => b.startTime - a.startTime); // Sort by most recent first
+
+        setSearchResult({
+          user: foundUser,
+          rentalHistory: rentalHistory
+        });
+
+      } catch (error: any) {
+        setSearchError(error.message);
+        toast({ variant: "destructive", title: "Search Failed", description: error.message });
+      } finally {
+        setIsSearching(false);
+      }
   };
 
   const handleSaveStallDetails = async () => {
@@ -351,6 +407,118 @@ export default function AdminPage() {
             </Card>
           </CardContent>
         </Card>
+      </section>
+      
+      <section>
+          <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-2xl flex items-center"><UserSearch className="mr-2 h-6 w-6 text-primary" /> Customer Support: User Lookup</CardTitle>
+              <CardDescription>Search for a user by their email to view their details, active rental, and rental history.</CardDescription>
+            </CardHeader>
+            <form onSubmit={handleSearchUser}>
+              <CardContent>
+                <div className="flex flex-col sm:flex-row gap-2">
+                  <Input 
+                    type="email" 
+                    placeholder="Enter user's email address" 
+                    value={searchEmail} 
+                    onChange={e => setSearchEmail(e.target.value)} 
+                    disabled={isSearching}
+                  />
+                  <Button type="submit" disabled={isSearching || !searchEmail}>
+                    {isSearching ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Search className="mr-2 h-4 w-4" />}
+                    Search
+                  </Button>
+                </div>
+              </CardContent>
+            </form>
+
+            <CardContent>
+              {isSearching ? (
+                <div className="flex items-center justify-center p-8">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : searchError ? (
+                <Alert variant="destructive">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertTitle>Search Error</AlertTitle>
+                  <AlertDescription>{searchError}</AlertDescription>
+                </Alert>
+              ) : searchResult ? (
+                <div className="space-y-6">
+                  <h3 className="text-xl font-semibold text-primary">Search Result</h3>
+                  <Card>
+                    <CardHeader>
+                      <CardTitle>{searchResult.user.displayName || searchResult.user.email}</CardTitle>
+                      <CardDescription className="font-mono text-xs">{searchResult.user.uid}</CardDescription>
+                    </CardHeader>
+                    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                       <p><strong>Email:</strong> {searchResult.user.email}</p>
+                       <p><strong>Deposit:</strong> HK${(searchResult.user.deposit || 0).toFixed(2)}</p>
+                       <p><strong>Balance:</strong> HK${(searchResult.user.balance || 0).toFixed(2)}</p>
+                       <p><strong>First Free Rental Used:</strong> {searchResult.user.hasHadFirstFreeRental ? 'Yes' : 'No'}</p>
+                    </CardContent>
+                  </Card>
+
+                  {searchResult.user.activeRental ? (
+                    <div>
+                      <h4 className="text-lg font-semibold mb-2">Active Rental</h4>
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value="active-rental">
+                          <AccordionTrigger className="bg-secondary/50 px-4 rounded-md">
+                            Rented from {searchResult.user.activeRental.stallName} at {new Date(searchResult.user.activeRental.startTime).toLocaleString()}
+                          </AccordionTrigger>
+                          <AccordionContent className="pt-2">
+                            <h5 className="font-semibold px-4 pt-2">Diagnostic Log:</h5>
+                            <ScrollArea className="h-40 border rounded-md m-2">
+                              <pre className="text-xs p-2 whitespace-pre-wrap font-mono">{JSON.stringify(searchResult.user.activeRental.logs || [], null, 2)}</pre>
+                            </ScrollArea>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
+                    </div>
+                  ) : (
+                     <p className="text-sm text-muted-foreground">No active rental.</p>
+                  )}
+                  
+                  <Separator />
+
+                  <div>
+                     <h4 className="text-lg font-semibold mb-2">Rental History ({searchResult.rentalHistory.length} trips)</h4>
+                      {searchResult.rentalHistory.length > 0 ? (
+                        <Accordion type="single" collapsible className="space-y-2">
+                          {searchResult.rentalHistory.map(rental => (
+                             <AccordionItem value={rental.rentalId} key={rental.rentalId}>
+                              <AccordionTrigger className="bg-secondary/50 px-4 rounded-md text-sm">
+                                <div className="flex flex-col md:flex-row justify-between w-full pr-4 text-left">
+                                  <span>From: {rental.stallName}</span>
+                                  <span className="text-muted-foreground">{new Date(rental.startTime).toLocaleString()}</span>
+                                </div>
+                              </AccordionTrigger>
+                              <AccordionContent className="pt-2 text-xs">
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-x-4 gap-y-1 p-4">
+                                  <p><strong>Returned To:</strong> {rental.returnedToStallName}</p>
+                                  <p><strong>End Time:</strong> {new Date(rental.endTime).toLocaleString()}</p>
+                                  <p><strong>Duration:</strong> {rental.durationHours.toFixed(2)} hrs</p>
+                                  <p><strong>Cost:</strong> HK${rental.finalCost.toFixed(2)}</p>
+                                </div>
+                                <h5 className="font-semibold px-4 pt-2">Diagnostic Log:</h5>
+                                <ScrollArea className="h-40 border rounded-md m-2">
+                                  <pre className="text-xs p-2 whitespace-pre-wrap font-mono">{JSON.stringify(rental.logs || [], null, 2)}</pre>
+                                </ScrollArea>
+                              </AccordionContent>
+                            </AccordionItem>
+                          ))}
+                        </Accordion>
+                      ) : (
+                         <p className="text-sm text-muted-foreground">No rental history found for this user.</p>
+                      )}
+                  </div>
+
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
       </section>
 
        <section>
