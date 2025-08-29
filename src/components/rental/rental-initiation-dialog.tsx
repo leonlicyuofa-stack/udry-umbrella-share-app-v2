@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Terminal } from 'lucide-react';
+import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Terminal, Info } from 'lucide-react';
 import Link from 'next/link';
 import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/bluetooth-le/dist/esm';
 
@@ -19,17 +19,18 @@ const GET_UMBRELLA_BASE_PARM = 1000000;
 
 type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
 
-const bluetoothStateMessages: Record<BluetoothState, string> = {
+// This is defined outside the component to avoid re-creation on every render.
+const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, string> => ({
   idle: "Ready to connect.",
   initializing: "Initializing Bluetooth...",
-  requesting_device: "Searching for machine. Please select the U-Dry device from the system pop-up...",
+  requesting_device: `Searching for the machine. In the system pop-up, please select the device with the name:`,
   connecting: "Connecting to the machine...",
   getting_token: "Connected. Authenticating...",
   getting_command: "Authenticated. Getting unlock command...",
   sending_command: "Sending unlock command to machine...",
   success: "Command sent! Your umbrella should unlock.",
   error: "An error occurred."
-};
+});
 
 interface RentalInitiationDialogProps {
   stall: Stall | null;
@@ -47,6 +48,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const connectedDeviceIdRef = useRef<string | null>(null);
   
   const isProcessing = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
+  const bluetoothStateMessages = getBluetoothStateMessages(stall);
 
   const disconnectFromDevice = useCallback(async () => {
     if (connectedDeviceIdRef.current) {
@@ -244,6 +246,15 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
              <div className="text-center p-4 bg-primary/10 rounded-lg">
               <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
               <p className="text-sm text-primary font-medium">{bluetoothStateMessages[bluetoothState]}</p>
+              {bluetoothState === 'requesting_device' && (
+                <Alert className="mt-2 text-left">
+                  <Info className="h-4 w-4" />
+                  <AlertTitle>Look for this name:</AlertTitle>
+                  <AlertDescription className="font-mono text-center text-lg py-1">
+                    {stall.btName}
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
           )}
 
@@ -259,7 +270,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         <DialogFooter>
           <Button onClick={handleConnectAndRent} disabled={!canRent || isProcessing} className="w-full">
             {isProcessing ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Bluetooth className="mr-2 h-5 w-5" />}
-            {isProcessing ? bluetoothStateMessages[bluetoothState] : "Connect & Rent"}
+            {isProcessing ? "Connecting..." : "Connect & Rent"}
           </Button>
         </DialogFooter>
       </DialogContent>

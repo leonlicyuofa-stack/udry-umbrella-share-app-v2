@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Loader2, AlertTriangle, ArrowLeft, Umbrella, TimerIcon, CheckCircle, Bluetooth, QrCode, CameraOff, Camera } from "lucide-react";
+import { Loader2, AlertTriangle, ArrowLeft, Umbrella, TimerIcon, CheckCircle, Bluetooth, QrCode, CameraOff, Camera, Info } from "lucide-react";
 import Link from "next/link";
 import type { Stall } from '@/lib/types';
 import { Html5Qrcode } from "html5-qrcode";
@@ -23,17 +23,17 @@ const RETURN_UMBRELLA_BASE_PARM = 3000000;
 type ReturnStep = 'idle' | 'initializing_scanner' | 'scanning' | 'scan_complete';
 type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
 
-const bluetoothStateMessages: Record<BluetoothState, string> = {
+const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, string> => ({
   idle: "Ready to start.",
   initializing: "Initializing Bluetooth...",
-  requesting_device: "Searching for machine. Please select the U-Dry device from the system pop-up...",
+  requesting_device: "Searching for the machine. In the system pop-up, please select the device with the name:",
   connecting: "Connecting to the machine...",
   getting_token: "Connected. Authenticating...",
   getting_command: "Authenticated. Getting return command...",
   sending_command: "Sending return command to machine...",
   success: "Command sent! Please place your umbrella in the slot.",
   error: "An error occurred."
-};
+});
 
 export default function ReturnUmbrellaPage() {
   const { activeRental, endRental, isLoadingRental, logMachineEvent } = useAuth();
@@ -55,6 +55,7 @@ export default function ReturnUmbrellaPage() {
   const isProcessingScan = useRef(false);
   
   const isProcessingBluetooth = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
+  const bluetoothStateMessages = getBluetoothStateMessages(scannedStall);
 
   useEffect(() => {
     if (!isLoadingRental && !activeRental && !isProcessingBluetooth) {
@@ -380,6 +381,15 @@ export default function ReturnUmbrellaPage() {
             <div className="text-center p-4 bg-primary/10 rounded-lg">
               <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
               <p className="text-sm text-primary font-medium">{bluetoothStateMessages[bluetoothState]}</p>
+               {bluetoothState === 'requesting_device' && scannedStall && (
+                <Alert className="mt-2 text-left">
+                  <Info className="h-4 w-4" />
+                  <AlertTitle>Look for this name:</AlertTitle>
+                  <AlertDescription className="font-mono text-center text-lg py-1">
+                    {scannedStall.btName}
+                  </AlertDescription>
+                </Alert>
+              )}
             </div>
           )}
           
