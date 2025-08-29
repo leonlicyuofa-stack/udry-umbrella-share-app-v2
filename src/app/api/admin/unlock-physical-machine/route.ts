@@ -1,13 +1,10 @@
 // src/app/api/admin/unlock-physical-machine/route.ts
 
 import { NextResponse } from 'next/server';
-import crypto from 'crypto';
 
 // This is a server-side route handler.
 // It securely communicates with the UTEK (machine vendor) API.
 
-// Ensure these are set in your .env.local file
-// These values are based on the user-provided working URL.
 const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
 const UTEK_APP_ID = process.env.NEXT_PUBLIC_UTEK_APP_ID || '684c01f3144cc';
 const UTEK_KEY = process.env.UTEK_API_KEY || '684c01f314508';
@@ -47,8 +44,10 @@ export async function POST(request: Request) {
         
         // The success condition from the vendor's documentation is `ret === 0`.
         if (responseData.ret !== 0) {
-            // Forward the error message from the UTEK API
-            return NextResponse.json({ success: false, message: `Machine API Error: ${responseData.msg} (Code: ${responseData.ret})` }, { status: 400 });
+            // ENHANCED ERROR LOGGING:
+            // Instead of just sending the message, we now format it to include the specific error code.
+            const detailedErrorMessage = `Machine API Error: ${responseData.msg} (Code: ${responseData.ret})`;
+            return NextResponse.json({ success: false, message: detailedErrorMessage }, { status: 400 });
         }
 
         // The 'data' field from UTEK contains the final command string
