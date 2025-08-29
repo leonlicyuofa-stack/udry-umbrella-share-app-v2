@@ -8,7 +8,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
-import { Loader2, AlertTriangle, ArrowLeft, Umbrella, TimerIcon, CheckCircle, Bluetooth, QrCode, CameraOff, Camera, Info } from "lucide-react";
+import { Loader2, AlertTriangle, ArrowLeft, Umbrella, TimerIcon, CheckCircle, Bluetooth, QrCode, CameraOff, Info, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Stall } from '@/lib/types';
 import { Html5Qrcode } from "html5-qrcode";
@@ -20,7 +20,7 @@ const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
 const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
 const RETURN_UMBRELLA_BASE_PARM = 3000000;
 
-type ReturnStep = 'idle' | 'initializing_scanner' | 'scanning' | 'scan_complete';
+type ReturnStep = 'idle' | 'initializing_scanner' | 'scanning' | 'scan_complete_pre_confirmation' | 'connecting';
 type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
 
 const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, string> => ({
@@ -111,7 +111,7 @@ export default function ReturnUmbrellaPage() {
     if (foundStall) {
       toast({ title: "Stall Identified!", description: `Ready to return to ${foundStall.name}.` });
       setScannedStall(foundStall);
-      setReturnStep('scan_complete');
+      setReturnStep('scan_complete_pre_confirmation');
     } else {
       toast({ variant: "destructive", title: "Invalid QR Code", description: `Scanned code did not match a known stall. Scanned: ${dvidFromUrl}` });
       setScannedStall(null);
@@ -255,6 +255,7 @@ export default function ReturnUmbrellaPage() {
   const handleReturnViaBluetooth = async () => {
     if (isProcessingBluetooth || !scannedStall) return;
     setBluetoothError(null);
+    setReturnStep('connecting');
     setBluetoothState('initializing');
     logMachineEvent({ stallId: scannedStall.id, type: 'info', message: 'User initiated return. Starting Bluetooth connection...' });
 
@@ -272,9 +273,9 @@ export default function ReturnUmbrellaPage() {
         disconnectFromDevice();
         toast({ variant: "destructive", title: "Bluetooth Disconnected", description: "The device connection was lost." });
         setBluetoothState('idle');
+        setReturnStep('scan_complete_pre_confirmation');
       });
 
-      // Add a small delay to allow service discovery to complete
       await new Promise(resolve => setTimeout(resolve, 300));
 
       logMachineEvent({ stallId: scannedStall.id, type: 'info', message: `Connected to device: ${device.name || 'Unknown'}` });
@@ -377,19 +378,10 @@ export default function ReturnUmbrellaPage() {
             </Alert>
           )}
 
-          {isProcessingBluetooth && (
+          {returnStep === 'connecting' && isProcessingBluetooth && (
             <div className="text-center p-4 bg-primary/10 rounded-lg">
               <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
               <p className="text-sm text-primary font-medium">{bluetoothStateMessages[bluetoothState]}</p>
-               {bluetoothState === 'requesting_device' && scannedStall && (
-                <Alert className="mt-2 text-left">
-                  <Info className="h-4 w-4" />
-                  <AlertTitle>Look for this name:</AlertTitle>
-                  <AlertDescription className="font-mono text-center text-lg py-1">
-                    {scannedStall.btName}
-                  </AlertDescription>
-                </Alert>
-              )}
             </div>
           )}
           
@@ -399,13 +391,16 @@ export default function ReturnUmbrellaPage() {
               <p className="text-sm text-green-700 font-medium">{bluetoothStateMessages.success}</p>
             </div>
           )}
-
-          {returnStep === 'scan_complete' && scannedStall && !isProcessingBluetooth && bluetoothState !== 'success' && (
-            <Alert>
-                <CheckCircle className="h-4 w-4 text-green-600"/>
-                <AlertTitle>Stall Identified: {scannedStall.name}</AlertTitle>
+          
+          {returnStep === 'scan_complete_pre_confirmation' && scannedStall && (
+             <Alert>
+                <Info className="h-4 w-4" />
+                <AlertTitle>Connection Step: {scannedStall.name}</AlertTitle>
                 <AlertDescription>
-                    Ready to connect and return.
+                  Your phone will ask for permission to connect. Please select the device with this exact name:
+                  <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-base text-center text-primary tracking-widest">
+                    {scannedStall.btName || "Device Name Not Found"}
+                  </div>
                 </AlertDescription>
             </Alert>
           )}
@@ -424,10 +419,10 @@ export default function ReturnUmbrellaPage() {
                 Cancel Scan
               </Button>
             )}
-            {returnStep === 'scan_complete' && !isProcessingBluetooth && bluetoothState !== 'success' && (
+            {returnStep === 'scan_complete_pre_confirmation' && (
               <>
               <Button onClick={handleReturnViaBluetooth} className="w-full">
-                <Bluetooth className="mr-2 h-5 w-5" /> Connect & Return to {scannedStall?.name}
+                Continue to Return <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
               <Button onClick={() => {
                   setReturnStep('idle');

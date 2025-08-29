@@ -9,7 +9,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, Di
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Terminal, Info } from 'lucide-react';
+import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Info, ArrowRight } from 'lucide-react';
 import Link from 'next/link';
 import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/bluetooth-le/dist/esm';
 
@@ -18,8 +18,8 @@ const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
 const GET_UMBRELLA_BASE_PARM = 1000000;
 
 type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
+type ConnectionStep = 'pre_confirmation' | 'connecting' | 'error';
 
-// This is defined outside the component to avoid re-creation on every render.
 const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, string> => ({
   idle: "Ready to connect.",
   initializing: "Initializing Bluetooth...",
@@ -44,6 +44,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   
   const [bluetoothState, setBluetoothState] = useState<BluetoothState>('idle');
   const [bluetoothError, setBluetoothError] = useState<string | null>(null);
+  const [connectionStep, setConnectionStep] = useState<ConnectionStep>('pre_confirmation');
   
   const connectedDeviceIdRef = useRef<string | null>(null);
   
@@ -65,6 +66,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
     if (!isOpen) {
       setBluetoothState('idle');
       setBluetoothError(null);
+      setConnectionStep('pre_confirmation');
       disconnectFromDevice();
     }
   }, [isOpen, disconnectFromDevice]);
@@ -100,7 +102,6 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           
           setBluetoothState('sending_command');
           const commandToSend = `CMD:${result.unlockDataString}\r\n`;
-          // Convert string to DataView
           const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
 
           await BleClient.write(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
@@ -118,12 +119,14 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           const errorMsg = error.message || "Unknown error during command phase.";
           setBluetoothError(errorMsg);
           setBluetoothState('error');
+          setConnectionStep('error');
           logMachineEvent({ stallId: stall.id, type: 'error', message: `Failed to get/send unlock command: ${errorMsg}` });
         }
       } else {
          const errorMsg = `Invalid token format received: ${tokenValue}`;
          setBluetoothError(errorMsg);
          setBluetoothState('error');
+         setConnectionStep('error');
          logMachineEvent({ stallId: stall.id, type: 'error', message: errorMsg });
       }
     } else if (receivedString.startsWith("CMD:")) {
@@ -132,6 +135,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       const errorMsg = "Machine Error: This rental action has already been processed. Please try again or select a different slot if possible.";
       setBluetoothError(errorMsg);
       setBluetoothState('error');
+      setConnectionStep('error');
       toast({ variant: "destructive", title: "Duplicate Action Error", description: errorMsg, duration: 8000 });
     }
   }, [stall, user, startRental, useFirstFreeRental, toast, logMachineEvent, onOpenChange]);
@@ -157,9 +161,9 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         disconnectFromDevice();
         toast({ variant: 'destructive', title: 'Bluetooth Disconnected' });
         setBluetoothState('idle');
+        setConnectionStep('pre_confirmation');
       });
 
-      // Add a small delay to allow service discovery to complete
       await new Promise(resolve => setTimeout(resolve, 300));
 
       logMachineEvent({ stallId: stall.id, type: 'info', message: `Connected to device: ${device.name || 'Unknown'}` });
@@ -184,6 +188,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       }
       setBluetoothError(errorMsg);
       setBluetoothState('error');
+      setConnectionStep('error');
       logMachineEvent({ stallId: stall.id, type: 'error', message: `Bluetooth Connection Error: ${errorMsg}` });
     }
   };
@@ -201,6 +206,53 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   else if (!hasUmbrellas) cannotRentReason = "No umbrellas are available at this stall.";
   else if (!hasDeposit) cannotRentReason = "A HK$100 refundable deposit is required to rent.";
   else if (!isFirstRental && !hasBalance) cannotRentReason = "Your account balance is empty. Please add funds to rent.";
+  
+  const renderPreConfirmation = () => (
+    <>
+       <Alert>
+          <Info className="h-4 w-4" />
+          <AlertTitle>Connection Step</AlertTitle>
+          <AlertDescription>
+            Your phone will ask for permission to connect. In the list that appears, please find and select the device with this exact name:
+            <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-lg text-center text-primary tracking-widest">
+              {stall.btName || "Device Name Not Found"}
+            </div>
+            If you do not see this name, please cancel and try again.
+          </AlertDescription>
+        </Alert>
+        <DialogFooter>
+            <Button onClick={() => {
+                setConnectionStep('connecting');
+                handleConnectAndRent();
+            }} disabled={!canRent} className="w-full">
+               Continue to Connection <ArrowRight className="ml-2 h-4 w-4"/>
+            </Button>
+        </DialogFooter>
+    </>
+  );
+
+  const renderConnecting = () => (
+    <>
+      {isProcessing && (
+        <div className="text-center p-4 bg-primary/10 rounded-lg">
+          <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
+          <p className="text-sm text-primary font-medium">{bluetoothStateMessages[bluetoothState]}</p>
+        </div>
+      )}
+      {connectionStep === 'error' && bluetoothError && (
+        <Alert variant="destructive">
+          <XCircle className="h-4 w-4" />
+          <AlertTitle>Connection Failed</AlertTitle>
+          <AlertDescription>{bluetoothError}</AlertDescription>
+        </Alert>
+      )}
+      <DialogFooter>
+        <Button variant="outline" onClick={() => onOpenChange(false)}>
+            Cancel
+        </Button>
+      </DialogFooter>
+    </>
+  );
 
   return (
     <Dialog open={isOpen} onOpenChange={onOpenChange}>
@@ -226,53 +278,28 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
             </Alert>
           )}
 
-          <Card>
-            <CardContent className="pt-4 space-y-2">
-              <p className="font-semibold">Availability: <span className={hasUmbrellas ? "text-green-600" : "text-destructive"}>{stall.availableUmbrellas} / {stall.totalUmbrellas} available</span></p>
-              <Alert>
-                 <AlertTriangle className="h-4 w-4" />
-                 <AlertTitle>Rental Terms</AlertTitle>
-                 <AlertDescription className="text-xs">
-                    {isFirstRental 
-                        ? "Your first rental is free!" 
-                        : "HK$5/hr, capped at HK$25 per 24-hour period."
-                    } Return within 72 hours to avoid forfeiting your deposit.
-                 </AlertDescription>
-              </Alert>
-            </CardContent>
-          </Card>
-
-          {isProcessing && (
-             <div className="text-center p-4 bg-primary/10 rounded-lg">
-              <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
-              <p className="text-sm text-primary font-medium">{bluetoothStateMessages[bluetoothState]}</p>
-              {bluetoothState === 'requesting_device' && (
-                <Alert className="mt-2 text-left">
-                  <Info className="h-4 w-4" />
-                  <AlertTitle>Look for this name:</AlertTitle>
-                  <AlertDescription className="font-mono text-center text-lg py-1">
-                    {stall.btName}
-                  </AlertDescription>
+          {canRent && (
+            <Card>
+                <CardContent className="pt-4 space-y-2">
+                <p className="font-semibold">Availability: <span className={hasUmbrellas ? "text-green-600" : "text-destructive"}>{stall.availableUmbrellas} / {stall.totalUmbrellas} available</span></p>
+                <Alert>
+                    <AlertTriangle className="h-4 w-4" />
+                    <AlertTitle>Rental Terms</AlertTitle>
+                    <AlertDescription className="text-xs">
+                        {isFirstRental 
+                            ? "Your first rental is free!" 
+                            : "HK$5/hr, capped at HK$25 per 24-hour period."
+                        } Return within 72 hours to avoid forfeiting your deposit.
+                    </AlertDescription>
                 </Alert>
-              )}
-            </div>
-          )}
-
-          {bluetoothState === 'error' && bluetoothError && (
-             <Alert variant="destructive">
-              <XCircle className="h-4 w-4" />
-              <AlertTitle>Connection Failed</AlertTitle>
-              <AlertDescription>{bluetoothError}</AlertDescription>
-            </Alert>
+                </CardContent>
+            </Card>
           )}
         </div>
+        
+        {canRent && connectionStep === 'pre_confirmation' && renderPreConfirmation()}
+        {canRent && connectionStep !== 'pre_confirmation' && renderConnecting()}
 
-        <DialogFooter>
-          <Button onClick={handleConnectAndRent} disabled={!canRent || isProcessing} className="w-full">
-            {isProcessing ? <Loader2 className="mr-2 h-5 w-5 animate-spin" /> : <Bluetooth className="mr-2 h-5 w-5" />}
-            {isProcessing ? "Connecting..." : "Connect & Rent"}
-          </Button>
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );
