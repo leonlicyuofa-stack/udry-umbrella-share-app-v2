@@ -11,25 +11,8 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <>
-      {/* --- NEW DIAGNOSTIC TEST --- */}
-      <div style={{
-        backgroundColor: 'red',
-        color: 'white',
-        padding: '10px',
-        textAlign: 'center',
-        fontWeight: 'bold',
-        position: 'sticky',
-        top: 0,
-        zIndex: 9999,
-        fontSize: '14px'
-      }}>
-        DIAGNOSTIC: If you see this on the payment success page, the WRONG LAYOUT is being used.
-      </div>
-      {/* --- END DIAGNOSTIC TEST --- */}
-      <MainAppChrome>
-        {children}
-      </MainAppChrome>
-    </>
+    <MainAppChrome>
+      {children}
+    </MainAppChrome>
   );
 }

@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useRef, Suspense } from 'react';
@@ -13,7 +12,7 @@ import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebas
 
 type UpdateStatus = 'idle' | 'processing' | 'success' | 'error';
 
-function InternalPaymentSuccessContent() {
+function PaymentSuccessContent() {
     const router = useRouter();
     const searchParams = useSearchParams();
     const { toast } = useToast();
@@ -46,29 +45,7 @@ function InternalPaymentSuccessContent() {
         });
     };
 
-    useEffect(() => {
-        if (hasProcessed.current || !firebaseServices) return;
-        
-        const sessionId = searchParams.get('session_id');
-        const uid = searchParams.get('uid'); 
-
-        if (!sessionId || !uid) {
-            toast({
-                title: "Invalid Payment Link",
-                description: "Missing session or user information.",
-                variant: "destructive"
-            });
-            router.replace('/home');
-            return;
-        }
-        
-        hasProcessed.current = true;
-        processPayment(sessionId, uid);
-
-    }, [firebaseServices, router, searchParams, toast]);
-
-
-    const processPayment = async (sessionId: string, uid: string) => {
+    const processPayment = useCallback(async (sessionId: string, uid: string) => {
         if (!firebaseServices) {
             setErrorMessage("Firebase services are not available for payment processing.");
             setStatus('error');
@@ -102,7 +79,28 @@ function InternalPaymentSuccessContent() {
             setStatus('error');
             toast({ title: "Payment Processing Error", description: "There was an issue updating your account.", variant: "destructive", duration: 8000 });
         }
-    };
+    }, [firebaseServices, toast]);
+
+    useEffect(() => {
+        if (hasProcessed.current || !firebaseServices) return;
+        
+        const sessionId = searchParams.get('session_id');
+        const uid = searchParams.get('uid'); 
+
+        if (!sessionId || !uid) {
+            toast({
+                title: "Invalid Payment Link",
+                description: "Missing session or user information.",
+                variant: "destructive"
+            });
+            router.replace('/home');
+            return;
+        }
+        
+        hasProcessed.current = true;
+        processPayment(sessionId, uid);
+
+    }, [firebaseServices, router, searchParams, toast, processPayment]);
     
     if (status === 'idle' || status === 'processing') {
          return (
@@ -186,11 +184,11 @@ function InternalPaymentSuccessContent() {
     );
 }
 
-export default function InternalPaymentSuccessPage() {
+export default function PaymentSuccessPage() {
     return (
         <div className="flex items-center justify-center min-h-[calc(100vh-10rem)] p-4">
              <Suspense fallback={<div className="text-center"><Loader2 className="h-8 w-8 animate-spin" /></div>}>
-                <InternalPaymentSuccessContent />
+                <PaymentSuccessContent />
             </Suspense>
         </div>
     )
