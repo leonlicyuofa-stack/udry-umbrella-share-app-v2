@@ -1,6 +1,6 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, initializeAuth, browserLocalPersistence, type Auth } from 'firebase/auth';
+import { getAuth, initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
 
@@ -45,7 +45,7 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     // For Capacitor, we use indexedDBLocalPersistence. 
     // This is the most robust option for native apps.
     const auth = initializeAuth(app, {
-      persistence: browserLocalPersistence,
+      persistence: indexedDBLocalPersistence,
     });
     const functions = getFunctions(app);
 
