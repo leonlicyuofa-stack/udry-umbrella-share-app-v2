@@ -63,8 +63,15 @@ function PaymentSuccessContent() {
                 setStatus('error');
             }
         };
+        
+        // TEST: Add a 10-second delay to give Firebase plenty of time to initialize.
+        console.log("Starting 10-second delay before processing payment...");
+        const timer = setTimeout(() => {
+             processPayment();
+        }, 10000);
 
-        processPayment();
+        return () => clearTimeout(timer);
+
 
     }, [searchParams]);
 
