@@ -9,192 +9,89 @@ import { CheckCircle, ArrowRight, Loader2, AlertTriangle, Terminal, RefreshCw } 
 import { useToast } from '@/hooks/use-toast';
 import { httpsCallable } from 'firebase/functions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase'; // Import directly
+import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase';
 import { Badge } from '@/components/ui/badge';
 
 type UpdateStatus = 'idle' | 'processing' | 'success' | 'error';
 
 function PaymentSuccessContent() {
-    const router = useRouter();
+    console.log('[TEST] PaymentSuccessContent component has started rendering.');
+
     const searchParams = useSearchParams();
-    const { toast } = useToast();
-    const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
-    
     const [status, setStatus] = useState<UpdateStatus>('idle');
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
-    const [isFunctionNotFoundError, setIsFunctionNotFoundError] = useState(false);
-    const [isSessionExpiredError, setIsSessionExpiredError] = useState(false);
-    
     const hasProcessed = useRef(false);
 
-    // Initialize Firebase services on component mount
     useEffect(() => {
-        const services = initializeFirebaseServices();
-        if (services) {
-            setFirebaseServices(services);
-        } else {
-            setErrorMessage("Failed to initialize connection to server.");
-            setStatus('error');
+        console.log('[TEST] useEffect hook has started.');
+        
+        if (hasProcessed.current) {
+            console.log('[TEST] useEffect hook stopped: hasProcessed is true.');
+            return;
         }
-    }, []);
+        hasProcessed.current = true;
 
-    const deployCommand = "firebase deploy --only functions";
-    const copyDeployCommand = () => {
-        navigator.clipboard.writeText(deployCommand).then(() => {
-        toast({ title: "Command Copied!", description: "Paste it into your terminal to deploy." });
-        }).catch(err => {
-        toast({ variant: "destructive", title: "Copy Failed", description: "Could not copy command." });
-        });
-    };
+        console.log('[TEST] Attempting to initialize Firebase services...');
+        const services = initializeFirebaseServices();
 
-    const processPayment = async (sessionId: string, uid: string) => {
-        if (!firebaseServices) {
-            setErrorMessage("Firebase services are not available for payment processing.");
+        if (!services) {
+            console.error('[TEST] Firebase initialization FAILED. The services object is null.');
+            setErrorMessage("TEST LOG: Firebase services failed to initialize.");
             setStatus('error');
             return;
         }
-
-        setStatus('processing');
-        try {
-            const finalizeStripePayment = httpsCallable(firebaseServices.functions, 'finalizeStripePayment');
-            
-            const result = await finalizeStripePayment({ sessionId, uid });
-            const data = result.data as { success: boolean, message: string };
-            if (!data.success) throw new Error(data.message || 'Failed to process payment session.');
-            
-            toast({ title: "Payment Successful!", description: "Your account has been updated." });
-            setStatus('success');
-
-        } catch (error: any) {
-            const errorMessageText = error.message || "An unknown error occurred.";
-            const isNotFound = error.code === 'functions/not-found' || errorMessageText.includes('not found');
-            const isFunctionDeploymentError = errorMessageText.includes('does not exist');
-
-            if (isFunctionDeploymentError) {
-                setErrorMessage("The server-side payment function has not been deployed yet.");
-                setIsFunctionNotFoundError(true);
-            } else if (isNotFound) {
-                setErrorMessage("This payment link has expired or has already been used.");
-                setIsSessionExpiredError(true);
-            } else {
-                 setErrorMessage(errorMessageText);
-            }
-            setStatus('error');
-            toast({ title: "Payment Processing Error", description: "There was an issue updating your account.", variant: "destructive", duration: 8000 });
-        }
-    };
-
-    // This is the core of the fix. This useEffect hook will ONLY run when
-    // the component mounts.
-    useEffect(() => {
-        if (hasProcessed.current) return;
+        
+        console.log('[TEST] Firebase initialization SUCCEEDED.');
 
         const sessionId = searchParams.get('session_id');
-        const uid = searchParams.get('uid'); 
+        const uid = searchParams.get('uid');
 
         if (!sessionId || !uid) {
-            toast({
-                title: "Invalid Payment Link",
-                description: "Missing session or user information.",
-                variant: "destructive"
-            });
-            router.replace('/home');
+            console.error('[TEST] Missing sessionId or uid in URL.');
+            setErrorMessage("TEST LOG: Missing session or user info.");
+            setStatus('error');
             return;
         }
-        
-        hasProcessed.current = true;
-        
-        // --- RACE CONDITION TEST ---
-        // Add a 10-second delay before processing the payment.
-        console.log("Starting 10-second delay before processing payment...");
-        const timer = setTimeout(() => {
-          console.log("Delay finished. Attempting to process payment now.");
-          processPayment(sessionId, uid);
-        }, 10000); // 10-second delay
 
-        // Cleanup function to clear the timeout if the component unmounts
-        return () => clearTimeout(timer);
+        console.log(`[TEST] Found sessionId: ${sessionId} and uid: ${uid}. Preparing to call function.`);
+        setStatus('processing');
+        
+        // This is a minimal test call. We don't need the 10-second delay for this test.
+        const finalizeStripePayment = httpsCallable(services.functions, 'finalizeStripePayment');
+        finalizeStripePayment({ sessionId, uid })
+            .then(result => {
+                console.log('[TEST] Cloud Function call SUCCEEDED.', result);
+                setStatus('success');
+            })
+            .catch(error => {
+                console.error('[TEST] Cloud Function call FAILED.', error);
+                setErrorMessage(`TEST LOG: Function call failed: ${error.message}`);
+                setStatus('error');
+            });
 
-    }, [searchParams, router, toast, processPayment]);
+    }, [searchParams]);
     
-    if (status === 'idle' || status === 'processing') {
-         return (
-            <Card className="w-full max-w-lg text-center shadow-xl relative">
-                <Badge variant="outline" className="absolute top-4 right-4">v16</Badge>
-                <CardHeader>
-                    <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
-                        <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
-                    </div>
-                    <CardTitle className="mt-4 text-2xl font-bold">
-                        Finalizing Payment
-                    </CardTitle>
-                    <CardDescription>
-                        Securely updating your account. This may take a moment...
-                    </CardDescription>
-                </CardHeader>
-            </Card>
-         );
-    }
-    
+    // Simplified render for the test
     return (
-        <Card className="w-full max-w-lg text-center shadow-xl relative">
-            <Badge variant="outline" className="absolute top-4 right-4">v16</Badge>
+        <Card className="w-full max-w-lg text-center shadow-xl">
             <CardHeader>
-                {status === 'success' && (
-                     <>
-                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-green-100">
-                            <CheckCircle className="h-8 w-8 text-green-600" />
-                        </div>
-                        <CardTitle className="mt-4 text-2xl font-bold">Payment Successful!</CardTitle>
-                        <CardDescription>
-                            Thank you! Your account has been updated. The app will now reload to show your new balance.
-                        </CardDescription>
-                    </>
-                )}
-                 {status === 'error' && (
-                     <>
-                        <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-red-100">
-                            <AlertTriangle className="h-8 w-8 text-red-600" />
-                        </div>
-                        <CardTitle className="mt-4 text-2xl font-bold text-destructive">
-                            Payment Error
-                        </CardTitle>
-                        <CardDescription>
-                            {isFunctionNotFoundError ? "Could not connect to the server-side payment service." : errorMessage}
-                        </CardDescription>
-                    </>
-                )}
+                 <CardTitle className="mt-4 text-2xl font-bold">Running Payment Test...</CardTitle>
+                 <CardDescription>Check the Safari Web Inspector Console for logs.</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-                 {isFunctionNotFoundError && (
-                    <Alert className="text-left">
-                        <Terminal className="h-4 w-4"/>
-                        <AlertTitle>Action Required: Deploy Server Functions</AlertTitle>
-                        <AlertDescription>
-                            To complete payments, the server-side logic must be deployed. Open a terminal and run:
-                            <div className="mt-2 p-2 bg-secondary/50 rounded-md font-mono text-sm flex justify-between items-center">
-                                <code>{deployCommand}</code>
-                                <Button variant="outline" size="sm" onClick={copyDeployCommand}>Copy</Button>
-                            </div>
-                        </AlertDescription>
+            <CardContent>
+                {status === 'processing' && <Loader2 className="h-8 w-8 animate-spin mx-auto" />}
+                {status === 'success' && <CheckCircle className="h-8 w-8 text-green-600 mx-auto" />}
+                {status === 'error' && (
+                    <Alert variant="destructive">
+                        <AlertTriangle className="h-4 w-4" />
+                        <AlertTitle>Test Failed</AlertTitle>
+                        <AlertDescription>{errorMessage}</AlertDescription>
                     </Alert>
-                 )}
-                 {isSessionExpiredError && (
-                     <Alert className="text-left">
-                        <RefreshCw className="h-4 w-4"/>
-                        <AlertTitle>Expired Payment Session</AlertTitle>
-                        <AlertDescription>
-                            Please start a new payment from the deposit page in the app.
-                        </AlertDescription>
-                    </Alert>
-                 )}
+                )}
             </CardContent>
-            <CardFooter>
-                 <Button onClick={() => {
-                     // This deep link will take the user back into the app
-                     window.location.href = `udry://account/balance`;
-                 }} className="w-full">
-                    Go to My Wallet <ArrowRight className="ml-2 h-4 w-4" />
+             <CardFooter>
+                 <Button onClick={() => { window.location.href = `udry://home`; }} className="w-full">
+                    Go Back to App
                 </Button>
             </CardFooter>
         </Card>
