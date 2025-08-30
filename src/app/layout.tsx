@@ -3,6 +3,10 @@ import '@/app/globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import type { Metadata, Viewport } from 'next';
 import { LanguageProvider } from '@/contexts/language-context';
+import { AuthProvider } from '@/contexts/auth-context';
+import { DeepLinkHandler } from '@/components/deep-link-handler';
+import { SignUpSuccessDialog } from '@/components/auth/sign-up-success-dialog';
+
 
 export const metadata: Metadata = {
   title: 'U-Dry - Smart Umbrella Sharing',
@@ -28,8 +32,12 @@ export default function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body>
         <LanguageProvider>
+          <AuthProvider>
+            <DeepLinkHandler />
             {children}
             <Toaster />
+            <SignUpSuccessDialog />
+          </AuthProvider>
         </LanguageProvider>
       </body>
     </html>

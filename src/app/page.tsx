@@ -1,17 +1,15 @@
-// src/app/page.tsx
+
 "use client";
 
 import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
 import { Loader2 } from 'lucide-react';
-import { AuthProvider } from '@/contexts/auth-context';
-import { DeepLinkHandler } from '@/components/deep-link-handler';
 
-// This is the new root page of the application.
+// This is the root page of the application.
 // Its only job is to redirect the user to the correct page
 // based on their authentication status.
-function RootRedirectPageContent() {
+function RootRedirectPage() {
   const { user, isReady } = useAuth();
   const router = useRouter();
 
@@ -39,12 +37,7 @@ function RootRedirectPageContent() {
 }
 
 
-// The root page needs its own AuthProvider to check the user's status.
+// The root page now relies on the root AuthProvider from layout.tsx.
 export default function RootPage() {
-    return (
-        <AuthProvider>
-            <DeepLinkHandler />
-            <RootRedirectPageContent />
-        </AuthProvider>
-    )
+    return <RootRedirectPage />;
 }
