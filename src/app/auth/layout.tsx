@@ -3,7 +3,6 @@ import type React from 'react';
 import { Suspense } from 'react';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
-import { AuthRedirector } from '@/components/auth/auth-redirector';
 import { AppLogo } from '@/components/layout/app-logo';
 import { AuthProvider } from '@/contexts/auth-context';
 import { DeepLinkHandler } from '@/components/deep-link-handler';
@@ -34,7 +33,7 @@ export default function AuthLayout({
               <Loader2 className="h-12 w-12 animate-spin text-primary" />
             </div>
           }>
-            <AuthRedirector>{children}</AuthRedirector>
+            {children}
           </Suspense>
         </AuthProvider>
       </div>
