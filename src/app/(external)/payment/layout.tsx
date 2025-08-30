@@ -1,3 +1,4 @@
+
 import type React from 'react';
 
 // This layout was moved from /src/app/payment/layout.tsx

@@ -3,11 +3,6 @@ import '@/app/globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import type { Metadata, Viewport } from 'next';
 import { LanguageProvider } from '@/contexts/language-context';
-import { AuthProvider } from '@/contexts/auth-context';
-import { DeepLinkHandler } from '@/components/deep-link-handler';
-import { MainAppChrome } from '@/components/layout/main-app-chrome';
-import { SignUpSuccessDialog } from '@/components/auth/sign-up-success-dialog';
-
 
 export const metadata: Metadata = {
   title: 'U-Dry - Smart Umbrella Sharing',
