@@ -4,10 +4,9 @@ const nextConfig = {
   // into the 'out' directory, which is required by Capacitor.
   output: 'export',
 
-  // By adding trailingSlash: true, Next.js will generate pages in the format
-  // that Firebase Hosting expects (e.g., /about -> /about/index.html).
-  // This resolves the 404 error when accessing pages directly via URL.
-  trailingSlash: true,
+  // By removing trailingSlash, Next.js will generate pages in the format
+  // /about.html instead of /about/index.html. This is a more modern
+  // approach and resolves the 404 error without complex server rules.
   
   // This is also required for Capacitor. The default Next.js Image Optimization API
   // requires a server, which doesn't exist in a static export for a mobile app.

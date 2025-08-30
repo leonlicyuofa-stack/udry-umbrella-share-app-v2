@@ -183,8 +183,8 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
-            cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
+            success_url: `${LIVE_APP_BASE_URL}/payment/success/?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
+            cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel/`,
             metadata: {
                 userId: userId,
                 paymentType: paymentType,
@@ -204,7 +204,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
 });
 
-exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
+exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public", cors: true }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
     const admin = require("firebase-admin");
     getAdminApp();
@@ -425,4 +425,5 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
 });
+    
     
