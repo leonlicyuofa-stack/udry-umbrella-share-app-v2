@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -20,7 +20,7 @@ function PaymentSuccessContent() {
 
     useEffect(() => {
         if (hasProcessed.current) return;
-        
+
         const processPayment = async () => {
             hasProcessed.current = true; // Mark as processed immediately
             
@@ -33,7 +33,7 @@ function PaymentSuccessContent() {
                 return;
             }
             
-            // This is the key fix: We now explicitly wait for services to be ready.
+            // Initialize services directly, as this page has no AuthProvider
             const services = initializeFirebaseServices();
             if (!services) {
                 setErrorMessage("Could not connect to backend services to finalize payment.");
@@ -53,7 +53,7 @@ function PaymentSuccessContent() {
                 setStatus('success');
                 // Automatically redirect back to the app on success
                 setTimeout(() => {
-                    // In a real app, a deep link would be better, but for a web fallback, this is okay.
+                    // This deep link tells the native app to open to the balance page
                     window.location.href = `udry://account/balance`;
                 }, 1500); // 1.5 second delay to show success message
 
@@ -64,14 +64,8 @@ function PaymentSuccessContent() {
             }
         };
         
-        // TEST: Add a 10-second delay to give Firebase plenty of time to initialize.
-        console.log("Starting 10-second delay before processing payment...");
-        const timer = setTimeout(() => {
-             processPayment();
-        }, 10000);
-
-        return () => clearTimeout(timer);
-
+        // No delay needed now that the structure is correct
+        processPayment();
 
     }, [searchParams]);
 
@@ -114,8 +108,11 @@ function PaymentSuccessContent() {
     );
 }
 
+// Wrap the client component in Suspense to handle useSearchParams()
 export default function PaymentSuccessPage() {
     return (
-         <PaymentSuccessContent />
+         <Suspense fallback={<div>Loading...</div>}>
+            <PaymentSuccessContent />
+         </Suspense>
     )
 }
