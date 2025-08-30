@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef, Suspense, useCallback } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -46,62 +46,60 @@ function PaymentSuccessContent() {
         });
     };
 
-    const processPayment = useCallback(async (sessionId: string, uid: string) => {
-        if (!firebaseServices) {
-            setErrorMessage("Firebase services are not available for payment processing.");
-            setStatus('error');
-            return;
-        }
-        setStatus('processing');
-        try {
-            const finalizeStripePayment = httpsCallable(firebaseServices.functions, 'finalizeStripePayment');
-            
-            const result = await finalizeStripePayment({ sessionId, uid });
-            const data = result.data as { success: boolean, message: string };
-            if (!data.success) throw new Error(data.message || 'Failed to process payment session.');
-            
-            toast({ title: "Payment Successful!", description: "Your account has been updated." });
-            setStatus('success');
-
-        } catch (error: any) {
-            const errorMessageText = error.message || "An unknown error occurred.";
-            const isNotFound = error.code === 'functions/not-found' || errorMessageText.includes('not found');
-            const isFunctionDeploymentError = errorMessageText.includes('does not exist');
-
-            if (isFunctionDeploymentError) {
-                setErrorMessage("The server-side payment function has not been deployed yet.");
-                setIsFunctionNotFoundError(true);
-            } else if (isNotFound) {
-                setErrorMessage("This payment link has expired or has already been used.");
-                setIsSessionExpiredError(true);
-            } else {
-                 setErrorMessage(errorMessageText);
-            }
-            setStatus('error');
-            toast({ title: "Payment Processing Error", description: "There was an issue updating your account.", variant: "destructive", duration: 8000 });
-        }
-    }, [firebaseServices, toast]);
-
+    // This is the core of the fix. This useEffect hook will ONLY run when
+    // firebaseServices is successfully initialized. This prevents the race condition.
     useEffect(() => {
-        if (hasProcessed.current || !firebaseServices) return;
-        
-        const sessionId = searchParams.get('session_id');
-        const uid = searchParams.get('uid'); 
+        const processPayment = async (sessionId: string, uid: string) => {
+            setStatus('processing');
+            try {
+                const finalizeStripePayment = httpsCallable(firebaseServices!.functions, 'finalizeStripePayment');
+                
+                const result = await finalizeStripePayment({ sessionId, uid });
+                const data = result.data as { success: boolean, message: string };
+                if (!data.success) throw new Error(data.message || 'Failed to process payment session.');
+                
+                toast({ title: "Payment Successful!", description: "Your account has been updated." });
+                setStatus('success');
 
-        if (!sessionId || !uid) {
-            toast({
-                title: "Invalid Payment Link",
-                description: "Missing session or user information.",
-                variant: "destructive"
-            });
-            router.replace('/home');
-            return;
+            } catch (error: any) {
+                const errorMessageText = error.message || "An unknown error occurred.";
+                const isNotFound = error.code === 'functions/not-found' || errorMessageText.includes('not found');
+                const isFunctionDeploymentError = errorMessageText.includes('does not exist');
+
+                if (isFunctionDeploymentError) {
+                    setErrorMessage("The server-side payment function has not been deployed yet.");
+                    setIsFunctionNotFoundError(true);
+                } else if (isNotFound) {
+                    setErrorMessage("This payment link has expired or has already been used.");
+                    setIsSessionExpiredError(true);
+                } else {
+                     setErrorMessage(errorMessageText);
+                }
+                setStatus('error');
+                toast({ title: "Payment Processing Error", description: "There was an issue updating your account.", variant: "destructive", duration: 8000 });
+            }
+        };
+
+        // Only proceed if services are ready and we haven't processed yet.
+        if (firebaseServices && !hasProcessed.current) {
+            const sessionId = searchParams.get('session_id');
+            const uid = searchParams.get('uid'); 
+
+            if (!sessionId || !uid) {
+                toast({
+                    title: "Invalid Payment Link",
+                    description: "Missing session or user information.",
+                    variant: "destructive"
+                });
+                router.replace('/home');
+                return;
+            }
+            
+            hasProcessed.current = true;
+            processPayment(sessionId, uid);
         }
-        
-        hasProcessed.current = true;
-        processPayment(sessionId, uid);
 
-    }, [firebaseServices, router, searchParams, toast, processPayment]);
+    }, [firebaseServices, router, searchParams, toast]);
     
     if (status === 'idle' || status === 'processing') {
          return (
