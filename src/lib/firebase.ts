@@ -37,13 +37,6 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     return services;
   }
 
-  const isFirebaseConfigured = firebaseConfig.apiKey && firebaseConfig.projectId && firebaseConfig.apiKey !== "YOUR_KEY_HERE";
-
-  if (!isFirebaseConfigured) {
-    console.error("Firebase config is not fully set. Check the firebaseConfig object in firebase.ts");
-    return null;
-  }
-
   try {
     // Get the existing app instance or initialize a new one.
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
