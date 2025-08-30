@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState, useRef, Suspense, useCallback } from 'react';
+import { useEffect, useState, useRef, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -47,7 +47,7 @@ function PaymentSuccessContent() {
         });
     };
 
-    const processPayment = useCallback(async (sessionId: string, uid: string) => {
+    const processPayment = async (sessionId: string, uid: string) => {
         if (!firebaseServices) {
             setErrorMessage("Firebase services are not available for payment processing.");
             setStatus('error');
@@ -82,7 +82,7 @@ function PaymentSuccessContent() {
             setStatus('error');
             toast({ title: "Payment Processing Error", description: "There was an issue updating your account.", variant: "destructive", duration: 8000 });
         }
-    }, [firebaseServices, toast]); // firebaseServices is now a dependency
+    };
 
     // This is the core of the fix. This useEffect hook will ONLY run when
     // the component mounts.
