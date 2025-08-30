@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { httpsCallable } from 'firebase/functions';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase'; // Import directly
+import { Badge } from '@/components/ui/badge';
 
 type UpdateStatus = 'idle' | 'processing' | 'success' | 'error';
 
@@ -118,7 +119,8 @@ function PaymentSuccessContent() {
     
     if (status === 'idle' || status === 'processing') {
          return (
-            <Card className="w-full max-w-lg text-center shadow-xl">
+            <Card className="w-full max-w-lg text-center shadow-xl relative">
+                <Badge variant="outline" className="absolute top-4 right-4">v16</Badge>
                 <CardHeader>
                     <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-blue-100">
                         <Loader2 className="h-8 w-8 text-blue-600 animate-spin" />
@@ -135,7 +137,8 @@ function PaymentSuccessContent() {
     }
     
     return (
-        <Card className="w-full max-w-lg text-center shadow-xl">
+        <Card className="w-full max-w-lg text-center shadow-xl relative">
+            <Badge variant="outline" className="absolute top-4 right-4">v16</Badge>
             <CardHeader>
                 {status === 'success' && (
                      <>
