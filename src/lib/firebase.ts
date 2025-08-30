@@ -1,9 +1,8 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, initializeAuth, indexedDBLocalPersistence, connectAuthEmulator, type Auth } from 'firebase/auth';
-import { getFirestore, connectFirestoreEmulator, type Firestore } from 'firebase/firestore';
-import { getFunctions, connectFunctionsEmulator, type Functions } from 'firebase/functions';
-import { Capacitor } from '@capacitor/core';
+import { getAuth, initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
+import { getFirestore, type Firestore } from 'firebase/firestore';
+import { getFunctions, type Functions } from 'firebase/functions';
 
 // This configuration is now hardcoded to ensure it works reliably in all environments.
 // These are public keys and are safe to be included here. Security is enforced by Firestore rules.
@@ -57,17 +56,7 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     });
     const functions = getFunctions(app);
 
-    // This block ensures we ONLY connect to emulators if a specific flag is set.
-    // By default, it will now ALWAYS connect to the live production database.
-    const USE_EMULATORS = process.env.NEXT_PUBLIC_USE_FIREBASE_EMULATORS === 'true';
-    if (USE_EMULATORS) {
-      console.log("Connecting to Firebase Emulators");
-      connectFirestoreEmulator(db, 'localhost', 8080);
-      connectAuthEmulator(auth, 'http://localhost:9099');
-      connectFunctionsEmulator(functions, 'localhost', 5001);
-    } else {
-      console.log("Connecting to LIVE Production Firebase services.");
-    }
+    console.log("Connecting to LIVE Production Firebase services.");
 
     // Cache the services for subsequent calls.
     services = { app, auth, db, functions };
