@@ -104,12 +104,12 @@ function PaymentSuccessContent() {
         hasProcessed.current = true;
         
         // --- RACE CONDITION TEST ---
-        // Add a 3-second delay before processing the payment.
-        console.log("Starting 3-second delay before processing payment...");
+        // Add a 10-second delay before processing the payment.
+        console.log("Starting 10-second delay before processing payment...");
         const timer = setTimeout(() => {
           console.log("Delay finished. Attempting to process payment now.");
           processPayment(sessionId, uid);
-        }, 3000); // 3-second delay
+        }, 10000); // 10-second delay
 
         // Cleanup function to clear the timeout if the component unmounts
         return () => clearTimeout(timer);
