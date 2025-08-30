@@ -204,7 +204,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
 });
 
-exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public" }, async (request) => {
+exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public", cors: true }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
     const admin = require("firebase-admin");
     getAdminApp();
