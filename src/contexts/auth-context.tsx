@@ -122,7 +122,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const services = initializeFirebaseServices();
     if (!services) {
       setIsFirebaseError(true);
-      setIsReady(true); // Set ready to stop loading screens
+      setIsReady(true);
       setIsLoadingRental(false);
       return;
     }
@@ -160,9 +160,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         hasPerformedInitialRedirect.current = true;
       }
     }
-    // We only want this effect to run once after `isReady` becomes true.
-    // The pathname dependency is there to re-evaluate if the user navigates manually
-    // before the initial check is complete, but the ref prevents multiple redirects.
   }, [isReady, firebaseUser, pathname, router]);
 
 
@@ -248,7 +245,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!firebaseServices?.auth) return;
     try {
       await signInWithEmailAndPassword(firebaseServices.auth, email, password);
-      // The redirect is now handled by the useEffect hook.
     } catch (error: any) {
       let description = error.message;
       if (error.code === 'auth/invalid-credential') {
@@ -262,9 +258,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     if (!firebaseServices?.auth) return;
     try {
-      hasPerformedInitialRedirect.current = false; // Reset redirect lock on sign out
+      hasPerformedInitialRedirect.current = false;
       await firebaseSignOut(firebaseServices.auth);
-      // Redirect is handled by the useEffect hook.
       toast({ title: translate('auth_success_signout') });
     } catch (error: any) {
       toast({ variant: 'destructive', title: translate('auth_error_signout_failed'), description: error.message });

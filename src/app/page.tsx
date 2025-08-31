@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react';
 // This is the root page of the application.
 // Its only job is to show a loading spinner while the AuthProvider
 // determines the user's authentication status and performs any necessary redirects.
-// The actual redirect logic has been moved into the AuthProvider itself to fix the redirect loop.
+// The actual redirect logic has been moved into the AuthProvider itself.
 export default function RootPage() {
   const { isReady } = useAuth();
 
