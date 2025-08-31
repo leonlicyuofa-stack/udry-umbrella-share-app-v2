@@ -14,7 +14,7 @@ const nextConfig = {
   // This helps ensure client-side routing works correctly from the file:// protocol.
   trailingSlash: true,
 
-  // Force a server restart by adding this comment.
+  // Force a server restart by adding this comment. This is a safe way to clear the cache.
 };
 
 module.exports = nextConfig;
