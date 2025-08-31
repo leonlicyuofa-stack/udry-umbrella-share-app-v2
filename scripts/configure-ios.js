@@ -6,6 +6,7 @@ const plist = require('plist');
 const infoPlistPath = path.resolve(__dirname, '../ios/App/App/Info.plist');
 const bundleIdentifier = 'com.udry.app';
 const urlScheme = 'udry';
+const cameraUsageDescription = 'To scan QR codes on umbrella stalls for renting and returning.';
 
 console.log(`Reading Info.plist from: ${infoPlistPath}`);
 
@@ -18,24 +19,22 @@ try {
   const infoPlistXml = fs.readFileSync(infoPlistPath, 'utf8');
   const infoPlistJson = plist.parse(infoPlistXml);
 
-  // Ensure CFBundleURLTypes array exists
+  // --- 1. Ensure URL Scheme ---
+  console.log('Ensuring URL Scheme is configured...');
   if (!infoPlistJson.CFBundleURLTypes) {
     infoPlistJson.CFBundleURLTypes = [];
     console.log('Created CFBundleURLTypes array.');
   }
 
-  // Check if our app's specific URL Type definition already exists
   let urlTypeEntry = infoPlistJson.CFBundleURLTypes.find(
     (entry) => entry.CFBundleURLName === bundleIdentifier
   );
 
   if (urlTypeEntry) {
     console.log('Found existing URL Type entry. Ensuring scheme is present.');
-    // Ensure CFBundleURLSchemes array exists within the entry
     if (!urlTypeEntry.CFBundleURLSchemes) {
       urlTypeEntry.CFBundleURLSchemes = [];
     }
-    // Add our scheme if it's not already there
     if (!urlTypeEntry.CFBundleURLSchemes.includes(urlScheme)) {
       urlTypeEntry.CFBundleURLSchemes.push(urlScheme);
       console.log(`Added '${urlScheme}' to existing schemes.`);
@@ -43,19 +42,31 @@ try {
       console.log(`'${urlScheme}' scheme already exists. No changes needed.`);
     }
   } else {
-    // If the entry doesn't exist, create it
     console.log('URL Type entry not found. Creating a new one.');
     infoPlistJson.CFBundleURLTypes.push({
       CFBundleURLName: bundleIdentifier,
       CFBundleURLSchemes: [urlScheme],
     });
   }
+  console.log('✅ URL Scheme configuration is correct.');
+
+
+  // --- 2. Ensure Camera Permission ---
+  console.log('Ensuring Camera Usage Description is present...');
+  if (infoPlistJson.NSCameraUsageDescription) {
+    console.log(`Camera permission already exists: "${infoPlistJson.NSCameraUsageDescription}"`);
+  } else {
+    infoPlistJson.NSCameraUsageDescription = cameraUsageDescription;
+    console.log('Added NSCameraUsageDescription.');
+  }
+  console.log('✅ Camera permission configuration is correct.');
+
 
   // Convert back to XML and write to the file
   const updatedInfoPlistXml = plist.build(infoPlistJson);
   fs.writeFileSync(infoPlistPath, updatedInfoPlistXml);
 
-  console.log('✅ Successfully configured Info.plist with URL scheme.');
+  console.log('✅ Successfully configured Info.plist.');
   process.exit(0);
 
 } catch (error) {
