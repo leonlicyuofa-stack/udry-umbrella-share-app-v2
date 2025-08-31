@@ -7,10 +7,12 @@ const config: CapacitorConfig = {
   webDir: 'out',
   android: {
     allowMixedContent: true,
+    scheme: 'udry'
   },
   ios: {
     appendUserAgent: "Firebase/Auth",
     contentInset: "always",
+    scheme: 'udry'
   },
   server: {
     allowNavigation: [
@@ -18,12 +20,6 @@ const config: CapacitorConfig = {
       "udry-app-dev.web.app",
       "udry-app-dev.firebaseapp.com"
     ]
-  },
-  plugins: {
-    "Capacitor-App": {
-      iosScheme: "udry",
-      androidScheme: "udry"
-    }
   }
 };
 
