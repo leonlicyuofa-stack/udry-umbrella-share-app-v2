@@ -8,6 +8,7 @@ const config: CapacitorConfig = {
   server: {
     hostname: 'udry.app',
     allowNavigation: [
+      "udry.app",
       "identitytoolkit.googleapis.com",
       "udry-app-dev.web.app",
       "udry-app-dev.firebaseapp.com",
