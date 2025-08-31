@@ -114,20 +114,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isReady || hasPerformedInitialRedirect.current) {
+    if (!isReady) {
       return;
     }
 
     const isAuthPage = pathname.startsWith('/auth');
     const isExternalPage = pathname.startsWith('/payment') || pathname.startsWith('/diag');
+    
+    // This console log is a diagnostic tool to trace the redirect logic.
+    console.log(`[Redirect Check] Ready: ${isReady}, User: ${!!firebaseUser}, Path: ${pathname}, isAuthPage: ${isAuthPage}, Redirected Yet: ${hasPerformedInitialRedirect.current}`);
+
+    if (hasPerformedInitialRedirect.current) {
+        return;
+    }
 
     if (firebaseUser) {
       if (isAuthPage) {
+        console.log(`[Redirect Action] User is on auth page, redirecting to /home.`);
         router.replace('/home');
         hasPerformedInitialRedirect.current = true;
       }
     } else {
       if (!isAuthPage && !isExternalPage) {
+        console.log(`[Redirect Action] User is not on auth page and not logged in, redirecting to /auth/signin.`);
         router.replace('/auth/signin');
         hasPerformedInitialRedirect.current = true;
       }
