@@ -1,10 +1,10 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // This is the crucial line that tells Next.js to build a static site
-  // into the 'out' directory, which is required by Capacitor.
-  output: 'export',
+  // The `output: 'export'` option has been removed to enable the standard
+  // Next.js server-based build, which is required for dynamic authentication
+  // and to resolve the re-rendering loop with Capacitor.
 
-  // This is also required for Capacitor. The default Next.js Image Optimization API
+  // This is required for Capacitor. The default Next.js Image Optimization API
   // requires a server, which doesn't exist in a static export for a mobile app.
   // This setting ensures images work correctly in the native build.
   images: {

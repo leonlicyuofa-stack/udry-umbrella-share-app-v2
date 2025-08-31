@@ -104,19 +104,6 @@ function FirebaseConfigurationError() {
   );
 }
 
-// A singleton promise to prevent re-initialization on navigation.
-let authReadyPromise: Promise<void> | null = null;
-let resolveAuthReady: (() => void) | null = null;
-
-function ensureAuthReady() {
-  if (!authReadyPromise) {
-    authReadyPromise = new Promise((resolve) => {
-      resolveAuthReady = resolve;
-    });
-  }
-  return authReadyPromise;
-}
-
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [firestoreUser, setFirestoreUser] = useState<User | null>(null);
@@ -131,43 +118,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isFirebaseError, setIsFirebaseError] = useState(false);
   const isJustSignedIn = useRef(false);
 
-  console.log(`[TEST] AuthProvider rendered. isReady: ${isReady}, user: ${firebaseUser?.uid || 'null'}`);
-
   useEffect(() => {
     const services = initializeFirebaseServices();
     if (!services) {
-      console.error("[TEST] Auth Context: Firebase services FAILED to initialize.");
       setIsFirebaseError(true);
       setIsReady(true);
       setIsLoadingRental(false);
-      if (resolveAuthReady) resolveAuthReady();
       return;
     }
     setFirebaseServices(services);
     setIsFirebaseError(false);
 
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
-      console.log(`[TEST] onAuthStateChanged fired. User: ${user?.uid || 'null'}`);
       setFirebaseUser(user);
       if (!user) {
         setFirestoreUser(null);
         setActiveRental(null);
       }
-      // This is a critical change. We should only consider auth ready AFTER the first check.
-      if (!isReady) {
-        console.log("[TEST] Setting isReady to TRUE now.");
-        setIsReady(true);
-      }
-      if (resolveAuthReady) {
-        resolveAuthReady();
-        resolveAuthReady = null; // Ensure it only resolves once
-      }
+      setIsReady(true);
     });
 
     return () => {
       unsubscribeAuth();
     };
-  }, []); // Removed 'toast' and 'isReady' from dependencies to prevent re-running this effect.
+  }, []);
   
   useEffect(() => {
     if (isReady && firebaseUser && isJustSignedIn.current) {
@@ -218,15 +192,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   }, [firebaseUser, firebaseServices]);
   
-  useEffect(() => {
-    ensureAuthReady().then(() => {
-        if (!isReady) {
-          console.log("[TEST] ensureAuthReady resolved, but isReady is still false. Setting it now.");
-          setIsReady(true);
-        }
-    });
-  }, [isReady]);
-
   if (isFirebaseError) {
     return <FirebaseConfigurationError />;
   }
@@ -362,8 +327,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const endRentalTransaction = httpsCallable(firebaseServices.functions, 'endRentalTransaction');
       
-      console.log(`[endRental] Calling Cloud Function with stallId: ${returnedToStallId}`);
-      
       const result = await endRentalTransaction({
         returnedToStallId: returnedToStallId,
         activeRentalData: activeRental 
@@ -371,8 +334,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
       const data = result.data as { success: boolean, message?: string };
       
-      console.log('[endRental] Cloud Function response:', data);
-
       if (!data.success) {
         throw new Error(data.message || "The server failed to process the return.");
       }
@@ -407,8 +368,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (activeRental) {
         await updateDoc(userDocRef, { 'activeRental.logs': arrayUnion(newLog) });
-    } else {
-        console.log(`[Machine Event Log - No Active Rental] User: ${firebaseUser.uid}, Stall: ${targetStallId}, Type: ${type}, Message: ${message}`);
     }
   };
   

@@ -13,25 +13,19 @@ function RootRedirectPage() {
   const { user, isReady } = useAuth();
   const router = useRouter();
 
-  console.log(`[TEST] RootRedirectPage rendered. isReady: ${isReady}, user: ${user?.uid || 'null'}`);
-
-
   useEffect(() => {
     // Wait until the authentication state is confirmed via isReady.
     // This prevents a race condition where the redirect happens
     // before Firebase has initialized.
     if (!isReady) {
-      console.log("[TEST] RootRedirectPage: Not ready, waiting...");
       return;
     }
 
     // If the user is logged in, redirect them to the main map page.
     if (user) {
-      console.log("[TEST] RootRedirectPage: Ready and USER FOUND. Redirecting to /home");
       router.replace('/home');
     } else {
       // If the user is not logged in, send them to the sign-in page.
-      console.log("[TEST] RootRedirectPage: Ready and NO USER. Redirecting to /auth/signin");
       router.replace('/auth/signin');
     }
   }, [user, isReady, router]);
