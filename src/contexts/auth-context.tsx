@@ -1,3 +1,4 @@
+
 "use client";
 
 import type React from 'react';
@@ -143,6 +144,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  /*
+  // HYPOTHESIS #2 TEST: This block is temporarily disabled.
+  // The theory is that this client-side redirect logic is firing
+  // prematurely in the Capacitor environment, causing the app to freeze.
+  // By disabling it, we can see if the app's initial network calls
+  // (like Firebase Auth) start working correctly.
   useEffect(() => {
     if (!isReady || hasPerformedInitialRedirect.current) return;
 
@@ -161,6 +168,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
   }, [isReady, firebaseUser, pathname, router]);
+  */
 
 
   useEffect(() => {
