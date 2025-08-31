@@ -8,43 +8,43 @@
 # Testing
 /coverage
 
-# Next.js build output
+# Next.js
 /.next/
 /out/
 
 # Production
 /build
 
+# Misc
+.DS_Store
+*.pem
+
 # Vercel
 .vercel
 
-# TypeScript
-*.tsbuildinfo
-next-env.d.ts
+# Capacitor
+/android/
+/ios/
+/app/src/main/assets/capacitor.config.json
 
-# Firebase
-/firebase-export
-/functions/node_modules
-*.log
-firebase-debug.log
-firestore-debug.log
-database-debug.log
-pubsub-debug.log
-storage-debug.log
+# Debug
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
 
-# Environment variables
-.env
+# Local .env files
 .env*.local
 
-# IDEs and editors
-/.vscode/
+# Editor directories and files
+.vscode/*
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
 .idea
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
-
-# System files
-.DS_Store
-Thumbs.db
