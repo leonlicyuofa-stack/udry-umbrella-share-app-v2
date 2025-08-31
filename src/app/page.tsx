@@ -8,13 +8,13 @@ import { Loader2 } from 'lucide-react';
 
 // This is the root page of the application.
 // Its only job is to redirect the user to the correct page
-// based on their authentication status.
+// based on their authentication status, after ensuring auth is ready.
 function RootRedirectPage() {
   const { user, isReady } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // Wait until the authentication state is confirmed.
+    // Wait until the authentication state is confirmed via isReady.
     // This prevents a race condition where the redirect happens
     // before Firebase has initialized.
     if (!isReady) {
@@ -37,7 +37,6 @@ function RootRedirectPage() {
     </div>
   );
 }
-
 
 // The root page now relies on the root AuthProvider from layout.tsx.
 export default function RootPage() {

@@ -2,7 +2,7 @@
 "use client";
 
 import type React from 'react';
-import { createContext, useContext, useState, ReactNode, useCallback, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import {
   onAuthStateChanged,
@@ -104,6 +104,18 @@ function FirebaseConfigurationError() {
   );
 }
 
+// A singleton promise to prevent re-initialization on navigation.
+let authReadyPromise: Promise<void> | null = null;
+let resolveAuthReady: () => void;
+
+function ensureAuthReady() {
+  if (!authReadyPromise) {
+    authReadyPromise = new Promise((resolve) => {
+      resolveAuthReady = resolve;
+    });
+  }
+  return authReadyPromise;
+}
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
@@ -117,8 +129,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const router = useRouter();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
   const [isFirebaseError, setIsFirebaseError] = useState(false);
-  const [isJustSignedIn, setIsJustSignedIn] = useState(false);
-
+  const isJustSignedIn = useRef(false);
 
   useEffect(() => {
     const services = initializeFirebaseServices();
@@ -127,6 +138,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsFirebaseError(true);
       setIsReady(true);
       setIsLoadingRental(false);
+      if (resolveAuthReady) resolveAuthReady();
       return;
     }
     setFirebaseServices(services);
@@ -139,21 +151,21 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setActiveRental(null);
       }
       setIsReady(true);
+      if (resolveAuthReady) resolveAuthReady();
     });
 
     return () => {
       unsubscribeAuth();
     };
   }, [toast]);
-
-  // This new effect handles post-login actions to prevent race conditions.
+  
   useEffect(() => {
-    if (isReady && firebaseUser && isJustSignedIn) {
+    if (isReady && firebaseUser && isJustSignedIn.current) {
       toast({ title: translate('auth_success_signin_email') });
       router.replace('/home');
-      setIsJustSignedIn(false); // Reset the flag
+      isJustSignedIn.current = false; // Reset the flag
     }
-  }, [isReady, firebaseUser, isJustSignedIn, router, toast, translate]);
+  }, [isReady, firebaseUser, router, toast, translate]);
 
 
   useEffect(() => {
@@ -195,6 +207,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
 
   }, [firebaseUser, firebaseServices]);
+  
+  useEffect(() => {
+    ensureAuthReady().then(() => {
+        setIsReady(true);
+    });
+  }, []);
 
   if (isFirebaseError) {
     return <FirebaseConfigurationError />;
@@ -238,8 +256,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!firebaseServices?.auth) return;
     try {
       await signInWithEmailAndPassword(firebaseServices.auth, email, password);
-      // Set a flag instead of directly calling toast/router
-      setIsJustSignedIn(true);
+      isJustSignedIn.current = true;
     } catch (error: any) {
       let description = error.message;
       if (error.code === 'auth/invalid-credential') {
