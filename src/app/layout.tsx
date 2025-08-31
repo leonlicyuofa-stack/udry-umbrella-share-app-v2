@@ -30,6 +30,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" suppressHydrationWarning>
+      <head>
+        {/* Fix for deprecated meta tag */}
+        <meta name="mobile-web-app-capable" content="yes" />
+      </head>
       <body>
         <LanguageProvider>
           <AuthProvider>
