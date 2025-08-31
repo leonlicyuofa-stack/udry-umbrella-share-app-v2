@@ -4,16 +4,20 @@ import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
 
-// This configuration is now hardcoded to ensure it works reliably in all environments.
-// These are public keys and are safe to be included here. Security is enforced by Firestore rules.
+// Build the config object from environment variables
 export const firebaseConfig = {
-  apiKey: "AIzaSyDk8gmZb-azt0fndBG80zrYXEma7NsUdL0",
-  authDomain: "udry-app-dev.firebaseapp.com",
-  projectId: "udry-app-dev",
-  storageBucket: "udry-app-dev.appspot.com",
-  messagingSenderId: "458603936715",
-  appId: "1:458603936715:web:8c50687fc1cdcf9c90944e",
-  measurementId: "G-X1VP807J0N"
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+};
+
+// Function to check if the config is valid
+const isFirebaseConfigValid = (config: typeof firebaseConfig): boolean => {
+    return Object.values(config).every(value => value && !value.includes('YOUR_'));
 };
 
 
@@ -36,14 +40,19 @@ export function initializeFirebaseServices(): FirebaseServices | null {
   if (services) {
     return services;
   }
+  
+  // Validate the config before attempting to initialize
+  if (!isFirebaseConfigValid(firebaseConfig)) {
+      console.error("Firebase configuration is missing or invalid. Please check your environment variables.");
+      return null;
+  }
+
 
   try {
     // Get the existing app instance or initialize a new one.
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     
     const db = getFirestore(app);
-    
-    // Reverted to the standard getAuth to resolve sign-in issues in Capacitor.
     const auth = getAuth(app);
     const functions = getFunctions(app);
 
