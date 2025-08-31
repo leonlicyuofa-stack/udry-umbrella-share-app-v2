@@ -51,11 +51,8 @@ function PaymentSuccessContent() {
                 }
 
                 setStatus('success');
-                // Automatically redirect back to the app on success
-                setTimeout(() => {
-                    // This deep link tells the native app to open to the balance page
-                    window.location.href = `udry://account/balance`;
-                }, 1500); // 1.5 second delay to show success message
+                // REMOVED: The automatic redirect attempt is blocked by mobile WebViews.
+                // The user must now explicitly click the button to return.
 
             } catch (error: any) {
                 console.error("Error finalizing Stripe payment:", error);
@@ -64,7 +61,6 @@ function PaymentSuccessContent() {
             }
         };
         
-        // No delay needed now that the structure is correct
         processPayment();
 
     }, [searchParams]);
@@ -84,7 +80,7 @@ function PaymentSuccessContent() {
                 </CardTitle>
                 <CardDescription>
                     {status === 'processing' && 'Please wait while we securely update your account. Do not close this window.'}
-                    {status === 'success' && 'Your account has been updated. Redirecting you back to the app...'}
+                    {status === 'success' && 'Your account has been updated. Please click the button below to return to the app.'}
                     {status === 'error' && 'There was an issue finalizing your payment.'}
                 </CardDescription>
             </CardHeader>
@@ -100,7 +96,7 @@ function PaymentSuccessContent() {
                 </CardContent>
             )}
             <CardFooter>
-                 <Button onClick={() => { window.location.href = `udry://home`; }} className="w-full">
+                 <Button onClick={() => { window.location.href = `udry://account/balance`; }} className="w-full">
                     Go Back to App <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
             </CardFooter>
