@@ -106,7 +106,7 @@ function FirebaseConfigurationError() {
 
 // A singleton promise to prevent re-initialization on navigation.
 let authReadyPromise: Promise<void> | null = null;
-let resolveAuthReady: () => void;
+let resolveAuthReady: (() => void) | null = null;
 
 function ensureAuthReady() {
   if (!authReadyPromise) {
@@ -131,10 +131,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isFirebaseError, setIsFirebaseError] = useState(false);
   const isJustSignedIn = useRef(false);
 
+  console.log(`[TEST] AuthProvider rendered. isReady: ${isReady}, user: ${firebaseUser?.uid || 'null'}`);
+
   useEffect(() => {
     const services = initializeFirebaseServices();
     if (!services) {
-      console.error("Auth Context: Firebase services failed to initialize.");
+      console.error("[TEST] Auth Context: Firebase services FAILED to initialize.");
       setIsFirebaseError(true);
       setIsReady(true);
       setIsLoadingRental(false);
@@ -145,19 +147,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsFirebaseError(false);
 
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
+      console.log(`[TEST] onAuthStateChanged fired. User: ${user?.uid || 'null'}`);
       setFirebaseUser(user);
       if (!user) {
         setFirestoreUser(null);
         setActiveRental(null);
       }
-      setIsReady(true);
-      if (resolveAuthReady) resolveAuthReady();
+      // This is a critical change. We should only consider auth ready AFTER the first check.
+      if (!isReady) {
+        console.log("[TEST] Setting isReady to TRUE now.");
+        setIsReady(true);
+      }
+      if (resolveAuthReady) {
+        resolveAuthReady();
+        resolveAuthReady = null; // Ensure it only resolves once
+      }
     });
 
     return () => {
       unsubscribeAuth();
     };
-  }, [toast]);
+  }, []); // Removed 'toast' and 'isReady' from dependencies to prevent re-running this effect.
   
   useEffect(() => {
     if (isReady && firebaseUser && isJustSignedIn.current) {
@@ -210,9 +220,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   useEffect(() => {
     ensureAuthReady().then(() => {
-        setIsReady(true);
+        if (!isReady) {
+          console.log("[TEST] ensureAuthReady resolved, but isReady is still false. Setting it now.");
+          setIsReady(true);
+        }
     });
-  }, []);
+  }, [isReady]);
 
   if (isFirebaseError) {
     return <FirebaseConfigurationError />;
