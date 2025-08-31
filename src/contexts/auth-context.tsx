@@ -118,20 +118,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
-    const isAuthPage = pathname.startsWith('/auth');
-    // --- TEST CHANGE ---
-    // We now consider the payment pages as "external" to prevent redirects.
-    const isExternalPage = pathname.startsWith('/payment') || pathname.startsWith('/diag');
-    
+    // Determine if the current page is an authentication or external callback page.
+    // These pages should not trigger redirects.
+    const isPublicPage = pathname.startsWith('/auth') || pathname.startsWith('/payment') || pathname.startsWith('/diag');
+
     if (firebaseUser) {
-      if (isAuthPage || pathname === '/') {
+      // If user is logged in, and they are on a public page (like /auth/signin) or the root, redirect them to the main app.
+      if (isPublicPage || pathname === '/') {
         router.replace('/home');
         hasPerformedInitialRedirect.current = true;
       }
     } else {
-      // If the user is not logged in, we only redirect if they are NOT on an auth page
-      // AND also NOT on one of our designated external pages.
-      if (!isAuthPage && !isExternalPage) {
+      // If user is not logged in, only redirect them to signin if they are trying to access a protected page.
+      if (!isPublicPage) {
         router.replace('/auth/signin');
         hasPerformedInitialRedirect.current = true;
       }
