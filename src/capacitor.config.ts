@@ -1,0 +1,26 @@
+
+import type { CapacitorConfig } from '@capacitor/cli';
+
+const config: CapacitorConfig = {
+  appId: 'com.udry.app',
+  appName: 'udry 共享雨傘 ',
+  webDir: 'out',
+  android: {
+    allowMixedContent: true,
+    scheme: 'udry'
+  },
+  ios: {
+    appendUserAgent: "Firebase/Auth",
+    contentInset: "always",
+    scheme: 'udry'
+  },
+  server: {
+    allowNavigation: [
+      "identitytoolkit.googleapis.com",
+      "udry-app-dev.web.app",
+      "udry-app-dev.firebaseapp.com"
+    ]
+  }
+};
+
+export default config;
