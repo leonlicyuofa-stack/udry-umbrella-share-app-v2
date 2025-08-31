@@ -8,11 +8,20 @@ import { Loader2 } from 'lucide-react';
 // determines the user's authentication status and performs any necessary redirects.
 // The actual redirect logic has been moved into the AuthProvider itself.
 export default function RootPage() {
-  const { isReady } = useAuth();
+  const { isReady, loading, user } = useAuth();
+  
+  // No redirect logic here. This page only displays status.
+  // The redirect logic is now handled entirely within AuthProvider.
+  
+  if (!isReady) {
+     return (
+        <div className="flex flex-col items-center justify-center h-screen bg-red-100">
+            <h1 className="text-3xl font-bold text-red-600">TESTING FILE CHANGE</h1>
+            <p className="mt-4 text-red-500">If you see this, the file update worked.</p>
+        </div>
+    );
+  }
 
-  // The AuthProvider will handle redirecting the user.
-  // We just need to show a loading state until that happens.
-  // This prevents the page from trying to render content before the auth state is known.
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <Loader2 className="h-12 w-12 animate-spin text-primary" />
