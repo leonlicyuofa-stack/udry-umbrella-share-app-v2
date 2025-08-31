@@ -54,10 +54,9 @@
 	<array>
 		<dict>
 			<key>CFBundleURLName</key>
-			<string>com.getcapacitor.capacitor</string>
+			<string>com.udry.app</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>capacitor</string>
 				<string>udry</string>
 			</array>
 		</dict>
