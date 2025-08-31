@@ -114,22 +114,43 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isReady || hasPerformedInitialRedirect.current) return;
+    console.log("--- REDIRECT EFFECT RUNNING ---");
+    console.log(`isReady: ${isReady}`);
+    console.log(`hasPerformedInitialRedirect: ${hasPerformedInitialRedirect.current}`);
+    console.log(`firebaseUser exists: ${!!firebaseUser}`);
+    console.log(`pathname: ${pathname}`);
+
+    if (!isReady || hasPerformedInitialRedirect.current) {
+        console.log("Redirect check: Bailing out. Either not ready or redirect already performed.");
+        return;
+    }
 
     const isAuthPage = pathname.startsWith('/auth');
     const isExternalPage = pathname.startsWith('/payment') || pathname.startsWith('/diag');
 
+    console.log(`isAuthPage: ${isAuthPage}`);
+    console.log(`isExternalPage: ${isExternalPage}`);
+
     if (firebaseUser) {
+      // User is logged in
       if (isAuthPage) {
+        console.log("Redirect check: User is LOGGED IN and on an AUTH page. Attempting to redirect to /home...");
         router.replace('/home');
         hasPerformedInitialRedirect.current = true;
+      } else {
+         console.log("Redirect check: User is LOGGED IN and on a non-auth page. No redirect needed.");
       }
     } else {
+      // User is not logged in
       if (!isAuthPage && !isExternalPage) {
+        console.log("Redirect check: User is LOGGED OUT and on a PROTECTED page. Attempting to redirect to /auth/signin...");
         router.replace('/auth/signin');
         hasPerformedInitialRedirect.current = true;
+      } else {
+        console.log("Redirect check: User is LOGGED OUT and on a PUBLIC page. No redirect needed.");
       }
     }
+     console.log("--- REDIRECT EFFECT FINISHED ---");
   }, [isReady, firebaseUser, pathname, router]);
 
   useEffect(() => {
@@ -369,7 +390,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     firebaseServices,
   };
 
-  // The "Loading Gate" to prevent the race condition
   if (!isReady) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background">
