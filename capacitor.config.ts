@@ -11,8 +11,7 @@ const config: CapacitorConfig = {
       "udry.app",
       "identitytoolkit.googleapis.com",
       "udry-app-dev.web.app",
-      "udry-app-dev.firebaseapp.com",
-      "checkout.stripe.com"
+      "udry-app-dev.firebaseapp.com"
     ]
   }
 };
