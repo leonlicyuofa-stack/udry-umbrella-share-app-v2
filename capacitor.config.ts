@@ -13,6 +13,13 @@ const config: CapacitorConfig = {
       "udry-app-dev.web.app",
       "udry-app-dev.firebaseapp.com"
     ]
+  },
+  plugins: {
+    App: {
+      ios: {
+        urlScheme: 'udry'
+      }
+    }
   }
 };
 
