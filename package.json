@@ -5,7 +5,8 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "build": "next build && npm run prepare:cap",
+    "prepare:cap": "mkdir -p out && cp out/index.html out/",
     "start": "next start",
     "lint": "next lint",
     "android:sync": "npx cap sync android",
