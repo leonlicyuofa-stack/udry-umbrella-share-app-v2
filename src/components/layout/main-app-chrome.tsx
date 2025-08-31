@@ -1,3 +1,4 @@
+
 // src/components/layout/main-app-chrome.tsx
 "use client";
 

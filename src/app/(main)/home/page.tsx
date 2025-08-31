@@ -1,3 +1,4 @@
+
 // src/app/(main)/home/page.tsx
 import { MapPageClient } from '@/components/map/map-page-client';
 import { ScrollArea } from '@/components/ui/scroll-area';
