@@ -1,1 +1,308 @@
- 
+{
+  "log": {
+    "version": "1.2",
+    "creator": {
+      "name": "WebKit Web Inspector",
+      "version": "1.0"
+    },
+    "pages": [
+      {
+        "startedDateTime": "2025-08-30T18:34:02.375Z",
+        "id": "page_0",
+        "title": "https://udry-app-dev.web.app/payment/success?session_id=cs_test_a1W3tiDdC1uBnbogVuy1KC4JIracsyLc8i9AicTcQBZhS1eoJzcHJiA9kc&uid=9bRMXbD5L0OYGSfQrkK89byMXSx1",
+        "pageTimings": {
+          "onContentLoad": 710.8976666640956,
+          "onLoad": 741.7876250110567
+        }
+      }
+    ],
+    "entries": [
+      {
+        "pageref": "page_0",
+        "startedDateTime": "2025-08-30T18:34:02.375Z",
+        "time": 616.0967593314126,
+        "request": {
+          "method": "GET",
+          "url": "https://udry-app-dev.web.app/payment/success?session_id=cs_test_a1W3tiDdC1uBnbogVuy1KC4JIracsyLc8i9AicTcQBZhS1eoJzcHJiA9kc&uid=9bRMXbD5L0OYGSfQrkK89byMXSx1",
+          "httpVersion": "HTTP/2",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Accept",
+              "value": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "cross-site"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "document"
+            },
+            {
+              "name": "Accept-Language",
+              "value": "en-CA,en-US;q=0.9,en;q=0.8"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "navigate"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1.1 Mobile/15E148 Safari/604.1"
+            },
+            {
+              "name": "Accept-Encoding",
+              "value": "gzip, deflate, br"
+            },
+            {
+              "name": "Referer",
+              "value": "https://checkout.stripe.com/"
+            },
+            {
+              "name": "Priority",
+              "value": "u=0, i"
+            }
+          ],
+          "queryString": [
+            {
+              "name": "session_id",
+              "value": "cs_test_a1W3tiDdC1uBnbogVuy1KC4JIracsyLc8i9AicTcQBZhS1eoJzcHJiA9kc"
+            },
+            {
+              "name": "uid",
+              "value": "9bRMXbD5L0OYGSfQrkK89byMXSx1"
+            }
+          ],
+          "headersSize": 420,
+          "bodySize": 0
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "httpVersion": "HTTP/2",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Content-Type",
+              "value": "text/html; charset=utf-8"
+            },
+            {
+              "name": "Accept-Ranges",
+              "value": "bytes"
+            },
+            {
+              "name": "Content-Encoding",
+              "value": "br"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "max-age=3600"
+            },
+            {
+              "name": "Date",
+              "value": "Sat, 30 Aug 2025 18:34:02 GMT"
+            },
+            {
+              "name": "Content-Length",
+              "value": "2212"
+            },
+            {
+              "name": "ETag",
+              "value": "\"9c895b1bfb8aaff7e021b5a94c4ac534910277ce0aeff3e6546309caef8aba89-br\""
+            },
+            {
+              "name": "Vary",
+              "value": "x-fh-requested-host, accept-encoding"
+            },
+            {
+              "name": "Last-Modified",
+              "value": "Sat, 30 Aug 2025 18:31:24 GMT"
+            },
+            {
+              "name": "x-cache-hits",
+              "value": "0"
+            },
+            {
+              "name": "Alt-Svc",
+              "value": "h3=\":443\";ma=86400,h3-29=\":443\";ma=86400,h3-27=\":443\";ma=86400"
+            },
+            {
+              "name": "x-served-by",
+              "value": "cache-tyo11973-TYO"
+            },
+            {
+              "name": "x-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "Strict-Transport-Security",
+              "value": "max-age=31556926; includeSubDomains; preload"
+            },
+            {
+              "name": "x-timer",
+              "value": "S1756578843.685712,VS0,VE217"
+            }
+          ],
+          "content": {
+            "size": 8399,
+            "compression": 6178,
+            "mimeType": "text/html",
+            "text": "<!DOCTYPE html><html lang=\"en\"><head><meta charSet=\"utf-8\"/><meta name=\"viewport\" content=\"width=device-width, initial-scale=1\"/><link rel=\"stylesheet\" href=\"/_next/static/css/981c79830eb1c3ab.css\" crossorigin=\"\" data-precedence=\"next\"/><link rel=\"preload\" as=\"script\" fetchPriority=\"low\" href=\"/_next/static/chunks/webpack-1591dedfe0308e67.js\" crossorigin=\"\"/><script src=\"/_next/static/chunks/fd9d1056-8abfbdfb1f98cc02.js\" async=\"\" crossorigin=\"\"></script><script src=\"/_next/static/chunks/8069-74d4d8293e5a5258.js\" async=\"\" crossorigin=\"\"></script><script src=\"/_next/static/chunks/main-app-c088c982b29c3c04.js\" async=\"\" crossorigin=\"\"></script><script src=\"/_next/static/chunks/bc9e92e6-c43245f5fd0b2ec9.js\" async=\"\"></script><script src=\"/_next/static/chunks/69806262-14d29418a93d6f01.js\" async=\"\"></script><script src=\"/_next/static/chunks/7192-a99ebff17ee7498a.js\" async=\"\"></script><script src=\"/_next/static/chunks/9811-e5f342335f66e46d.js\" async=\"\"></script><script src=\"/_next/static/chunks/384-fd73a1ff81d5cf72.js\" async=\"\"></script><script src=\"/_next/static/chunks/7992-46bebfcd7ecafc95.js\" async=\"\"></script><script src=\"/_next/static/chunks/6210-1fde7629c45ad144.js\" async=\"\"></script><script src=\"/_next/static/chunks/app/page-0c886b550eb71e54.js\" async=\"\"></script><script src=\"/_next/static/chunks/6665-3b4417763fcc35e1.js\" async=\"\"></script><script src=\"/_next/static/chunks/5528-24344a1575a5138b.js\" async=\"\"></script><script src=\"/_next/static/chunks/4978-2ef12f02cc299672.js\" async=\"\"></script><script src=\"/_next/static/chunks/app/layout-6b1849eca804c181.js\" async=\"\"></script><script src=\"/_next/static/chunks/app/error-e84ea8791255122f.js\" async=\"\"></script><meta name=\"theme-color\" content=\"#3F51B5\"/><title>U-Dry - Smart Umbrella Sharing</title><meta name=\"description\" content=\"Rent and return umbrellas easily with U-Dry. Find nearby smart umbrella stations.\"/><link rel=\"manifest\" href=\"/manifest.json\"/><meta name=\"apple-mobile-web-app-capable\" content=\"yes\"/><meta name=\"apple-mobile-web-app-title\" content=\"U-Dry\"/><meta name=\"apple-mobile-web-app-status-bar-style\" content=\"default\"/><link rel=\"icon\" href=\"/favicon.ico\" type=\"image/x-icon\" sizes=\"16x16\"/><script src=\"/_next/static/chunks/polyfills-c67a75d1b6f99dc8.js\" crossorigin=\"\" noModule=\"\"></script></head><body><div class=\"flex min-h-screen flex-col\"><div class=\"flex flex-col items-center justify-center h-screen\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" class=\"lucide lucide-loader-circle h-12 w-12 animate-spin text-primary\"><path d=\"M21 12a9 9 0 1 1-6.219-8.56\"></path></svg></div></div><div role=\"region\" aria-label=\"Notifications (F8)\" tabindex=\"-1\" style=\"pointer-events:none\"><ol tabindex=\"-1\" class=\"fixed top-0 z-[100] flex max-h-screen w-full flex-col-reverse p-4 sm:bottom-0 sm:right-0 sm:top-auto sm:flex-col md:max-w-[420px]\"></ol></div><script src=\"/_next/static/chunks/webpack-1591dedfe0308e67.js\" crossorigin=\"\" async=\"\"></script><script>(self.__next_f=self.__next_f||[]).push([0]);self.__next_f.push([2,null])</script><script>self.__next_f.push([1,\"1:HL[\\\"/_next/static/css/981c79830eb1c3ab.css\\\",\\\"style\\\",{\\\"crossOrigin\\\":\\\"\\\"}]\\n0:\\\"$L2\\\"\\n\"])</script><script>self.__next_f.push([1,\"3:I[7690,[],\\\"\\\"]\\n5:I[7831,[],\\\"\\\"]\\n6:I[8836,[\\\"4358\\\",\\\"static/chunks/bc9e92e6-c43245f5fd0b2ec9.js\\\",\\\"139\\\",\\\"static/chunks/69806262-14d29418a93d6f01.js\\\",\\\"7192\\\",\\\"static/chunks/7192-a99ebff17ee7498a.js\\\",\\\"9811\\\",\\\"static/chunks/9811-e5f342335f66e46d.js\\\",\\\"384\\\",\\\"static/chunks/384-fd73a1ff81d5cf72.js\\\",\\\"7992\\\",\\\"static/chunks/7992-46bebfcd7ecafc95.js\\\",\\\"6210\\\",\\\"static/chunks/6210-1fde7629c45ad144.js\\\",\\\"1931\\\",\\\"static/chunks/app/page-0c886b550eb71e54.js\\\"],\\\"\\\"]\\n7:I[3790,[\\\"7192\\\",\\\"static/chunks/7192-a99ebff17ee7498a.js\\\",\\\"6665\\\",\\\"static\"])</script><script>self.__next_f.push([1,\"/chunks/6665-3b4417763fcc35e1.js\\\",\\\"5528\\\",\\\"static/chunks/5528-24344a1575a5138b.js\\\",\\\"4978\\\",\\\"static/chunks/4978-2ef12f02cc299672.js\\\",\\\"7992\\\",\\\"static/chunks/7992-46bebfcd7ecafc95.js\\\",\\\"3185\\\",\\\"static/chunks/app/layout-6b1849eca804c181.js\\\"],\\\"LanguageProvider\\\"]\\n8:I[5613,[],\\\"\\\"]\\n9:I[449,[\\\"7601\\\",\\\"static/chunks/app/error-e84ea8791255122f.js\\\"],\\\"\\\"]\\na:I[1778,[],\\\"\\\"]\\nb:I[9657,[\\\"7192\\\",\\\"static/chunks/7192-a99ebff17ee7498a.js\\\",\\\"6665\\\",\\\"static/chunks/6665-3b4417763fcc35e1.js\\\",\\\"5528\\\",\\\"static/chunks/5528-24344a1575a5138b.js\\\",\\\"4978\\\"\"])</script><script>self.__next_f.push([1,\",\\\"static/chunks/4978-2ef12f02cc299672.js\\\",\\\"7992\\\",\\\"static/chunks/7992-46bebfcd7ecafc95.js\\\",\\\"3185\\\",\\\"static/chunks/app/layout-6b1849eca804c181.js\\\"],\\\"Toaster\\\"]\\nd:I[8955,[],\\\"\\\"]\\ne:[]\\n\"])</script><script>self.__next_f.push([1,\"2:[[[\\\"$\\\",\\\"link\\\",\\\"0\\\",{\\\"rel\\\":\\\"stylesheet\\\",\\\"href\\\":\\\"/_next/static/css/981c79830eb1c3ab.css\\\",\\\"precedence\\\":\\\"next\\\",\\\"crossOrigin\\\":\\\"\\\"}]],[\\\"$\\\",\\\"$L3\\\",null,{\\\"buildId\\\":\\\"4xTDB3IZIjOz-uV_CTYwl\\\",\\\"assetPrefix\\\":\\\"\\\",\\\"initialCanonicalUrl\\\":\\\"/\\\",\\\"initialTree\\\":[\\\"\\\",{\\\"children\\\":[\\\"__PAGE__\\\",{}]},\\\"$undefined\\\",\\\"$undefined\\\",true],\\\"initialSeedData\\\":[\\\"\\\",{\\\"children\\\":[\\\"__PAGE__\\\",{},[\\\"$L4\\\",[\\\"$\\\",\\\"$L5\\\",null,{\\\"propsForComponent\\\":{\\\"params\\\":{}},\\\"Component\\\":\\\"$6\\\",\\\"isStaticGeneration\\\":true}],null]]},[null,[\\\"$\\\",\\\"html\\\",null,{\"lang\\\":\\\"en\\\",\\\"suppressHydrationWarning\\\":true,\\\"children\\\":[\\\"$\\\",\\\"body\\\",null,{\\\"children\\\":[\\\"$\\\",\\\"$L7\\\",null,{\\\"children\\\":[[\\\"$\\\",\\\"div\\\",null,{\\\"className\\\":\\\"flex min-h-screen flex-col\\\",\\\"children\\\":[\\\"$\\\",\\\"$L8\\\",null,{\\\"parallelRouterKey\\\":\\\"children\\\",\\\"segmentPath\\\":[\\\"children\\\"],\\\"loading\\\":\\\"$undefined\\\",\\\"loadingStyles\\\":\\\"$undefined\\\",\\\"loadingScripts\\\":\\\"$undefined\\\",\\\"hasLoading\\\":false,\\\"error\\\":\\\"$9\\\",\\\"errorStyles\\\":[],\\\"errorScripts\\\":[],\\\"template\\\":[\\\"$\\\",\\\"$La\\\",null,{}],\\\"templateStyles\\\":\\\"$undefined\\\",\\\"templateScripts\\\":\\\"$undefined\\\",\\\"notFound\\\":[[\\\"$\\\",\\\"title\\\",null,{\\\"children\\\":\\\"404: This page could not be found.\\\"}],[\\\"$\\\",\\\"div\\\",null,{\\\"style\\\":{\\\"fontFamily\\\":\\\"system-ui,\\\\\\\"Segoe UI\\\\\\\",Roboto,Helvetica,Arial,sans-serif,\\\\\\\"Apple Color Emoji\\\\\\\",\\\\\\\"Segoe UI Emoji\\\\\\\"\\\",\\\"height\\\":\\\"100vh\\\",\\\"textAlign\\\":\\\"center\\\",\\\"display\\\":\\\"flex\\\",\\\"flexDirection\\\":\\\"column\\\",\\\"alignItems\\\":\\\"center\\\",\\\"justifyContent\\\":\\\"center\\\"},\\\"children\\\":[\\\"$\\\",\\\"div\\\",null,{\\\"children\\\":[[\\\"$\\\",\\\"style\\\",null,{\\\"dangerouslySetInnerHTML\\\":{\\\"__html\\\":\\\"body{color:#000;background:#fff;margin:0}.next-error-h1{border-right:1px solid rgba(0,0,0,.3)}@media (prefers-color-scheme:dark){body{color:#fff;background:#000}.next-error-h1{border-right:1px solid rgba(255,255,255,.3)}}\\\"}}],[\\\"$\\\",\\\"h1\\\",null,{\\\"className\\\":\\\"next-error-h1\\\",\\\"style\\\":{\\\"display\\\":\\\"inline-block\\\",\\\"margin\\\":\\\"0 20px 0 0\\\",\\\"padding\\\":\\\"0 23px 0 0\\\",\\\"fontSize\\\":24,\\\"fontWeight\\\":500,\\\"verticalAlign\\\":\\\"top\\\",\\\"lineHeight\\\":\\\"49px\\\"},\\\"children\\\":\\\"404\\\"}],[\\\"$\\\",\\\"div\\\",null,{\\\"style\\\":{\\\"display\\\":\\\"inline-block\\\"},\\\"children\\\":[\\\"$\\\",\\\"h2\\\",null,{\\\"style\\\":{\\\"fontSize\\\":14,\\\"fontWeight\\\":400,\\\"lineHeight\\\":\\\"49px\\\",\\\"margin\\\":0},\\\"children\\\":\\\"This page could not be found.\\\"}]}]]}]}]],\\\"notFoundStyles\\\":[],\\\"styles\\\":null}]}],[\\\"$\\\",\\\"$Lb\\\",null,{}]]}]}]}],null]],\\\"initialHead\\\":[false,\\\"$Lc\\\"],\\\"globalErrorComponent\\\":\\\"$d\\\",\\\"missingSlots\\\":\\\"$We\\\"}]]\\n\"])</script><script>self.__next_f.push([1,\"c:[[\\\"$\\\",\\\"meta\\\",\\\"0\\\",{\\\"name\\\":\\\"viewport\\\",\\\"content\\\":\\\"width=device-width, initial-scale=1\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"1\\\",{\\\"name\\\":\\\"theme-color\\\",\\\"content\\\":\\\"#3F51B5\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"2\\\",{\\\"charSet\\\":\\\"utf-8\\\"}],[\\\"$\\\",\\\"title\\\",\\\"3\\\",{\\\"children\\\":\\\"U-Dry - Smart Umbrella Sharing\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"4\\\",{\\\"name\\\":\\\"description\\\",\\\"content\\\":\\\"Rent and return umbrellas easily with U-Dry. Find nearby smart umbrella stations.\\\"}],[\\\"$\\\",\\\"link\\\",\\\"5\\\",{\\\"rel\\\":\\\"manifest\\\",\\\"href\\\":\\\"/manifest.json\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"6\\\",{\\\"name\\\":\\\"apple-mobile-web-app-capable\\\",\\\"content\\\":\\\"yes\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"7\\\",{\\\"name\\\":\\\"apple-mobile-web-app-title\\\",\\\"content\\\":\\\"U-Dry\\\"}],[\\\"$\\\",\\\"meta\\\",\\\"8\\\",{\\\"name\\\":\\\"apple-mobile-web-app-status-bar-style\\\",\\\"content\\\":\\\"default\\\"}],[\\\"$\\\",\\\"link\\\",\\\"9\\\",{\\\"rel\\\":\\\"icon\\\",\\\"href\\\":\\\"/favicon.ico\\\",\\\"type\\\":\\\"image/x-icon\\\",\\\"sizes\\\":\\\"16x16\\\"}]]\\n\"])</script><script>self.__next_f.push([1,\"4:null\\n\"])</script><script>self.__next_f.push([1,\"\"])</script></body></html>"
+          },
+          "redirectURL": "",
+          "headersSize": 358,
+          "bodySize": 2221,
+          "_transferSize": 2579
+        },
+        "cache": {},
+        "timings": {
+          "blocked": 10.707179055316374,
+          "dns": 1.999980042455718,
+          "connect": 245.00033230287954,
+          "ssl": 133.00002200412564,
+          "send": 1.5622018836438656,
+          "wait": 353.2687066763174,
+          "receive": 0.5582550656981766
+        },
+        "serverIPAddress": "199.36.158.100",
+        "_serverPort": 443,
+        "connection": "3",
+        "_fetchType": "Network Load",
+        "_priority": "high"
+      },
+      {
+        "pageref": "page_0",
+        "startedDateTime": "2025-08-30T18:34:03.019Z",
+        "time": 39.264041668502614,
+        "request": {
+          "method": "GET",
+          "url": "https://udry-app-dev.web.app/_next/static/css/981c79830eb1c3ab.css",
+          "httpVersion": "",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Origin",
+              "value": "https://udry-app-dev.web.app"
+            },
+            {
+              "name": "Accept",
+              "value": "text/css,*/*;q=0.1"
+            },
+            {
+              "name": "Referer",
+              "value": "https://udry-app-dev.web.app/payment/success?session_id=cs_test_a1W3tiDdC1uBnbogVuy1KC4JIracsyLc8i9AicTcQBZhS1eoJzcHJiA9kc&uid=9bRMXbD5L0OYGSfQrkK89byMXSx1"
+            },
+            {
+              "name": "Sec-Fetch-Dest",
+              "value": "style"
+            },
+            {
+              "name": "Sec-Fetch-Mode",
+              "value": "cors"
+            },
+            {
+              "name": "Sec-Fetch-Site",
+              "value": "same-origin"
+            },
+            {
+              "name": "User-Agent",
+              "value": "Mozilla/5.0 (iPhone; CPU iPhone OS 18_1_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/18.1.1 Mobile/15E148 Safari/604.1"
+            }
+          ],
+          "queryString": [],
+          "headersSize": -1,
+          "bodySize": -1
+        },
+        "response": {
+          "status": 200,
+          "statusText": "",
+          "httpVersion": "",
+          "cookies": [],
+          "headers": [
+            {
+              "name": "Content-Type",
+              "value": "text/css; charset=utf-8"
+            },
+            {
+              "name": "Accept-Ranges",
+              "value": "bytes"
+            },
+            {
+              "name": "Content-Encoding",
+              "value": "br"
+            },
+            {
+              "name": "Cache-Control",
+              "value": "max-age=3600"
+            },
+            {
+              "name": "Date",
+              "value": "Sat, 30 Aug 2025 18:32:30 GMT"
+            },
+            {
+              "name": "Content-Length",
+              "value": "8506"
+            },
+            {
+              "name": "ETag",
+              "value": "\"e8680dff2e45b2ce9c1d19987695b8ef5eecbc767f755a0a8ae2cb66183388c1-br\""
+            },
+            {
+              "name": "Vary",
+              "value": "x-fh-requested-host, accept-encoding"
+            },
+            {
+              "name": "Last-Modified",
+              "value": "Sat, 30 Aug 2025 18:31:24 GMT"
+            },
+            {
+              "name": "x-cache-hits",
+              "value": "0"
+            },
+            {
+              "name": "Alt-Svc",
+              "value": "h3=\":443\";ma=86400,h3-29=\":443\";ma=86400,h3-27=\":443\";ma=86400"
+            },
+            {
+              "name": "x-served-by",
+              "value": "cache-tyo11970-TYO"
+            },
+            {
+              "name": "x-cache",
+              "value": "MISS"
+            },
+            {
+              "name": "Strict-Transport-Security",
+              "value": "max-age=31556926; includeSubDomains; preload"
+            },
+            {
+              "name": "x-timer",
+              "value": "S1756578750.353658,VS0,VE277"
+            }
+          ],
+          "content": {
+            "size": 51730,
+            "compression": 51730,
+            "mimeType": "text/css",
+            "text": "REMOVED"
+          },
+          "redirectURL": "",
+          "headersSize": -1,
+          "bodySize": -1
+        },
+        "cache": {},
+        "timings": {
+          "blocked": 0,
+          "dns": -1,
+          "connect": -1,
+          "ssl": -1,
+          "send": 0,
+          "wait": 0,
+          "receive": 39.264041668502614
+        },
+        "_fetchType": "Disk Cache"
+      }
+    ]
+  }
+}
