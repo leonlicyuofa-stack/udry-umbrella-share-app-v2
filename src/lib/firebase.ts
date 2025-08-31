@@ -6,13 +6,13 @@ import { getFunctions, type Functions } from 'firebase/functions';
 
 // Build the config object from environment variables
 export const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+  apiKey: "AIzaSyDk8gmZb-azt0fndBG80zrYXEma7NsUdL0",
+  authDomain: "udry-app-dev.firebaseapp.com",
+  projectId: "udry-app-dev",
+  storageBucket: "udry-app-dev.appspot.com",
+  messagingSenderId: "458603936715",
+  appId: "1:458603936715:web:8c50687fc1cdcf9c90944e",
+  measurementId: "G-X1VP807J0N"
 };
 
 // Function to check if the config is valid
