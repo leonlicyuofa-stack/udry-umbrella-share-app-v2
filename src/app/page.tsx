@@ -10,29 +10,27 @@ import { Loader2 } from 'lucide-react';
 // Its only job is to redirect the user to the correct page
 // based on their authentication status.
 function RootRedirectPage() {
-  console.log("TRACE: src/app/page.tsx - RootRedirectPage rendering");
   const { user, isReady } = useAuth();
   const router = useRouter();
 
   useEffect(() => {
-    // Wait until the authentication state is ready.
+    // Wait until the authentication state is confirmed.
+    // This prevents a race condition where the redirect happens
+    // before Firebase has initialized.
     if (!isReady) {
-      console.log("TRACE: src/app/page.tsx - Auth not ready, waiting.");
       return;
     }
 
     // If the user is logged in, redirect them to the main map page.
     if (user) {
-      console.log("TRACE: src/app/page.tsx - User is logged in. Redirecting to /home");
       router.replace('/home');
     } else {
       // If the user is not logged in, send them to the sign-in page.
-      console.log("TRACE: src/app/page.tsx - User is logged out. Redirecting to /auth/signin");
       router.replace('/auth/signin');
     }
   }, [user, isReady, router]);
 
-  // Render a loading spinner while the redirect is happening.
+  // Render a loading spinner while the authentication check is happening.
   return (
     <div className="flex flex-col items-center justify-center h-screen">
       <Loader2 className="h-12 w-12 animate-spin text-primary" />

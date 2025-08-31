@@ -12,7 +12,6 @@ export default function AuthLayout({
 }: {
   children: React.ReactNode;
 }) {
-  console.log("TRACE: src/app/auth/layout.tsx - AuthLayout rendering");
   return (
     // This outer div provides a separate layout for the auth pages,
     // ensuring they don't get the main app Header.

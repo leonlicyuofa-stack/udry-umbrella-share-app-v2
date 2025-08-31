@@ -11,7 +11,6 @@ export default function MainLayout({
 }: {
   children: React.ReactNode;
 }) {
-  console.log("TRACE: src/app/(main)/layout.tsx - MainLayout rendering");
   return (
     <MainAppChrome>
       {children}
