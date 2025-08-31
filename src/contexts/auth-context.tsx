@@ -52,37 +52,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// --- New Hook specifically for fetching stalls ---
-export function useStalls() {
-    const [stalls, setStalls] = useState<Stall[]>([]);
-    const [isLoadingStalls, setIsLoadingStalls] = useState(true);
-    const { toast } = useToast();
-    const services = initializeFirebaseServices();
-
-    useEffect(() => {
-        if (!services) {
-            setIsLoadingStalls(false);
-            return;
-        }
-
-        const stallsCollectionRef = collection(services.db, 'stalls');
-        const unsubscribeStalls = onSnapshot(stallsCollectionRef, (snapshot) => {
-            const stallsData = snapshot.docs.map(doc => ({ ...doc.data(), dvid: doc.id, id: doc.id } as Stall));
-            setStalls(stallsData);
-            setIsLoadingStalls(false);
-        }, (error) => {
-            console.error("Error fetching stalls:", error);
-            toast({ variant: 'destructive', title: 'Error', description: 'Could not load stall locations.' });
-            setIsLoadingStalls(false);
-        });
-
-        return () => unsubscribeStalls();
-    }, [services, toast]);
-
-    return { stalls, isLoadingStalls };
-}
-
-
 // --- New Component to show when Firebase fails to initialize ---
 function FirebaseConfigurationError() {
   const { translate } = useLanguage();
@@ -144,12 +113,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  // HYPOTHESIS #2 TEST: This block is temporarily disabled.
-  // The theory is that this client-side redirect logic is firing
-  // prematurely in the Capacitor environment, causing the app to freeze.
-  // By disabling it, we can see if the app's initial network calls
-  // (like Firebase Auth) start working correctly.
-  /*
   useEffect(() => {
     if (!isReady || hasPerformedInitialRedirect.current) return;
 
@@ -168,8 +131,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     }
   }, [isReady, firebaseUser, pathname, router]);
-  */
-
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
@@ -408,7 +369,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     firebaseServices,
   };
 
-  // NEW: Loading Gate to prevent race condition
+  // The "Loading Gate" to prevent the race condition
   if (!isReady) {
     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background">
