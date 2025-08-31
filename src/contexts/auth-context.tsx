@@ -86,7 +86,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
   const [isFirebaseError, setIsFirebaseError] = useState(false);
-  const hasPerformedInitialRedirect = useRef(false);
 
   useEffect(() => {
     const services = initializeFirebaseServices();
@@ -113,32 +112,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
+  // Simplified redirect logic. The root page "/" now handles the initial redirect.
+  // This hook now only handles redirects *after* the initial load, e.g., logging in/out.
   useEffect(() => {
     if (!isReady) {
       return;
     }
 
     const isAuthPage = pathname.startsWith('/auth');
-    const isExternalPage = pathname.startsWith('/payment') || pathname.startsWith('/diag');
     
-    // This console log is a diagnostic tool to trace the redirect logic.
-    console.log(`[Redirect Check] Ready: ${isReady}, User: ${!!firebaseUser}, Path: ${pathname}, isAuthPage: ${isAuthPage}, Redirected Yet: ${hasPerformedInitialRedirect.current}`);
-
-    if (hasPerformedInitialRedirect.current) {
-        return;
-    }
-
-    if (firebaseUser) {
-      if (isAuthPage) {
-        console.log(`[Redirect Action] User is on auth page, redirecting to /home.`);
-        router.push('/home'); // TEST: Using push instead of replace
-        hasPerformedInitialRedirect.current = true;
-      }
-    } else {
-      if (!isAuthPage && !isExternalPage) {
-        console.log(`[Redirect Action] User is not on auth page and not logged in, redirecting to /auth/signin.`);
-        router.push('/auth/signin'); // TEST: Using push instead of replace
-        hasPerformedInitialRedirect.current = true;
+    if (firebaseUser && isAuthPage) {
+      // User is logged in but on an auth page, send them home.
+      router.replace('/home');
+    } else if (!firebaseUser && !isAuthPage) {
+      // User is logged out and not on an auth or external page, send to signin.
+      // Note: External pages (like payment) are not handled here because they have their own layouts.
+      // This logic primarily applies to the (main) app routes.
+      const isMainAppPage = !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
+      if (isMainAppPage) {
+        router.replace('/auth/signin');
       }
     }
   }, [isReady, firebaseUser, pathname, router]);
@@ -239,9 +231,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     if (!firebaseServices?.auth) return;
     try {
-      hasPerformedInitialRedirect.current = false;
       await firebaseSignOut(firebaseServices.auth);
       toast({ title: translate('auth_success_signout') });
+      // The redirect is handled by the useEffect hook.
     } catch (error: any) {
       toast({ variant: 'destructive', title: translate('auth_error_signout_failed'), description: error.message });
     }
@@ -381,8 +373,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     firebaseServices,
   };
 
+  // The initial "Initializing Session..." screen is no longer needed here,
+  // as the root page.tsx handles the initial loading/redirect state.
   if (!isReady) {
-    return (
+     return (
       <div className="flex h-screen w-screen items-center justify-center bg-background">
         <div className="flex flex-col items-center gap-4">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
@@ -391,6 +385,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       </div>
     );
   }
+
 
   return (
     <AuthContext.Provider value={value}>
