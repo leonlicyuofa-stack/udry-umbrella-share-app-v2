@@ -24,7 +24,7 @@ import type { SignUpFormData, SignInFormData, ChangePasswordFormData, User, Stal
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/language-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle } from 'lucide-react';
+import { AlertTriangle, Loader2 } from 'lucide-react';
 import { httpsCallable } from 'firebase/functions';
 
 interface AuthContextType {
@@ -144,12 +144,12 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
   }, []);
 
-  /*
   // HYPOTHESIS #2 TEST: This block is temporarily disabled.
   // The theory is that this client-side redirect logic is firing
   // prematurely in the Capacitor environment, causing the app to freeze.
   // By disabling it, we can see if the app's initial network calls
   // (like Firebase Auth) start working correctly.
+  /*
   useEffect(() => {
     if (!isReady || hasPerformedInitialRedirect.current) return;
 
@@ -407,6 +407,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logMachineEvent,
     firebaseServices,
   };
+
+  // NEW: Loading Gate to prevent race condition
+  if (!isReady) {
+    return (
+      <div className="flex h-screen w-screen items-center justify-center bg-background">
+        <div className="flex flex-col items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <p className="text-muted-foreground">Initializing Session...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <AuthContext.Provider value={value}>
