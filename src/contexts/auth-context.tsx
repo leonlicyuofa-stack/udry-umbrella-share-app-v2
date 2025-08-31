@@ -131,13 +131,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (firebaseUser) {
       if (isAuthPage) {
         console.log(`[Redirect Action] User is on auth page, redirecting to /home.`);
-        router.replace('/home');
+        router.push('/home'); // TEST: Using push instead of replace
         hasPerformedInitialRedirect.current = true;
       }
     } else {
       if (!isAuthPage && !isExternalPage) {
         console.log(`[Redirect Action] User is not on auth page and not logged in, redirecting to /auth/signin.`);
-        router.replace('/auth/signin');
+        router.push('/auth/signin'); // TEST: Using push instead of replace
         hasPerformedInitialRedirect.current = true;
       }
     }
