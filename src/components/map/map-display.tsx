@@ -10,7 +10,7 @@ import { Umbrella, MapPinIcon, Loader2, CornerDownLeft, LocateFixed, Navigation,
 import Link from 'next/link';
 import { useToast } from "@/hooks/use-toast";
 import { ScanAndRentDialog } from '@/components/rental/scan-and-rent-dialog';
-import { useStalls } from '@/contexts/auth-context'; // Import useStalls
+import { useStalls } from '@/contexts/stalls-context';
 import { defaultMapCenter } from '@/lib/mock-data';
 import { RentalInitiationDialog } from '@/components/rental/rental-initiation-dialog';
 
@@ -73,7 +73,7 @@ const UmbrellaMapIcon = () => (
 
 export function MapDisplay() {
   const { toast } = useToast();
-  const { stalls, isLoadingStalls } = useStalls(); // Get stalls from the new hook
+  const { stalls, isLoadingStalls } = useStalls();
 
   const [selectedMapStall, setSelectedMapStall] = useState<Stall | null>(null);
   const [stallForRentalDialog, setStallForRentalDialog] = useState<Stall | null>(null);

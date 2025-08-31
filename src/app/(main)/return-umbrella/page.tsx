@@ -3,7 +3,8 @@
 
 import { useEffect, useState, useRef, useCallback } from "react";
 import { useRouter } from "next/navigation";
-import { useAuth, useStalls } from "@/contexts/auth-context";
+import { useAuth } from "@/contexts/auth-context";
+import { useStalls } from "@/contexts/stalls-context";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";

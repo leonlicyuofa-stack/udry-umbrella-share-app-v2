@@ -2,7 +2,8 @@
 "use client";
 
 import { useEffect, useState, useCallback } from 'react';
-import { useAuth, useStalls } from '@/contexts/auth-context';
+import { useAuth } from '@/contexts/auth-context';
+import { useStalls } from '@/contexts/stalls-context';
 import { useLanguage } from '@/contexts/language-context';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
