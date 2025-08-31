@@ -1,4 +1,3 @@
-
 "use client";
 
 import type React from 'react';
@@ -117,12 +116,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
   const [isFirebaseError, setIsFirebaseError] = useState(false);
+  const hasPerformedInitialRedirect = useRef(false);
 
   useEffect(() => {
     const services = initializeFirebaseServices();
     if (!services) {
       setIsFirebaseError(true);
-      setIsReady(true);
+      setIsReady(true); // Set ready to stop loading screens
       setIsLoadingRental(false);
       return;
     }
@@ -144,24 +144,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   useEffect(() => {
-    if (!isReady) return;
+    if (!isReady || hasPerformedInitialRedirect.current) return;
 
     const isAuthPage = pathname.startsWith('/auth');
-    const isExternalPage = pathname.startsWith('/payment');
+    const isExternalPage = pathname.startsWith('/payment') || pathname.startsWith('/diag');
 
-    // If auth is ready and we have a user, but they are on an auth page, redirect to home.
-    if (firebaseUser && isAuthPage) {
-      router.replace('/home');
-      return;
+    if (firebaseUser) {
+      if (isAuthPage) {
+        router.replace('/home');
+        hasPerformedInitialRedirect.current = true;
+      }
+    } else {
+      if (!isAuthPage && !isExternalPage) {
+        router.replace('/auth/signin');
+        hasPerformedInitialRedirect.current = true;
+      }
     }
-
-    // If auth is ready and there's no user, and they are not on an auth or external page,
-    // redirect them to signin.
-    if (!firebaseUser && !isAuthPage && !isExternalPage) {
-      router.replace('/auth/signin');
-      return;
-    }
-
+    // We only want this effect to run once after `isReady` becomes true.
+    // The pathname dependency is there to re-evaluate if the user navigates manually
+    // before the initial check is complete, but the ref prevents multiple redirects.
   }, [isReady, firebaseUser, pathname, router]);
 
 
@@ -261,6 +262,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     if (!firebaseServices?.auth) return;
     try {
+      hasPerformedInitialRedirect.current = false; // Reset redirect lock on sign out
       await firebaseSignOut(firebaseServices.auth);
       // Redirect is handled by the useEffect hook.
       toast({ title: translate('auth_success_signout') });
