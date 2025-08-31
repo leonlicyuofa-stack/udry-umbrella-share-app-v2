@@ -7,6 +7,7 @@ const infoPlistPath = path.resolve(__dirname, '../ios/App/App/Info.plist');
 const bundleIdentifier = 'com.udry.app';
 const urlScheme = 'udry';
 const cameraUsageDescription = 'To scan QR codes on umbrella stalls for renting and returning.';
+const bluetoothUsageDescription = 'This app uses Bluetooth to connect to and unlock U-Dry umbrella machines.';
 
 console.log(`Reading Info.plist from: ${infoPlistPath}`);
 
@@ -62,11 +63,22 @@ try {
   console.log('✅ Camera permission configuration is correct.');
 
 
+  // --- 3. Ensure Bluetooth Permission ---
+  console.log('Ensuring Bluetooth Usage Description is present...');
+  if (infoPlistJson.NSBluetoothAlwaysUsageDescription) {
+    console.log(`Bluetooth permission already exists: "${infoPlistJson.NSBluetoothAlwaysUsageDescription}"`);
+  } else {
+    infoPlistJson.NSBluetoothAlwaysUsageDescription = bluetoothUsageDescription;
+    console.log('Added NSBluetoothAlwaysUsageDescription.');
+  }
+  console.log('✅ Bluetooth permission configuration is correct.');
+
+
   // Convert back to XML and write to the file
   const updatedInfoPlistXml = plist.build(infoPlistJson);
   fs.writeFileSync(infoPlistPath, updatedInfoPlistXml);
 
-  console.log('✅ Successfully configured Info.plist.');
+  console.log('✅ Successfully configured Info.plist for all required native features.');
   process.exit(0);
 
 } catch (error) {
