@@ -17,11 +17,10 @@ export const DeepLinkHandler = () => {
         // Example URL: udry://payment/success?session_id=cs_test_...
         const url = new URL(event.url);
         
-        // We want to navigate to the in-app path: /payment/success?session_id=...
+        // This handles cases like udry://home or udry://payment/success
+        // It combines the hostname and the pathname correctly.
+        // e.g., udry://payment/success -> hostname: 'payment', pathname: '/success' -> /payment/success
         const pathWithSearch = `${url.pathname}${url.search}`;
-
-        // The hostname from udry://hostname/ is the first part of our path
-        // e.g. udry://payment/success -> pathname is /success, hostname is 'payment'
         const finalPath = `/${url.hostname}${pathWithSearch}`;
         
         console.log(`Deep link received: ${event.url}. Navigating to internal path: ${finalPath}`);
