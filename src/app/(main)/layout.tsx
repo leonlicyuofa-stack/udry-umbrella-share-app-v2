@@ -14,9 +14,11 @@ export default function MainLayout({
 }) {
   return (
     <StallsProvider>
-      <MainAppChrome>
-        {children}
-      </MainAppChrome>
+      <div className="flex min-h-screen flex-col">
+        <MainAppChrome>
+          {children}
+        </MainAppChrome>
+      </div>
     </StallsProvider>
   );
 }
