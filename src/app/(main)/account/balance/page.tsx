@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect } from 'react';
@@ -5,7 +6,7 @@ import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, AlertTriangle, LogIn, Wallet, Landmark, PlusCircle, History, Ticket } from 'lucide-react';
+import { Loader2, AlertTriangle, LogIn, Wallet, Landmark, PlusCircle, History, Ticket, Wrench } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/language-context';
 import { Separator } from '@/components/ui/separator';
@@ -97,6 +98,15 @@ export default function AccountBalancePage() {
               </Button>
             </div>
           </CardContent>
+           <CardFooter className="flex-col items-center gap-2 pt-4 border-t">
+              <p className="text-xs text-muted-foreground mb-2">For debugging purposes only:</p>
+              <Button asChild variant="outline">
+                <Link href="/diag" className="flex items-center">
+                  <Wrench className="mr-2 h-4 w-4" />
+                  Diagnostic Tools
+                </Link>
+              </Button>
+          </CardFooter>
         </Card>
 
         {/* Coupons Section */}
