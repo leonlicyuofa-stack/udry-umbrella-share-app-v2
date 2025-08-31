@@ -121,9 +121,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
 
   useEffect(() => {
+    console.log("TRACE: AuthProvider mounting. Initializing Firebase services.");
     const services = initializeFirebaseServices();
     if (!services) {
-      console.error("Auth Context: Firebase services failed to initialize.");
+      console.error("TRACE: Auth Context: Firebase services failed to initialize.");
       setIsFirebaseError(true);
       setIsReady(true);
       setIsLoadingRental(false);
@@ -133,15 +134,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setIsFirebaseError(false);
 
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
+      console.log("TRACE: onAuthStateChanged fired. User:", user ? user.uid : 'null');
       setFirebaseUser(user);
       if (!user) {
         setFirestoreUser(null);
         setActiveRental(null);
       }
       setIsReady(true);
+      console.log("TRACE: AuthProvider is now ready.");
     });
 
-    return () => unsubscribeAuth();
+    return () => {
+      console.log("TRACE: AuthProvider unmounting. Unsubscribing from auth state changes.");
+      unsubscribeAuth();
+    };
   }, [toast]);
 
   // This new effect handles post-login actions to prevent race conditions.
@@ -160,14 +166,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
 
+    console.log(`TRACE: Firebase user found (${firebaseUser.uid}). Setting up Firestore listener.`);
     setIsLoadingRental(true);
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
     const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
       if (docSnap.exists()) {
+        console.log("TRACE: Firestore user document exists.");
         const userData = docSnap.data() as User;
         setFirestoreUser(userData);
         setActiveRental(userData.activeRental || null);
       } else {
+        console.log("TRACE: Firestore user document does NOT exist. Creating new one.");
         const newUserDoc: Omit<User, 'uid'> = {
           email: firebaseUser.email,
           displayName: firebaseUser.displayName,
@@ -188,7 +197,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoadingRental(false);
     });
 
-    return () => unsubscribeUserDoc();
+    return () => {
+      console.log("TRACE: Unsubscribing from Firestore user document.");
+      unsubscribeUserDoc();
+    };
 
   }, [firebaseUser, firebaseServices]);
 
