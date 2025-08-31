@@ -1,24 +1,18 @@
 // src/app/page.tsx
-import { redirect } from 'next/navigation';
-import { cookies } from 'next/headers';
+"use client";
 
-// This is now a Server Component. Its only job is to handle the initial redirect.
-// It checks for a Firebase auth cookie to make an educated guess about the user's status.
-// The final auth state is still definitively handled by the client-side AuthProvider.
+import { Loader2 } from 'lucide-react';
+
+// This is a simple client-side component that shows a loading indicator.
+// The AuthProvider will handle redirecting the user away from this page
+// to either the sign-in page or the main app.
 export default function RootPage() {
-  const cookieStore = cookies();
-  // Firebase Auth sets a cookie when a user is signed in. We check for its existence.
-  // The cookie name is complex, but it always contains "firebase" and "user".
-  const hasAuthCookie = cookieStore.getAll().some(cookie => cookie.name.includes('firebase') && cookie.name.includes('user'));
-
-  if (hasAuthCookie) {
-    // If the cookie exists, we assume the user is logged in and redirect to the main app page.
-    redirect('/home');
-  } else {
-    // If no auth cookie, redirect to the sign-in page.
-    redirect('/auth/signin');
-  }
-
-  // This component will never actually render anything, as it always redirects.
-  return null;
+  return (
+    <div className="flex h-screen w-screen items-center justify-center bg-background">
+      <div className="flex flex-col items-center gap-4">
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
+        <p className="text-muted-foreground">Loading App...</p>
+      </div>
+    </div>
+  );
 }
