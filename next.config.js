@@ -1,12 +1,11 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // The `output: 'export'` option is re-enabled to generate a static site,
-  // which is required by Capacitor to have an `index.html` entry point.
+  // The `output: 'export'` option is required by Capacitor to generate a static site
+  // with an `index.html` entry point. The build process will place the output in the `/out` directory.
   output: 'export',
 
-  // This is required for Capacitor. The default Next.js Image Optimization API
-  // requires a server, which doesn't exist in a static export for a mobile app.
-  // This setting ensures images work correctly in the native build.
+  // This setting is required for static exports to work correctly with the Next.js Image component.
+  // It disables the default server-based image optimization.
   images: {
     unoptimized: true,
   },
