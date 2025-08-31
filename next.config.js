@@ -9,6 +9,10 @@ const nextConfig = {
   images: {
     unoptimized: true,
   },
+
+  // NEW: This disables the modern App Router's advanced features that are incompatible with a static export.
+  // This helps ensure client-side routing works correctly from the file:// protocol.
+  trailingSlash: true,
 };
 
 module.exports = nextConfig;
