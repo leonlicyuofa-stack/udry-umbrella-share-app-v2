@@ -3,7 +3,7 @@
 
 import type React from 'react';
 import { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from 'react';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import {
   onAuthStateChanged,
   signOut as firebaseSignOut,
@@ -114,9 +114,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [activeRental, setActiveRental] = useState<ActiveRental | null>(null);
   const [isLoadingRental, setIsLoadingRental] = useState(true);
   const router = useRouter();
+  const pathname = usePathname();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
   const [isFirebaseError, setIsFirebaseError] = useState(false);
-  const isJustSignedIn = useRef(false);
 
   useEffect(() => {
     const services = initializeFirebaseServices();
@@ -142,14 +142,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       unsubscribeAuth();
     };
   }, []);
-  
+
   useEffect(() => {
-    if (isReady && firebaseUser && isJustSignedIn.current) {
-      toast({ title: translate('auth_success_signin_email') });
+    if (!isReady) return;
+
+    const isAuthPage = pathname.startsWith('/auth');
+    const isExternalPage = pathname.startsWith('/payment');
+
+    // If auth is ready and we have a user, but they are on an auth page, redirect to home.
+    if (firebaseUser && isAuthPage) {
       router.replace('/home');
-      isJustSignedIn.current = false; // Reset the flag
+      return;
     }
-  }, [isReady, firebaseUser, router, toast, translate]);
+
+    // If auth is ready and there's no user, and they are not on an auth or external page,
+    // redirect them to signin.
+    if (!firebaseUser && !isAuthPage && !isExternalPage) {
+      router.replace('/auth/signin');
+      return;
+    }
+
+  }, [isReady, firebaseUser, pathname, router]);
 
 
   useEffect(() => {
@@ -234,7 +247,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!firebaseServices?.auth) return;
     try {
       await signInWithEmailAndPassword(firebaseServices.auth, email, password);
-      isJustSignedIn.current = true;
+      // The redirect is now handled by the useEffect hook.
     } catch (error: any) {
       let description = error.message;
       if (error.code === 'auth/invalid-credential') {
@@ -249,7 +262,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!firebaseServices?.auth) return;
     try {
       await firebaseSignOut(firebaseServices.auth);
-      router.push('/auth/signin');
+      // Redirect is handled by the useEffect hook.
       toast({ title: translate('auth_success_signout') });
     } catch (error: any) {
       toast({ variant: 'destructive', title: translate('auth_error_signout_failed'), description: error.message });
