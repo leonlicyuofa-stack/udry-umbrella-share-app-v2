@@ -1,7 +1,7 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
-import { getFirestore, type Firestore, connectFirestoreEmulator } from 'firebase/firestore';
+import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
 
 // This configuration is now hardcoded to ensure it works reliably in all environments.
@@ -43,23 +43,9 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     
     const db = getFirestore(app);
     
-    // This line is the fix. In a production Capacitor app where no emulator is running,
-    // this forces the SDK to use a standard web channel for real-time communication,
-    // avoiding a race condition with the capacitor:// custom protocol after re-authentication.
-    // It safely falls back to the production Firestore instance.
-    if (process.env.NODE_ENV === 'development') {
-       // This will only run in your local 'npm run dev' environment
-       try {
-        connectFirestoreEmulator(db, '127.0.0.1', 8080);
-        console.log("Successfully connected to LOCAL Firestore emulator.");
-       } catch (e) {
-        console.warn("Could not connect to local Firestore emulator. This is expected if you are not running it. Using production Firestore.");
-       }
-    }
-
-
     // For Capacitor, we use indexedDBLocalPersistence. 
-    // This is the most robust option for native apps.
+    // This is the most robust option for native apps and helps prevent
+    // race conditions during re-authentication on custom protocols like capacitor://
     const auth = initializeAuth(app, {
       persistence: indexedDBLocalPersistence,
     });
