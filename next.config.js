@@ -1,8 +1,13 @@
 /** @type {import('next').NextConfig} */
+
+// Check if the build is running in a production environment (e.g., via 'npm run build')
+const isProd = process.env.NODE_ENV === 'production';
+
 const nextConfig = {
-  // The `output: 'export'` option is required by Capacitor to generate a static site
-  // with an `index.html` entry point. The build process will place the output in the `/out` directory.
-  output: 'export',
+  // The `output: 'export'` option is required by Capacitor.
+  // We only apply this during a production build (`npm run build`) to avoid
+  // breaking the development server (`npm run dev`).
+  output: isProd ? 'export' : undefined,
 
   // This setting is required for static exports to work correctly with the Next.js Image component.
   // It disables the default server-based image optimization.
@@ -10,11 +15,8 @@ const nextConfig = {
     unoptimized: true,
   },
 
-  // NEW: This disables the modern App Router's advanced features that are incompatible with a static export.
-  // This helps ensure client-side routing works correctly from the file:// protocol.
+  // This helps ensure client-side routing works correctly from the file:// protocol in Capacitor.
   trailingSlash: true,
-
-  // Force a server restart by adding this comment. This is a safe way to clear the cache.
 };
 
 module.exports = nextConfig;
