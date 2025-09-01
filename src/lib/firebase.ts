@@ -40,9 +40,8 @@ export function initializeFirebaseServices(): FirebaseServices | null {
 
   try {
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-    console.log("[U-Dry Diag] Firebase App object created:", app.name);
-    const auth = getAuth(app);
-    console.log("[U-Dry Diag] Firebase Auth object created successfully.");
+    // Use initializeAuth with browserLocalPersistence for Capacitor compatibility
+    const auth = initializeAuth(app, { persistence: browserLocalPersistence });
     const db = getFirestore(app);
     const functions = getFunctions(app);
     return { app, auth, db, functions };
