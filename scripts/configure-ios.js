@@ -8,6 +8,7 @@ const bundleIdentifier = 'com.udry.app';
 const urlScheme = 'udry';
 const cameraUsageDescription = 'To scan QR codes on umbrella stalls for renting and returning.';
 const bluetoothUsageDescription = 'This app uses Bluetooth to connect to and unlock U-Dry umbrella machines.';
+const photoLibraryUsageDescription = 'To allow you to select photos for reporting issues, although this feature is not yet enabled.';
 
 console.log(`Reading Info.plist from: ${infoPlistPath}`);
 
@@ -72,6 +73,16 @@ try {
     console.log('Added NSBluetoothAlwaysUsageDescription.');
   }
   console.log('✅ Bluetooth permission configuration is correct.');
+
+  // --- 4. Ensure Photo Library Permission ---
+  console.log('Ensuring Photo Library Usage Description is present...');
+  if (infoPlistJson.NSPhotoLibraryUsageDescription) {
+      console.log(`Photo Library permission already exists: "${infoPlistJson.NSPhotoLibraryUsageDescription}"`);
+  } else {
+      infoPlistJson.NSPhotoLibraryUsageDescription = photoLibraryUsageDescription;
+      console.log('Added NSPhotoLibraryUsageDescription.');
+  }
+  console.log('✅ Photo Library permission configuration is correct.');
 
 
   // Convert back to XML and write to the file
