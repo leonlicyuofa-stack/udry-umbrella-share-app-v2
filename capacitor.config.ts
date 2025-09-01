@@ -19,6 +19,10 @@ const config: CapacitorConfig = {
       ios: {
         urlScheme: 'udry'
       }
+    },
+    StatusBar: {
+      overlaysWebView: true,
+      style: 'light'
     }
   }
 };

@@ -25,6 +25,7 @@
     "@capacitor/cli": "6.0.0",
     "@capacitor/core": "6.0.0",
     "@capacitor/ios": "6.0.0",
+    "@capacitor/status-bar": "6.0.0",
     "@genkit-ai/googleai": "^1.0.0",
     "@googlemaps/react-wrapper": "^1.1.35",
     "@hookform/resolvers": "^3.3.4",
