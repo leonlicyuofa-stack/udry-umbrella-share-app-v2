@@ -1,13 +1,11 @@
 /** @type {import('next').NextConfig} */
 
-// Check if the build is running in a production environment (e.g., via 'npm run build')
-const isProd = process.env.NODE_ENV === 'production';
-
+// The conditional logic has been removed. 
+// The `output: 'export'` is now always set for `npm run build`.
+// The `npm run dev` script will be modified to ignore this setting.
 const nextConfig = {
-  // The `output: 'export'` option is required by Capacitor.
-  // We only apply this during a production build (`npm run build`) to avoid
-  // breaking the development server (`npm run dev`).
-  output: isProd ? 'export' : undefined,
+  // The `output: 'export'` option is required by Capacitor for static exports.
+  output: 'export',
 
   // This setting is required for static exports to work correctly with the Next.js Image component.
   // It disables the default server-based image optimization.
