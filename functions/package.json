@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint .",
-    "serve": "firebase emulators:start --only functions",
+    "serve": "firebase functions:shell",
     "shell": "firebase functions:shell",
     "start": "npm run shell",
     "deploy": "firebase deploy --only functions",
@@ -21,6 +21,8 @@
     "stripe": "^16.5.0"
   },
   "devDependencies": {
+    "eslint": "^8.57.0",
+    "eslint-plugin-promise": "^6.1.1",
     "firebase-functions-test": "^3.2.0"
   },
   "private": true
