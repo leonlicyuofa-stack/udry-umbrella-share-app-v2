@@ -283,9 +283,18 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
             }
 
             if (paymentType === 'deposit') {
-                transaction.update(userDocRef, { deposit: admin.firestore.FieldValue.increment(amountNum) });
+                if (!session.payment_intent) {
+                    throw new HttpsError('internal', 'Payment Intent ID is missing from the successful Stripe session.');
+                }
+                logger.info(`Recording Payment Intent ID: ${session.payment_intent} for deposit.`);
+                transaction.update(userDocRef, { 
+                    deposit: admin.firestore.FieldValue.increment(amountNum),
+                    depositPaymentIntentId: session.payment_intent 
+                });
             } else if (paymentType === 'balance') {
-                transaction.update(userDocRef, { balance: admin.firestore.FieldValue.increment(amountNum) });
+                transaction.update(userDocRef, { 
+                    balance: admin.firestore.FieldValue.increment(amountNum) 
+                });
             }
             
             transaction.set(paymentRef, {
