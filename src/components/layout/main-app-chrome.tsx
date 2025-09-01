@@ -14,13 +14,14 @@ export function MainAppChrome({ children }: { children: React.ReactNode }) {
   const { isReady } = useAuth();
 
   return (
-    <>
+    // This div now manages the full-screen flex layout
+    <div className="flex flex-1 flex-col min-h-screen">
       <Header />
       <main className={cn("flex-1 overflow-y-auto bg-green-500")}>
         {children}
       </main>
       {/* The rental timer will only show up if there is an active rental */}
       {isReady && <RentalTimer />}
-    </>
+    </div>
   );
 }
