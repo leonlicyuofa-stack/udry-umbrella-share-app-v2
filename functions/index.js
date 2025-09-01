@@ -419,6 +419,27 @@ exports.endRentalTransaction = onCall(async (request) => {
 });
 
 
+exports.requestDepositRefund = onCall(async (request) => {
+    logger.info("--- requestDepositRefund function triggered ---");
+
+    // Step 1: Authentication Check
+    if (!request.auth) {
+        logger.error("[requestDepositRefund] Authentication check failed: No auth context.");
+        throw new HttpsError('unauthenticated', 'You must be logged in to request a refund.');
+    }
+
+    const userId = request.auth.uid;
+    logger.info(`[requestDepositRefund] User ${userId} initiated a refund request.`);
+
+    // This is a placeholder for now. The full logic will be added in subsequent steps.
+    // It currently does not process any refund.
+    return { 
+        success: true, 
+        message: "Refund feature is currently in development. Please check back later." 
+    };
+});
+
+
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
