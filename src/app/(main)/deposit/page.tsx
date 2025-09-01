@@ -17,6 +17,11 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Badge } from '@/components/ui/badge';
 import { httpsCallable } from 'firebase/functions';
 
+// --- DIAGNOSTIC CONSOLE LOG ---
+// This line will print the key that the build process is using.
+console.log("Stripe Publishable Key being used:", process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY);
+// -----------------------------
+
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
 
