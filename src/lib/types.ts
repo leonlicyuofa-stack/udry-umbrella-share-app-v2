@@ -9,6 +9,7 @@ export interface User extends Partial<FirebaseUser> {
   // Financial and usage fields from Firestore
   deposit?: number;
   balance?: number;
+  depositPaymentIntentId?: string | null; // Added to store the Stripe transaction ID
   hasHadFirstFreeRental?: boolean;
   activeRental?: ActiveRental | null;
   createdAt?: any; // Firestore timestamp

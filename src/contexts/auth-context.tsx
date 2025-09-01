@@ -43,6 +43,7 @@ interface AuthContextType {
   signOut: () => Promise<void>;
   addBalance: (amount: number) => Promise<void>;
   setDeposit: () => Promise<void>;
+  requestDepositRefund: () => Promise<void>;
   useFirstFreeRental: () => Promise<void>;
   showSignUpSuccess: boolean;
   dismissSignUpSuccess: () => void;
@@ -165,6 +166,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           hasHadFirstFreeRental: false,
           createdAt: serverTimestamp(),
           activeRental: null,
+          depositPaymentIntentId: null,
         };
         await setDoc(userDocRef, newUserDoc);
         setFirestoreUser({ uid: firebaseUser.uid, ...newUserDoc });
@@ -275,6 +277,26 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     await updateDoc(userDocRef, { deposit: 100 });
     toast({ title: "Deposit Paid", description: "Your HK$100 deposit has been successfully recorded." });
   };
+
+  const requestDepositRefund = async () => {
+    if (!firebaseServices?.functions) {
+        toast({ variant: 'destructive', title: 'Error', description: 'Cannot connect to refund service.' });
+        throw new Error('Functions service not available');
+    }
+    try {
+        const requestRefundFunction = httpsCallable(firebaseServices.functions, 'requestDepositRefund');
+        const result = await requestRefundFunction();
+        const data = result.data as { success: boolean, message: string };
+        if (data.success) {
+            toast({ title: 'Refund Successful', description: data.message });
+        } else {
+            throw new Error(data.message);
+        }
+    } catch (error: any) {
+        toast({ variant: 'destructive', title: 'Refund Failed', description: error.message });
+        throw error;
+    }
+  };
   
   const useFirstFreeRental = async () => {
       if (!firebaseUser || !firebaseServices?.db) return;
@@ -374,6 +396,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoadingRental: isLoadingRental || (!!firebaseUser && !firestoreUser),
     startRental, endRental, signInWithGoogle, signInWithApple, signUpWithEmail,
     signInWithEmail, signOut, changeUserPassword, addBalance, setDeposit,
+    requestDepositRefund,
     useFirstFreeRental, showSignUpSuccess, dismissSignUpSuccess,
     logMachineEvent,
     firebaseServices,

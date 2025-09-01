@@ -1,26 +1,51 @@
 
 "use client";
 
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useAuth } from '@/contexts/auth-context';
 import { useRouter } from 'next/navigation';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, AlertTriangle, LogIn, Wallet, Landmark, PlusCircle, History, Ticket, Wrench } from 'lucide-react';
+import { Loader2, AlertTriangle, LogIn, Wallet, Landmark, PlusCircle, History, Ticket, Wrench, RefreshCw } from 'lucide-react';
 import Link from 'next/link';
 import { useLanguage } from '@/contexts/language-context';
 import { Separator } from '@/components/ui/separator';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 export default function AccountBalancePage() {
-  const { user, isReady } = useAuth();
+  const { user, isReady, requestDepositRefund } = useAuth();
   const router = useRouter();
   const { translate } = useLanguage();
+  const [isRefunding, setIsRefunding] = useState(false);
 
   useEffect(() => {
     if (isReady && !user) {
       router.replace('/auth/signin?redirect=/account/balance');
     }
   }, [user, isReady, router]);
+
+  const handleRefund = async () => {
+    setIsRefunding(true);
+    try {
+      await requestDepositRefund();
+      // Success toast is handled in AuthContext
+    } catch (error) {
+      // Error toast is handled in AuthContext
+      console.error("Refund request failed on page:", error);
+    } finally {
+      setIsRefunding(false);
+    }
+  };
 
   if (!isReady) {
     return (
@@ -52,6 +77,10 @@ export default function AccountBalancePage() {
       </div>
     );
   }
+
+  const hasPaidDeposit = (user.deposit || 0) >= 100;
+  const hasActiveRental = !!user.activeRental;
+  const hasNegativeBalance = (user.balance || 0) < 0;
 
   return (
     <div className="container mx-auto py-8 px-4 max-w-2xl">
@@ -89,14 +118,45 @@ export default function AccountBalancePage() {
               </div>
             </div>
             
-            <div className="flex justify-center">
+            <div className="flex flex-col sm:flex-row justify-center gap-4">
               <Button asChild>
                <Link href="/deposit" className="flex items-center">
                 <PlusCircle className="mr-2 h-5 w-5" />
-                {user.deposit && user.deposit >= 100 ? translate('add_balance_button') : translate('pay_deposit_button')}
+                {hasPaidDeposit ? translate('add_balance_button') : translate('pay_deposit_button')}
                </Link>
               </Button>
+              {hasPaidDeposit && (
+                <AlertDialog>
+                  <AlertDialogTrigger asChild>
+                    <Button variant="outline" disabled={hasActiveRental || hasNegativeBalance}>
+                      <RefreshCw className="mr-2 h-4 w-4" />
+                      Request Deposit Refund
+                    </Button>
+                  </AlertDialogTrigger>
+                  <AlertDialogContent>
+                    <AlertDialogHeader>
+                      <AlertDialogTitle>Are you sure you want to refund your deposit?</AlertDialogTitle>
+                      <AlertDialogDescription>
+                        This will refund your HK$100.00 deposit. You will need to pay it again to rent umbrellas in the future. This action cannot be undone. It may take 5-10 business days for the refund to appear on your statement.
+                      </AlertDialogDescription>
+                    </AlertDialogHeader>
+                    <AlertDialogFooter>
+                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogAction onClick={handleRefund} disabled={isRefunding}>
+                        {isRefunding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                        Yes, Refund My Deposit
+                      </AlertDialogAction>
+                    </AlertDialogFooter>
+                  </AlertDialogContent>
+                </AlertDialog>
+              )}
             </div>
+            {hasPaidDeposit && (hasActiveRental || hasNegativeBalance) && (
+              <p className="text-xs text-destructive text-center">
+                {hasActiveRental ? "You cannot refund your deposit while you have an active rental." : null}
+                {hasNegativeBalance ? "You must clear your negative balance before refunding your deposit." : null}
+              </p>
+            )}
           </CardContent>
            <CardFooter className="flex-col items-center gap-2 pt-4 border-t">
               <p className="text-xs text-muted-foreground mb-2">For debugging purposes only:</p>
