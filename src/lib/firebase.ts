@@ -53,11 +53,8 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     
     const db = getFirestore(app);
-    // REVERTED: Use the simpler getAuth() for better compatibility with Capacitor.
     const auth = getAuth(app); 
     const functions = getFunctions(app);
-
-    console.log("Connecting to LIVE Production Firebase services.");
 
     // Cache the services for subsequent calls.
     services = { app, auth, db, functions };
