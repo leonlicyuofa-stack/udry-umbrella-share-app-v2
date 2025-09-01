@@ -1,6 +1,6 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
+import { initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
 
@@ -43,8 +43,11 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     
     const db = getFirestore(app);
     
-    // Reverted to the standard getAuth to resolve sign-in issues in Capacitor.
-    const auth = getAuth(app);
+    // Use initializeAuth with indexedDBLocalPersistence for Capacitor compatibility
+    const auth = initializeAuth(app, {
+      persistence: indexedDBLocalPersistence
+    });
+
     const functions = getFunctions(app);
 
     console.log("Connecting to LIVE Production Firebase services.");

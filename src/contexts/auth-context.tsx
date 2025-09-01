@@ -89,38 +89,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const hasPerformedInitialRedirect = useRef(false);
 
   useEffect(() => {
-    // TEST FOR HYPOTHESIS #2: Add a delay to initialization
-    const timer = setTimeout(() => {
-      console.log("[U-Dry Test] Delay finished. Attempting to initialize Firebase now...");
-      const services = initializeFirebaseServices();
+    // The 1-second delay for testing the race condition has been removed.
+    // The correct initialization method in firebase.ts should solve this permanently.
+    const services = initializeFirebaseServices();
 
-      if (!services) {
-        setIsFirebaseError(true);
-        setIsReady(true);
-        setIsLoadingRental(false);
-        return;
+    if (!services) {
+      setIsFirebaseError(true);
+      setIsReady(true);
+      setIsLoadingRental(false);
+      return;
+    }
+
+    setFirebaseServices(services);
+    setIsFirebaseError(false);
+    
+    const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
+      setFirebaseUser(user);
+      if (!user) {
+        setFirestoreUser(null);
+        setActiveRental(null);
       }
+      setIsReady(true);
+    });
 
-      setFirebaseServices(services);
-      setIsFirebaseError(false);
-      console.log('[U-Dry Auth] AuthProvider mounted. Setting up onAuthStateChanged listener...');
-      const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
-        console.log('[U-Dry Auth] onAuthStateChanged fired!', user ? `User UID: ${user.uid}` : 'User is null');
-        setFirebaseUser(user);
-        if (!user) {
-          setFirestoreUser(null);
-          setActiveRental(null);
-        }
-        setIsReady(true);
-      });
-
-      // This is a cleanup function for the onAuthStateChanged listener, NOT the timeout.
-      // We are not returning it from the setTimeout callback, but we need to call it if the outer component unmounts.
-      // A more complex ref-based approach could handle this, but for a temporary test, this is acceptable.
-    }, 1000); // 1-second delay
-
-    // Cleanup for the timeout itself
-    return () => clearTimeout(timer);
+    return () => unsubscribeAuth();
   }, []);
 
   useEffect(() => {
