@@ -428,7 +428,7 @@ exports.endRentalTransaction = onCall(async (request) => {
 });
 
 
-exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
+exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public", cors: true }, async (request) => {
     logger.info("--- requestDepositRefund function triggered ---");
     const admin = require("firebase-admin");
     const db = getAdminApp().firestore();
@@ -508,7 +508,7 @@ exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async 
         if (error instanceof HttpsError) {
             throw error;
         }
-        throw new HttpsError('internal', 'An unexpected server error occurred while processing your refund request.');
+        throw new HttpsError('internal', 'An unexpected error occurred while processing your refund request.');
     }
 });
 
@@ -518,4 +518,6 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      res.status(200).send({ received: true });
 });
     
+    
+
     
