@@ -19,7 +19,7 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   return (
-    <AuthProvider log={() => { /* No-op for normal operation */ }}>
+    <AuthProvider>
       <StallsProvider>
         <div className="flex min-h-screen flex-col pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
           <DeepLinkHandler />
