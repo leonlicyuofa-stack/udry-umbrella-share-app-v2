@@ -1,7 +1,6 @@
 // src/app/layout.tsx
 "use client";
 
-import type { Metadata } from 'next';
 import { usePathname } from 'next/navigation';
 import { useState, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
@@ -12,12 +11,11 @@ import { LanguageProvider } from '@/contexts/language-context';
 import { DeepLinkHandler } from '@/components/deep-link-handler';
 import { SignUpSuccessDialog } from '@/components/auth/sign-up-success-dialog';
 
-// This is the new Diagnostic Root Page Component, moved from the deleted app-initializer.tsx
+// This is the Diagnostic Root Page Component
 function DiagnosticRootPage() {
   const [logs, setLogs] = useState<string[]>(["Step 0: Diagnostic UI rendered."]);
   
   const addLog = useCallback((message: string) => {
-    // This function receives logs from AuthProvider
     setLogs(prevLogs => [...prevLogs, message]);
   }, []);
 
@@ -47,8 +45,6 @@ function DiagnosticRootPage() {
 }
 
 
-// This component is now a client component to handle the diagnostic view.
-// Metadata can no longer be exported from here.
 export default function RootLayout({
   children,
 }: {
@@ -57,7 +53,6 @@ export default function RootLayout({
   const pathname = usePathname();
 
   // If we are on the root path, show the diagnostic UI.
-  // This has its own AuthProvider with a real logger.
   if (pathname === '/') {
     return (
        <html lang="en" suppressHydrationWarning>
@@ -71,10 +66,10 @@ export default function RootLayout({
   }
 
   // Otherwise, render the normal app structure.
+  // AuthProvider is now moved to the (main) layout to ensure correct context wrapping.
   return (
     <html lang="en" suppressHydrationWarning>
       <head>
-        {/* Metadata can be placed here in a client component */}
         <title>U-Dry - Smart Umbrella Sharing</title>
         <meta name="description" content="Rent and return umbrellas easily with U-Dry. Find nearby smart umbrella stations." />
         <link rel="manifest" href="/manifest.json" />
@@ -85,13 +80,7 @@ export default function RootLayout({
       </head>
       <body>
         <LanguageProvider>
-           {/* The regular app flow uses an AuthProvider with a no-op logger. */}
-            <AuthProvider log={() => { /* No-op for normal operation */ }}>
-                <DeepLinkHandler />
-                {children}
-                <Toaster />
-                <SignUpSuccessDialog />
-            </AuthProvider>
+            {children}
         </LanguageProvider>
       </body>
     </html>
