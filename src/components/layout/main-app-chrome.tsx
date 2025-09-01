@@ -14,10 +14,8 @@ export function MainAppChrome({ children }: { children: React.ReactNode }) {
 
   return (
     <>
-      <div className="bg-blue-500">
-        <Header />
-      </div>
-      <main className={cn("flex-1 overflow-y-auto bg-green-500")}>
+      <Header />
+      <main className={cn("flex-1 overflow-y-auto")}>
         {children}
       </main>
       {/* The rental timer will only show up if there is an active rental */}

@@ -17,7 +17,8 @@ export default function MainLayout({
 }) {
   return (
     <StallsProvider>
-      <div className="flex flex-1 min-h-screen flex-col pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] bg-red-500">
+      {/* This container now provides the safe-area padding and fills the screen. */}
+      <div className="flex flex-1 flex-col min-h-screen pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
         <DeepLinkHandler />
         <MainAppChrome>
           {children}
