@@ -14,6 +14,10 @@ const config: CapacitorConfig = {
       "udry-app-dev.firebaseapp.com"
     ]
   },
+  // This new setting is crucial for iOS to allow the webview to use the safe area.
+  ios: {
+    contentInset: 'always'
+  },
   plugins: {
     App: {
       ios: {
