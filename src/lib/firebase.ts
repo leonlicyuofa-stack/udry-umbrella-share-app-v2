@@ -34,18 +34,20 @@ export interface FirebaseServices {
  */
 export function initializeFirebaseServices(): FirebaseServices | null {
   if (!isFirebaseConfigValid(firebaseConfig)) {
-      console.error("Firebase configuration is missing or invalid. Please check your environment variables.");
+      console.error("[U-Dry Diag] Firebase configuration is missing or invalid. Please check your environment variables.");
       return null;
   }
 
   try {
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+    console.log("[U-Dry Diag] Firebase App object created:", app.name);
     const auth = getAuth(app);
+    console.log("[U-Dry Diag] Firebase Auth object created successfully.");
     const db = getFirestore(app);
     const functions = getFunctions(app);
     return { app, auth, db, functions };
   } catch (error: any) {
-    console.error(`CRITICAL ERROR during Firebase service initialization: ${error.message}`, error);
+    console.error(`[U-Dry Diag] CRITICAL ERROR during Firebase service initialization: ${error.message}`, error);
     return null;
   }
 }
