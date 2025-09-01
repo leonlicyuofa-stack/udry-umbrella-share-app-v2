@@ -421,22 +421,51 @@ exports.endRentalTransaction = onCall(async (request) => {
 
 exports.requestDepositRefund = onCall(async (request) => {
     logger.info("--- requestDepositRefund function triggered ---");
+    const admin = require("firebase-admin");
+    const db = getAdminApp().firestore();
 
     // Step 1: Authentication Check
     if (!request.auth) {
-        logger.error("[requestDepositRefund] Authentication check failed: No auth context.");
+        logger.error("[requestDepositRefund] Auth check failed: No auth context.");
         throw new HttpsError('unauthenticated', 'You must be logged in to request a refund.');
     }
-
     const userId = request.auth.uid;
-    logger.info(`[requestDepositRefund] User ${userId} initiated a refund request.`);
+    logger.info(`[requestDepositRefund] User ${userId} initiated refund request.`);
 
-    // This is a placeholder for now. The full logic will be added in subsequent steps.
-    // It currently does not process any refund.
-    return { 
-        success: true, 
-        message: "Refund feature is currently in development. Please check back later." 
-    };
+    try {
+        // Step 2: Fetch User Data
+        const userDocRef = db.collection('users').doc(userId);
+        const userDoc = await userDocRef.get();
+        if (!userDoc.exists) {
+            logger.error(`[requestDepositRefund] User document not found for UID: ${userId}`);
+            throw new HttpsError('not-found', 'User data not found.');
+        }
+        const userData = userDoc.data();
+        logger.info(`[requestDepositRefund] Successfully fetched user data for ${userId}.`, { balance: userData.balance });
+
+        // Step 3: Negative Balance Check (The core security rule)
+        if (userData.balance < 0) {
+            const message = `Refund denied. You must clear your negative balance of HK$${Math.abs(userData.balance).toFixed(2)} before requesting a deposit refund.`;
+            logger.warn(`[requestDepositRefund] Refund denied for ${userId} due to negative balance.`);
+            throw new HttpsError('failed-precondition', message);
+        }
+
+        logger.info(`[requestDepositRefund] Balance check passed for ${userId}.`);
+        
+        // Step 4: Placeholder for full implementation
+        // The full Stripe refund logic will be added here in a future step.
+        return { 
+            success: true, 
+            message: "Refund feature is currently in development. Please check back later." 
+        };
+
+    } catch (error) {
+        logger.error(`[requestDepositRefund] CRITICAL ERROR for user ${userId}:`, error);
+        if (error instanceof HttpsError) {
+            throw error; // Re-throw known errors
+        }
+        throw new HttpsError('internal', 'An unexpected server error occurred while processing your refund request.');
+    }
 });
 
 
