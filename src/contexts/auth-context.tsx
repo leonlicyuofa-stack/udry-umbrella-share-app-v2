@@ -73,7 +73,7 @@ function FirebaseConfigurationError() {
   );
 }
 
-export function AuthProvider({ children, log = () => {} }: { children: ReactNode, log?: (message: string) => void }) {
+export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [firestoreUser, setFirestoreUser] = useState<User | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -89,43 +89,31 @@ export function AuthProvider({ children, log = () => {} }: { children: ReactNode
   const hasPerformedInitialRedirect = useRef(false);
 
   useEffect(() => {
-    log("Step 1: AuthProvider mounted.");
-    log("Step 2: Preparing to initialize Firebase services.");
-    
-    const services = initializeFirebaseServices(log);
-    log("Step 3: initializeFirebaseServices function has returned.");
+    const services = initializeFirebaseServices();
 
     if (!services) {
-      log("Step 4 (Failure): Firebase services object is null. Setting error state.");
       setIsFirebaseError(true);
       setIsReady(true);
       setIsLoadingRental(false);
       return;
     }
 
-    log("Step 4 (Success): Firebase services object is valid.");
     setFirebaseServices(services);
     setIsFirebaseError(false);
-    log("Step 5: Firebase services have been set in state.");
 
-    log("Step 6: Setting up onAuthStateChanged listener.");
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
-      log(`Step 6.1: onAuthStateChanged triggered. User is ${user ? 'present' : 'null'}.`);
       setFirebaseUser(user);
       if (!user) {
-        log("Step 6.2: No user found. Clearing local user data.");
         setFirestoreUser(null);
         setActiveRental(null);
       }
-      log("Step 6.3: Setting isReady to true.");
       setIsReady(true);
     });
 
     return () => {
-      log("AuthProvider unmounted. Cleaning up onAuthStateChanged listener.");
       unsubscribeAuth();
     };
-  }, [log]);
+  }, []);
 
   useEffect(() => {
     if (!isReady || hasPerformedInitialRedirect.current) {
@@ -386,8 +374,13 @@ export function AuthProvider({ children, log = () => {} }: { children: ReactNode
   };
 
   if (!isReady) {
-    // This is now handled by the diagnostic root page, so we pass children through.
-    return <>{children}</>;
+    // Return a global loading state for the initial app load.
+    // This can be a simple spinner or a splash screen component.
+    return (
+        <div className="flex h-screen w-screen items-center justify-center bg-background">
+            <Loader2 className="h-12 w-12 animate-spin text-primary" />
+        </div>
+    );
   }
 
   return (

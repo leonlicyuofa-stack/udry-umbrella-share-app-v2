@@ -1,8 +1,8 @@
-// src/app/page.tsx
 
-// This page is now only rendered inside the DiagnosticRootPage component
-// in app-initializer.tsx when the path is '/'.
-// Its content is not directly shown, but we keep it minimal.
+// This page is effectively a placeholder.
+// The redirection logic is handled by the AuthProvider and layouts.
+// Logged-in users will be redirected to '/home'.
+// Logged-out users will be redirected to '/auth/signin'.
 export default function RootPage() {
   return null;
 }
