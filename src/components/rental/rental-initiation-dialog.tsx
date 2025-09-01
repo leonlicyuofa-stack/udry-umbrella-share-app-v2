@@ -236,6 +236,12 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
             If you do not see this name, please cancel and try again.
           </AlertDescription>
         </Alert>
+         <p className="text-xs text-center text-muted-foreground pt-2">
+            By proceeding, you agree to our{' '}
+            <Link href="/account/terms" className="underline hover:text-primary">
+                Terms and Conditions
+            </Link>.
+        </p>
         <DialogFooter>
             <Button onClick={() => {
                 setConnectionStep('connecting');
