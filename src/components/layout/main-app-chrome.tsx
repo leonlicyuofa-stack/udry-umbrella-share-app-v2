@@ -1,3 +1,4 @@
+
 // src/components/layout/main-app-chrome.tsx
 "use client";
 
@@ -15,7 +16,7 @@ export function MainAppChrome({ children }: { children: React.ReactNode }) {
   return (
     <>
       <Header />
-      <main className={cn("flex-1 overflow-y-auto")}>
+      <main className={cn("flex-1 overflow-y-auto bg-green-500")}>
         {children}
       </main>
       {/* The rental timer will only show up if there is an active rental */}
