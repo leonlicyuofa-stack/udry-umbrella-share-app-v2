@@ -86,7 +86,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
   const [isFirebaseError, setIsFirebaseError] = useState(false);
-  const hasPerformedInitialRedirect = useRef(false);
 
   useEffect(() => {
     // The 1-second delay for testing the race condition has been removed.
@@ -114,23 +113,30 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => unsubscribeAuth();
   }, []);
-
+  
+  // --- REFACTORED REDIRECTION LOGIC ---
   useEffect(() => {
-    if (!isReady || hasPerformedInitialRedirect.current) {
-      return;
+    if (!isReady) {
+      return; // Wait until Firebase auth state is confirmed
     }
 
-    const isPublicPage = pathname.startsWith('/auth') || pathname.startsWith('/payment') || pathname.startsWith('/diag');
+    const isAuthPage = pathname.startsWith('/auth');
+    // Protected pages are anything NOT under /auth, /payment, or /diag
+    const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
 
     if (firebaseUser) {
-      if (isPublicPage || pathname === '/') {
+      // User is LOGGED IN
+      if (isAuthPage) {
+        // If a logged-in user somehow lands on an auth page (e.g., signin, signup),
+        // redirect them to the main app homepage.
         router.replace('/home');
-        hasPerformedInitialRedirect.current = true;
       }
     } else {
-      if (!isPublicPage) {
+      // User is LOGGED OUT
+      if (isProtectedRoute) {
+        // If a logged-out user tries to access a protected page,
+        // redirect them to the sign-in page.
         router.replace('/auth/signin');
-        hasPerformedInitialRedirect.current = true;
       }
     }
   }, [isReady, firebaseUser, pathname, router]);
@@ -231,8 +237,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     if (!firebaseServices?.auth) return;
     try {
-      hasPerformedInitialRedirect.current = false;
       await firebaseSignOut(firebaseServices.auth);
+      // No need to manage redirect flags, the useEffect will handle it
       toast({ title: translate('auth_success_signout') });
     } catch (error: any) {
       toast({ variant: 'destructive', title: translate('auth_error_signout_failed'), description: error.message });

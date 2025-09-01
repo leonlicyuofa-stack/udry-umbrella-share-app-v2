@@ -15,13 +15,14 @@ export default function RootPage() {
   const { isReady, user } = useAuth();
 
   useEffect(() => {
-    // Wait until the auth state is fully determined.
+    // The redirect logic has been moved to AuthProvider to handle all cases globally.
+    // This component now just shows a loading spinner while AuthProvider makes the decision.
     if (isReady) {
+      // If for some reason the redirect in AuthProvider didn't fire,
+      // this provides a fallback.
       if (user) {
-        // If the user is logged in, send them to the main app homepage.
         router.replace('/home');
       } else {
-        // If the user is not logged in, send them to the sign-in page.
         router.replace('/auth/signin');
       }
     }
