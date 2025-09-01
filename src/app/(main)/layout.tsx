@@ -1,4 +1,3 @@
-
 "use client";
 
 import { MainAppChrome } from '@/components/layout/main-app-chrome';
