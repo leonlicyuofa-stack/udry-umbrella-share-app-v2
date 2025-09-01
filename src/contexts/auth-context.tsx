@@ -89,32 +89,38 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const hasPerformedInitialRedirect = useRef(false);
 
   useEffect(() => {
-    const services = initializeFirebaseServices();
+    // TEST FOR HYPOTHESIS #2: Add a delay to initialization
+    const timer = setTimeout(() => {
+      console.log("[U-Dry Test] Delay finished. Attempting to initialize Firebase now...");
+      const services = initializeFirebaseServices();
 
-    if (!services) {
-      setIsFirebaseError(true);
-      setIsReady(true);
-      setIsLoadingRental(false);
-      return;
-    }
-
-    setFirebaseServices(services);
-    setIsFirebaseError(false);
-    console.log('[U-Dry Auth] AuthProvider mounted. Setting up onAuthStateChanged listener...');
-    const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
-      console.log('[U-Dry Auth] onAuthStateChanged fired!', user ? `User UID: ${user.uid}` : 'User is null');
-      setFirebaseUser(user);
-      if (!user) {
-        setFirestoreUser(null);
-        setActiveRental(null);
+      if (!services) {
+        setIsFirebaseError(true);
+        setIsReady(true);
+        setIsLoadingRental(false);
+        return;
       }
-      setIsReady(true);
-    });
 
-    return () => {
-      console.log('[U-Dry Auth] AuthProvider unmounted. Cleaning up listener.');
-      unsubscribeAuth();
-    };
+      setFirebaseServices(services);
+      setIsFirebaseError(false);
+      console.log('[U-Dry Auth] AuthProvider mounted. Setting up onAuthStateChanged listener...');
+      const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
+        console.log('[U-Dry Auth] onAuthStateChanged fired!', user ? `User UID: ${user.uid}` : 'User is null');
+        setFirebaseUser(user);
+        if (!user) {
+          setFirestoreUser(null);
+          setActiveRental(null);
+        }
+        setIsReady(true);
+      });
+
+      // This is a cleanup function for the onAuthStateChanged listener, NOT the timeout.
+      // We are not returning it from the setTimeout callback, but we need to call it if the outer component unmounts.
+      // A more complex ref-based approach could handle this, but for a temporary test, this is acceptable.
+    }, 1000); // 1-second delay
+
+    // Cleanup for the timeout itself
+    return () => clearTimeout(timer);
   }, []);
 
   useEffect(() => {
