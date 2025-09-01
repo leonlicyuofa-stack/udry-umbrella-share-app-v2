@@ -100,8 +100,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     setFirebaseServices(services);
     setIsFirebaseError(false);
-
+    console.log('[U-Dry Auth] AuthProvider mounted. Setting up onAuthStateChanged listener...');
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
+      console.log('[U-Dry Auth] onAuthStateChanged fired!', user ? `User UID: ${user.uid}` : 'User is null');
       setFirebaseUser(user);
       if (!user) {
         setFirestoreUser(null);
@@ -111,6 +112,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => {
+      console.log('[U-Dry Auth] AuthProvider unmounted. Cleaning up listener.');
       unsubscribeAuth();
     };
   }, []);
