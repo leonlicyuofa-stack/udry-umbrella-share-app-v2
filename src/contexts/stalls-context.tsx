@@ -20,6 +20,8 @@ export function StallsProvider({ children }: { children: ReactNode }) {
   const [stalls, setStalls] = useState<Stall[]>([]);
   const [isLoadingStalls, setIsLoadingStalls] = useState(true);
   const { toast } = useToast();
+  // Call initializeFirebaseServices without the log function.
+  // A default, empty function is now provided in firebase.ts to prevent crashes.
   const services = initializeFirebaseServices();
 
   useEffect(() => {

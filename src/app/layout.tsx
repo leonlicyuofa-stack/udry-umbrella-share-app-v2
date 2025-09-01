@@ -6,12 +6,9 @@ import { useState, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 import { AuthProvider } from '@/contexts/auth-context';
 import '@/app/globals.css';
-import { Toaster } from '@/components/ui/toaster';
 import { LanguageProvider } from '@/contexts/language-context';
-import { DeepLinkHandler } from '@/components/deep-link-handler';
-import { SignUpSuccessDialog } from '@/components/auth/sign-up-success-dialog';
 
-// This is the Diagnostic Root Page Component
+// This is the Diagnostic Root Page Component, used only on the root path.
 function DiagnosticRootPage() {
   const [logs, setLogs] = useState<string[]>(["Step 0: Diagnostic UI rendered."]);
   
@@ -19,6 +16,8 @@ function DiagnosticRootPage() {
     setLogs(prevLogs => [...prevLogs, message]);
   }, []);
 
+  // This AuthProvider is only for the diagnostic screen.
+  // The main app uses the AuthProvider in (main)/layout.tsx
   return (
     <AuthProvider log={addLog}>
       <div className="flex h-screen w-screen items-center justify-center bg-gray-900 text-white p-4">
@@ -53,6 +52,7 @@ export default function RootLayout({
   const pathname = usePathname();
 
   // If we are on the root path, show the diagnostic UI.
+  // This is a temporary measure for debugging.
   if (pathname === '/') {
     return (
        <html lang="en" suppressHydrationWarning>
@@ -66,7 +66,7 @@ export default function RootLayout({
   }
 
   // Otherwise, render the normal app structure.
-  // AuthProvider is now moved to the (main) layout to ensure correct context wrapping.
+  // The main AuthProvider is now correctly placed in the (main) layout.
   return (
     <html lang="en" suppressHydrationWarning>
       <head>

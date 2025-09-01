@@ -73,7 +73,7 @@ function FirebaseConfigurationError() {
   );
 }
 
-export function AuthProvider({ children, log }: { children: ReactNode, log: (message: string) => void }) {
+export function AuthProvider({ children, log = () => {} }: { children: ReactNode, log?: (message: string) => void }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [firestoreUser, setFirestoreUser] = useState<User | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -125,7 +125,7 @@ export function AuthProvider({ children, log }: { children: ReactNode, log: (mes
       log("AuthProvider unmounted. Cleaning up onAuthStateChanged listener.");
       unsubscribeAuth();
     };
-  }, [log]); // log is a stable function, this should only run once
+  }, [log]);
 
   useEffect(() => {
     if (!isReady || hasPerformedInitialRedirect.current) {

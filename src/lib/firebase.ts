@@ -33,7 +33,7 @@ export interface FirebaseServices {
  * Initializes Firebase services using a standard pattern that prevents re-initialization.
  * @returns An object containing the initialized Firebase services, or null if config is missing.
  */
-export function initializeFirebaseServices(log: (message: string) => void): FirebaseServices | null {
+export function initializeFirebaseServices(log: (message: string) => void = () => {}): FirebaseServices | null {
   log("Step 3.1: Entered initializeFirebaseServices function.");
 
   if (!isFirebaseConfigValid(firebaseConfig)) {
