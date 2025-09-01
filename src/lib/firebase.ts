@@ -28,35 +28,29 @@ export interface FirebaseServices {
   functions: Functions;
 }
 
+// Store services in a memoized object to avoid re-initialization.
 let services: FirebaseServices | null = null;
 
 /**
- * Initializes Firebase services using a singleton pattern. This function can be safely
- * called multiple times, but will only initialize Firebase once.
+ * Initializes Firebase services using a standard pattern that prevents re-initialization.
  * @returns An object containing the initialized Firebase services, or null if config is missing.
  */
 export function initializeFirebaseServices(): FirebaseServices | null {
-  // If services have already been initialized, return them.
   if (services) {
     return services;
   }
-  
-  // Validate the config before attempting to initialize
+
   if (!isFirebaseConfigValid(firebaseConfig)) {
       console.error("Firebase configuration is missing or invalid. Please check your environment variables.");
       return null;
   }
 
-
   try {
-    // Get the existing app instance or initialize a new one.
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-    
+    const auth = getAuth(app);
     const db = getFirestore(app);
-    const auth = getAuth(app); 
     const functions = getFunctions(app);
 
-    // Cache the services for subsequent calls.
     services = { app, auth, db, functions };
     return services;
   } catch (error) {
