@@ -3,7 +3,6 @@ import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
 import { getAuth, type Auth, connectAuthEmulator, browserLocalPersistence, initializeAuth } from 'firebase/auth';
 import { getFirestore, type Firestore, connectFirestoreEmulator } from 'firebase/firestore';
 import { getFunctions, type Functions, connectFunctionsEmulator } from 'firebase/functions';
-import { enableLogging } from 'firebase/auth';
 
 // Build the config object from environment variables
 export const firebaseConfig = {
