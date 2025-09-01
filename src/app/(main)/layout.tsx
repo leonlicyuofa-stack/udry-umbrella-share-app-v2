@@ -17,7 +17,7 @@ export default function MainLayout({
 }) {
   return (
     <StallsProvider>
-      <div className="flex min-h-screen flex-col pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
+      <div className="flex flex-1 min-h-screen flex-col pt-[env(safe-area-inset-top)] pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]">
         <DeepLinkHandler />
         <MainAppChrome>
           {children}
