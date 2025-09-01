@@ -5,9 +5,6 @@ import { usePathname } from 'next/navigation';
 import { useState, useCallback } from 'react';
 import { Loader2 } from 'lucide-react';
 import { AuthProvider } from '@/contexts/auth-context';
-import { DeepLinkHandler } from '@/components/deep-link-handler';
-import { Toaster } from '@/components/ui/toaster';
-import { SignUpSuccessDialog } from '@/components/auth/sign-up-success-dialog';
 import type React from 'react';
 
 // This is the new Diagnostic Root Page Component, moved from layout.tsx
@@ -49,17 +46,12 @@ export function AppInitializer({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
 
   // If we are on the root path, show the diagnostic UI.
+  // The DiagnosticRootPage has its own AuthProvider with a real logger.
   if (pathname === '/') {
     return <DiagnosticRootPage />;
   }
 
-  // Otherwise, render the normal app structure.
-  return (
-    <AuthProvider log={() => { /* No-op for normal operation */ }}>
-      <DeepLinkHandler />
-      {children}
-      <Toaster />
-      <SignUpSuccessDialog />
-    </AuthProvider>
-  );
+  // Otherwise, render the normal app structure passed in from the layout.
+  // This will use the AuthProvider from the layout with the no-op logger.
+  return <>{children}</>;
 }
