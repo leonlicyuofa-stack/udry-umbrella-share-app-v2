@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -158,15 +157,6 @@ export default function AccountBalancePage() {
               </p>
             )}
           </CardContent>
-           <CardFooter className="flex-col items-center gap-2 pt-4 border-t">
-              <p className="text-xs text-muted-foreground mb-2">For debugging purposes only:</p>
-              <Button asChild variant="outline">
-                <Link href="/diag" className="flex items-center">
-                  <Wrench className="mr-2 h-4 w-4" />
-                  Diagnostic Tools
-                </Link>
-              </Button>
-          </CardFooter>
         </Card>
 
         {/* Coupons Section */}
