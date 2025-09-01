@@ -73,7 +73,7 @@ function FirebaseConfigurationError() {
   );
 }
 
-export function AuthProvider({ children }: { children: ReactNode }) {
+export function AuthProvider({ children, log }: { children: ReactNode, log: (message: string) => void }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [firestoreUser, setFirestoreUser] = useState<User | null>(null);
   const [isReady, setIsReady] = useState(false);
@@ -89,47 +89,57 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const hasPerformedInitialRedirect = useRef(false);
 
   useEffect(() => {
-    const services = initializeFirebaseServices();
+    log("Step 1: AuthProvider mounted.");
+    log("Step 2: Preparing to initialize Firebase services.");
+    
+    const services = initializeFirebaseServices(log);
+    log("Step 3: initializeFirebaseServices function has returned.");
+
     if (!services) {
+      log("Step 4 (Failure): Firebase services object is null. Setting error state.");
       setIsFirebaseError(true);
       setIsReady(true);
       setIsLoadingRental(false);
       return;
     }
+
+    log("Step 4 (Success): Firebase services object is valid.");
     setFirebaseServices(services);
     setIsFirebaseError(false);
+    log("Step 5: Firebase services have been set in state.");
 
+    log("Step 6: Setting up onAuthStateChanged listener.");
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
+      log(`Step 6.1: onAuthStateChanged triggered. User is ${user ? 'present' : 'null'}.`);
       setFirebaseUser(user);
       if (!user) {
+        log("Step 6.2: No user found. Clearing local user data.");
         setFirestoreUser(null);
         setActiveRental(null);
       }
+      log("Step 6.3: Setting isReady to true.");
       setIsReady(true);
     });
 
     return () => {
+      log("AuthProvider unmounted. Cleaning up onAuthStateChanged listener.");
       unsubscribeAuth();
     };
-  }, []);
+  }, [log]); // log is a stable function, this should only run once
 
   useEffect(() => {
     if (!isReady || hasPerformedInitialRedirect.current) {
       return;
     }
 
-    // Determine if the current page is an authentication or external callback page.
-    // These pages should not trigger redirects.
     const isPublicPage = pathname.startsWith('/auth') || pathname.startsWith('/payment') || pathname.startsWith('/diag');
 
     if (firebaseUser) {
-      // If user is logged in, and they are on a public page (like /auth/signin) or the root, redirect them to the main app.
       if (isPublicPage || pathname === '/') {
         router.replace('/home');
         hasPerformedInitialRedirect.current = true;
       }
     } else {
-      // If user is not logged in, only redirect them to signin if they are trying to access a protected page.
       if (!isPublicPage) {
         router.replace('/auth/signin');
         hasPerformedInitialRedirect.current = true;
@@ -233,8 +243,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const signOut = async () => {
     if (!firebaseServices?.auth) return;
     try {
-      // Reset the redirect flag so that after signing out, the user is correctly
-      // redirected from the homepage to the signin page.
       hasPerformedInitialRedirect.current = false;
       await firebaseSignOut(firebaseServices.auth);
       toast({ title: translate('auth_success_signout') });
@@ -378,16 +386,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   if (!isReady) {
-     return (
-      <div className="flex h-screen w-screen items-center justify-center bg-background">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-muted-foreground">Initializing Session...</p>
-        </div>
-      </div>
-    );
+    // This is now handled by the diagnostic root page, so we pass children through.
+    return <>{children}</>;
   }
-
 
   return (
     <AuthContext.Provider value={value}>
