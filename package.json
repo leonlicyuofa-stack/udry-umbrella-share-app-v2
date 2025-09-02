@@ -8,7 +8,7 @@
     "start": "next start",
     "lint": "next lint",
     "android:sync": "npx cap sync android",
-    "android:prepare": "echo \"sdk.dir=C:\\\\Users\\\\udry-app-dev\\\\AppData\\\\Local\\\\Android\\\\Sdk\" > android/local.properties",
+    "android:prepare": "echo \"sdk.dir=$HOME/Library/Android/sdk\" > android/local.properties",
     "android:build:release": "cd android && ./gradlew assembleRelease",
     "ios:clean-sync": "npm run build && npx cap add ios && npx cap sync ios",
     "ios:configure": "node scripts/configure-ios.js"
