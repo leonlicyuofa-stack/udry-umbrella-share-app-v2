@@ -12,7 +12,8 @@ const config: CapacitorConfig = {
       "identitytoolkit.googleapis.com",
       "udry-app-dev.web.app",
       "udry-app-dev.firebaseapp.com"
-    ]
+    ],
+    androidScheme: 'https'
   },
   // This new setting is crucial for iOS to allow the webview to use the safe area.
   ios: {
