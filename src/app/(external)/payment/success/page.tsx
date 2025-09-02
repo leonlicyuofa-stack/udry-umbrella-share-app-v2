@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useRef, Suspense } from 'react';
@@ -22,7 +21,7 @@ function PaymentSuccessContent() {
         if (hasProcessed.current) return;
 
         const processPayment = async () => {
-            hasProcessed.current = true; // Mark as processed immediately
+            hasProcessed.current = true; 
             
             const sessionId = searchParams.get('session_id');
             const uid = searchParams.get('uid');
@@ -33,7 +32,6 @@ function PaymentSuccessContent() {
                 return;
             }
             
-            // Initialize services directly, as this page has no AuthProvider
             const services = initializeFirebaseServices();
             if (!services) {
                 setErrorMessage("Could not connect to backend services to finalize payment.");
@@ -51,8 +49,16 @@ function PaymentSuccessContent() {
                 }
 
                 setStatus('success');
-                // REMOVED: The automatic redirect attempt is blocked by mobile WebViews.
-                // The user must now explicitly click the button to return.
+                
+                // --- NEW CONDITIONAL REDIRECT LOGIC ---
+                // This checks if the user agent string does NOT contain "Android".
+                // This allows the iOS custom scheme redirect to work, while Android
+                // relies on its native App Links to handle returning to the app.
+                if (navigator.userAgent && !/android/i.test(navigator.userAgent)) {
+                    // This code will now ONLY run for non-Android devices (like iOS).
+                    window.location.href = `udry://account/balance`;
+                }
+                // For Android, we do nothing and let the OS handle the redirect.
 
             } catch (error: any) {
                 console.error("Error finalizing Stripe payment:", error);
