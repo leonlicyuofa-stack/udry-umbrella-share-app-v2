@@ -181,7 +181,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}&t=${Date.now()}`,
+            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
                 userId: userId,
@@ -315,7 +315,7 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
         if (error instanceof HttpsError) {
             throw error;
         }
-        throw new HttpsError('internal', `An unexpected error occurred: ${error.message}`);
+        throw new HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
     }
 });
 
@@ -518,3 +518,7 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
 });
+    
+    
+
+    
