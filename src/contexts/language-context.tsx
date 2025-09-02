@@ -241,7 +241,7 @@ const translations: Record<Language, Record<string, string>> = {
     'add_balance_enter_custom_amount': 'Enter custom amount',
     'add_balance_proceed_button': 'Add to Balance',
 
-    'payment_method_credit_card': 'Credit/Debit Card / Apple Pay',
+    'payment_method_credit_card': 'Credit/Debit Card',
     'payment_method_payme': 'PayMe',
     'payment_method_apple_pay': 'Apple Pay',
     'payment_method_google_pay': 'Google Pay',
@@ -624,7 +624,7 @@ const translations: Record<Language, Record<string, string>> = {
     'add_balance_enter_custom_amount': '輸入自訂金額',
     'add_balance_proceed_button': '增值到餘額',
 
-    'payment_method_credit_card': '信用卡/扣帳卡 / Apple Pay',
+    'payment_method_credit_card': '信用卡/扣帳卡',
     'payment_method_payme': 'PayMe',
     'payment_method_apple_pay': 'Apple Pay',
     'payment_method_google_pay': 'Google Pay',
