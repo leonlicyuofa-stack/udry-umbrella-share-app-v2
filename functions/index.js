@@ -181,7 +181,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${LIVE_APP_BASE_URL}/payment/finalize?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
+            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
                 userId: userId,
@@ -522,3 +522,4 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     
 
     
+
