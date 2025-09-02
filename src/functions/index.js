@@ -181,7 +181,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
+            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}&t=${Date.now()}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
                 userId: userId,
@@ -239,10 +239,11 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
             session = await stripeInstance.checkout.sessions.retrieve(sessionId);
             logger.info(`Step 4 SUCCESS: Successfully retrieved session from Stripe.`);
         } catch (stripeError) {
-            logger.error(`Step 4 FAILED: Error retrieving session from Stripe: ${stripeError.message}`);
             if (stripeError.type === 'StripeInvalidRequestError') {
+                logger.error(`Step 4 FAILED: Stripe session not found: ${stripeError.message}`);
                 throw new HttpsError('not-found', 'Stripe session not found.');
             }
+            logger.error(`Step 4 FAILED: A Stripe error occurred: ${stripeError.message}`);
             throw new HttpsError('internal', `A Stripe error occurred: ${stripeError.message}`);
         }
         
@@ -283,9 +284,18 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
             }
 
             if (paymentType === 'deposit') {
-                transaction.update(userDocRef, { deposit: admin.firestore.FieldValue.increment(amountNum) });
+                if (!session.payment_intent) {
+                    throw new HttpsError('internal', 'Payment Intent ID is missing from the successful Stripe session.');
+                }
+                logger.info(`Recording Payment Intent ID: ${session.payment_intent} for deposit.`);
+                transaction.update(userDocRef, { 
+                    deposit: admin.firestore.FieldValue.increment(amountNum),
+                    depositPaymentIntentId: session.payment_intent 
+                });
             } else if (paymentType === 'balance') {
-                transaction.update(userDocRef, { balance: admin.firestore.FieldValue.increment(amountNum) });
+                transaction.update(userDocRef, { 
+                    balance: admin.firestore.FieldValue.increment(amountNum) 
+                });
             }
             
             transaction.set(paymentRef, {
@@ -419,9 +429,92 @@ exports.endRentalTransaction = onCall(async (request) => {
 });
 
 
+exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public", cors: true }, async (request) => {
+    logger.info("--- requestDepositRefund function triggered ---");
+    const admin = require("firebase-admin");
+    const db = getAdminApp().firestore();
+    const stripeInstance = getStripe();
+
+    // Step 1: Authentication & Service Check
+    if (!request.auth) {
+        logger.error("[requestDepositRefund] Auth check failed: No auth context.");
+        throw new HttpsError('unauthenticated', 'You must be logged in to request a refund.');
+    }
+    if (!stripeInstance) {
+        logger.error("[requestDepositRefund] Stripe SDK is not initialized.");
+        throw new HttpsError('internal', 'The server is missing critical payment processing configuration.');
+    }
+    const userId = request.auth.uid;
+    logger.info(`[requestDepositRefund] User ${userId} initiated refund request.`);
+
+    try {
+        const userDocRef = db.collection('users').doc(userId);
+        const refundRecordRef = db.collection('refunds').doc();
+        
+        // Step 2: Use a transaction for safety
+        await db.runTransaction(async (transaction) => {
+            const userDoc = await transaction.get(userDocRef);
+            if (!userDoc.exists) {
+                throw new HttpsError('not-found', 'User data not found.');
+            }
+            const userData = userDoc.data();
+            logger.info(`[requestDepositRefund] Fetched user data inside transaction.`, { balance: userData.balance });
+            
+            // Step 3: Critical Business Logic Checks
+            if (userData.activeRental) {
+                throw new HttpsError('failed-precondition', 'Cannot refund deposit with an active rental.');
+            }
+            if (userData.balance < 0) {
+                const message = `Refund denied. You must clear your negative balance of HK$${Math.abs(userData.balance).toFixed(2)} before requesting a deposit refund.`;
+                throw new HttpsError('failed-precondition', message);
+            }
+            if (!userData.deposit || userData.deposit <= 0) {
+                throw new HttpsError('failed-precondition', 'No deposit found to refund.');
+            }
+            if (!userData.depositPaymentIntentId) {
+                throw new HttpsError('failed-precondition', 'Original deposit transaction ID not found. Please contact support.');
+            }
+
+            logger.info(`[requestDepositRefund] All pre-flight checks passed for user ${userId}.`);
+
+            // Step 4: Perform Stripe Refund
+            logger.info(`[requestDepositRefund] Attempting to refund Stripe Payment Intent: ${userData.depositPaymentIntentId}`);
+            await stripeInstance.refunds.create({
+                payment_intent: userData.depositPaymentIntentId,
+            });
+            logger.info(`[requestDepositRefund] Stripe refund successful.`);
+
+            // Step 5: Update Firestore database
+            transaction.update(userDocRef, {
+                deposit: 0,
+                depositPaymentIntentId: null 
+            });
+
+            // Step 6: Create an audit record
+            transaction.set(refundRecordRef, {
+                userId: userId,
+                refundedAt: admin.firestore.FieldValue.serverTimestamp(),
+                amount: userData.deposit,
+                originalPaymentIntentId: userData.depositPaymentIntentId,
+                status: 'succeeded'
+            });
+            logger.info(`[requestDepositRefund] Firestore updated and audit record created.`);
+        });
+
+        logger.info(`[requestDepositRefund] Transaction completed successfully for user ${userId}.`);
+        return { success: true, message: "Your deposit has been successfully refunded. It may take 5-10 business days to appear on your statement." };
+
+    } catch (error) {
+        logger.error(`[requestDepositRefund] CRITICAL ERROR for user ${userId}:`, error);
+        if (error instanceof HttpsError) {
+            throw error;
+        }
+        throw new HttpsError('internal', 'An unexpected error occurred while processing your refund request.');
+    }
+});
+
+
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a request.');
      res.status(200).send({ received: true });
 });
-    
-    
