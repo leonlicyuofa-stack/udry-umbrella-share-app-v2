@@ -10,9 +10,6 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   updateProfile,
-  GoogleAuthProvider,
-  signInWithRedirect,
-  OAuthProvider,
   reauthenticateWithCredential,
   EmailAuthProvider,
   updatePassword,
@@ -35,8 +32,6 @@ interface AuthContextType {
   isLoadingRental: boolean;
   startRental: (rental: Omit<ActiveRental, 'logs'>) => Promise<void>;
   endRental: (returnedToStallId: string) => Promise<void>;
-  signInWithGoogle: () => Promise<void>;
-  signInWithApple: () => Promise<void>;
   signUpWithEmail: (data: SignUpFormData) => Promise<void>;
   signInWithEmail: (data: SignInFormData) => Promise<void>;
   changeUserPassword: (data: ChangePasswordFormData) => Promise<void>;
@@ -187,26 +182,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   if (isFirebaseError) {
     return <FirebaseConfigurationError />;
   }
-
-  const signInWithGoogle = async () => {
-    if (!firebaseServices?.auth) return;
-    const provider = new GoogleAuthProvider();
-    try {
-      await signInWithRedirect(firebaseServices.auth, provider);
-    } catch (error: any) {
-      toast({ variant: 'destructive', title: translate('auth_error_signin_google_failed'), description: error.message });
-    }
-  };
-
-  const signInWithApple = async () => {
-    if (!firebaseServices?.auth) return;
-    const provider = new OAuthProvider('apple.com');
-    try {
-      await signInWithRedirect(firebaseServices.auth, provider);
-    } catch (error: any) {
-      toast({ variant: 'destructive', title: translate('auth_error_signin_apple_failed'), description: error.message });
-    }
-  };
 
   const signUpWithEmail = async ({ name, email, password }: SignUpFormData) => {
     if (!firebaseServices?.auth || !firebaseServices.db) return;
@@ -394,7 +369,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     loading: !isReady || (!!firebaseUser && !firestoreUser),
     activeRental, 
     isLoadingRental: isLoadingRental || (!!firebaseUser && !firestoreUser),
-    startRental, endRental, signInWithGoogle, signInWithApple, signUpWithEmail,
+    startRental, endRental, signUpWithEmail,
     signInWithEmail, signOut, changeUserPassword, addBalance, setDeposit,
     requestDepositRefund,
     useFirstFreeRental, showSignUpSuccess, dismissSignUpSuccess,

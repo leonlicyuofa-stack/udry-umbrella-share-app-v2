@@ -18,7 +18,6 @@ import { signInSchema, type SignInFormData } from "@/lib/types";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
-import { SocialLoginButtons } from "./social-login-buttons";
 import { Separator } from "@/components/ui/separator";
 
 export function SignInForm() {
@@ -83,20 +82,7 @@ export function SignInForm() {
         </form>
       </Form>
 
-      <div className="relative">
-        <div className="absolute inset-0 flex items-center">
-          <Separator />
-        </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
-          </span>
-        </div>
-      </div>
-
-      <SocialLoginButtons onLoadingChange={setFormLoading} />
-
-      <p className="text-center text-sm text-muted-foreground">
+      <p className="text-center text-sm text-muted-foreground pt-4">
         Don&apos;t have an account?{' '}
         <Button variant="link" asChild className="px-0.5">
           <Link href="/auth/signup">Sign up</Link>
