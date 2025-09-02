@@ -14,6 +14,7 @@ import {
   EmailAuthProvider,
   updatePassword,
   type User as FirebaseUser,
+  type UserCredential,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, onSnapshot, updateDoc as firestoreUpdateDoc, query, writeBatch, type Firestore, addDoc, GeoPoint, arrayUnion, orderBy, limit, getDocs, increment } from 'firebase/firestore';
 import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase';
@@ -33,7 +34,7 @@ interface AuthContextType {
   startRental: (rental: Omit<ActiveRental, 'logs'>) => Promise<void>;
   endRental: (returnedToStallId: string) => Promise<void>;
   signUpWithEmail: (data: SignUpFormData) => Promise<void>;
-  signInWithEmail: (data: SignInFormData) => Promise<void>;
+  signInWithEmail: (data: SignInFormData) => Promise<UserCredential>;
   changeUserPassword: (data: ChangePasswordFormData) => Promise<void>;
   signOut: () => Promise<void>;
   addBalance: (amount: number) => Promise<void>;
