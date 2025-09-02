@@ -5,14 +5,9 @@ const config: CapacitorConfig = {
   appId: 'com.udry.app',
   appName: 'udry 共享雨傘 ',
   webDir: 'out',
+  // This is the main server configuration for production (iOS and final Android)
   server: {
-    // This new URL property forces the app to load local assets instead of the live site.
-    // This is a temporary change for debugging.
-    url: 'http://localhost',
     hostname: 'udry.app',
-    // This allows the app to load from an unencrypted http:// address on Android.
-    cleartext: true,
-    // This configures Android App Links.
     androidScheme: 'https',
     allowNavigation: [
       "udry.app",
@@ -21,9 +16,19 @@ const config: CapacitorConfig = {
       "udry-app-dev.firebaseapp.com"
     ]
   },
-  // This new setting is crucial for iOS to allow the webview to use the safe area.
+  // This setting is crucial for iOS to allow the webview to use the safe area.
   ios: {
     contentInset: 'always'
+  },
+  // This block contains Android-specific overrides for debugging.
+  android: {
+    // This server block will override the top-level one ONLY for Android.
+    server: {
+      // The debugging URL forces the app to load local assets.
+      url: 'http://localhost',
+      // This allows the app to load from an unencrypted http:// address.
+      cleartext: true
+    }
   },
   plugins: {
     App: {
