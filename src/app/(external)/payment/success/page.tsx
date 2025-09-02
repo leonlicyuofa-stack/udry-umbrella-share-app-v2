@@ -106,7 +106,6 @@ function PaymentSuccessContent() {
                  <Button onClick={() => { window.location.href = `udry://account/balance`; }} className="w-full">
                     Go Back to App <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
-                <Badge variant="outline">v1.1-android-test</Badge>
             </CardFooter>
         </Card>
     );
