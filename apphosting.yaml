@@ -10,8 +10,6 @@ headers:
         value: 'no-store'
   - path: /
     headers:
-      - key: Cache-Control
-        value: 'public, max-age=3600, must-revalidate'
       - key: X-Frame-Options
         value: 'SAMEORIGIN'
       - key: X-Content-Type-Options
