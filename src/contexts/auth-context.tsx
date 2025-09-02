@@ -202,11 +202,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await signInWithEmailAndPassword(firebaseServices.auth, email, password);
     } catch (error: any) {
-      let description = error.message;
-      if (error.code === 'auth/invalid-credential') {
-        description = translate('auth_error_invalid_credential_desc');
-      }
-      toast({ variant: 'destructive', title: translate('auth_error_signin_email_failed'), description });
+      // The error is now thrown, and the UI component will handle the toast.
       throw error;
     }
   };

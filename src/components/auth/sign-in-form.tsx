@@ -19,9 +19,13 @@ import { Loader2 } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
+import { useToast } from "@/hooks/use-toast";
+import { useLanguage } from "@/contexts/language-context";
 
 export function SignInForm() {
   const { signInWithEmail, loading: authLoading } = useAuth();
+  const { toast } = useToast();
+  const { translate } = useLanguage();
   const [formLoading, setFormLoading] = useState(false);
   const isLoading = authLoading || formLoading;
 
@@ -37,9 +41,14 @@ export function SignInForm() {
     setFormLoading(true);
     try {
       await signInWithEmail(values);
-      // Redirect is handled by AuthLayout or page
-    } catch (error) {
-      // Error is handled by toast in AuthContext
+      // On success, redirect is handled by AuthContext's useEffect
+    } catch (error: any) {
+      // On failure, handle the error and show a toast immediately.
+      let description = error.message;
+      if (error.code === 'auth/invalid-credential') {
+        description = translate('auth_error_invalid_credential_desc');
+      }
+      toast({ variant: 'destructive', title: translate('auth_error_signin_email_failed'), description });
     } finally {
       setFormLoading(false);
     }
