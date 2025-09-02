@@ -198,13 +198,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const dismissSignUpSuccess = () => setShowSignUpSuccess(false);
 
   const signInWithEmail = async ({ email, password }: SignInFormData) => {
-    if (!firebaseServices?.auth) return;
-    try {
-      await signInWithEmailAndPassword(firebaseServices.auth, email, password);
-    } catch (error: any) {
-      // The error is now thrown, and the UI component will handle the toast.
-      throw error;
-    }
+    if (!firebaseServices?.auth) return Promise.reject(new Error("Auth service not available."));
+    return signInWithEmailAndPassword(firebaseServices.auth, email, password);
   };
 
   const signOut = async () => {
