@@ -8,6 +8,8 @@ headers:
     headers:
       - key: Cache-Control
         value: 'no-store'
+      - key: X-UDRY-DEBUG
+        value: 'RULE-APPLIED-V6-TEST'
   - path: /
     headers:
       - key: X-Frame-Options
