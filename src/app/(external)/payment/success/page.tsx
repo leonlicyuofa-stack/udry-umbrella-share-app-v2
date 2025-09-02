@@ -8,6 +8,7 @@ import { CheckCircle, ArrowRight, Loader2, AlertTriangle } from 'lucide-react';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { initializeFirebaseServices } from '@/lib/firebase';
 import { httpsCallable } from 'firebase/functions';
+import { Badge } from '@/components/ui/badge';
 
 type UpdateStatus = 'processing' | 'success' | 'error';
 
@@ -101,10 +102,11 @@ function PaymentSuccessContent() {
                     </Alert>
                 </CardContent>
             )}
-            <CardFooter>
+            <CardFooter className="flex-col gap-4">
                  <Button onClick={() => { window.location.href = `udry://account/balance`; }} className="w-full">
                     Go Back to App <ArrowRight className="ml-2 h-4 w-4" />
                 </Button>
+                <Badge variant="outline">v1.1-android-test</Badge>
             </CardFooter>
         </Card>
     );
