@@ -4,7 +4,7 @@ runConfig:
   cpu: 1
   memoryMiB: 512
 headers:
-  - path: /payment/success
+  - path: /payment/success**
     headers:
       - key: Cache-Control
         value: 'no-store'
