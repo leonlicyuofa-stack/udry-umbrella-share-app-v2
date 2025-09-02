@@ -6,6 +6,9 @@ const config: CapacitorConfig = {
   appName: 'udry 共享雨傘 ',
   webDir: 'out',
   server: {
+    // This new URL property forces the app to load local assets instead of the live site.
+    // This is a temporary change for debugging.
+    url: 'http://localhost',
     hostname: 'udry.app',
     allowNavigation: [
       "udry.app",
