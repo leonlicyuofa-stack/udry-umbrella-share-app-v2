@@ -181,7 +181,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
                 quantity: 1,
             }],
             mode: 'payment',
-            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}`,
+            success_url: `${LIVE_APP_BASE_URL}/payment/success?session_id={CHECKOUT_SESSION_ID}&uid=${userId}&t=${Date.now()}`,
             cancel_url: `${LIVE_APP_BASE_URL}/payment/cancel`,
             metadata: {
                 userId: userId,
@@ -239,10 +239,11 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
             session = await stripeInstance.checkout.sessions.retrieve(sessionId);
             logger.info(`Step 4 SUCCESS: Successfully retrieved session from Stripe.`);
         } catch (stripeError) {
-            logger.error(`Step 4 FAILED: Error retrieving session from Stripe: ${stripeError.message}`);
             if (stripeError.type === 'StripeInvalidRequestError') {
+                logger.error(`Step 4 FAILED: Stripe session not found: ${stripeError.message}`);
                 throw new HttpsError('not-found', 'Stripe session not found.');
             }
+            logger.error(`Step 4 FAILED: A Stripe error occurred: ${stripeError.message}`);
             throw new HttpsError('internal', `A Stripe error occurred: ${stripeError.message}`);
         }
         
@@ -314,7 +315,7 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
         if (error instanceof HttpsError) {
             throw error;
         }
-        throw new HttpsError('internal', `An unexpected error occurred: ${error.message}`);
+        throw new HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
     }
 });
 
