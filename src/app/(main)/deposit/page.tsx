@@ -105,7 +105,13 @@ export default function DepositPage() {
               if (!stripe) throw new Error('Stripe.js has not loaded yet.');
 
               const { error } = await stripe.redirectToCheckout({ sessionId });
-              if (error) throw new Error(error.message);
+              
+              if (error) {
+                 // This error only triggers if there's an immediate problem before redirection,
+                 // like an invalid session ID. The user-facing toast here has been removed.
+                 console.error("Stripe redirectToCheckout error:", error);
+                 throw new Error(error.message);
+              }
           } else {
              toast({ title: "Payment Method Not Implemented", description: `The selected method '${selectedMethod}' is not yet fully integrated.` });
              setIsProcessingPayment(false);
