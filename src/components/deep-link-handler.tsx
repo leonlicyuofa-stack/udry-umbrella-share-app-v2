@@ -21,7 +21,7 @@ export const DeepLinkHandler = () => {
         try {
           // Replace the custom scheme with a dummy https protocol to allow standard URL parsing.
           // This is a robust way to handle custom schemes.
-          const parsableUrl = new URL(urlString.replace(/^udry:\/\//, 'https:\/\/udry.app/'));
+          const parsableUrl = new URL(urlString.replace(/^udry:\/\//, 'https://udry.app/'));
 
           // The pathname will be, e.g., /rent/CMYS234400696
           const finalPath = parsableUrl.pathname;
