@@ -14,17 +14,23 @@ export const DeepLinkHandler = () => {
 
     const setupListener = async () => {
       handle = await App.addListener('appUrlOpen', (event) => {
-        // Example URL: udry://payment/success?session_id=cs_test_...
-        const url = new URL(event.url);
-        
-        // This handles cases like udry://home or udry://payment/success
-        // It combines the hostname and the pathname correctly.
-        // e.g., udry://payment/success -> hostname: 'payment', pathname: '/success' -> /payment/success
-        const pathWithSearch = `${url.pathname}${url.search}`;
-        const finalPath = `/${url.hostname}${pathWithSearch}`;
-        
-        console.log(`Deep link received: ${event.url}. Navigating to internal path: ${finalPath}`);
-        router.push(finalPath);
+        // Example URL: udry://rent/CMYS234400696
+        const urlString = event.url;
+        console.log(`Deep link received: ${urlString}`);
+
+        try {
+          // Replace the custom scheme with a dummy https protocol to allow standard URL parsing.
+          // This is a robust way to handle custom schemes.
+          const parsableUrl = new URL(urlString.replace(/^udry:\/\//, 'https:\/\/udry.app/'));
+
+          // The pathname will be, e.g., /rent/CMYS234400696
+          const finalPath = parsableUrl.pathname;
+          
+          console.log(`Navigating to internal path: ${finalPath}`);
+          router.push(finalPath);
+        } catch (error) {
+          console.error("Failed to parse deep link URL:", error);
+        }
       });
     };
 
