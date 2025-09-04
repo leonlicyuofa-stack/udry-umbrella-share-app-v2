@@ -1,17 +1,14 @@
 
-"use client";
-
 import type { Metadata } from 'next';
 import '@/app/globals.css';
 import { LanguageProvider } from '@/contexts/language-context';
 import { AuthProvider } from '@/contexts/auth-context';
 
-// Note: Metadata export is fine in a client component, Next.js handles it.
-// export const metadata: Metadata = {
-//   title: 'U-Dry - Smart Umbrella Sharing',
-//   description: 'Rent and return umbrellas easily with U-Dry. Find nearby smart umbrella stations.',
-//   manifest: '/manifest.json',
-// };
+export const metadata: Metadata = {
+  title: 'U-Dry - Smart Umbrella Sharing',
+  description: 'Rent and return umbrellas easily with U-Dry. Find nearby smart umbrella stations.',
+  manifest: '/manifest.json',
+};
 
 export default function RootLayout({
   children,
