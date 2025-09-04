@@ -1,41 +1,49 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0; url=udry://home">
-    <script type="text/javascript">
-        window.onload = function() {
-            // This is the custom URL scheme that will open your app
-            var appURL = "udry://home";
-            // This is the URL for the Apple App Store
-            var appStoreURL = "https://apps.apple.com/us/app/udry/id6751819661"; // Your live App Store URL
-            // This is the URL for the Google Play Store
-            var playStoreURL = "PLAY_STORE_URL"; // Placeholder for your Google Play Store URL
+    <title>U-Dry App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; text-align: center; padding-top: 50px; }
+        a { color: #007aff; }
+    </style>
+    <script>
+        function attemptOpenApp() {
+            var appURL = "udry://";
+            var appStoreURL = "https://apps.apple.com/us/app/udry/id6751819661"; // Your actual App Store URL
 
-            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-            var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
-            var isAndroid = /android/i.test(userAgent);
+            var fallbackTimeout = setTimeout(redirectToStore, 1000);
 
-            // Attempt to open the app
-            window.location.replace(appURL);
+            var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            var isAndroid = /Android/.test(navigator.userAgent);
+            
+            // For iOS 9+, try to open the app directly.
+            // For older versions or other OS, this might not work as smoothly.
+            window.location.href = appURL;
 
-            // Set a timeout to redirect to the store if the app doesn't open
-            setTimeout(function() {
-                if (isIOS) {
-                    window.location.href = appStoreURL;
-                } else if (isAndroid) {
-                    // Android redirection is handled by the intent filter in the manifest
-                    // but we can add a fallback if needed. For now, we will focus on iOS.
-                    // window.location.href = playStoreURL;
-                } else {
-                    // Fallback for desktop browsers
-                    window.location.href = appStoreURL;
+            // This part helps detect if the app was successfully opened.
+            // If the browser is blurred (app takes focus), we clear the timeout.
+            window.addEventListener('blur', function() {
+                clearTimeout(fallbackTimeout);
+            });
+            // visibilitychange is a more reliable modern approach
+            document.addEventListener("visibilitychange", function() {
+                if (document.hidden) {
+                    clearTimeout(fallbackTimeout);
                 }
-            }, 2000); // 2 second delay to allow the app to try opening
-        };
+            });
+
+            function redirectToStore() {
+                // This will only run if the app did not open and clear the timeout.
+                window.location.href = appStoreURL;
+            }
+        }
+
+        window.onload = attemptOpenApp;
     </script>
 </head>
 <body>
-    <p>If you are not redirected automatically, <a href="udry://home">click here to open the app</a> or visit the <a href="https://apps.apple.com/us/app/udry/id6751819661">App Store</a>.</p>
+    <p>If you are not redirected automatically, <a href="udry://">click here to open the app</a> or visit the <a href="https://apps.apple.com/us/app/udry/id6751819661">App Store</a>.</p>
 </body>
 </html>
