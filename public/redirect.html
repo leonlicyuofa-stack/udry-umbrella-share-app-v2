@@ -1,79 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Redirecting to U-Dry...</title>
-    <style>
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-            background-color: #f0f2fa;
-            color: #333;
-            text-align: center;
-        }
-        .container {
-            padding: 2rem;
-        }
-        h1 {
-            font-size: 1.5rem;
-            color: #3F51B5;
-        }
-        p {
-            font-size: 1rem;
-            color: #555;
-        }
-        .loader {
-            border: 4px solid #f3f3f3;
-            border-top: 4px solid #3F51B5;
-            border-radius: 50%;
-            width: 40px;
-            height: 40px;
-            animation: spin 1s linear infinite;
-            margin: 20px auto;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
-    </style>
+    <title>Redirecting...</title>
+    <meta http-equiv="refresh" content="0; url=udry://home">
     <script type="text/javascript">
-        function smartRedirect() {
-            // --- CONFIGURATION ---
-            // You must replace these placeholder values with your actual App Store URL and custom scheme.
-            const APP_STORE_URL = "https://apps.apple.com/app/your-app-name/idYOUR_APP_ID";
-            const CUSTOM_SCHEME = "udry";
-            // --- END CONFIGURATION ---
+        window.onload = function() {
+            // This is the custom URL scheme that will open your app
+            var appURL = "udry://home";
+            // This is the URL for the Apple App Store
+            var appStoreURL = "https://apps.apple.com/us/app/udry/id6751819661"; // Your live App Store URL
+            // This is the URL for the Google Play Store
+            var playStoreURL = "PLAY_STORE_URL"; // Placeholder for your Google Play Store URL
 
-            const params = new URLSearchParams(window.location.search);
-            const stallId = params.get('stall_id');
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            var isIOS = /iPad|iPhone|iPod/.test(userAgent) && !window.MSStream;
+            var isAndroid = /android/i.test(userAgent);
 
-            // Construct the deep link URL with the stall ID if it exists
-            const deepLinkUrl = stallId ? `${CUSTOM_SCHEME}://rent/${stallId}` : `${CUSTOM_SCHEME}://`;
+            // Attempt to open the app
+            window.location.replace(appURL);
 
-            // Attempt to open the app via the custom URL scheme
-            window.location.href = deepLinkUrl;
-
-            // Set a timer. If the app is not installed, the user will still be on this page.
-            // After the timeout, we redirect them to the App Store.
+            // Set a timeout to redirect to the store if the app doesn't open
             setTimeout(function() {
-                window.location.href = APP_STORE_URL;
-            }, 2500); // 2.5 second delay
-        }
-
-        // Run the redirect function as soon as the page loads
-        window.onload = smartRedirect;
+                if (isIOS) {
+                    window.location.href = appStoreURL;
+                } else if (isAndroid) {
+                    // Android redirection is handled by the intent filter in the manifest
+                    // but we can add a fallback if needed. For now, we will focus on iOS.
+                    // window.location.href = playStoreURL;
+                } else {
+                    // Fallback for desktop browsers
+                    window.location.href = appStoreURL;
+                }
+            }, 2000); // 2 second delay to allow the app to try opening
+        };
     </script>
 </head>
 <body>
-    <div class="container">
-        <div class="loader"></div>
-        <h1>Redirecting you to the U-Dry app...</h1>
-        <p>If you are not redirected automatically, please visit the App Store to download U-Dry.</p>
-    </div>
+    <p>If you are not redirected automatically, <a href="udry://home">click here to open the app</a> or visit the <a href="https://apps.apple.com/us/app/udry/id6751819661">App Store</a>.</p>
 </body>
 </html>
