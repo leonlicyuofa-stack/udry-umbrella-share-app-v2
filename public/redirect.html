@@ -1,17 +1,79 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <title>Redirecting...</title>
-    <meta http-equiv="refresh" content="0; url=https://udry-app-dev.web.app/" />
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Redirecting to U-Dry...</title>
     <style>
-        body { font-family: sans-serif; text-align: center; padding-top: 50px; color: #333; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f2fa;
+            color: #333;
+            text-align: center;
+        }
+        .container {
+            padding: 2rem;
+        }
+        h1 {
+            font-size: 1.5rem;
+            color: #3F51B5;
+        }
+        p {
+            font-size: 1rem;
+            color: #555;
+        }
+        .loader {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #3F51B5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 20px auto;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
     </style>
+    <script type="text/javascript">
+        function smartRedirect() {
+            // --- CONFIGURATION ---
+            // You must replace these placeholder values with your actual App Store URL and custom scheme.
+            const APP_STORE_URL = "https://apps.apple.com/app/your-app-name/idYOUR_APP_ID";
+            const CUSTOM_SCHEME = "udry";
+            // --- END CONFIGURATION ---
+
+            const params = new URLSearchParams(window.location.search);
+            const stallId = params.get('stall_id');
+
+            // Construct the deep link URL with the stall ID if it exists
+            const deepLinkUrl = stallId ? `${CUSTOM_SCHEME}://rent/${stallId}` : `${CUSTOM_SCHEME}://`;
+
+            // Attempt to open the app via the custom URL scheme
+            window.location.href = deepLinkUrl;
+
+            // Set a timer. If the app is not installed, the user will still be on this page.
+            // After the timeout, we redirect them to the App Store.
+            setTimeout(function() {
+                window.location.href = APP_STORE_URL;
+            }, 2500); // 2.5 second delay
+        }
+
+        // Run the redirect function as soon as the page loads
+        window.onload = smartRedirect;
+    </script>
 </head>
 <body>
-    <p>Redirecting you to the U-Dry app...</p>
-    <p>If you are not redirected automatically, <a href="https://udry-app-dev.web.app/">click here</a>.</p>
-    <script type="text/javascript">
-        window.location.href = "https://udry-app-dev.web.app/";
-    </script>
+    <div class="container">
+        <div class="loader"></div>
+        <h1>Redirecting you to the U-Dry app...</h1>
+        <p>If you are not redirected automatically, please visit the App Store to download U-Dry.</p>
+    </div>
 </body>
 </html>
