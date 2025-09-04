@@ -1,8 +1,7 @@
 
 import type { Metadata } from 'next';
 import '@/app/globals.css';
-import { LanguageProvider } from '@/contexts/language-context';
-import { AuthProvider } from '@/contexts/auth-context';
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'U-Dry - Smart Umbrella Sharing',
@@ -25,11 +24,9 @@ export default function RootLayout({
         <meta name="theme-color" content="#3F51B5" />
       </head>
       <body>
-        <LanguageProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </LanguageProvider>
+        <Providers>
+          {children}
+        </Providers>
       </body>
     </html>
   );
