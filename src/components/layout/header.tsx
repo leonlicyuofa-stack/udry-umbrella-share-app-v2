@@ -1,4 +1,3 @@
-
 "use client";
 
 import Link from 'next/link';
@@ -53,7 +52,8 @@ export function Header() {
             <Link href="/home" aria-label="U-Dry Home" className="mr-6 flex items-center space-x-2">
                 <AppLogo />
             </Link>
-            <nav className="hidden items-center space-x-1 lg:flex">
+            {/* The className here is changed to be visible on all screen sizes */}
+            <nav className="flex items-center space-x-1">
               <NavItem href="/home" icon={<MapPin size={18} />} label={translate('map')} />
               <NavItem href="/guide" icon={<BookOpenText size={18} />} label={translate('guide')} />
             </nav>
