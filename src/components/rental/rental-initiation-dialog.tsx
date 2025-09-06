@@ -6,6 +6,7 @@ import type { Stall } from '@/lib/types';
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader as AlertDialogHeader, AlertDialogTitle as AlertDialogTitle, AlertDialogDescription as AlertDialogDescription } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
@@ -46,6 +47,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const [bluetoothState, setBluetoothState] = useState<BluetoothState>('idle');
   const [bluetoothError, setBluetoothError] = useState<string | null>(null);
   const [connectionStep, setConnectionStep] = useState<ConnectionStep>('pre_confirmation');
+  const [showSuccessDialog, setShowSuccessDialog] = useState(false);
   
   const connectedDeviceIdRef = useRef<string | null>(null);
   const isIntentionalDisconnect = useRef(false);
@@ -71,6 +73,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       setBluetoothState('idle');
       setBluetoothError(null);
       setConnectionStep('pre_confirmation');
+      setShowSuccessDialog(false);
       disconnectFromDevice();
     }
   }, [isOpen, disconnectFromDevice]);
@@ -81,6 +84,18 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       setBluetoothError(null);
       setConnectionStep('pre_confirmation');
   }, [stall]);
+
+  // Effect to handle the success dialog timeout
+  useEffect(() => {
+    if (showSuccessDialog) {
+      const timer = setTimeout(() => {
+        setShowSuccessDialog(false);
+        onOpenChange(false); // Close the main dialog as well
+      }, 4000); // Keep dialog open for 4 seconds
+
+      return () => clearTimeout(timer);
+    }
+  }, [showSuccessDialog, onOpenChange]);
 
 
   const handleTokNotification = useCallback(async (value: DataView) => {
@@ -126,9 +141,8 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           
           isIntentionalDisconnect.current = true;
           setBluetoothState('success');
-          toast({ title: 'Rental Started!', description: `Your umbrella from ${stall.name} should be released.`});
-          onOpenChange(false);
-
+          setShowSuccessDialog(true); // Trigger the success dialog
+          
         } catch (error: any) {
           const errorMsg = error.message || "Unknown error during command phase.";
           setBluetoothError(errorMsg);
@@ -152,7 +166,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       setConnectionStep('error');
       toast({ variant: "destructive", title: "Duplicate Action Error", description: errorMsg, duration: 8000 });
     }
-  }, [stall, user, startRental, useFirstFreeRental, toast, logMachineEvent, onOpenChange, firebaseServices]);
+  }, [stall, user, startRental, useFirstFreeRental, toast, logMachineEvent, firebaseServices]);
 
   const handleConnectAndRent = async () => {
     if (!stall) return;
@@ -277,52 +291,67 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   );
 
   return (
-    <Dialog open={isOpen} onOpenChange={onOpenChange}>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle className="text-2xl font-bold text-primary flex items-center">
-            <Umbrella className="h-6 w-6 mr-2" /> Rent from {stall.name}
-          </DialogTitle>
-          <DialogDescription className="flex items-center pt-2">
-            <MapPin className="h-4 w-4 mr-1 text-muted-foreground" /> {stall.address}
-          </DialogDescription>
-        </DialogHeader>
+    <>
+      <Dialog open={isOpen && !showSuccessDialog} onOpenChange={onOpenChange}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-bold text-primary flex items-center">
+              <Umbrella className="h-6 w-6 mr-2" /> Rent from {stall.name}
+            </DialogTitle>
+            <DialogDescription className="flex items-center pt-2">
+              <MapPin className="h-4 w-4 mr-1 text-muted-foreground" /> {stall.address}
+            </DialogDescription>
+          </DialogHeader>
 
-        <div className="py-4 space-y-6">
-          {!canRent && (
-            <Alert variant="destructive">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Cannot Rent</AlertTitle>
-              <AlertDescription>
-                {cannotRentReason} 
-                {user && (!hasDeposit || (!isFirstRental && !hasBalance)) && <Button variant="link" className="p-0 h-auto" asChild><Link href="/deposit"> Go to Wallet</Link></Button>}
-              </AlertDescription>
-            </Alert>
-          )}
+          <div className="py-4 space-y-6">
+            {!canRent && (
+              <Alert variant="destructive">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Cannot Rent</AlertTitle>
+                <AlertDescription>
+                  {cannotRentReason} 
+                  {user && (!hasDeposit || (!isFirstRental && !hasBalance)) && <Button variant="link" className="p-0 h-auto" asChild><Link href="/deposit"> Go to Wallet</Link></Button>}
+                </AlertDescription>
+              </Alert>
+            )}
 
-          {canRent && (
-            <Card>
-                <CardContent className="pt-4 space-y-2">
-                <p className="font-semibold">Availability: <span className={hasUmbrellas ? "text-green-600" : "text-destructive"}>{stall.availableUmbrellas} / {stall.totalUmbrellas} available</span></p>
-                <Alert>
-                    <AlertTriangle className="h-4 w-4" />
-                    <AlertTitle>Rental Terms</AlertTitle>
-                    <AlertDescription className="text-xs">
-                        {isFirstRental 
-                            ? "Your first rental is free!" 
-                            : "HK$5/hr, capped at HK$25 per 24-hour period."
-                        } Return within 72 hours to avoid forfeiting your deposit.
-                    </AlertDescription>
-                </Alert>
-                </CardContent>
-            </Card>
-          )}
-        </div>
-        
-        {canRent && connectionStep === 'pre_confirmation' && renderPreConfirmation()}
-        {canRent && connectionStep !== 'pre_confirmation' && renderConnecting()}
+            {canRent && (
+              <Card>
+                  <CardContent className="pt-4 space-y-2">
+                  <p className="font-semibold">Availability: <span className={hasUmbrellas ? "text-green-600" : "text-destructive"}>{stall.availableUmbrellas} / {stall.totalUmbrellas} available</span></p>
+                  <Alert>
+                      <AlertTriangle className="h-4 w-4" />
+                      <AlertTitle>Rental Terms</AlertTitle>
+                      <AlertDescription className="text-xs">
+                          {isFirstRental 
+                              ? "Your first rental is free!" 
+                              : "HK$5/hr, capped at HK$25 per 24-hour period."
+                          } Return within 72 hours to avoid forfeiting your deposit.
+                      </AlertDescription>
+                  </Alert>
+                  </CardContent>
+              </Card>
+            )}
+          </div>
+          
+          {canRent && connectionStep === 'pre_confirmation' && renderPreConfirmation()}
+          {canRent && connectionStep !== 'pre_confirmation' && renderConnecting()}
 
-      </DialogContent>
-    </Dialog>
+        </DialogContent>
+      </Dialog>
+      
+      <AlertDialog open={showSuccessDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader className="items-center">
+            <AlertDialogTitle className="flex items-center text-xl text-primary">
+              <Umbrella className="mr-2 h-8 w-8" /> Unlock Successful!
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
+              Please take the umbrella from the machine. Your rental has started.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+    </>
   );
 }
