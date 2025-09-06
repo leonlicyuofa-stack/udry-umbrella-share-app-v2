@@ -43,12 +43,21 @@ export function SignInForm() {
       await signInWithEmail(values);
       // On success, redirect is handled by AuthContext's useEffect
     } catch (error: any) {
-      // On failure, handle the error and show a toast immediately.
-      let description = error.message;
+      // On failure, handle the error.
       if (error.code === 'auth/invalid-credential') {
-        description = translate('auth_error_invalid_credential_desc');
+        // Use react-hook-form's setError to display an inline message
+        form.setError("password", { 
+          type: "manual", 
+          message: translate('auth_error_invalid_credential_desc') 
+        });
+      } else {
+        // For other, unexpected errors, show a generic toast.
+        toast({ 
+          variant: 'destructive', 
+          title: translate('auth_error_signin_email_failed'), 
+          description: error.message 
+        });
       }
-      toast({ variant: 'destructive', title: translate('auth_error_signin_email_failed'), description });
     } finally {
       setFormLoading(false);
     }
