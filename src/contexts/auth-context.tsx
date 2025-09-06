@@ -296,35 +296,80 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       toast({ title: "Rental Started!", description: `You have rented an umbrella from ${rental.stallName}.` });
   };
 
- const endRental = async (returnedToStallId: string) => {
-    if (!firebaseUser || !activeRental || !firebaseServices?.functions) {
-      console.error("[endRental] Pre-condition failed: Missing user, active rental, or functions service.");
+  const endRental = async (returnedToStallId: string) => {
+    if (!firebaseUser || !activeRental || !firebaseServices) {
+      console.error("[endRental] Pre-condition failed: Missing user, active rental, or Firebase services.");
       return;
     }
-  
-    try {
-      const endRentalTransaction = httpsCallable(firebaseServices.functions, 'endRentalTransaction');
-      
-      const result = await endRentalTransaction({
-        returnedToStallId: returnedToStallId,
-        activeRentalData: activeRental 
-      });
 
-      const data = result.data as { success: boolean, message?: string };
-      
-      if (!data.success) {
-        throw new Error(data.message || "The server failed to process the return.");
-      }
-      
-      toast({ title: "Return Successful", description: "Your rental has been completed." });
-      
-    } catch (error: any) {
-      console.error("--- [endRental] CRITICAL ERROR during Cloud Function call ---", error);
-      toast({
-        variant: "destructive",
-        title: "Return Processing Error",
-        description: error.message || "Could not finalize the return. Please contact support."
-      });
+    // --- NEW LOGIC ---
+    if (activeRental.isFree) {
+        // Handle free rental directly on the client
+        try {
+            const { db } = firebaseServices;
+            const userDocRef = doc(db, 'users', firebaseUser.uid);
+            const returnedStallDocRef = doc(db, 'stalls', returnedToStallId);
+            const newRentalHistoryDocRef = doc(collection(db, 'rentals'));
+
+            const returnedStallSnap = await getDoc(returnedStallDocRef);
+            if (!returnedStallSnap.exists()) {
+                throw new Error("Return stall not found.");
+            }
+            const returnedStall = returnedStallSnap.data();
+
+            const rentalHistory: RentalHistory = {
+                rentalId: newRentalHistoryDocRef.id,
+                userId: firebaseUser.uid,
+                stallId: activeRental.stallId,
+                stallName: activeRental.stallName,
+                startTime: activeRental.startTime,
+                isFree: true,
+                endTime: Date.now(),
+                durationHours: (Date.now() - activeRental.startTime) / (1000 * 60 * 60),
+                finalCost: 0,
+                returnedToStallId: returnedToStallId,
+                returnedToStallName: returnedStall.name,
+                logs: activeRental.logs || [],
+            };
+
+            const batch = writeBatch(db);
+            batch.set(newRentalHistoryDocRef, rentalHistory);
+            batch.update(userDocRef, { activeRental: null });
+            batch.update(returnedStallDocRef, {
+                availableUmbrellas: increment(1),
+                nextActionSlot: increment(1),
+            });
+            await batch.commit();
+            toast({ title: "Return Successful", description: "Your free rental has been completed." });
+        } catch (error: any) {
+            console.error("--- [endRental] CRITICAL ERROR during client-side free rental processing ---", error);
+            toast({
+                variant: "destructive",
+                title: "Return Processing Error",
+                description: "Could not finalize your free rental. Please contact support."
+            });
+        }
+    } else {
+        // Handle paid rental via Cloud Function
+        try {
+            const endRentalTransaction = httpsCallable(firebaseServices.functions, 'endRentalTransaction');
+            const result = await endRentalTransaction({
+                returnedToStallId: returnedToStallId,
+                activeRentalData: activeRental,
+            });
+            const data = result.data as { success: boolean; message?: string };
+            if (!data.success) {
+                throw new Error(data.message || "The server failed to process the return.");
+            }
+            toast({ title: "Return Successful", description: "Your rental has been completed." });
+        } catch (error: any) {
+            console.error("--- [endRental] CRITICAL ERROR during Cloud Function call ---", error);
+            toast({
+                variant: "destructive",
+                title: "Return Processing Error",
+                description: error.message || "Could not finalize the return. Please contact support."
+            });
+        }
     }
   };
   
