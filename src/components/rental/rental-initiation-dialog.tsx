@@ -134,10 +134,8 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
 
           await BleClient.writeWithoutResponse(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
           logMachineEvent({ stallId: stall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Get Umbrella)` });
-
-          const isFree = user?.hasHadFirstFreeRental === false;
-          await startRental({ stallId: stall.id, stallName: stall.name, startTime: Date.now(), isFree });
-          if(isFree) await useFirstFreeRental();
+          
+          await startRental({ stallId: stall.id, stallName: stall.name, startTime: Date.now(), isFree: false });
           
           isIntentionalDisconnect.current = true;
           setBluetoothState('success');
@@ -226,16 +224,15 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   if (!stall) return null;
 
   const hasDeposit = user?.deposit && user.deposit >= 100;
-  const isFirstRental = user?.hasHadFirstFreeRental === false;
   const hasBalance = user?.balance && user.balance > 0;
   const hasUmbrellas = stall.availableUmbrellas > 0;
-  const canRent = hasUmbrellas && hasDeposit && (isFirstRental || hasBalance);
+  const canRent = hasUmbrellas && hasDeposit && hasBalance;
 
   let cannotRentReason = '';
   if (!user) cannotRentReason = "You must be signed in to rent.";
   else if (!hasUmbrellas) cannotRentReason = "No umbrellas are available at this stall.";
   else if (!hasDeposit) cannotRentReason = "A HK$100 refundable deposit is required to rent.";
-  else if (!isFirstRental && !hasBalance) cannotRentReason = "Your account balance is empty. Please add funds to rent.";
+  else if (!hasBalance) cannotRentReason = "Your account balance is empty. Please add funds to rent.";
   
   const renderPreConfirmation = () => (
     <>
@@ -310,7 +307,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                 <AlertTitle>Cannot Rent</AlertTitle>
                 <AlertDescription>
                   {cannotRentReason} 
-                  {user && (!hasDeposit || (!isFirstRental && !hasBalance)) && <Button variant="link" className="p-0 h-auto" asChild><Link href="/deposit"> Go to Wallet</Link></Button>}
+                  {user && (!hasDeposit || !hasBalance) && <Button variant="link" className="p-0 h-auto" asChild><Link href="/deposit"> Go to Wallet</Link></Button>}
                 </AlertDescription>
               </Alert>
             )}
@@ -323,10 +320,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                       <AlertTriangle className="h-4 w-4" />
                       <AlertTitle>Rental Terms</AlertTitle>
                       <AlertDescription className="text-xs">
-                          {isFirstRental 
-                              ? "Your first rental is free!" 
-                              : "HK$5/hr, capped at HK$25 per 24-hour period."
-                          } Return within 72 hours to avoid forfeiting your deposit.
+                          HK$5/hr, capped at HK$25 per 24-hour period. Return within 72 hours to avoid forfeiting your deposit.
                       </AlertDescription>
                   </Alert>
                   </CardContent>

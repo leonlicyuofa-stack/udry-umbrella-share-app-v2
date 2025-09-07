@@ -368,9 +368,7 @@ exports.endRentalTransaction = onCall(async (request) => {
         const DAILY_CAP = 25;
         let calculatedCost = 0;
 
-        if (activeRentalData.isFree === true) { // Explicitly check for true
-            calculatedCost = 0;
-        } else if (durationHours > 72) {
+        if (durationHours > 72) {
             calculatedCost = 100; // Forfeit deposit
         } else {
             const fullDays = Math.floor(durationHours / 24);
@@ -522,4 +520,5 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     
 
     
+
 

@@ -158,31 +158,6 @@ export default function AccountBalancePage() {
             )}
           </CardContent>
         </Card>
-
-        {/* Coupons Section */}
-        <Card className="shadow-xl">
-          <CardHeader>
-            <CardTitle className="text-xl font-bold text-primary flex items-center">
-              <Ticket className="mr-3 h-6 w-6" />
-              My Coupons
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            {user.hasHadFirstFreeRental === false ? (
-              <div className="p-4 border-2 border-dashed border-green-400 rounded-lg bg-green-50 flex items-center justify-between">
-                <div>
-                  <h3 className="font-semibold text-green-700">First Rental Free!</h3>
-                  <p className="text-sm text-green-600">Your next umbrella rental is on us. This coupon will be applied automatically.</p>
-                </div>
-                <Ticket className="h-10 w-10 text-green-500 opacity-80" />
-              </div>
-            ) : (
-              <p className="text-muted-foreground text-center py-4">
-                You have no available coupons at this time.
-              </p>
-            )}
-          </CardContent>
-        </Card>
       </div>
     </div>
   );
