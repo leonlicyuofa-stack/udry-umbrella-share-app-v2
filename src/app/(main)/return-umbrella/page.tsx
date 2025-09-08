@@ -22,9 +22,10 @@ const QR_READER_REGION_ID = "qr-reader-region-return";
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
 const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
 const RETURN_UMBRELLA_BASE_PARM = 3000000;
+const RETURN_CONFIRMATION_TIMEOUT = 30000; // 30 seconds
 
 type ReturnStep = 'idle' | 'initializing_scanner' | 'scanning' | 'scan_complete_pre_confirmation' | 'connecting';
-type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
+type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'awaiting_confirmation' | 'success' | 'error';
 
 const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, string> => ({
   idle: "Ready to start.",
@@ -34,7 +35,8 @@ const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, 
   getting_token: "Connected. Authenticating...",
   getting_command: "Authenticated. Getting return command...",
   sending_command: "Sending return command to machine...",
-  success: "Command sent! Please place your umbrella in the slot.",
+  awaiting_confirmation: "Command sent. Please place your umbrella in the slot and wait for confirmation...",
+  success: "Confirmation received! Your return is complete.",
   error: "An error occurred."
 });
 
@@ -57,6 +59,7 @@ export default function ReturnUmbrellaPage() {
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   const isProcessingScan = useRef(false);
   const isIntentionalDisconnect = useRef(false);
+  const confirmationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   
   const isProcessingBluetooth = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
   const bluetoothStateMessages = getBluetoothStateMessages(scannedStall);
@@ -165,6 +168,10 @@ export default function ReturnUmbrellaPage() {
   }, [onScanSuccess, returnStep]);
 
   const disconnectFromDevice = useCallback(async () => {
+    if (confirmationTimeoutRef.current) {
+        clearTimeout(confirmationTimeoutRef.current);
+        confirmationTimeoutRef.current = null;
+    }
     if (connectedDeviceIdRef.current) {
       try {
         await BleClient.disconnect(connectedDeviceIdRef.current);
@@ -212,8 +219,15 @@ export default function ReturnUmbrellaPage() {
           logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Return Umbrella)` });
           console.log(`[U-Dry Return] Return command sent to machine.`);
           
-          setShowSuccessDialog(true);
-          setBluetoothState('success');
+          setBluetoothState('awaiting_confirmation');
+
+          // Start a timeout to wait for the final confirmation from the machine
+          confirmationTimeoutRef.current = setTimeout(() => {
+              const errorMsg = "Return confirmation timeout. The machine did not confirm the return. Please check if the umbrella is properly inserted and try again. Your rental is still active.";
+              setBluetoothError(errorMsg);
+              setBluetoothState('error');
+              toast({ variant: "destructive", title: "Return Timed Out", description: errorMsg, duration: 8000 });
+          }, RETURN_CONFIRMATION_TIMEOUT);
 
         } catch (error: any) {
           console.error("[U-Dry Return] Error during server command fetch or BT write:", error);
@@ -228,8 +242,14 @@ export default function ReturnUmbrellaPage() {
          setBluetoothState('error');
          logMachineEvent({ stallId: scannedStall.id, type: 'error', message: errorMsg });
       }
-    } else if (receivedString.startsWith("CMD:")) {
-      console.log(`[U-Dry Return] Machine acknowledged command with: ${receivedString}`);
+    } else if (receivedString.includes("CMD:OK")) {
+        if (confirmationTimeoutRef.current) {
+            clearTimeout(confirmationTimeoutRef.current);
+            confirmationTimeoutRef.current = null;
+        }
+        logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Confirmation received: ${receivedString}` });
+        setBluetoothState('success');
+        setShowSuccessDialog(true);
     } else if (receivedString.startsWith("REPET:")) {
       const errorMsg = "Machine Error: This return action has already been processed. Please try again or select a different slot if possible.";
       console.error(`[U-Dry Return] Received REPET error: ${receivedString}`);
@@ -326,10 +346,10 @@ export default function ReturnUmbrellaPage() {
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
             <AlertDialogTitle className="flex items-center text-xl text-primary">
-              <Umbrella className="mr-2 h-8 w-8" /> Please Return Your Umbrella Now
+              <Umbrella className="mr-2 h-8 w-8" /> Return Confirmed
             </AlertDialogTitle>
             <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
-              Place the umbrella securely into the opened slot to complete the return.
+              Your rental has ended. Thank you for using U-Dry!
             </AlertDialogDescription>
           </AlertDialogHeader>
         </AlertDialogContent>
