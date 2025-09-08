@@ -7,13 +7,14 @@ const config: CapacitorConfig = {
   webDir: 'out',
   // This is the main server configuration for production (iOS and final Android)
   server: {
-    hostname: 'udry.app',
+    // CORRECTED: Pointing to the actual Firebase Hosting URL
+    hostname: 'udry-app-dev.web.app',
     androidScheme: 'https',
     allowNavigation: [
-      "udry.app",
-      "identitytoolkit.googleapis.com",
+      // Keep existing allowNavigation rules
       "udry-app-dev.web.app",
-      "udry-app-dev.firebaseapp.com"
+      "udry-app-dev.firebaseapp.com",
+      "identitytoolkit.googleapis.com",
     ]
   },
   // This setting is crucial for iOS to allow the webview to use the safe area.
