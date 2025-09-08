@@ -1,3 +1,4 @@
+
 // src/components/rental/rental-initiation-dialog.tsx
 "use client";
 
@@ -30,7 +31,7 @@ const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, 
   getting_token: "Connected. Authenticating...",
   getting_command: "Authenticated. Getting unlock command...",
   sending_command: "Sending unlock command to machine...",
-  awaiting_final_confirmation: "Command sent. Waiting for umbrella to be taken...",
+  awaiting_final_confirmation: "Unlock command sent! Please take the umbrella from the machine.",
   success: "Command sent! Your umbrella should unlock.",
   error: "An error occurred."
 });
@@ -49,6 +50,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const [bluetoothError, setBluetoothError] = useState<string | null>(null);
   const [connectionStep, setConnectionStep] = useState<ConnectionStep>('pre_confirmation');
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showWaitingDialog, setShowWaitingDialog] = useState(false);
   
   const connectedDeviceIdRef = useRef<string | null>(null);
   const isIntentionalDisconnect = useRef(false);
@@ -76,6 +78,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       setBluetoothError(null);
       setConnectionStep('pre_confirmation');
       setShowSuccessDialog(false);
+      setShowWaitingDialog(false);
       disconnectFromDevice();
     }
   }, [isOpen, disconnectFromDevice]);
@@ -85,6 +88,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       setBluetoothState('idle');
       setBluetoothError(null);
       setConnectionStep('pre_confirmation');
+      setShowWaitingDialog(false);
   }, [stall]);
 
   // Effect to handle the success dialog timeout
@@ -110,11 +114,12 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         cmdOkCounter.current += 1;
         logMachineEvent({ stallId: stall.id, type: 'info', message: `CMD:OK count is now ${cmdOkCounter.current}` });
 
-        if (cmdOkCounter.current === 4) {
+        if (cmdOkCounter.current >= 4) {
             logMachineEvent({ stallId: stall.id, type: 'info', message: `Final confirmation 'CMD:OK4' received.` });
             await startRental({ stallId: stall.id, stallName: stall.name, startTime: Date.now(), isFree: false });
             isIntentionalDisconnect.current = true;
             setBluetoothState('success');
+            setShowWaitingDialog(false);
             setShowSuccessDialog(true);
         }
         return;
@@ -151,6 +156,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           logMachineEvent({ stallId: stall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Get Umbrella)` });
           
           setBluetoothState('awaiting_final_confirmation');
+          setShowWaitingDialog(true);
           
         } catch (error: any) {
           const errorMsg = error.message || "Unknown error during command phase.";
@@ -275,7 +281,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
 
   const renderConnecting = () => (
     <>
-      {isProcessing && (
+      {isProcessing && bluetoothState !== 'awaiting_final_confirmation' && (
         <div className="text-center p-4 bg-primary/10 rounded-lg">
           <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
           <p className="text-sm text-primary font-medium">{bluetoothStateMessages[bluetoothState]}</p>
@@ -298,7 +304,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
 
   return (
     <>
-      <Dialog open={isOpen && !showSuccessDialog} onOpenChange={onOpenChange}>
+      <Dialog open={isOpen && !showSuccessDialog && !showWaitingDialog} onOpenChange={onOpenChange}>
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-primary flex items-center">
@@ -343,14 +349,27 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         </DialogContent>
       </Dialog>
       
+       <AlertDialog open={showWaitingDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader className="items-center">
+            <AlertDialogTitle className="flex items-center text-xl text-primary">
+              <Loader2 className="mr-2 h-6 w-6 animate-spin" /> Waiting for Confirmation
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
+              {bluetoothStateMessages.awaiting_final_confirmation}
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+
       <AlertDialog open={showSuccessDialog}>
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
             <AlertDialogTitle className="flex items-center text-xl text-primary">
-              <Umbrella className="mr-2 h-8 w-8" /> Unlock Successful!
+              <Umbrella className="mr-2 h-8 w-8" /> Rental Started!
             </AlertDialogTitle>
             <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
-              Please take the umbrella from the machine. Your rental has started.
+              You can now take the umbrella from the machine. Enjoy!
             </AlertDialogDescription>
           </AlertDialogHeader>
         </AlertDialogContent>
@@ -358,3 +377,4 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
     </>
   );
 }
+

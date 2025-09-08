@@ -51,6 +51,7 @@ export default function ReturnUmbrellaPage() {
   const [bluetoothState, setBluetoothState] = useState<BluetoothState>('idle');
   const [bluetoothError, setBluetoothError] = useState<string | null>(null);
   const [showSuccessDialog, setShowSuccessDialog] = useState(false);
+  const [showWaitingDialog, setShowWaitingDialog] = useState(false);
   const [elapsedTime, setElapsedTime] = useState<string>('');
   const [qrError, setQrError] = useState<string|null>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
@@ -219,11 +220,13 @@ export default function ReturnUmbrellaPage() {
           logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Return Umbrella)` });
           
           setBluetoothState('awaiting_confirmation');
+          setShowWaitingDialog(true); // Show the waiting pop-up
 
           confirmationTimeoutRef.current = setTimeout(() => {
               const errorMsg = "Return confirmation timeout. The machine did not confirm the return. Please check if the umbrella is properly inserted and try again. Your rental is still active.";
               setBluetoothError(errorMsg);
               setBluetoothState('error');
+              setShowWaitingDialog(false);
               toast({ variant: "destructive", title: "Return Timed Out", description: errorMsg, duration: 8000 });
           }, RETURN_CONFIRMATION_TIMEOUT);
 
@@ -251,7 +254,8 @@ export default function ReturnUmbrellaPage() {
             }
             logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Final confirmation received: ${receivedString}` });
             setBluetoothState('success');
-            setShowSuccessDialog(true);
+            setShowWaitingDialog(false); // Close waiting dialog
+            setShowSuccessDialog(true); // Show final success dialog
             isIntentionalDisconnect.current = true;
         }
     } else if (receivedString.startsWith("REPET:")) {
@@ -346,6 +350,19 @@ export default function ReturnUmbrellaPage() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] py-8 px-4">
+       <AlertDialog open={showWaitingDialog}>
+        <AlertDialogContent>
+          <AlertDialogHeader className="items-center">
+            <AlertDialogTitle className="flex items-center text-xl text-primary">
+              <Loader2 className="mr-2 h-6 w-6 animate-spin" /> Waiting for Confirmation
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
+              Please place your umbrella in the slot and wait for the machine to confirm the return.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+        </AlertDialogContent>
+      </AlertDialog>
+
        <AlertDialog open={showSuccessDialog}>
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
@@ -409,7 +426,7 @@ export default function ReturnUmbrellaPage() {
             </Alert>
           )}
 
-          {returnStep === 'connecting' && isProcessingBluetooth && (
+          {returnStep === 'connecting' && isProcessingBluetooth && bluetoothState !== 'awaiting_confirmation' && (
             <div className="text-center p-4 bg-primary/10 rounded-lg">
               <Loader2 className="h-8 w-8 mx-auto text-primary animate-spin mb-3" />
               <p className="text-sm text-primary font-medium">{bluetoothStateMessages[bluetoothState]}</p>
@@ -470,3 +487,4 @@ export default function ReturnUmbrellaPage() {
     </div>
   );
 }
+
