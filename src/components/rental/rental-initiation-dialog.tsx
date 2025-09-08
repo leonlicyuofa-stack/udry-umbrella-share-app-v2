@@ -19,7 +19,7 @@ const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
 const UTEK_CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb";
 const GET_UMBRELLA_BASE_PARM = 2000000;
 
-type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'success' | 'error';
+type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'awaiting_final_confirmation' | 'success' | 'error';
 type ConnectionStep = 'pre_confirmation' | 'connecting' | 'error';
 
 const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, string> => ({
@@ -30,6 +30,7 @@ const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, 
   getting_token: "Connected. Authenticating...",
   getting_command: "Authenticated. Getting unlock command...",
   sending_command: "Sending unlock command to machine...",
+  awaiting_final_confirmation: "Command sent. Waiting for umbrella to be taken...",
   success: "Command sent! Your umbrella should unlock.",
   error: "An error occurred."
 });
@@ -51,7 +52,8 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   
   const connectedDeviceIdRef = useRef<string | null>(null);
   const isIntentionalDisconnect = useRef(false);
-  
+  const cmdOkCounter = useRef(0); // Ref to count CMD:OK signals
+
   const isProcessing = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
   const bluetoothStateMessages = getBluetoothStateMessages(stall);
 
@@ -104,19 +106,32 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
 
     logMachineEvent({ stallId: stall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
 
+    if (receivedString.includes("CMD:OK")) {
+        cmdOkCounter.current += 1;
+        logMachineEvent({ stallId: stall.id, type: 'info', message: `CMD:OK count is now ${cmdOkCounter.current}` });
+
+        if (cmdOkCounter.current === 4) {
+            logMachineEvent({ stallId: stall.id, type: 'info', message: `Final confirmation 'CMD:OK4' received.` });
+            await startRental({ stallId: stall.id, stallName: stall.name, startTime: Date.now(), isFree: false });
+            isIntentionalDisconnect.current = true;
+            setBluetoothState('success');
+            setShowSuccessDialog(true);
+        }
+        return;
+    }
+
     if (receivedString.startsWith("TOK:")) {
+      cmdOkCounter.current = 0; // Reset counter for new attempt
       const fullToken = receivedString.substring(4).trim();
       if (/^\d{6}$/.test(fullToken)) {
         const tokenValue = fullToken.substring(0, 3); // Use only the first 3 digits
         setBluetoothState('getting_command');
         
         try {
-          // Use the dynamic slot number from the stall object
           const slotNum = stall.nextActionSlot || 1; 
           const parmValue = (GET_UMBRELLA_BASE_PARM + slotNum).toString();
           const cmdType = '1';
 
-          // Call the Cloud Function
           const unlockPhysicalMachine = httpsCallable(firebaseServices.functions, 'unlockPhysicalMachine');
           const result = await unlockPhysicalMachine({ dvid: stall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType });
           
@@ -135,11 +150,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           await BleClient.writeWithoutResponse(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
           logMachineEvent({ stallId: stall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Get Umbrella)` });
           
-          await startRental({ stallId: stall.id, stallName: stall.name, startTime: Date.now(), isFree: false });
-          
-          isIntentionalDisconnect.current = true;
-          setBluetoothState('success');
-          setShowSuccessDialog(true); // Trigger the success dialog
+          setBluetoothState('awaiting_final_confirmation');
           
         } catch (error: any) {
           const errorMsg = error.message || "Unknown error during command phase.";
@@ -155,8 +166,6 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
          setConnectionStep('error');
          logMachineEvent({ stallId: stall.id, type: 'error', message: errorMsg });
       }
-    } else if (receivedString.startsWith("CMD:")) {
-      console.log(`Machine acknowledged command with: ${receivedString}`);
     } else if (receivedString.startsWith("REPET:")) {
       const errorMsg = "Machine Error: This rental action has already been processed. Please try again or select a different slot if possible.";
       setBluetoothError(errorMsg);
