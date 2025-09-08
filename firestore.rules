@@ -3,50 +3,48 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // Helper function to check for admin status by checking for their UID in the 'admins' collection.
+    // --- Admin Rules ---
+    // Helper function to check if the requesting user is in the 'admins' collection.
     function isAdmin() {
       return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
-    // --- STALLS: Publicly readable, admin writable ---
-    match /stalls/{stallId} {
-      allow read: if true;
-      allow write: if isAdmin();
-    }
-    
-    // --- SETTINGS: Admin read/write for global settings like announcements ---
-    match /settings/{setting} {
+    // --- Global Read/Write for Admins ---
+    // Admins have universal read/write access to the entire database.
+    // This rule must come first to grant them overriding permissions.
+    match /{document=**} {
       allow read, write: if isAdmin();
     }
 
-    // --- USERS: Users can only access their own data ---
+    // --- Public & User-Specific Rules ---
+
+    // Stalls Collection: Any authenticated user can read the list of stalls.
+    // Only admins can create, update, or delete stalls (covered by the global admin rule).
+    match /stalls/{stallId} {
+      allow read: if request.auth != null;
+      allow write: if false; // Regular users cannot write to stalls
+    }
+
+    // Users Collection: Users can read their own document and update it.
+    // They cannot read other users' documents.
     match /users/{userId} {
-      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
-      allow create: if request.auth != null;
+      allow read, update: if request.auth != null && request.auth.uid == userId;
+      // Creation is handled by Cloud Functions upon sign-up.
+      // Deletion is restricted to admins.
+      allow create, delete: if false;
     }
 
-    // --- RENTALS: Users can read their own, admins can read all ---
+    // Rentals (History) Collection: Users can read their own rental history.
+    // Writing is handled by a secure Cloud Function, so client writes are disabled.
     match /rentals/{rentalId} {
-      allow read: if (request.auth != null && resource.data.userId == request.auth.uid) || isAdmin();
-      allow create: if request.auth != null;
-      allow update, delete: if false; // Rentals are immutable
-    }
-
-    // --- REFUNDS & PAYMENTS: Admins can read for auditing, but creation is handled by secure cloud functions.
-    match /refunds/{refundId} {
-        allow read: if isAdmin();
-        allow write: if false;
+      allow read: if request.auth != null && resource.data.userId == request.auth.uid;
+      allow write: if false; // Handled by Cloud Function
     }
     
-    match /processed_stripe_payments/{paymentId} {
-        allow read: if isAdmin();
-        allow write: if false;
-    }
-    
-    // --- ADMINS: Only readable by other admins. Creation is handled by a secure cloud function.
-    match /admins/{adminId} {
-        allow read: if isAdmin();
-        allow write: if false;
+    // Settings Collection: Only admins can read or write global settings.
+    // This is also covered by the global rule, but kept for clarity.
+    match /settings/{settingId} {
+        allow read, write: if isAdmin();
     }
   }
 }
