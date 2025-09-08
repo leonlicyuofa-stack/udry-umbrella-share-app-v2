@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock, UserSearch, Search, MinusCircle, Megaphone, Trash2 } from 'lucide-react';
+import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock, UserSearch, Search, MinusCircle, Megaphone, Trash2, PlayCircle } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { Stall, User, RentalHistory, ActiveRental, RentalLog } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
@@ -111,6 +111,11 @@ export default function AdminPage() {
   const [announcementMessage, setAnnouncementMessage] = useState('');
   const [isLoadingAnnouncement, setIsLoadingAnnouncement] = useState(true);
   const [isSavingAnnouncement, setIsSavingAnnouncement] = useState(false);
+
+  // State for manual rental start
+  const [manualStartUid, setManualStartUid] = useState('');
+  const [manualStartDvid, setManualStartDvid] = useState('');
+  const [isStartingManualRental, setIsStartingManualRental] = useState(false);
 
 
   const isSuperAdminUser = user?.email?.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim();
@@ -387,6 +392,49 @@ export default function AdminPage() {
         toast({ variant: 'destructive', title: 'Reset Failed', description: error.message });
     } finally {
         setIsResettingUser(false);
+    }
+  };
+
+  const handleManualRentalStart = async () => {
+    if (!firebaseServices?.db || !manualStartUid || !manualStartDvid) {
+        toast({ variant: 'destructive', title: 'Missing Information', description: 'Please provide both a User ID and a Stall DVID.' });
+        return;
+    }
+    setIsStartingManualRental(true);
+    try {
+        const userDocRef = doc(firebaseServices.db, 'users', manualStartUid);
+        const userDoc = await getDoc(userDocRef);
+        if (!userDoc.exists()) {
+            throw new Error(`User with UID ${manualStartUid} not found.`);
+        }
+        if (userDoc.data().activeRental) {
+            throw new Error('This user already has an active rental.');
+        }
+
+        const stallDocRef = doc(firebaseServices.db, 'stalls', manualStartDvid);
+        const stallDoc = await getDoc(stallDocRef);
+        if (!stallDoc.exists()) {
+            throw new Error(`Stall with DVID ${manualStartDvid} not found.`);
+        }
+        const stallData = stallDoc.data() as Stall;
+
+        const newActiveRental: ActiveRental = {
+            stallId: stallData.dvid,
+            stallName: stallData.name,
+            startTime: Date.now(),
+            isFree: false, // Manual rentals are never free
+            logs: [{ type: 'info', message: 'Rental manually started by admin.', timestamp: Date.now() }],
+        };
+        
+        await firestoreUpdateDoc(userDocRef, { activeRental: newActiveRental });
+        
+        toast({ title: 'Rental Started', description: `Successfully started a rental for user at ${stallData.name}.` });
+        setManualStartUid('');
+        setManualStartDvid('');
+    } catch (error: any) {
+        toast({ variant: 'destructive', title: 'Manual Start Failed', description: error.message });
+    } finally {
+        setIsStartingManualRental(false);
     }
   };
 
@@ -755,7 +803,7 @@ export default function AdminPage() {
               <CardTitle className="text-2xl flex items-center"><Wrench className="mr-2 h-6 w-6 text-primary" /> Admin Actions</CardTitle>
               <CardDescription>Use these tools for administrative tasks like fixing user state.</CardDescription>
           </CardHeader>
-          <CardContent className="space-y-4">
+          <CardContent className="space-y-6">
             <div className="p-4 border rounded-lg bg-secondary/30">
               <Label htmlFor="reset-uid" className="font-semibold">Clear a User's Active Rental</Label>
               <p className="text-xs text-muted-foreground mt-1 mb-2">If a user is stuck with an active rental due to an error, enter their User ID (UID) below and click clear. You can find the UID in the user management list.</p>
@@ -772,6 +820,24 @@ export default function AdminPage() {
                   Clear Active Rental
                 </Button>
               </div>
+            </div>
+            <div className="p-4 border rounded-lg bg-secondary/30">
+                <Label className="font-semibold">Manual Rental Management</Label>
+                <p className="text-xs text-muted-foreground mt-1 mb-2">Manually start a rental for a user if their app failed to do so. The rental timer will begin immediately.</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                    <div className="space-y-1">
+                        <Label htmlFor="manual-uid">User ID (UID)</Label>
+                        <Input id="manual-uid" placeholder="Enter User ID" value={manualStartUid} onChange={(e) => setManualStartUid(e.target.value)} disabled={isStartingManualRental} />
+                    </div>
+                    <div className="space-y-1">
+                        <Label htmlFor="manual-dvid">Stall DVID</Label>
+                        <Input id="manual-dvid" placeholder="Enter Stall DVID" value={manualStartDvid} onChange={(e) => setManualStartDvid(e.target.value)} disabled={isStartingManualRental} />
+                    </div>
+                </div>
+                 <Button onClick={handleManualRentalStart} disabled={isStartingManualRental || !manualStartUid || !manualStartDvid} className="mt-4">
+                    {isStartingManualRental ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlayCircle className="mr-2 h-4 w-4" />}
+                    Manually Start Rental for User
+                </Button>
             </div>
           </CardContent>
         </Card>
