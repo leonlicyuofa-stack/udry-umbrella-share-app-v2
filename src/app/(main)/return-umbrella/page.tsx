@@ -349,7 +349,7 @@ export default function ReturnUmbrellaPage() {
   }
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] py-8 px-4">
+    <div className="flex flex-col items-center justify-center min-h-[calc(100vh-10rem)] py-8 px-4 pb-48">
        <AlertDialog open={showWaitingDialog}>
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
@@ -487,4 +487,3 @@ export default function ReturnUmbrellaPage() {
     </div>
   );
 }
-
