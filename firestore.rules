@@ -3,41 +3,50 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // [TEMP TEST] Allow read access for anyone, and write access for any logged-in user.
+    // Helper function to check for admin status by checking for their UID in the 'admins' collection.
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // --- STALLS: Publicly readable, admin writable ---
     match /stalls/{stallId} {
       allow read: if true;
-      allow write: if request.auth != null;
+      allow write: if isAdmin();
+    }
+    
+    // --- SETTINGS: Admin read/write for global settings like announcements ---
+    match /settings/{setting} {
+      allow read, write: if isAdmin();
     }
 
-    // [TEMP TEST] Allow any logged-in user to read/write their own document.
-    // This rule is effectively the same but stated for clarity during testing.
+    // --- USERS: Users can only access their own data ---
     match /users/{userId} {
-      allow read, write: if request.auth != null && request.auth.uid == userId;
+      allow read, update, delete: if request.auth != null && request.auth.uid == userId;
+      allow create: if request.auth != null;
     }
-    
-    // Admins can read/write any user document (useful for support).
-    match /users/{userId} {
-      allow read, write: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
-    }
-    
-    // Admins can read/write the admins collection. No one else can.
-    match /admins/{adminId} {
-        allow read, write: if request.auth != null && request.auth.uid == adminId;
-    }
-    
-    // Anyone can read rental history, but only admins can write/delete.
-    // In a real app, you might restrict reads to the specific user or admins.
+
+    // --- RENTALS: Users can read their own, admins can read all ---
     match /rentals/{rentalId} {
-        allow read: if true;
-        allow write, delete: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
-    }
-    
-    // Allow anyone to read processed payments for idempotency checks by the user,
-    // but only admins can create them (though they are created by backend functions).
-    match /processed_stripe_payments/{paymentId} {
-        allow read: if true;
-        allow write: if request.auth != null && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+      allow read: if (request.auth != null && resource.data.userId == request.auth.uid) || isAdmin();
+      allow create: if request.auth != null;
+      allow update, delete: if false; // Rentals are immutable
     }
 
+    // --- REFUNDS & PAYMENTS: Admins can read for auditing, but creation is handled by secure cloud functions.
+    match /refunds/{refundId} {
+        allow read: if isAdmin();
+        allow write: if false;
+    }
+    
+    match /processed_stripe_payments/{paymentId} {
+        allow read: if isAdmin();
+        allow write: if false;
+    }
+    
+    // --- ADMINS: Only readable by other admins. Creation is handled by a secure cloud function.
+    match /admins/{adminId} {
+        allow read: if isAdmin();
+        allow write: if false;
+    }
   }
 }
