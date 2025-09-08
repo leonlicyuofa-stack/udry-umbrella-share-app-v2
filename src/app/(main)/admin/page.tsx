@@ -12,11 +12,11 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock, UserSearch, Search, MinusCircle, Megaphone } from 'lucide-react';
+import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock, UserSearch, Search, MinusCircle, Megaphone, Trash2 } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { Stall, User, RentalHistory, ActiveRental, RentalLog } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
-import { GeoPoint, collection, getDocs, doc, updateDoc as firestoreUpdateDoc, setDoc, query, where, Timestamp, increment, getDoc } from 'firebase/firestore';
+import { GeoPoint, collection, getDocs, doc, updateDoc as firestoreUpdateDoc, setDoc, query, where, Timestamp, increment, getDoc, deleteDoc } from 'firebase/firestore';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import {
   Accordion,
@@ -34,6 +34,17 @@ import {
 } from "@/components/ui/table"
 import { Separator } from '@/components/ui/separator';
 import { Textarea } from '@/components/ui/textarea';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 
 
 const ADMIN_EMAIL = "admin@u-dry.com";
@@ -77,6 +88,7 @@ export default function AdminPage() {
   const [editedStallLng, setEditedStallLng] = useState<number>(0);
   const [editedNextActionSlot, setEditedNextActionSlot] = useState<number>(1);
   const [togglingDeployId, setTogglingDeployId] = useState<string | null>(null);
+  const [isDeleting, setIsDeleting] = useState(false);
   
   const [allUsers, setAllUsers] = useState<User[]>([]);
   const [rentalHistories, setRentalHistories] = useState<RentalHistory[]>([]);
@@ -312,7 +324,7 @@ export default function AdminPage() {
       const stallDocRef = doc(firebaseServices.db, 'stalls', editingStallId);
       await firestoreUpdateDoc(stallDocRef, {
         name: editedStallName,
-        dvid: editedStallDvid,
+        // DVID (document ID) cannot be changed here.
         btName: editedBtName,
         address: editedStallAddress,
         location: new GeoPoint(editedStallLat, editedStallLng),
@@ -322,6 +334,21 @@ export default function AdminPage() {
       setEditingStallId(null);
     } catch (error: any) {
       toast({ variant: "destructive", title: "Update Failed", description: error.message });
+    }
+  };
+
+  const handleDeleteStall = async (stallId: string) => {
+    if (!firebaseServices?.db) return;
+    setIsDeleting(true);
+    try {
+      const stallDocRef = doc(firebaseServices.db, 'stalls', stallId);
+      await deleteDoc(stallDocRef);
+      toast({ title: "Machine Deleted", description: `Machine record ${stallId} has been successfully removed.` });
+    } catch (error: any) {
+      toast({ variant: 'destructive', title: 'Deletion Failed', description: error.message });
+      console.error("Error deleting stall: ", error);
+    } finally {
+      setIsDeleting(false);
     }
   };
 
@@ -777,7 +804,7 @@ export default function AdminPage() {
                         <CardHeader><CardTitle className="text-lg flex items-center"><Edit className="mr-2 h-5 w-5" /> Editing: {stall.name}</CardTitle><CardDescription>Update the details for this machine.</CardDescription></CardHeader>
                         <CardContent className="space-y-4">
                           <div className="space-y-1"><Label htmlFor={`edit-name-${stall.dvid}`}>Stall Name</Label><Input id={`edit-name-${stall.dvid}`} value={editedStallName} onChange={e => setEditedStallName(e.target.value)} /></div>
-                          <div className="space-y-1"><Label htmlFor={`edit-dvid-${stall.dvid}`}>Machine DVID</Label><Input id={`edit-dvid-${stall.dvid}`} value={editedStallDvid} onChange={e => setEditedStallDvid(e.target.value)} /></div>
+                          <div className="space-y-1"><Label htmlFor={`edit-dvid-${stall.dvid}`}>Machine DVID</Label><Input id={`edit-dvid-${stall.dvid}`} value={stall.dvid} disabled readOnly /></div>
                           <div className="space-y-1"><Label htmlFor={`edit-btname-${stall.dvid}`}>Bluetooth Device Name</Label><Input id={`edit-btname-${stall.dvid}`} value={editedBtName} onChange={e => setEditedBtName(e.target.value)} /></div>
                           <div className="space-y-1"><Label htmlFor={`edit-address-${stall.dvid}`}>Address</Label><Input id={`edit-address-${stall.dvid}`} value={editedStallAddress} onChange={e => setEditedStallAddress(e.target.value)} /></div>
                           <div className="grid grid-cols-2 gap-4">
@@ -802,6 +829,28 @@ export default function AdminPage() {
                         <Button variant="outline" size="sm" onClick={() => { setEditingStallId(stall.dvid); setEditedStallName(stall.name); setEditedStallDvid(stall.dvid); setEditedBtName(stall.btName); setEditedStallAddress(stall.address); setEditedStallLat(stall.location?.latitude || 0); setEditedStallLng(stall.location?.longitude || 0); setEditedNextActionSlot(stall.nextActionSlot); }}>
                           <Edit className="mr-2 h-4 w-4" />{translate('admin_stall_edit_button')}
                         </Button>
+                        <AlertDialog>
+                          <AlertDialogTrigger asChild>
+                            <Button variant="destructive" size="sm">
+                              <Trash2 className="mr-2 h-4 w-4" /> Delete
+                            </Button>
+                          </AlertDialogTrigger>
+                          <AlertDialogContent>
+                            <AlertDialogHeader>
+                              <AlertDialogTitle>Are you absolutely sure?</AlertDialogTitle>
+                              <AlertDialogDescription>
+                                This action cannot be undone. This will permanently delete the machine record for <span className="font-bold">{stall.name} ({stall.dvid})</span>. This is only recommended for machines that are permanently decommissioned.
+                              </AlertDialogDescription>
+                            </AlertDialogHeader>
+                            <AlertDialogFooter>
+                              <AlertDialogCancel>Cancel</AlertDialogCancel>
+                              <AlertDialogAction onClick={() => handleDeleteStall(stall.dvid)} disabled={isDeleting}>
+                                {isDeleting ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                                Yes, delete this machine
+                              </AlertDialogAction>
+                            </AlertDialogFooter>
+                          </AlertDialogContent>
+                        </AlertDialog>
                       </CardFooter>
                      </>
                    )}
