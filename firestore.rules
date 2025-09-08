@@ -3,48 +3,43 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
-    // --- Admin Rules ---
-    // Helper function to check if the requesting user is in the 'admins' collection.
+    // Helper function to check for admin status
     function isAdmin() {
       return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
-    // --- Global Read/Write for Admins ---
-    // Admins have universal read/write access to the entire database.
-    // This rule must come first to grant them overriding permissions.
+    // Comprehensive Admin Rule: Admins can read/write everything.
     match /{document=**} {
       allow read, write: if isAdmin();
     }
-
-    // --- Public & User-Specific Rules ---
-
-    // Stalls Collection: Any authenticated user can read the list of stalls.
-    // Only admins can create, update, or delete stalls (covered by the global admin rule).
-    match /stalls/{stallId} {
+    
+    // Settings Collection: Only readable by authenticated users (for the banner)
+    // Write access is handled by the admin rule above.
+    match /settings/{docId} {
       allow read: if request.auth != null;
-      allow write: if false; // Regular users cannot write to stalls
     }
 
-    // Users Collection: Users can read their own document and update it.
-    // They cannot read other users' documents.
+    // Users Collection: Users can read their own data and update specific fields.
     match /users/{userId} {
       allow read, update: if request.auth != null && request.auth.uid == userId;
-      // Creation is handled by Cloud Functions upon sign-up.
-      // Deletion is restricted to admins.
-      allow create, delete: if false;
     }
 
-    // Rentals (History) Collection: Users can read their own rental history.
-    // Writing is handled by a secure Cloud Function, so client writes are disabled.
+    // Stalls Collection:
+    // Logged-in users can read all stall data.
+    // Users can ONLY UPDATE the umbrella and slot count for rentals. All other fields are protected.
+    match /stalls/{stallId} {
+      allow read: if request.auth != null;
+      allow update: if request.auth != null
+                    && request.resource.data.diff(resource.data).affectedKeys()
+                       .hasOnly(['availableUmbrellas', 'nextActionSlot']);
+    }
+
+    // Rentals Collection (History):
+    // For now, deny client-side creation. This is handled by a secure Cloud Function.
+    // Logged-in users can read their own rental history.
     match /rentals/{rentalId} {
       allow read: if request.auth != null && resource.data.userId == request.auth.uid;
-      allow write: if false; // Handled by Cloud Function
-    }
-    
-    // Settings Collection: Only admins can read or write global settings.
-    // This is also covered by the global rule, but kept for clarity.
-    match /settings/{settingId} {
-        allow read, write: if isAdmin();
+      allow create: if false; // Handled by secure Cloud Function
     }
   }
 }
