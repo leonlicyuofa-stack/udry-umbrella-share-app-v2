@@ -184,8 +184,6 @@ export default function ReturnUmbrellaPage() {
 
   const handleTokNotification = useCallback(async (value: DataView) => {
     const receivedString = dataViewToText(value).trim();
-    // This is the diagnostic log we added.
-    console.log(`[U-Dry Return Debug] Raw data received from machine: "${receivedString}"`);
     if (!scannedStall || !firebaseServices) return;
 
     logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
