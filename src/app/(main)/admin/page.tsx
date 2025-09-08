@@ -113,7 +113,7 @@ export default function AdminPage() {
   const [isSavingAnnouncement, setIsSavingAnnouncement] = useState(false);
 
   // State for manual rental start
-  const [manualStartUid, setManualStartUid] = useState('');
+  const [manualStartEmail, setManualStartEmail] = useState('');
   const [manualStartDvid, setManualStartDvid] = useState('');
   const [isStartingManualRental, setIsStartingManualRental] = useState(false);
 
@@ -396,18 +396,25 @@ export default function AdminPage() {
   };
 
   const handleManualRentalStart = async () => {
-    if (!firebaseServices?.db || !manualStartUid || !manualStartDvid) {
-        toast({ variant: 'destructive', title: 'Missing Information', description: 'Please provide both a User ID and a Stall DVID.' });
+    if (!firebaseServices?.db || !manualStartEmail || !manualStartDvid) {
+        toast({ variant: 'destructive', title: 'Missing Information', description: 'Please provide both a User Email and a Stall DVID.' });
         return;
     }
     setIsStartingManualRental(true);
     try {
-        const userDocRef = doc(firebaseServices.db, 'users', manualStartUid);
-        const userDoc = await getDoc(userDocRef);
-        if (!userDoc.exists()) {
-            throw new Error(`User with UID ${manualStartUid} not found.`);
+        // Find user by email
+        const usersRef = collection(firebaseServices.db, 'users');
+        const q = query(usersRef, where("email", "==", manualStartEmail.trim()));
+        const userQuerySnapshot = await getDocs(q);
+
+        if (userQuerySnapshot.empty) {
+            throw new Error(`User with email ${manualStartEmail} not found.`);
         }
-        if (userDoc.data().activeRental) {
+        const userDoc = userQuerySnapshot.docs[0];
+        const userUid = userDoc.id;
+        const userData = userDoc.data();
+
+        if (userData.activeRental) {
             throw new Error('This user already has an active rental.');
         }
 
@@ -426,10 +433,11 @@ export default function AdminPage() {
             logs: [{ type: 'info', message: 'Rental manually started by admin.', timestamp: Date.now() }],
         };
         
-        await firestoreUpdateDoc(userDocRef, { activeRental: newActiveRental });
+        const userDocRefToUpdate = doc(firebaseServices.db, 'users', userUid);
+        await firestoreUpdateDoc(userDocRefToUpdate, { activeRental: newActiveRental });
         
-        toast({ title: 'Rental Started', description: `Successfully started a rental for user at ${stallData.name}.` });
-        setManualStartUid('');
+        toast({ title: 'Rental Started', description: `Successfully started a rental for ${manualStartEmail} at ${stallData.name}.` });
+        setManualStartEmail('');
         setManualStartDvid('');
     } catch (error: any) {
         toast({ variant: 'destructive', title: 'Manual Start Failed', description: error.message });
@@ -826,15 +834,15 @@ export default function AdminPage() {
                 <p className="text-xs text-muted-foreground mt-1 mb-2">Manually start a rental for a user if their app failed to do so. The rental timer will begin immediately.</p>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
                     <div className="space-y-1">
-                        <Label htmlFor="manual-uid">User ID (UID)</Label>
-                        <Input id="manual-uid" placeholder="Enter User ID" value={manualStartUid} onChange={(e) => setManualStartUid(e.target.value)} disabled={isStartingManualRental} />
+                        <Label htmlFor="manual-email">User Email</Label>
+                        <Input id="manual-email" placeholder="Enter user's email" value={manualStartEmail} onChange={(e) => setManualStartEmail(e.target.value)} disabled={isStartingManualRental} />
                     </div>
                     <div className="space-y-1">
                         <Label htmlFor="manual-dvid">Stall DVID</Label>
                         <Input id="manual-dvid" placeholder="Enter Stall DVID" value={manualStartDvid} onChange={(e) => setManualStartDvid(e.target.value)} disabled={isStartingManualRental} />
                     </div>
                 </div>
-                 <Button onClick={handleManualRentalStart} disabled={isStartingManualRental || !manualStartUid || !manualStartDvid} className="mt-4">
+                 <Button onClick={handleManualRentalStart} disabled={isStartingManualRental || !manualStartEmail || !manualStartDvid} className="mt-4">
                     {isStartingManualRental ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlayCircle className="mr-2 h-4 w-4" />}
                     Manually Start Rental for User
                 </Button>
