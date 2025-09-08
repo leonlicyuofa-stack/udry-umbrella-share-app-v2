@@ -75,6 +75,7 @@ export default function AdminPage() {
   const [newStallBtName, setNewStallBtName] = useState('');
   const [newStallAddress, setNewStallAddress] = useState('');
   const [newStallCapacity, setNewStallCapacity] = useState('');
+  const [newStallAvailable, setNewStallAvailable] = useState('');
   const [newStallLat, setNewStallLat] = useState('');
   const [newStallLng, setNewStallLng] = useState('');
   const [isRegistering, setIsRegistering] = useState(false);
@@ -198,7 +199,7 @@ export default function AdminPage() {
     if (!firebaseServices?.db) return;
     setIsRegistering(true);
 
-    if (!newStallName || !newStallDvid || !newStallBtName || !newStallAddress || !newStallCapacity || !newStallLat || !newStallLng) {
+    if (!newStallName || !newStallDvid || !newStallBtName || !newStallAddress || !newStallCapacity || !newStallAvailable || !newStallLat || !newStallLng) {
       toast({ variant: "destructive", title: "Missing Information", description: "Please fill out all fields to register a machine." });
       setIsRegistering(false);
       return;
@@ -209,13 +210,20 @@ export default function AdminPage() {
         return;
     }
     const capacity = parseInt(newStallCapacity, 10);
+    const available = parseInt(newStallAvailable, 10);
     const lat = parseFloat(newStallLat);
     const lng = parseFloat(newStallLng);
 
-    if (isNaN(capacity) || isNaN(lat) || isNaN(lng)) {
-      toast({ variant: "destructive", title: "Invalid Number", description: "Capacity, Latitude, and Longitude must be valid numbers." });
+    if (isNaN(capacity) || isNaN(available) || isNaN(lat) || isNaN(lng)) {
+      toast({ variant: "destructive", title: "Invalid Number", description: "Capacity, Available Umbrellas, Latitude, and Longitude must be valid numbers." });
       setIsRegistering(false);
       return;
+    }
+
+    if (available > capacity) {
+        toast({ variant: "destructive", title: "Invalid Input", description: "Initial available umbrellas cannot be greater than the total capacity." });
+        setIsRegistering(false);
+        return;
     }
     
     try {
@@ -224,7 +232,7 @@ export default function AdminPage() {
         name: newStallName,
         address: newStallAddress,
         location: new GeoPoint(lat, lng),
-        availableUmbrellas: capacity, 
+        availableUmbrellas: available,
         totalUmbrellas: capacity,
         nextActionSlot: 1, 
         isDeployed: false, 
@@ -233,7 +241,7 @@ export default function AdminPage() {
       const stallDocRef = doc(firebaseServices.db, 'stalls', stallDoc.dvid);
       await setDoc(stallDocRef, stallDoc);
       toast({ title: "Machine Registered", description: `Machine ${stallDoc.name} has been added.` });
-      setNewStallName(''); setNewStallDvid(''); setNewStallAddress(''); setNewStallCapacity(''); setNewStallLat(''); setNewStallLng(''); setNewStallBtName('');
+      setNewStallName(''); setNewStallDvid(''); setNewStallAddress(''); setNewStallCapacity(''); setNewStallLat(''); setNewStallLng(''); setNewStallBtName(''); setNewStallAvailable('');
     } catch (error: any) {
       toast({ variant: "destructive", title: "Registration Failed", description: error.message });
       console.error("Error adding stall: ", error);
@@ -782,7 +790,8 @@ export default function AdminPage() {
                 <div className="space-y-1"><Label htmlFor="stall-address">Address</Label><Input id="stall-address" placeholder="e.g., 123 Nathan Road" value={newStallAddress} onChange={(e) => setNewStallAddress(e.target.value)} disabled={isRegistering} /></div>
                 <div className="space-y-1"><Label htmlFor="stall-lat">Latitude</Label><Input id="stall-lat" type="number" step="any" placeholder="e.g., 22.3193" value={newStallLat} onChange={(e) => setNewStallLat(e.target.value)} disabled={isRegistering} /></div>
                 <div className="space-y-1"><Label htmlFor="stall-lng">Longitude</Label><Input id="stall-lng" type="number" step="any" placeholder="e.g., 114.1694" value={newStallLng} onChange={(e) => setNewStallLng(e.target.value)} disabled={isRegistering} /></div>
-                <div className="md:col-span-2 space-y-1"><Label htmlFor="stall-capacity">Total Umbrella Capacity</Label><Input id="stall-capacity" type="number" placeholder="e.g., 20" value={newStallCapacity} onChange={(e) => setNewStallCapacity(e.target.value)} disabled={isRegistering} /></div>
+                <div className="space-y-1"><Label htmlFor="stall-capacity">Total Umbrella Capacity</Label><Input id="stall-capacity" type="number" placeholder="e.g., 20" value={newStallCapacity} onChange={(e) => setNewStallCapacity(e.target.value)} disabled={isRegistering} /></div>
+                <div className="space-y-1"><Label htmlFor="stall-available">Initial Available Umbrellas</Label><Input id="stall-available" type="number" placeholder="e.g., 18" value={newStallAvailable} onChange={(e) => setNewStallAvailable(e.target.value)} disabled={isRegistering} /></div>
               </div>
             </CardContent>
             <CardFooter><Button type="submit" className="bg-accent hover:bg-accent/90 text-accent-foreground" disabled={isRegistering}>{isRegistering ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <PlusCircle className="mr-2 h-4 w-4" />} Register Machine</Button></CardFooter>
@@ -868,3 +877,5 @@ export default function AdminPage() {
     </>
   );
 }
+
+    
