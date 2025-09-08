@@ -60,6 +60,7 @@ export default function ReturnUmbrellaPage() {
   const isProcessingScan = useRef(false);
   const isIntentionalDisconnect = useRef(false);
   const confirmationTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const cmdOkCounter = useRef(0);
   
   const isProcessingBluetooth = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
   const bluetoothStateMessages = getBluetoothStateMessages(scannedStall);
@@ -186,17 +187,13 @@ export default function ReturnUmbrellaPage() {
     const receivedString = dataViewToText(value).trim();
     if (!scannedStall || !firebaseServices) return;
 
-    // --- TEMPORARY DEBUGGING CHANGE ---
-    // Log EVERY signal received to the console.
-    console.log(`[U-Dry Return Debug] Raw data received from machine: "${receivedString}"`);
     logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Received Signal: "${receivedString}"` });
-    // --- END TEMPORARY CHANGE ---
 
     if (receivedString.startsWith("TOK:")) {
+      cmdOkCounter.current = 0; // Reset counter for new attempt
       const fullToken = receivedString.substring(4).trim();
       if (/^\d{6}$/.test(fullToken)) {
         const tokenValue = fullToken.substring(0, 3); // Use only the first 3 digits
-        console.log(`[U-Dry Return] Parsed Token: ${tokenValue}`);
         setBluetoothState('getting_command');
         
         try {
@@ -204,7 +201,6 @@ export default function ReturnUmbrellaPage() {
           const parmValue = (RETURN_UMBRELLA_BASE_PARM + slotNum).toString();
           const cmdType = '1';
 
-          // Use the correct, deployed Cloud Function
           const unlockPhysicalMachine = httpsCallable(firebaseServices.functions, 'unlockPhysicalMachine');
           const result = await unlockPhysicalMachine({ dvid: scannedStall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType });
           const data = result.data as { success: boolean; unlockDataString?: string; message?: string; };
@@ -221,17 +217,15 @@ export default function ReturnUmbrellaPage() {
           await BleClient.writeWithoutResponse(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
 
           logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Return Umbrella)` });
-          console.log(`[U-Dry Return] Return command sent to machine.`);
           
           setBluetoothState('awaiting_confirmation');
 
-          // --- TEMPORARY DEBUGGING CHANGE: Timeout is disabled to allow us to listen indefinitely ---
-          // confirmationTimeoutRef.current = setTimeout(() => {
-          //     const errorMsg = "Return confirmation timeout. The machine did not confirm the return. Please check if the umbrella is properly inserted and try again. Your rental is still active.";
-          //     setBluetoothError(errorMsg);
-          //     setBluetoothState('error');
-          //     toast({ variant: "destructive", title: "Return Timed Out", description: errorMsg, duration: 8000 });
-          // }, RETURN_CONFIRMATION_TIMEOUT);
+          confirmationTimeoutRef.current = setTimeout(() => {
+              const errorMsg = "Return confirmation timeout. The machine did not confirm the return. Please check if the umbrella is properly inserted and try again. Your rental is still active.";
+              setBluetoothError(errorMsg);
+              setBluetoothState('error');
+              toast({ variant: "destructive", title: "Return Timed Out", description: errorMsg, duration: 8000 });
+          }, RETURN_CONFIRMATION_TIMEOUT);
 
         } catch (error: any) {
           console.error("[U-Dry Return] Error during server command fetch or BT write:", error);
@@ -247,17 +241,19 @@ export default function ReturnUmbrellaPage() {
          logMachineEvent({ stallId: scannedStall.id, type: 'error', message: errorMsg });
       }
     } else if (receivedString.includes("CMD:OK")) {
-        // --- TEMPORARY DEBUGGING CHANGE: Do not end the flow here. Just log it. ---
-        console.log(`[U-Dry Return Debug] Received a 'CMD:OK' signal. Keeping connection open to check for more signals.`);
-        // PREVIOUS LOGIC (DISABLED FOR TEST):
-        // if (confirmationTimeoutRef.current) {
-        //     clearTimeout(confirmationTimeoutRef.current);
-        //     confirmationTimeoutRef.current = null;
-        // }
-        // logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Confirmation received: ${receivedString}` });
-        // setBluetoothState('success');
-        // setShowSuccessDialog(true);
-        // --- END TEMPORARY CHANGE ---
+        cmdOkCounter.current += 1;
+        logMachineEvent({ stallId: scannedStall.id, type: 'info', message: `CMD:OK count is now ${cmdOkCounter.current}` });
+
+        if (cmdOkCounter.current >= 4) {
+            if (confirmationTimeoutRef.current) {
+                clearTimeout(confirmationTimeoutRef.current);
+                confirmationTimeoutRef.current = null;
+            }
+            logMachineEvent({ stallId: scannedStall.id, type: 'received', message: `Final confirmation received: ${receivedString}` });
+            setBluetoothState('success');
+            setShowSuccessDialog(true);
+            isIntentionalDisconnect.current = true;
+        }
     } else if (receivedString.startsWith("REPET:")) {
       const errorMsg = "Machine Error: This return action has already been processed. Please try again or select a different slot if possible.";
       console.error(`[U-Dry Return] Received REPET error: ${receivedString}`);
@@ -265,7 +261,7 @@ export default function ReturnUmbrellaPage() {
       setBluetoothState('error');
       toast({ variant: "destructive", title: "Duplicate Action Error", description: errorMsg, duration: 8000 });
     }
-  }, [scannedStall, toast, logMachineEvent, firebaseServices]);
+  }, [scannedStall, toast, logMachineEvent, firebaseServices, endRental]);
 
   useEffect(() => {
     if (showSuccessDialog && activeRental && scannedStall) {
