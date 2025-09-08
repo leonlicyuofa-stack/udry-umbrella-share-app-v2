@@ -12,7 +12,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock, UserSearch, Search, MinusCircle } from 'lucide-react';
+import { Loader2, AlertTriangle, LogIn, ShieldCheck, LayoutDashboard, ListTree, PlusCircle, Users, Home, Edit, Save, Building, Hash, Zap, CloudUpload, CloudOff, NotebookText, Wrench, Eraser, Umbrella, TrendingUp, DollarSign, Landmark, Terminal, Wallet, Bluetooth, Clock, UserSearch, Search, MinusCircle, Megaphone } from 'lucide-react';
 import { useToast } from "@/hooks/use-toast";
 import type { Stall, User, RentalHistory, ActiveRental, RentalLog } from '@/lib/types';
 import { Badge } from '@/components/ui/badge';
@@ -33,6 +33,7 @@ import {
   TableRow,
 } from "@/components/ui/table"
 import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
 
 
 const ADMIN_EMAIL = "admin@u-dry.com";
@@ -93,6 +94,11 @@ export default function AdminPage() {
   const [adjustmentAmount, setAdjustmentAmount] = useState('');
   const [isAdjustingBalance, setIsAdjustingBalance] = useState(false);
 
+  // State for announcement banner
+  const [announcementMessage, setAnnouncementMessage] = useState('');
+  const [isLoadingAnnouncement, setIsLoadingAnnouncement] = useState(true);
+  const [isSavingAnnouncement, setIsSavingAnnouncement] = useState(false);
+
 
   const isSuperAdminUser = user?.email?.toLowerCase().trim() === ADMIN_EMAIL.toLowerCase().trim();
   const deployedStallsCount = stalls.filter(s => s.isDeployed).length;
@@ -138,6 +144,42 @@ export default function AdminPage() {
         fetchAdminData();
     }
   }, [isReady, user, fetchAdminData]);
+
+  // Fetch announcement message on component mount
+  useEffect(() => {
+    if (!firebaseServices?.db || !isSuperAdminUser) {
+        setIsLoadingAnnouncement(false);
+        return;
+    }
+    const settingsDocRef = doc(firebaseServices.db, 'settings', 'global');
+    const getAnnouncement = async () => {
+        try {
+            const docSnap = await getDoc(settingsDocRef);
+            if (docSnap.exists()) {
+                setAnnouncementMessage(docSnap.data().announcementMessage || '');
+            }
+        } catch (error) {
+            console.error("Error fetching announcement:", error);
+        } finally {
+            setIsLoadingAnnouncement(false);
+        }
+    };
+    getAnnouncement();
+  }, [firebaseServices, isSuperAdminUser]);
+  
+  const handleSaveAnnouncement = async () => {
+    if (!firebaseServices?.db) return;
+    setIsSavingAnnouncement(true);
+    const settingsDocRef = doc(firebaseServices.db, 'settings', 'global');
+    try {
+        await setDoc(settingsDocRef, { announcementMessage: announcementMessage.trim() }, { merge: true });
+        toast({ title: "Success", description: "Announcement message has been updated." });
+    } catch (error: any) {
+        toast({ variant: "destructive", title: "Save Failed", description: error.message });
+    } finally {
+        setIsSavingAnnouncement(false);
+    }
+  };
   
   const handleRegisterStall = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -440,6 +482,36 @@ export default function AdminPage() {
             </Card>
           </CardContent>
         </Card>
+      </section>
+
+      <section>
+        <Card className="shadow-lg">
+            <CardHeader>
+              <CardTitle className="text-2xl flex items-center"><Megaphone className="mr-2 h-6 w-6 text-primary" /> Global Announcement</CardTitle>
+              <CardDescription>Set a message to be displayed in a banner across the app. Leave blank to hide the banner.</CardDescription>
+            </CardHeader>
+            <CardContent>
+              {isLoadingAnnouncement ? (
+                <div className="flex items-center justify-center h-24">
+                  <Loader2 className="h-8 w-8 animate-spin text-primary" />
+                </div>
+              ) : (
+                <Textarea
+                  placeholder="E.g., Welcome to U-Dry! or System maintenance tonight at 2 AM."
+                  value={announcementMessage}
+                  onChange={(e) => setAnnouncementMessage(e.target.value)}
+                  disabled={isSavingAnnouncement}
+                  rows={3}
+                />
+              )}
+            </CardContent>
+            <CardFooter>
+              <Button onClick={handleSaveAnnouncement} disabled={isSavingAnnouncement || isLoadingAnnouncement}>
+                {isSavingAnnouncement ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+                Save Message
+              </Button>
+            </CardFooter>
+          </Card>
       </section>
       
       <section>
