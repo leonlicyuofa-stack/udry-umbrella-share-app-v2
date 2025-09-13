@@ -1,21 +1,18 @@
-// The first line is critical for loading variables
-apply from: "../../variables.gradle"
-
 apply plugin: 'com.android.application'
+apply from: '../variables.gradle'
 
 android {
     namespace "com.udry.app"
-    // The compileSdkVersion is now set in the format required by modern AGP
-    compileSdkVersion "android-34"
+    compileSdkVersion "android-${rootProject.ext.compileSdkVersion}"
     defaultConfig {
         applicationId "com.udry.app"
-        // These now correctly read the variables loaded from the file above
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
+             // Folders and files created by Speech Recognition are invalid assets.
              ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
