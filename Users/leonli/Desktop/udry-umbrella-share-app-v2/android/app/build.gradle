@@ -1,0 +1,81 @@
+apply plugin: 'com.android.application'
+
+def keystoreProperties = new Properties()
+def keystorePropertiesFile = rootProject.file('keystore.properties')
+if (!keystorePropertiesFile.exists()) {
+    keystorePropertiesFile = new File(project.projectDir, 'keystore.properties')
+}
+
+if (keystorePropertiesFile.exists()) {
+    keystorePropertiesFile.withReader('UTF-8') { reader ->
+        keystoreProperties.load(reader)
+    }
+}
+
+android {
+    namespace "com.getcapacitor.app"
+    compileSdk 34
+    signingConfigs {
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['my-release-store-file'])
+                storePassword keystoreProperties['my-release-store-password']
+                keyAlias keystoreProperties['my-release-key-alias']
+                keyPassword keystoreProperties['my-release-key-password']
+            } else {
+                println "Release signing config not found. Build will be unsigned."
+            }
+        }
+    }
+    defaultConfig {
+        applicationId "com.getcapacitor.app"
+        minSdkVersion 22
+        targetSdkVersion 34
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            if (keystorePropertiesFile.exists()) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
+repositories {
+    flatDir {
+        dirs '../capacitor-cordova-android-plugins/src/main/libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+if (new File('../../node_modules/@capacitor/android/capacitor.build.gradle').exists()) {
+    apply from: '../../node_modules/@capacitor/android/capacitor.build.gradle'
+}
+
+try {
+    def servicesJSON = new File(project.projectDir, 'google-services.json')
+    if (servicesJSON.exists()) {
+        apply plugin: 'com.google.gms.google-services'
+    }
+} catch (Exception e) {
+    logger.warn("google-services.json not found, google-services plugin not applied. Read more at https://capacitorjs.com/docs/guides/google-services-plugin")
+}
+
+if (new File('../../node_modules/capacitor-cordova-android-plugins/cordova.variables.gradle').exists()) {
+    apply from: "../../node_modules/capacitor-cordova-android-plugins/cordova.variables.gradle"
+}
