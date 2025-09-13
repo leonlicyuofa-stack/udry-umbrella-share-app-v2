@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "458603936715",
+    "firebase_url": "https://udry-app-dev.firebaseio.com",
+    "project_id": "udry-app-dev",
+    "storage_bucket": "udry-app-dev.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:458603936715:android:c77b4c689e21dd9f90944e",
+        "android_client_info": {
+          "package_name": "com.udry.app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "458603936715-notarealclientid.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDk8gmZb-azt0fndBG80zrYXEma7NsUdL0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "458603936715-notarealclientid.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
