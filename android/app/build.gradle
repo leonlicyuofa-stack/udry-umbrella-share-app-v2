@@ -1,35 +1,36 @@
 apply plugin: 'com.android.application'
 
-if (project.hasProperty('keystore.properties')) {
-    Properties props = new Properties()
-    props.load(new FileInputStream(file('keystore.properties')))
-    android.signingConfigs.release.storeFile = file(props['my-release-store-file'])
-    android.signingConfigs.release.storePassword = props['my-release-store-password']
-    android.signingConfigs.release.keyAlias = props['my-release-key-alias']
-    android.signingConfigs.release.keyPassword = props['my-release-key-password']
+def keystorePropertiesFile = rootProject.file("keystore.properties")
+if (!keystorePropertiesFile.exists()) {
+    keystorePropertiesFile = rootProject.file("../keystore.properties")
+}
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+
+if (new File('../../node_modules/@capacitor/android/capacitor.build.gradle').exists()) {
+    apply from: '../../node_modules/@capacitor/android/capacitor.build.gradle'
 }
 
 android {
-    namespace "com.udry.app"
+    namespace "com.getcapacitor.app"
     compileSdkVersion 34
     defaultConfig {
-        applicationId "com.udry.app"
-        minSdkVersion 24
+        applicationId "com.getcapacitor.app"
+        minSdkVersion 22
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
     }
     signingConfigs {
         release {
-            if (project.hasProperty('keystore.properties')) {
-                storeFile file(project.property('my-release-store-file'))
-                storePassword project.property('my-release-store-password')
-                keyAlias project.property('my-release-key-alias')
-                keyPassword project.property('my-release-key-password')
+            if (keystoreProperties.getProperty('my-release-store-file') != null) {
+                storeFile file(keystoreProperties.getProperty('my-release-store-file'))
+                storePassword keystoreProperties.getProperty('my-release-store-password')
+                keyAlias keystoreProperties.getProperty('my-release-key-alias')
+                keyPassword keystoreProperties.getProperty('my-release-key-password')
             }
         }
     }
@@ -39,13 +40,6 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
-    }
-    lintOptions {
-        abortOnError false
-    }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
@@ -57,17 +51,13 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
-    implementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
     implementation project(':capacitor-android')
-    testImplementation 'junit:junit:4.13.2'
-    implementation project(':capacitor-community-sqlite')
-}
-
-if (new File('../../node_modules/@capacitor/splash-screen/android').exists()) {
-    apply from: '../../node_modules/@capacitor/splash-screen/android/splashscreen.gradle'
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    implementation project(':capacitor-cordova-android-plugins')
 }
 
 if (new File('../../node_modules/capacitor-cordova-android-plugins/cordova.variables.gradle').exists()) {
