@@ -1,0 +1,5 @@
+// GENERATED FILE - DO NOT EDIT
+include ':app'
+include ':capacitor-android'
+include ':capacitor-community-sqlite'
+include ':capacitor-cordova-android-plugins'
