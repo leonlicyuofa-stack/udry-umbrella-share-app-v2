@@ -1,18 +1,18 @@
+
 apply plugin: 'com.android.application'
 
 android {
     namespace "com.udry.app"
-    // Use the specific string format required by modern Android Gradle Plugin
-    compileSdkVersion "android-34"
+    compileSdkVersion 34
     defaultConfig {
         applicationId "com.udry.app"
-        // Correctly reference variables from variables.gradle
-        minSdkVersion rootProject.ext.minSdkVersion
-        targetSdkVersion rootProject.ext.targetSdkVersion
+        minSdkVersion 22
+        targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
+             // Folders and files created by Speech Recognition are invalid assets.
              ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
