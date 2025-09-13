@@ -1,8 +1,13 @@
-apply plugin: 'com.android.application'
+
+// This is the main build file for the Android app module.
+
+// Load project-specific variables
+apply from: "../variables.gradle"
 
 android {
     namespace "com.udry.app"
-    compileSdkVersion "android-${rootProject.ext.compileSdkVersion}"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+
     defaultConfig {
         applicationId "com.udry.app"
         minSdkVersion rootProject.ext.minSdkVersion
@@ -10,57 +15,60 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        aaptOptions {
-             // Folders and files created by Speech Recognition are invalid assets.
-             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
-        }
     }
-    signingConfigs {
-        release {
-            storeFile file('my-release-key.keystore')
-            storePassword System.getenv("SIGNING_STORE_PASSWORD")
-            keyAlias System.getenv("SIGNING_KEY_ALIAS")
-            keyPassword System.getenv("SIGNING_KEY_PASSWORD")
-        }
-    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    // Signing configuration for release builds
+    signingConfigs {
+        release {
+            // Reference the keystore.properties file from the app directory
+            def keystorePropertiesFile = rootProject.file("keystore.properties")
+            def keystoreProperties = new Properties()
+            if (keystorePropertiesFile.exists()) {
+                keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+            }
+
+            storeFile file(keystoreProperties['storeFile'])
+            storePassword keystoreProperties['storePassword']
+            keyAlias keystoreProperties['keyAlias']
+            keyPassword keystoreProperties['keyPassword']
+        }
+    }
+
+    // Apply the release signing configuration to the release build type
+    buildTypes {
+        release {
             signingConfig signingConfigs.release
         }
     }
-}
 
-repositories {
-    flatDir{
-        dirs '../capacitor-cordova-android-plugins/src/main/libs'
+    lintOptions {
+        abortOnError false
     }
 }
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "androidx.appcompat:appcompat:$rootProject.ext.androidxAppCompatVersion"
-    implementation "androidx.coordinatorlayout:coordinatorlayout:$rootProject.ext.androidxCoordinatorLayoutVersion"
-    implementation "androidx.core:core-splashscreen:$rootProject.ext.coreSplashScreenVersion"
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.test.ext:junit:$androidxJunitVersion"
+    implementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    testImplementation "junit:junit:$junitVersion"
+    
+    // Capacitor dependencies
     implementation project(':capacitor-android')
-    testImplementation "junit:junit:$rootProject.ext.junitVersion"
-    androidTestImplementation "androidx.test.ext:junit:$rootProject.ext.androidxJunitVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$rootProject.ext.androidxEspressoCoreVersion"
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
+    implementation project(':capacitor-status-bar')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
-    implementation project(':capacitor-status-bar')
 }
 
-apply from: 'capacitor.build.gradle'
-
-try {
-    def servicesJSON = file('google-services.json')
-    if (servicesJSON.exists()) {
-        apply plugin: 'com.google.gms.google-services'
-    }
-} catch(Exception e) {
-    logger.warn("google-services.json not found, google-services plugin not applied. Push Notifications won't work")
-}
+// apply google services
+apply plugin: 'com.google.gms.google-services'
