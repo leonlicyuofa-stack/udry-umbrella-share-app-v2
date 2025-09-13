@@ -2,14 +2,13 @@ apply plugin: 'com.android.application'
 
 android {
     namespace "com.udry.app"
-    // Use the specific string format required by the new AGP, overriding variables.gradle for this property.
+    // Use the specific string format required by modern Android Gradle Plugin
     compileSdkVersion "android-34"
-    
     defaultConfig {
         applicationId "com.udry.app"
+        // Correctly reference variables from variables.gradle
         minSdkVersion rootProject.ext.minSdkVersion
-        // Explicitly set targetSdkVersion to 34 as a number, as required.
-        targetSdkVersion 34 
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -17,7 +16,6 @@ android {
              ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
-
     signingConfigs {
         release {
             storeFile file('my-release-key.keystore')
@@ -26,7 +24,6 @@ android {
             keyPassword System.getenv("SIGNING_KEY_PASSWORD")
         }
     }
-
     buildTypes {
         release {
             minifyEnabled false
