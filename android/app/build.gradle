@@ -1,4 +1,7 @@
 // This is the main build file for the Android app module.
+plugins {
+    id 'com.android.application'
+}
 
 // All variables are now inherited from the root project's build.gradle.
 // The line "apply from: '../variables.gradle'" has been removed.
