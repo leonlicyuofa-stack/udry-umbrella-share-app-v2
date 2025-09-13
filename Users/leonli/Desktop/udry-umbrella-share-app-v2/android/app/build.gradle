@@ -1,0 +1,106 @@
+// The official Android plugin for Gradle must be the first line.
+apply plugin: 'com.android.application'
+
+// Allow for cordova plugins to be included.
+def capacitor_android_versions = [
+  minSdkVersion: 24,
+  compileSdkVersion: 34,
+  targetSdkVersion: 34,
+  androidxActivityVersion: '1.8.2',
+  androidxAppCompatVersion: '1.6.1',
+  androidxCoordinatorLayoutVersion: '1.2.0',
+  androidxCoreVersion: '1.12.0',
+  androidxFragmentVersion: '1.6.2',
+  coreSplashScreenVersion: '1.0.1',
+  androidxWebkitVersion: '1.10.0',
+  junitVersion: '4.13.2',
+  androidxJunitVersion: '1.1.5',
+  androidxEspressoCoreVersion: '3.5.1',
+  cordovaAndroidVersion: '10.1.1'
+]
+
+// Function to load properties from a file, checking multiple locations.
+def loadProperties(filePath) {
+    def propertiesFile = file(filePath)
+    if (propertiesFile.exists()) {
+        def properties = new Properties()
+        properties.load(new FileInputStream(propertiesFile))
+        return properties
+    }
+    return null
+}
+
+// Try loading keystore properties from the android directory first, then the root.
+def keystoreProperties = loadProperties('keystore.properties') ?: loadProperties('../keystore.properties')
+
+if (keystoreProperties == null) {
+    println "keystore.properties file not found. Release builds will not be signed."
+}
+
+// Conditionally load capacitor.settings.gradle if it exists
+def capacitorSettingsGradle = new File(project.projectDir.parentFile, 'capacitor.settings.gradle')
+if (capacitorSettingsGradle.exists()) {
+    apply from: capacitorSettingsGradle
+}
+
+android {
+    namespace "com.getcapacitor.app"
+    compileSdkVersion capacitor_android_versions.compileSdkVersion
+    defaultConfig {
+        applicationId "com.udry.app"
+        minSdkVersion capacitor_android_versions.minSdkVersion
+        targetSdkVersion capacitor_android_versions.targetSdkVersion
+        versionCode 1
+        versionName "1.0"
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+    
+    // Define the signing configuration for release builds.
+    if (keystoreProperties) {
+        signingConfigs {
+            release {
+                storeFile file(keystoreProperties['my-release-store-file'])
+                storePassword keystoreProperties['my-release-store-password']
+                keyAlias keystoreProperties['my-release-key-alias']
+                keyPassword keystoreProperties['my-release-key-password']
+            }
+        }
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Apply the signing config to the release build type.
+            if (keystoreProperties) {
+                signingConfig signingConfigs.release
+            }
+        }
+    }
+}
+
+repositories {
+    flatDir{
+        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    }
+}
+
+dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$capacitor_android_versions.androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$capacitor_android_versions.androidxCoordinatorLayoutVersion"
+    implementation "androidx.core:core-splashscreen:$capacitor_android_versions.coreSplashScreenVersion"
+    implementation project(':capacitor-android')
+    testImplementation "junit:junit:$capacitor_android_versions.junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$capacitor_android_versions.androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$capacitor_android_versions.androidxEspressoCoreVersion"
+    implementation project(':capacitor-cordova-android-plugins')
+}
+
+apply from: "capacitor.build.gradle"
+
+// Conditionally apply cordova.variables.gradle if it exists
+def cordovaVariablesFile = new File(project.projectDir.parentFile, 'cordova.variables.gradle')
+if (cordovaVariablesFile.exists()) {
+    apply from: cordovaVariablesFile
+}
