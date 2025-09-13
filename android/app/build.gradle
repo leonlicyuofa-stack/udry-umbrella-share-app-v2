@@ -1,83 +1,75 @@
-apply plugin: 'com.android.application'
+// This file is used to configure the Android application build process.
+// It defines dependencies, SDK versions, and signing configurations.
 
+// Load properties from the keystore.properties file if it exists.
+// This is a safer way to handle signing credentials without committing them to version control.
 def keystorePropertiesFile = rootProject.file("keystore.properties")
 def keystoreProperties = new Properties()
 if (keystorePropertiesFile.exists()) {
     keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
 } else {
-    // Also check the android directory for the properties file
-    def androidKeystoreFile = project.file("keystore.properties")
-    if (androidKeystoreFile.exists()) {
-        keystoreProperties.load(new FileInputStream(androidKeystoreFile))
-    }
+    println "Release signing configuration not found. Skipping."
 }
 
 
 android {
-    namespace "com.getcapacitor.app"
+    namespace "com.udry.app"
     compileSdkVersion 34
     defaultConfig {
-        applicationId "com.getcapacitor.app"
+        applicationId "com.udry.app"
         minSdkVersion 24
         targetSdkVersion 34
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        aaptOptions {
-             // Files and dirs to omit from the APK.
-             // Can be used to remove assets like this:
-             // noCompress "couto.sqlor"
+    }
+
+    // --- CORRECTED SIGNING CONFIGURATION ---
+    // This block ensures the 'release' signing config always exists,
+    // and then populates it if the keystore properties were successfully loaded.
+    signingConfigs {
+        release {
+            if (keystoreProperties.getProperty('my-release-store-file') != null) {
+                storeFile file(keystoreProperties['my-release-store-file'])
+                storePassword keystoreProperties['my-release-store-password']
+                keyAlias keystoreProperties['my-release-key-alias']
+                keyPassword keystoreProperties['my-release-key-password']
+            } else {
+                // Provide placeholder values for CI/CD environments or unsigned builds
+                storeFile file('placeholder.keystore')
+                storePassword 'placeholder'
+                keyAlias 'placeholder'
+                keyPassword 'placeholder'
+            }
         }
     }
+    
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            if (keystoreProperties.getProperty('my-release-store-file') != null) {
-                signingConfig signingConfigs.release
-            }
+            // Apply the signing configuration to the release build type.
+            // This line will now work because 'signingConfigs.release' is guaranteed to exist.
+            signingConfig signingConfigs.release
         }
     }
-    signingConfigs {
-        release {
-            if (keystoreProperties.getProperty('my-release-store-file') != null) {
-                storeFile file(keystoreProperties.getProperty('my-release-store-file'))
-                storePassword keystoreProperties.getProperty('my-release-store-password')
-                keyAlias keystoreProperties.getProperty('my-release-key-alias')
-                keyPassword keystoreProperties.getProperty('my-release-key-password')
-            } else {
-                println "Release signing configuration not found. Skipping."
-            }
-        }
-    }
-}
 
-repositories {
-    flatDir{
-        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = "17"
     }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation "androidx.appcompat:appcompat:1.6.1"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
+    testImplementation "junit:junit:4.13.2"
+    androidTestImplementation "androidx.test.ext:junit:1.1.5"
+    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
     implementation project(':capacitor-android')
-    testImplementation "junit:junit:$junitVersion"
-    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
-    implementation project(':capacitor-cordova-android-plugins')
-}
-
-if (project.hasProperty('postBuildExtras')) {
-    postBuildExtras()
-}
-
-def capacitor_android_versions_file = rootProject.file("capacitor.android.versions.gradle")
-if (capacitor_android_versions_file.exists()) {
-    apply from: capacitor_android_versions_file
-}
-
-def capacitor_build_gradle = rootProject.file('node_modules/@capacitor/android/capacitor.build.gradle')
-if (capacitor_build_gradle.exists()) {
-    apply from: capacitor_build_gradle
 }
