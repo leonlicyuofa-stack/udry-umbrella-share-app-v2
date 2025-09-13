@@ -1,0 +1,7 @@
+include ':app'
+include ':capacitor-android'
+project(':capacitor-android').projectDir = new File(settingsDir, '../node_modules/@capacitor/android/capacitor')
+include ':capacitor-community-sqlite'
+project(':capacitor-community-sqlite').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/sqlite/android')
+include ':capacitor-cordova-android-plugins'
+project(':capacitor-cordova-android-plugins').projectDir = new File(settingsDir, 'capacitor-cordova-android-plugins')
