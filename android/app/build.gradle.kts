@@ -1,18 +1,13 @@
-import com.android.build.api.dsl.ApplicationExtension
-import org.jetbrains.kotlin.storage.ExceptionOccurredException
-
-// Reading properties and converting them to the correct types
-val compileSdkVersion: Int = (findProperty("compileSdkVersion") as? String)?.toInt() ?: 34
-val minSdkVersion: Int = (findProperty("minSdkVersion") as? String)?.toInt() ?: 23
-val targetSdkVersion: Int = (findProperty("targetSdkVersion") as? String)?.toInt() ?: 34
-val versionCode: Int = (findProperty("versionCode") as? String)?.toInt() ?: 1
-val versionName: String = findProperty("versionName") as? String ?: "1.0"
-val buildToolsVersion: String = findProperty("buildToolsVersion") as? String ?: "34.0.0"
-
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.googleServices)
+    id("com.android.application")
+    id("com.google.gms.google-services")
 }
+
+// Read properties from gradle.properties and provide default values
+val compileSdkVersion: Int = (project.findProperty("compileSdkVersion") as? String ?: "34").toInt()
+val minSdkVersion: Int = (project.findProperty("minSdkVersion") as? String ?: "22").toInt()
+val targetSdkVersion: Int = (project.findProperty("targetSdkVersion") as? String ?: "34").toInt()
+val buildToolsVersion: String = project.findProperty("buildToolsVersion") as? String ?: "34.0.0"
 
 android {
     namespace = "com.udry.app"
@@ -23,8 +18,8 @@ android {
         applicationId = "com.udry.app"
         minSdk = minSdkVersion
         targetSdk = targetSdkVersion
-        versionCode = versionCode
-        versionName = versionName
+        versionCode = 1
+        versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -32,30 +27,38 @@ android {
         abortOnError = false
     }
 
-    signingConfigs {
-        create("release") {
-            // These are read from environment variables for security
-            storeFile = file(System.getenv("UDRY_KEYSTORE_PATH") ?: "app/my-release-key.keystore")
-            storePassword = System.getenv("UDRY_STORE_PASSWORD")
-            keyAlias = System.getenv("UDRY_KEY_ALIAS")
-            keyPassword = System.getenv("UDRY_KEY_PASSWORD")
-        }
-    }
-
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-            signingConfig = signingConfigs.getByName("release")
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            
+            val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
+            val storePassword = System.getenv("UDRY_STORE_PASSWORD")
+            val keyAlias = System.getenv("UDRY_KEY_ALIAS")
+            val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
+
+            if (keystorePath != null && storePassword != null && keyAlias != null && keyPassword != null) {
+                signingConfigs.create("release") {
+                    storeFile = rootProject.file(keystorePath)
+                    this.storePassword = storePassword
+                    this.keyAlias = keyAlias
+                    this.keyPassword = keyPassword
+                }
+                signingConfig = signingConfigs.getByName("release")
+            } else {
+                println("Release signing config not found, using debug signing.")
+                signingConfig = signingConfigs.getByName("debug")
+            }
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
@@ -63,10 +66,9 @@ dependencies {
     implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
-    implementation(libs.androidx.test.ext.junit)
-    implementation(libs.espresso.core)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
 }
