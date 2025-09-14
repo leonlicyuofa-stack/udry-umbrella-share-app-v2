@@ -1,7 +1,19 @@
+import java.io.FileInputStream
+import java.util.Properties
+
+// Apply the necessary plugins for an Android application.
+// Versions are now managed centrally, so we don't specify them here.
 plugins {
-    id("com.android.application")
-    id("kotlin-android") version "1.9.22"
-    id("com.google.gms.google-services")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.googleServices)
+}
+
+// Keystore properties setup
+val keystorePropertiesFile = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 }
 
 android {
@@ -17,17 +29,23 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // Signing configurations and build types are temporarily removed for this diagnostic step.
-    // We expect the build to fail, but with a new error asking for a 'release' signing config.
-    // This will prove the baseline is correct.
+    // --- Temporarily removed for baseline testing ---
+    // buildTypes {
+    //     getByName("release") {
+    //         isMinifyEnabled = false
+    //         proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+    //     }
+    // }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = "1.8"
     }
+
     buildFeatures {
         viewBinding = true
     }
@@ -37,12 +55,15 @@ dependencies {
     implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
     implementation(project(":capacitor-app"))
     implementation(project(":capacitor-camera"))
     implementation(project(":capacitor-community-bluetooth-le"))
     implementation(project(":capacitor-community-sqlite"))
     implementation(project(":capacitor-status-bar"))
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
 }

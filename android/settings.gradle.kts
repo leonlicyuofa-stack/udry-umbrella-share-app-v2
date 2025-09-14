@@ -1,3 +1,5 @@
+// The `pluginManagement` block is the modern way to tell Gradle where to find plugins.
+// It ensures that all sub-projects (like `:app`) use the same repositories.
 pluginManagement {
     repositories {
         google()
@@ -5,6 +7,7 @@ pluginManagement {
         gradlePluginPortal()
     }
 }
+
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -12,6 +15,7 @@ dependencyResolutionManagement {
         mavenCentral()
     }
 }
+
 rootProject.name = "android"
 include(":app")
 include(":capacitor-android")
@@ -25,6 +29,6 @@ project(":capacitor-community-bluetooth-le").projectDir = file("../node_modules/
 include(":capacitor-community-sqlite")
 project(":capacitor-community-sqlite").projectDir = file("../node_modules/@capacitor-community/sqlite/android")
 include(":capacitor-cordova-android-plugins")
-project(":capacitor-cordova-android-plugins").projectDir = file("capacitor-cordova-android-plugins")
+project(":capacitor-cordova-android-plugins").projectDir = file("./capacitor-cordova-android-plugins")
 include(":capacitor-status-bar")
 project(":capacitor-status-bar").projectDir = file("../node_modules/@capacitor/status-bar/android")
