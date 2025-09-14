@@ -2,8 +2,8 @@ import java.util.Properties
 import java.io.FileInputStream
 
 plugins {
-    id("com.android.application")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.googleServices)
 }
 
 // Read properties from gradle.properties
@@ -32,28 +32,32 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            
-            // Correctly apply the signing config for the release build type
+    signingConfigs {
+        create("release") {
+            // Use environment variables for security, matching your run command
             val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
             val storePassword = System.getenv("UDRY_STORE_PASSWORD")
             val keyAlias = System.getenv("UDRY_KEY_ALIAS")
             val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
 
-            if (keystorePath != null && storePassword != null && keyAlias != null && keyPassword != null) {
-                signingConfig = signingConfigs.create("release") {
-                    storeFile = file(keystorePath)
-                    storePassword = storePassword
-                    keyAlias = keyAlias
-                    keyPassword = keyPassword
-                }
+            if (keystorePath != null && keystoreFile.isFile) {
+                storeFile = file(keystorePath)
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
             } else {
-                println("Release signing config not found, using debug signing.")
+                println("Release signing config not found. Using debug signing.")
                 signingConfig = signingConfigs.getByName("debug")
             }
+        }
+    }
+
+    buildTypes {
+        release {
+            isMinifyEnabled = false
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Correctly apply the signing config
+            signingConfig = signingConfigs.getByName("release")
         }
     }
 
@@ -61,24 +65,23 @@ android {
         sourceCompatibility = JavaVersion.VERSION_17
         targetCompatibility = JavaVersion.VERSION_17
     }
-    
-    lint {
-        abortOnError = false
-    }
 }
 
 dependencies {
-    implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
-    implementation(libs.firebase.bom)
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
+    implementation(libs.androidx.coordinatorlayout)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
+
+    implementation(project(":capacitor-android"))
     implementation(project(":capacitor-app"))
     implementation(project(":capacitor-camera"))
-    implementation(project(":capacitor-status-bar"))
     implementation(project(":capacitor-community-bluetooth-le"))
     implementation(project(":capacitor-community-sqlite"))
+    implementation(project(":capacitor-cordova-android-plugins"))
+    implementation(project(":capacitor-status-bar"))
 }
