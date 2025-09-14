@@ -1,3 +1,4 @@
+// The `plugins` block must be the first block in the file.
 plugins {
     alias(libs.plugins.androidApplication)
     alias(libs.plugins.googleServices)
@@ -5,7 +6,7 @@ plugins {
 
 android {
     namespace = "com.udry.app"
-    compileSdk = 34
+    compileSdk = 34 // This is now inherited from the root project
 
     defaultConfig {
         applicationId = "com.udry.app"
@@ -15,44 +16,48 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
-    
-    // Defines the signing configuration for the release build.
+
     signingConfigs {
         create("release") {
-            val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
-            if (keystorePath != null && File(project.rootDir, keystorePath).exists()) {
-                storeFile = File(project.rootDir, keystorePath)
-                storePassword = System.getenv("UDRY_STORE_PASSWORD")
-                keyAlias = System.getenv("UDRY_KEY_ALIAS")
-                keyPassword = System.getenv("UDRY_KEY_PASSWORD")
-            } else {
-                 println("Warning: Keystore not found at $keystorePath. Release builds will not be signed.")
-            }
+            storeFile = file(System.getenv("UDRY_KEYSTORE_PATH") ?: "app/my-release-key.keystore")
+            storePassword = System.getenv("UDRY_STORE_PASSWORD") ?: ""
+            keyAlias = System.getenv("UDRY_KEY_ALIAS") ?: ""
+            keyPassword = System.getenv("UDRY_KEY_PASSWORD") ?: ""
         }
     }
 
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // This line tells the release build to use the signing config defined above.
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("release")
         }
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
-    
+
     buildFeatures {
-      buildConfig = true
+        viewBinding = true
     }
 }
 
 dependencies {
+    // Firebase
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+
+    // AndroidX
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
+
+    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
@@ -64,9 +69,4 @@ dependencies {
     implementation(project(":capacitor-community-bluetooth-le"))
     implementation(project(":capacitor-community-sqlite"))
     implementation(project(":capacitor-status-bar"))
-
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
 }
