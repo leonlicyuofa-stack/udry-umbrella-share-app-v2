@@ -1,16 +1,33 @@
-import com.android.build.api.dsl.ApplicationExtension
-import com.google.gms.googleservices.GoogleServicesPlugin
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+import java.io.File
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.googleServices)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.googleServices)
 }
 
 android {
     namespace = "com.udry.app"
     compileSdk = 34
+
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
+            val storePassword = System.getenv("UDRY_STORE_PASSWORD")
+            val keyAlias = System.getenv("UDRY_KEY_ALIAS")
+            val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
+
+            if (keystorePath != null && File("../$keystorePath").exists()) {
+                storeFile = file("../$keystorePath")
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            } else {
+                println("Release keystore not found, using debug signing for release build.")
+                signingConfig = getByName("debug").signingConfig
+            }
+        }
+    }
 
     defaultConfig {
         applicationId = "com.udry.app"
@@ -18,58 +35,32 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
-
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary = true
-        }
-    }
-
-    signingConfigs {
-        create("release") {
-            // These are configured by environment variables in the build command
-            val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
-            val storePassword = System.getenv("UDRY_STORE_PASSWORD")
-            val keyAlias = System.getenv("UDRY_KEY_ALIAS")
-            val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
-
-            if (keystorePath != null && storePassword != null && keyAlias != null && keyPassword != null) {
-                storeFile = file(keystorePath)
-                this.storePassword = storePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
-            }
-        }
     }
 
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
         }
-        debug {
+        getByName("debug") {
             isDebuggable = true
             signingConfig = signingConfigs.getByName("debug")
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
+
     kotlinOptions {
-        jvmTarget = "1.8"
+        jvmTarget = "17"
     }
+
     buildFeatures {
-        compose = false
-    }
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+        viewBinding = true
     }
 }
 
@@ -77,14 +68,10 @@ dependencies {
     implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(project(":capacitor-app"))
-    implementation(project(":capacitor-camera"))
-    implementation(project(":capacitor-community-bluetooth-le"))
-    implementation(project(":capacitor-community-sqlite"))
-    implementation(project(":capacitor-status-bar"))
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
 }
