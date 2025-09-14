@@ -6,31 +6,29 @@ plugins {
     alias(libs.plugins.googleServices) apply false
 }
 
-val compileSdkVersion: Int by settings
-val minSdkVersion: Int by settings
-val targetSdkVersion: Int by settings
-val buildToolsVersion: String by settings
+// Define versions in a central place
+val compileSdkVersion = libs.versions.androidxAppCompat.get().substringBefore('.').toIntOrNull() ?: 34
+val minSdkVersion = 23
+val targetSdkVersion = 34
+val buildToolsVersion = "34.0.0"
 
 subprojects {
-    project.plugins.withId("com.android.base") {
-        project.extensions.configure<com.android.build.gradle.BaseExtension>("android") {
-            compileSdkVersion(this@subprojects.compileSdkVersion)
-            buildToolsVersion(this@subprojects.buildToolsVersion)
+    afterEvaluate {
+        val androidPlugin = project.plugins.findPlugin("com.android.base")
+        if (androidPlugin != null) {
+            project.extensions.configure<com.android.build.gradle.BaseExtension>("android") {
+                compileSdkVersion(this@subprojects.compileSdkVersion)
+                buildToolsVersion(this@subprojects.buildToolsVersion)
 
-            defaultConfig {
-                minSdk = this@subprojects.minSdkVersion
-                targetSdk = this@subprojects.targetSdkVersion
+                defaultConfig {
+                    minSdk = this@subprojects.minSdkVersion
+                    targetSdk = this@subprojects.targetSdkVersion
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                }
 
-                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-            }
-
-            lint {
-                abortOnError = false
-            }
-
-            compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_17
-                targetCompatibility = JavaVersion.VERSION_17
+                lint {
+                    abortOnError = false
+                }
             }
         }
     }
