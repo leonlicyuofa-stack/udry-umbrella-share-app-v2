@@ -21,26 +21,21 @@ android {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
     buildFeatures {
         viewBinding = true
     }
 }
 
 dependencies {
+    implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
-    implementation(project(":capacitor-android"))
     implementation(project(":capacitor-app"))
     implementation(project(":capacitor-camera"))
     implementation(project(":capacitor-community-bluetooth-le"))
