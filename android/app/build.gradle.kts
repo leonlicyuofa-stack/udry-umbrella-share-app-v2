@@ -19,50 +19,58 @@ android {
 
     signingConfigs {
         create("release") {
-            // These are read from environment variables on the build machine
-            // You can also temporarily place them in ~/.gradle/gradle.properties for local builds
+            // These are read from environment variables for security.
+            // Do not hardcode them here. The build command provides them.
             val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
             val storePassword = System.getenv("UDRY_STORE_PASSWORD")
             val keyAlias = System.getenv("UDRY_KEY_ALIAS")
             val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
 
-            if (keystorePath != null && keystorePath.isNotEmpty()) {
-                storeFile = file(keystorePath)
+            if (keystorePath != null && File(keystorePath).exists()) {
+                storeFile = File(keystorePath)
                 this.storePassword = storePassword
                 this.keyAlias = keyAlias
                 this.keyPassword = keyPassword
             } else {
-                println("Release signing config not found, using debug signing for release build.")
-                // Fallback to debug signing if environment variables are not set
-                signingConfig = signingConfigs.getByName("debug")
+                println("Release keystore not found at path specified by UDRY_KEYSTORE_PATH. Release builds may not be signed.")
             }
         }
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
-            // Correctly assign the release signing configuration
+            // Correctly assign the release signing config
             signingConfig = signingConfigs.getByName("release")
         }
     }
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
+    }
+
+    buildFeatures {
+        buildConfig = true
     }
 }
 
 dependencies {
+    implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.coordinatorlayout)
+    implementation(libs.firebase.bom)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
+    implementation(project(":capacitor-app"))
+    implementation(project(":capacitor-camera"))
+    implementation(project(":capacitor-community-bluetooth-le"))
+    implementation(project(":capacitor-community-sqlite"))
+    implementation(project(":capacitor-status-bar"))
 }
