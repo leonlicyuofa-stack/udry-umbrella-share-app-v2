@@ -1,52 +1,53 @@
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.googleServices)
+    id("com.android.application")
+    id("com.google.gms.google-services")
 }
 
-val compileSdkVersion: Int by project
-val minSdkVersion: Int by project
-val targetSdkVersion: Int by project
+// Read properties from gradle.properties
+val compileSdkVersion: String by project
+val minSdkVersion: String by project
+val targetSdkVersion: String by project
+val versionCode: String by project
+val versionName: String by project
 
 android {
     namespace = "com.udry.app"
-    compileSdk = compileSdkVersion
+    compileSdk = compileSdkVersion.toInt()
+
+    defaultConfig {
+        applicationId = "com.udry.app"
+        minSdk = minSdkVersion.toInt()
+        targetSdk = targetSdkVersion.toInt()
+        versionCode = project.findProperty("versionCode")?.toString()?.toIntOrNull() ?: 1
+        versionName = project.findProperty("versionName")?.toString() ?: "1.0"
+        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
 
     signingConfigs {
         create("release") {
+            // Use environment variables for security, matching your build command
             val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
             val storePassword = System.getenv("UDRY_STORE_PASSWORD")
             val keyAlias = System.getenv("UDRY_KEY_ALIAS")
             val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
 
-            if (keystorePath != null && File(keystorePath).exists()) {
+            if (keystorePath != null && keystorePath.isNotEmpty()) {
                 storeFile = file(keystorePath)
                 this.storePassword = storePassword
                 this.keyAlias = keyAlias
                 this.keyPassword = keyPassword
             } else {
-                println("Release keystore not found, using debug signing.")
+                println("Release keystore information not found in environment variables. Using debug signing.")
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
     }
 
-    defaultConfig {
-        applicationId = "com.udry.app"
-        minSdk = minSdkVersion
-        targetSdk = targetSdkVersion
-        versionCode = 1
-        versionName = "1.0"
-        testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-    }
-
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            // Correctly assign the release signing config
             signingConfig = signingConfigs.getByName("release")
         }
     }
@@ -56,23 +57,20 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
     buildFeatures {
-        viewBinding = true
+        buildConfig = true
     }
 }
 
 dependencies {
     implementation(project(":capacitor-android"))
+    implementation(project(":capacitor-app"))
+    implementation(project(":capacitor-camera"))
+    implementation(project(":capacitor-status-bar"))
+    implementation(project(":capacitor-community-bluetooth-le"))
+    implementation(project(":capacitor-community-sqlite"))
     implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.coordinatorlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
     implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
 }
