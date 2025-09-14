@@ -1,8 +1,11 @@
-@Suppress("DSL_SCOPE_VIOLATION")
+import com.android.build.api.dsl.ApplicationExtension
+import com.google.gms.googleservices.GoogleServicesPlugin
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.googleServices)
+    alias(libs.plugins.kotlinAndroid)
 }
 
 android {
@@ -24,19 +27,17 @@ android {
 
     signingConfigs {
         create("release") {
+            // These are configured by environment variables in the build command
             val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
             val storePassword = System.getenv("UDRY_STORE_PASSWORD")
             val keyAlias = System.getenv("UDRY_KEY_ALIAS")
             val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
 
-            if (keystorePath != null && File(keystorePath).exists()) {
-                storeFile = File(keystorePath)
+            if (keystorePath != null && storePassword != null && keyAlias != null && keyPassword != null) {
+                storeFile = file(keystorePath)
                 this.storePassword = storePassword
                 this.keyAlias = keyAlias
                 this.keyPassword = keyPassword
-            } else {
-                println("Release keystore not found, using debug keystore for release build.")
-                signingConfig = getByName("debug")
             }
         }
     }
@@ -76,10 +77,14 @@ dependencies {
     implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
-    implementation(libs.firebase.bom)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    testImplementation(libs.junit)
+    implementation(project(":capacitor-app"))
+    implementation(project(":capacitor-camera"))
+    implementation(project(":capacitor-community-bluetooth-le"))
+    implementation(project(":capacitor-community-sqlite"))
+    implementation(project(":capacitor-status-bar"))
 }
