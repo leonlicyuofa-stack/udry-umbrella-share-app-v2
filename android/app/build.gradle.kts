@@ -1,20 +1,23 @@
-import com.android.build.api.dsl.ApplicationExtension
-import org.jetbrains.kotlin.storage.ExceptionOccurredException
-
-// Reading properties from gradle.properties
-val compileSdkVersion = providers.gradleProperty("compileSdkVersion").get().toInt()
-val minSdkVersion = providers.gradleProperty("minSdkVersion").get().toInt()
-val targetSdkVersion = providers.gradleProperty("targetSdkVersion").get().toInt()
-val buildToolsVersion = providers.gradleProperty("buildToolsVersion").get()
+import java.util.Properties
+import java.io.FileInputStream
 
 plugins {
-    id("com.android.application")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.googleServices)
 }
+
+// Read properties from gradle.properties
+val props = Properties()
+props.load(FileInputStream(rootProject.file("gradle.properties")))
+val compileSdkVersion: Int = props.getProperty("compileSdkVersion").toInt()
+val minSdkVersion: Int = props.getProperty("minSdkVersion").toInt()
+val targetSdkVersion: Int = props.getProperty("targetSdkVersion").toInt()
+val buildToolsVersion: String = props.getProperty("buildToolsVersion")
 
 android {
     namespace = "com.udry.app"
     compileSdk = compileSdkVersion
+    buildToolsVersion = buildToolsVersion
 
     defaultConfig {
         applicationId = "com.udry.app"
@@ -25,23 +28,25 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildToolsVersion = buildToolsVersion
+    lint {
+        abortOnError = false
+    }
 
     signingConfigs {
         create("release") {
-            // These environment variables are now read correctly by Gradle
+            // These are read from environment variables for security
             val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
-            val storePass = System.getenv("UDRY_STORE_PASSWORD")
-            val alias = System.getenv("UDRY_KEY_ALIAS")
-            val keyPass = System.getenv("UDRY_KEY_PASSWORD")
-            
-            if (keystorePath != null && storePass != null && alias != null && keyPass != null) {
+            val storePassword = System.getenv("UDRY_STORE_PASSWORD")
+            val keyAlias = System.getenv("UDRY_KEY_ALIAS")
+            val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
+
+            if (keystorePath != null && File(keystorePath).exists()) {
                 storeFile = file(keystorePath)
-                storePassword = storePass
-                keyAlias = alias
-                keyPassword = keyPass
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
             } else {
-                println("Release signing config not found. Using debug signing.")
+                println("Release keystore not found, using debug signing for release build.")
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
@@ -51,7 +56,6 @@ android {
         release {
             isMinifyEnabled = false
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // This now correctly references the "release" signing config we created above.
             signingConfig = signingConfigs.getByName("release")
         }
     }
@@ -61,29 +65,25 @@ android {
         targetCompatibility = JavaVersion.VERSION_1_8
     }
 
-    lint {
-        abortOnError = false
-    }
-
-    packaging {
-        resources {
-            excludes += "/META-INF/{AL2.0,LGPL2.1}"
-        }
+    buildFeatures {
+        viewBinding = true
     }
 }
 
 dependencies {
     implementation(project(":capacitor-android"))
-    implementation("androidx.appcompat:appcompat:1.6.1")
-    implementation("com.google.android.material:material:1.12.0")
-    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
-    implementation("androidx.core:core-splashscreen:1.0.1")
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.coordinatorlayout)
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
     implementation(project(":capacitor-app"))
     implementation(project(":capacitor-camera"))
     implementation(project(":capacitor-status-bar"))
     implementation(project(":capacitor-community-bluetooth-le"))
     implementation(project(":capacitor-community-sqlite"))
 }
+
+// Ensure this is at the end of the file
+apply(plugin = "com.google.gms.google-services")
