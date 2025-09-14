@@ -1,8 +1,8 @@
-// This is the main build file for the Android app module.
-
 plugins {
     id 'com.android.application'
 }
+
+// All variables are now inherited from the root project's build.gradle.
 
 android {
     namespace "com.udry.app"
@@ -32,20 +32,12 @@ android {
             if (keystorePropertiesFile.exists()) {
                 def keystoreProperties = new Properties()
                 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-
-                // --- DIAGNOSTIC PRINT STATEMENTS ---
-                println "--> [DEBUG] storeFile: " + keystoreProperties['storeFile']
-                println "--> [DEBUG] storePassword: " + keystoreProperties['storePassword']
-                println "--> [DEBUG] keyAlias: " + keystoreProperties['keyAlias']
-                println "--> [DEBUG] keyPassword: " + keystoreProperties['keyPassword']
-                // --- END DIAGNOSTIC ---
-
                 storeFile file(keystoreProperties['storeFile'])
                 storePassword keystoreProperties['storePassword']
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
             } else {
-                println "--> [DEBUG] keystore.properties not found in app directory."
+                println "keystore.properties not found in app directory. Release builds will not be signed."
             }
         }
     }
