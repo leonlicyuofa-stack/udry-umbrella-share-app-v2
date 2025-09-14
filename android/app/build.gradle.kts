@@ -1,18 +1,8 @@
-import java.util.Properties
-import java.io.FileInputStream
-
 plugins {
-    id("com.android.application")
-    kotlin("android")
-    id("com.google.gms.google-services")
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.googleServices)
 }
-
-// Load keystore properties from environment variables
-val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
-val storePassword = System.getenv("UDRY_STORE_PASSWORD")
-val keyAlias = System.getenv("UDRY_KEY_ALIAS")
-val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
-
 
 android {
     namespace = "com.udry.app"
@@ -20,59 +10,66 @@ android {
 
     defaultConfig {
         applicationId = "com.udry.app"
-        minSdk = 24
+        minSdk = 23
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        create("release") {
-            if (keystorePath != null && storePassword != null && keyAlias != null && keyPassword != null) {
-                storeFile = file(keystorePath)
-                storePassword = storePassword
-                keyAlias = keyAlias
-                keyPassword = keyPassword
-            }
-        }
-    }
-
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("release")
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
     buildFeatures {
         viewBinding = true
+    }
+
+    signingConfigs {
+        create("release") {
+            // These values are read from environment variables for security.
+            val storeFilePath = System.getenv("UDRY_KEYSTORE_PATH")
+            val storePassword = System.getenv("UDRY_STORE_PASSWORD")
+            val keyAlias = System.getenv("UDRY_KEY_ALIAS")
+            val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
+
+            if (storeFilePath != null && storePassword != null && keyAlias != null && keyPassword != null) {
+                storeFile = rootProject.file(storeFilePath)
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            } else {
+                 println("Signing config environment variables not set. Release builds will not be signed.")
+            }
+        }
     }
 }
 
 dependencies {
+    implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
+    implementation(libs.firebase.auth)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(project(":capacitor-android"))
     implementation(project(":capacitor-app"))
     implementation(project(":capacitor-camera"))
     implementation(project(":capacitor-status-bar"))
     implementation(project(":capacitor-community-bluetooth-le"))
     implementation(project(":capacitor-community-sqlite"))
-    implementation("com.google.firebase:firebase-auth:23.0.0")
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
-    implementation("androidx.browser:browser:1.8.0")
 }
