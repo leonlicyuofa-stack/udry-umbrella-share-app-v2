@@ -1,36 +1,48 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
+plugins {
+    alias(libs.plugins.android.application) apply false
+    alias(libs.plugins.android.library) apply false
+    alias(libs.plugins.kotlin.android) apply false
+    alias(libs.plugins.google.services) apply false
+}
 
-// Apply the allprojects block to configure all projects in the build
+// Define project-wide versions as extra properties
+val compileSdkVersion by extra(34)
+val buildToolsVersion by extra("34.0.0")
+val minSdkVersion by extra(22)
+val targetSdkVersion by extra(34)
+val kotlinVersion by extra("1.9.22")
+
+// Apply repositories to all projects (root and sub-projects)
 allprojects {
-    // Repositories for all projects
     repositories {
         google()
         mavenCentral()
     }
 }
 
-// Configure sub-projects (including Capacitor plugins)
+// Apply Android-specific configurations ONLY to sub-projects (like :app and capacitor plugins)
 subprojects {
-    // This block applies configurations after each sub-project has been evaluated.
-    afterEvaluate {
-        // Check if the sub-project has the 'android' extension (i.e., is an Android module)
-        if (project.extensions.findByName("android") is com.android.build.gradle.api.AndroidBasePlugin) {
-            // Apply common Android settings
-            project.extensions.configure<com.android.build.gradle.api.AndroidBasePlugin>("android") {
-                val compileSdkVersion: String by project
-                val buildToolsVersion: String by project
+    // Check if the sub-project has an Android plugin before trying to configure it
+    plugins.withId("com.android.base") {
+        extensions.configure<com.android.build.gradle.api.AndroidBasePlugin> {
+            compileSdkVersion(34)
+            buildToolsVersion("34.0.0")
 
-                compileSdkVersion(compileSdkVersion)
-                buildToolsVersion(buildToolsVersion)
+            defaultConfig {
+                minSdk = 22
+                targetSdk = 34
+                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+            }
 
-                // Common lint options for all Android modules
-                lint {
-                    abortOnError = false
-                }
+            compileOptions {
+                sourceCompatibility = JavaVersion.VERSION_17
+                targetCompatibility = JavaVersion.VERSION_17
             }
         }
     }
 }
+
 
 tasks.register("clean", Delete::class) {
     delete(rootProject.buildDir)
