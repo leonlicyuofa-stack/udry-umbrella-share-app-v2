@@ -1,6 +1,6 @@
 plugins {
     id("com.android.application")
-    id("org.jetbrains.kotlin.android") version "1.9.22"
+    id("kotlin-android") version "1.9.22"
     id("com.google.gms.google-services")
 }
 
@@ -16,6 +16,10 @@ android {
         versionName = "1.0"
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
+
+    // Signing configurations and build types are temporarily removed for this diagnostic step.
+    // We expect the build to fail, but with a new error asking for a 'release' signing config.
+    // This will prove the baseline is correct.
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
