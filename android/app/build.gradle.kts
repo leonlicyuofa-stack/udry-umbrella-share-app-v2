@@ -1,17 +1,16 @@
-// Top-level build file for the app module, using Kotlin DSL
-
-// 1. APPLY PLUGINS
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.google.services)
-    kotlin("android")
 }
 
-// 2. ANDROID CONFIGURATION
+val compileSdkVersion: String by project
+val minSdkVersion: String by project
+val targetSdkVersion: String by project
+val versionCode: String by project
+val versionName: String by project
+
 android {
     namespace = "com.udry.app"
-    
-    // Read properties safely using the providers API
     compileSdk = providers.gradleProperty("compileSdkVersion").map { it.toInt() }.get()
 
     defaultConfig {
@@ -24,10 +23,20 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    // 3. SIGNING CONFIGURATIONS
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
+
     signingConfigs {
         create("release") {
-            // Use environment variables for security
             val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
             val storePassword = System.getenv("UDRY_STORE_PASSWORD")
             val keyAlias = System.getenv("UDRY_KEY_ALIAS")
@@ -39,54 +48,23 @@ android {
                 this.keyAlias = keyAlias
                 this.keyPassword = keyPassword
             } else {
-                println("Release keystore not found at path: $keystorePath. Using debug signing for release build.")
+                println("Warning: Keystore not found at path: $keystorePath. Using debug signing for release build.")
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
     }
-
-    // 4. BUILD TYPES
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Correctly assign the release signing configuration
-            signingConfig = signingConfigs.getByName("release")
-        }
-    }
-
-    // 5. COMPILE OPTIONS
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
-    }
-
-    kotlinOptions {
-        jvmTarget = "17"
-    }
-
-    // 6. BUILD FEATURES
-    buildFeatures {
-        viewBinding = true
-    }
 }
 
-// 7. DEPENDENCIES
 dependencies {
-    // Standard Android dependencies
+    implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
-
-    // Firebase Bill of Materials (BoM) - manages versions for Firebase libraries
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
-    
-    // Capacitor
-    implementation(project(":capacitor-android"))
-
-    // Testing dependencies
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation(project(":capacitor-app"))
+    implementation(project(":capacitor-camera"))
+    implementation(project(":capacitor.community.bluetooth.le"))
+    implementation(project(":capacitor.community.sqlite"))
+    implementation(project(":capacitor-status-bar"))
 }
