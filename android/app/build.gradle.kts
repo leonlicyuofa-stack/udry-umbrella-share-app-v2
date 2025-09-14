@@ -1,13 +1,7 @@
 plugins {
-    alias(libs.plugins.android.application)
-    alias(libs.plugins.google.services)
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.googleServices)
 }
-
-val compileSdkVersion: String by project
-val minSdkVersion: String by project
-val targetSdkVersion: String by project
-val versionCode: String by project
-val versionName: String by project
 
 android {
     namespace = "com.udry.app"
@@ -23,48 +17,52 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildTypes {
-        getByName("release") {
-            isMinifyEnabled = false
-            signingConfig = signingConfigs.getByName("release")
-        }
-    }
-
-    compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
     signingConfigs {
         create("release") {
+            // These are read from environment variables on the build machine
+            // You can also temporarily place them in ~/.gradle/gradle.properties for local builds
             val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
             val storePassword = System.getenv("UDRY_STORE_PASSWORD")
             val keyAlias = System.getenv("UDRY_KEY_ALIAS")
             val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
 
-            if (keystorePath != null && File(keystorePath).exists()) {
+            if (keystorePath != null && keystorePath.isNotEmpty()) {
                 storeFile = file(keystorePath)
                 this.storePassword = storePassword
                 this.keyAlias = keyAlias
                 this.keyPassword = keyPassword
             } else {
-                println("Warning: Keystore not found at path: $keystorePath. Using debug signing for release build.")
+                println("Release signing config not found, using debug signing for release build.")
+                // Fallback to debug signing if environment variables are not set
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
     }
+
+    buildTypes {
+        getByName("release") {
+            isMinifyEnabled = false
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            // Correctly assign the release signing configuration
+            signingConfig = signingConfigs.getByName("release")
+        }
+    }
+    compileOptions {
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
+    }
 }
 
 dependencies {
-    implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
-    implementation(project(":capacitor-app"))
-    implementation(project(":capacitor-camera"))
-    implementation(project(":capacitor.community.bluetooth.le"))
-    implementation(project(":capacitor.community.sqlite"))
-    implementation(project(":capacitor-status-bar"))
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
 }
