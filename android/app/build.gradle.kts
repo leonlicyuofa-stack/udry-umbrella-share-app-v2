@@ -1,9 +1,8 @@
-// android/app/build.gradle.kts
-
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.googleServices)
     alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.googleServices)
 }
 
 android {
@@ -18,6 +17,9 @@ android {
         versionName = "1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary = true
+        }
     }
 
     signingConfigs {
@@ -28,52 +30,56 @@ android {
             val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
 
             if (keystorePath != null && File(keystorePath).exists()) {
-                storeFile = file(keystorePath)
+                storeFile = File(keystorePath)
                 this.storePassword = storePassword
                 this.keyAlias = keyAlias
                 this.keyPassword = keyPassword
             } else {
-                println("Release keystore not found, using debug signing.")
-                getByName("debug")
+                println("Release keystore not found, using debug keystore for release build.")
+                signingConfig = getByName("debug")
             }
         }
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            setSigningConfig(signingConfigs.getByName("release"))
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
         }
-        getByName("debug") {
+        debug {
             isDebuggable = true
-            setSigningConfig(signingConfigs.getByName("debug"))
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
     kotlinOptions {
         jvmTarget = "1.8"
     }
-
     buildFeatures {
-        buildConfig = true
+        compose = false
+    }
+    packaging {
+        resources {
+            excludes += "/META-INF/{AL2.0,LGPL2.1}"
+        }
     }
 }
-
 
 dependencies {
     implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.coordinatorlayout)
+    implementation(libs.firebase.bom)
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
-    implementation(project(":capacitor-app"))
-    implementation(project(":capacitor-camera"))
-    implementation(project(":capacitor-community-bluetooth-le"))
-    implementation(project(":capacitor-community-sqlite"))
-    implementation(project(":capacitor-status-bar"))
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
+    testImplementation(libs.junit)
 }
