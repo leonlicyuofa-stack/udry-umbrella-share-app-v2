@@ -1,16 +1,16 @@
 import com.android.build.api.dsl.ApplicationExtension
-import org.jetbrains.kotlin.gradle.dsl.KotlinJvmProjectExtension
+import org.jetbrains.kotlin.storage.ExceptionOccurredException
 
-// Reading properties from gradle.properties
-val compileSdkVersion = providers.gradleProperty("compileSdkVersion").get().toInt()
-val minSdkVersion = providers.gradleProperty("minSdkVersion").get().toInt()
-val targetSdkVersion = providers.gradleProperty("targetSdkVersion").get().toInt()
-val buildToolsVersion = providers.gradleProperty("buildToolsVersion").get()
-val androidXAppCompatVersion = "1.6.1"
+// Reading properties and converting them to the correct types
+val compileSdkVersion: Int = (findProperty("compileSdkVersion") as? String)?.toInt() ?: 34
+val minSdkVersion: Int = (findProperty("minSdkVersion") as? String)?.toInt() ?: 23
+val targetSdkVersion: Int = (findProperty("targetSdkVersion") as? String)?.toInt() ?: 34
+val versionCode: Int = (findProperty("versionCode") as? String)?.toInt() ?: 1
+val versionName: String = findProperty("versionName") as? String ?: "1.0"
+val buildToolsVersion: String = findProperty("buildToolsVersion") as? String ?: "34.0.0"
 
 plugins {
     alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.googleServices)
 }
 
@@ -23,8 +23,8 @@ android {
         applicationId = "com.udry.app"
         minSdk = minSdkVersion
         targetSdk = targetSdkVersion
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = versionCode
+        versionName = versionName
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -32,63 +32,41 @@ android {
         abortOnError = false
     }
 
+    signingConfigs {
+        create("release") {
+            // These are read from environment variables for security
+            storeFile = file(System.getenv("UDRY_KEYSTORE_PATH") ?: "app/my-release-key.keystore")
+            storePassword = System.getenv("UDRY_STORE_PASSWORD")
+            keyAlias = System.getenv("UDRY_KEY_ALIAS")
+            keyPassword = System.getenv("UDRY_KEY_PASSWORD")
+        }
+    }
+
     buildTypes {
         release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            
-            // This block will configure signing for the 'release' build type
-            val storeFile = System.getenv("UDRY_KEYSTORE_PATH")?.let { rootProject.file(it) }
-            val storePassword = System.getenv("UDRY_STORE_PASSWORD")
-            val keyAlias = System.getenv("UDRY_KEY_ALIAS")
-            val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
-
-            if (storeFile != null && storeFile.exists() && storePassword != null && keyAlias != null && keyPassword != null) {
-                signingConfigs.create("release") {
-                    this.storeFile = storeFile
-                    this.storePassword = storePassword
-                    this.keyAlias = keyAlias
-                    this.keyPassword = keyPassword
-                }
-                signingConfig = signingConfigs.getByName("release")
-            } else {
-                println("Release signing config not found. Building with debug signing config.")
-                signingConfig = signingConfigs.getByName("debug")
-            }
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
-    
+
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_1_8
-        targetCompatibility = JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = "1.8"
-    }
-
-    buildFeatures {
-        buildConfig = true
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 }
 
 dependencies {
     implementation(project(":capacitor-android"))
-    implementation("androidx.appcompat:appcompat:$androidXAppCompatVersion")
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
-    testImplementation(libs.androidx.test.ext.junit)
-    testImplementation(libs.espresso.core)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    implementation(project(":capacitor-app"))
-    implementation(project(":capacitor-camera"))
-    implementation(project(":capacitor-community-bluetooth-le"))
-    implementation(project(":capacitor-community-sqlite"))
-    implementation(project(":capacitor-status-bar"))
-
-    // Firebase
+    implementation(libs.androidx.test.ext.junit)
+    implementation(libs.espresso.core)
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.auth)
     implementation(libs.firebase.firestore)
+    testImplementation(libs.junit)
 }
