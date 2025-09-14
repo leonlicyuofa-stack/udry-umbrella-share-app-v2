@@ -1,12 +1,13 @@
-// The `plugins` block must be the first block in the file.
+@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
     alias(libs.plugins.googleServices)
 }
 
 android {
     namespace = "com.udry.app"
-    compileSdk = 34 // This is now inherited from the root project
+    compileSdk = 34
 
     defaultConfig {
         applicationId = "com.udry.app"
@@ -14,59 +15,55 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    signingConfigs {
-        create("release") {
-            storeFile = file(System.getenv("UDRY_KEYSTORE_PATH") ?: "app/my-release-key.keystore")
-            storePassword = System.getenv("UDRY_STORE_PASSWORD") ?: ""
-            keyAlias = System.getenv("UDRY_KEY_ALIAS") ?: ""
-            keyPassword = System.getenv("UDRY_KEY_PASSWORD") ?: ""
-        }
-    }
-
     buildTypes {
-        release {
+        getByName("release") {
             isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
+            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
             signingConfig = signingConfigs.getByName("release")
         }
     }
-
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_1_8
         targetCompatibility = JavaVersion.VERSION_1_8
     }
-
+    kotlinOptions {
+        jvmTarget = "1.8"
+    }
     buildFeatures {
         viewBinding = true
+    }
+    signingConfigs {
+        create("release") {
+            val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
+            val storePassword = System.getenv("UDRY_STORE_PASSWORD")
+            val keyAlias = System.getenv("UDRY_KEY_ALIAS")
+            val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
+
+            if (keystorePath != null && File(keystorePath).exists()) {
+                storeFile = file(keystorePath)
+                this.storePassword = storePassword
+                this.keyAlias = keyAlias
+                this.keyPassword = keyPassword
+            } else {
+                println("Release keystore not found, using debug signing for release build.")
+                signingConfig = signingConfigs.getByName("debug")
+            }
+        }
     }
 }
 
 dependencies {
-    // Firebase
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
-
-    // AndroidX
+    implementation(project(":capacitor-android"))
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.coordinatorlayout)
-
-    // Testing
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.test.ext.junit)
     androidTestImplementation(libs.espresso.core)
-
-    // Capacitor
-    implementation(project(":capacitor-android"))
-    implementation(project(":capacitor-app"))
-    implementation(project(":capacitor-camera"))
-    implementation(project(":capacitor-community-bluetooth-le"))
-    implementation(project(":capacitor-community-sqlite"))
-    implementation(project(":capacitor-status-bar"))
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.auth)
+    implementation(libs.firebase.firestore)
 }
