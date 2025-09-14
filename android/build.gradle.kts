@@ -1,5 +1,4 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-@Suppress("DSL_SCOPE_VIOLATION")
 plugins {
     alias(libs.plugins.androidApplication) apply false
     alias(libs.plugins.androidLibrary) apply false
@@ -7,31 +6,29 @@ plugins {
     alias(libs.plugins.googleServices) apply false
 }
 
-// Define versions in one place
-val compileSdkVersion = libs.versions.compileSdk.get().toInt()
-val minSdkVersion = libs.versions.minSdk.get().toInt()
-val targetSdkVersion = libs.versions.targetSdk.get().toInt()
-val buildToolsVersion = libs.versions.buildTools.get()
+// Read versions from gradle.properties
+val compileSdkVersion: Int = (findProperty("compileSdkVersion") as String).toInt()
+val minSdkVersion: Int = (findProperty("minSdkVersion") as String).toInt()
+val targetSdkVersion: Int = (findProperty("targetSdkVersion") as String).toInt()
+val buildToolsVersion: String = findProperty("buildToolsVersion") as String
 
 subprojects {
-    project.plugins.withId("com.android.base") {
-        project.extensions.configure<com.android.build.gradle.BaseExtension>("android") {
-            compileSdkVersion(compileSdkVersion)
-            buildToolsVersion(buildToolsVersion)
+    afterEvaluate { project ->
+        if (project.plugins.hasPlugin("com.android.application") || project.plugins.hasPlugin("com.android.library")) {
+            project.extensions.configure<com.android.build.api.dsl.CommonExtension<*, *, *, *, *, *>>("android") {
+                setCompileSdkVersion(compileSdkVersion)
+                buildToolsVersion = this@subprojects.buildToolsVersion
 
-            defaultConfig {
-                minSdk = minSdkVersion
-                targetSdk = targetSdkVersion
-                testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-            }
+                defaultConfig {
+                    minSdk = this@subprojects.minSdkVersion
+                    targetSdk = this@subprojects.targetSdkVersion
 
-            compileOptions {
-                sourceCompatibility = JavaVersion.VERSION_1_8
-                targetCompatibility = JavaVersion.VERSION_1_8
-            }
+                    testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+                }
 
-            lint {
-                abortOnError = false
+                lint {
+                    abortOnError = false
+                }
             }
         }
     }
