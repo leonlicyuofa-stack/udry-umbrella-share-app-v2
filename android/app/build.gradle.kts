@@ -1,33 +1,12 @@
-import java.io.File
-
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.googleServices)
+    id("com.android.application")
+    id("kotlin-android")
+    id("com.google.gms.google-services")
 }
 
 android {
     namespace = "com.udry.app"
     compileSdk = 34
-
-    signingConfigs {
-        create("release") {
-            val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
-            val storePassword = System.getenv("UDRY_STORE_PASSWORD")
-            val keyAlias = System.getenv("UDRY_KEY_ALIAS")
-            val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
-
-            if (keystorePath != null && File("../$keystorePath").exists()) {
-                storeFile = file("../$keystorePath")
-                this.storePassword = storePassword
-                this.keyAlias = keyAlias
-                this.keyPassword = keyPassword
-            } else {
-                println("Release keystore not found, using debug signing for release build.")
-                signingConfig = getByName("debug").signingConfig
-            }
-        }
-    }
 
     defaultConfig {
         applicationId = "com.udry.app"
@@ -35,7 +14,17 @@ android {
         targetSdk = 34
         versionCode = 1
         versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    signingConfigs {
+        create("release") {
+            storeFile = file(System.getenv("UDRY_KEYSTORE_PATH") ?: "app/my-release-key.keystore")
+            storePassword = System.getenv("UDRY_STORE_PASSWORD") ?: ""
+            keyAlias = System.getenv("UDRY_KEY_ALIAS") ?: ""
+            keyPassword = System.getenv("UDRY_KEY_PASSWORD") ?: ""
+        }
     }
 
     buildTypes {
@@ -51,12 +40,12 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_17
-        targetCompatibility = JavaVersion.VERSION_17
+        sourceCompatibility = JavaVersion.VERSION_1_8
+        targetCompatibility = JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
-        jvmTarget = "17"
+        jvmTarget = "1.8"
     }
 
     buildFeatures {
@@ -66,12 +55,18 @@ android {
 
 dependencies {
     implementation(project(":capacitor-android"))
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.coordinatorlayout)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
+    implementation("androidx.appcompat:appcompat:1.6.1")
+    implementation("com.google.android.material:material:1.12.0")
+    implementation("androidx.constraintlayout:constraintlayout:2.1.4")
+    testImplementation("junit:junit:4.13.2")
+    androidTestImplementation("androidx.test.ext:junit:1.1.5")
+    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
+    implementation(project(":capacitor-app"))
+    implementation(project(":capacitor-camera"))
+    implementation(project(":capacitor-status-bar"))
+    implementation(project(":capacitor-community-bluetooth-le"))
+    implementation(project(":capacitor-community-sqlite"))
+    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
+    implementation("com.google.firebase:firebase-auth")
+    implementation("com.google.firebase:firebase-firestore")
 }
