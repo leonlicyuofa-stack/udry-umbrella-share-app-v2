@@ -10,6 +10,7 @@ androidxCoordinatorLayout = "1.2.0"
 androidxTestExtJunit = "1.1.5"
 espressoCore = "3.5.1"
 junit = "4.13.2"
+firebaseBom = "33.1.2"
 
 [libraries]
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }
@@ -20,6 +21,11 @@ androidx-coordinatorlayout = { group = "androidx.coordinatorlayout", name = "coo
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidxTestExtJunit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espressoCore" }
 junit = { group = "junit", name = "junit", version.ref = "junit" }
+
+# Firebase
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-auth = { group = "com.google.firebase", name = "firebase-auth" }
+firebase-firestore = { group = "com.google.firebase", name = "firebase-firestore" }
 
 
 [plugins]
