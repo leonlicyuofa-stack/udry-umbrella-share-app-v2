@@ -1,8 +1,11 @@
+// This is the main build file for the Android app module.
+
+// All variables are now inherited from the root project's build.gradle.
+// The line "apply from: '../variables.gradle'" has been removed.
+
 plugins {
     id 'com.android.application'
 }
-
-// All variables are now inherited from the root project's build.gradle.
 
 android {
     namespace "com.udry.app"
@@ -27,17 +30,25 @@ android {
     // Signing configuration for release builds
     signingConfigs {
         release {
-            // Correctly reference the keystore.properties file from the local 'app' directory
+            // More robust property loading for diagnostics
             def keystorePropertiesFile = file("keystore.properties")
             if (keystorePropertiesFile.exists()) {
                 def keystoreProperties = new Properties()
                 keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+                
                 storeFile file(keystoreProperties['storeFile'])
                 storePassword keystoreProperties['storePassword']
                 keyAlias keystoreProperties['keyAlias']
                 keyPassword keystoreProperties['keyPassword']
+
+                // --- NEW DIAGNOSTIC TEST ---
+                // Print the values *after* they have been assigned to this config block.
+                println "--> [DIAGNOSTIC] Signing Config Store Password: '${storePassword}'"
+                println "--> [DIAGNOSTIC] Signing Config Key Password:   '${keyPassword}'"
+                println "--> [DIAGNOSTIC] Signing Config Key Alias:      '${keyAlias}'"
+
             } else {
-                println "keystore.properties not found in app directory. Release builds will not be signed."
+                println "--> [DIAGNOSTIC] keystore.properties not found. Signing will be skipped or fail."
             }
         }
     }
