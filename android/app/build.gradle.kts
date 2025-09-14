@@ -1,53 +1,59 @@
+import java.util.Properties
+import java.io.FileInputStream
+
 plugins {
     id("com.android.application")
     id("com.google.gms.google-services")
 }
 
 // Read properties from gradle.properties
-val compileSdkVersion: String by project
-val minSdkVersion: String by project
-val targetSdkVersion: String by project
-val versionCode: String by project
-val versionName: String by project
+val gradleProperties = Properties()
+val gradlePropertiesFile = rootProject.file("gradle.properties")
+if (gradlePropertiesFile.exists()) {
+    gradleProperties.load(FileInputStream(gradlePropertiesFile))
+}
 
 android {
     namespace = "com.udry.app"
-    compileSdk = compileSdkVersion.toInt()
+    compileSdk = gradleProperties.getProperty("compileSdkVersion").toInt()
 
     defaultConfig {
         applicationId = "com.udry.app"
-        minSdk = minSdkVersion.toInt()
-        targetSdk = targetSdkVersion.toInt()
-        versionCode = project.findProperty("versionCode")?.toString()?.toIntOrNull() ?: 1
-        versionName = project.findProperty("versionName")?.toString() ?: "1.0"
+        minSdk = gradleProperties.getProperty("minSdkVersion").toInt()
+        targetSdk = gradleProperties.getProperty("targetSdkVersion").toInt()
+        versionCode = 1
+        versionName = "1.0"
+
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
 
     signingConfigs {
         create("release") {
-            // Use environment variables for security, matching your build command
+            // These properties are read from environment variables for security
             val keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
             val storePassword = System.getenv("UDRY_STORE_PASSWORD")
             val keyAlias = System.getenv("UDRY_KEY_ALIAS")
             val keyPassword = System.getenv("UDRY_KEY_PASSWORD")
 
-            if (keystorePath != null && keystorePath.isNotEmpty()) {
+            if (keystorePath != null && File(keystorePath).exists()) {
                 storeFile = file(keystorePath)
                 this.storePassword = storePassword
                 this.keyAlias = keyAlias
                 this.keyPassword = keyPassword
             } else {
-                println("Release keystore information not found in environment variables. Using debug signing.")
+                println("Release keystore not found at path: $keystorePath. Using debug signing.")
                 signingConfig = signingConfigs.getByName("debug")
             }
         }
     }
 
     buildTypes {
-        getByName("release") {
+        release {
             isMinifyEnabled = false
-            proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
-            // Correctly assign the release signing config
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             signingConfig = signingConfigs.getByName("release")
         }
     }
@@ -64,13 +70,20 @@ android {
 
 dependencies {
     implementation(project(":capacitor-android"))
+    implementation(libs.androidx.appcompat)
+    implementation(libs.androidx.coordinatorlayout)
+    testImplementation(libs.junit)
+    androidTestImplementation(libs.androidx.test.ext.junit)
+    androidTestImplementation(libs.espresso.core)
     implementation(project(":capacitor-app"))
     implementation(project(":capacitor-camera"))
-    implementation(project(":capacitor-status-bar"))
     implementation(project(":capacitor-community-bluetooth-le"))
     implementation(project(":capacitor-community-sqlite"))
-    implementation(libs.androidx.appcompat)
+    implementation(project(":capacitor-status-bar"))
+    
+    // Firebase BoM
     implementation(platform(libs.firebase.bom))
+    implementation("com.google.firebase:firebase-analytics")
     implementation("com.google.firebase:firebase-auth")
     implementation("com.google.firebase:firebase-firestore")
 }
