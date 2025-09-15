@@ -3,53 +3,42 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace "com.udry.app"
-    compileSdk 34 // Explicitly set compileSdk
-
+    compileSdkVersion rootProject.ext.compileSdkVersion
     defaultConfig {
         applicationId "com.udry.app"
-        minSdk 22
-        targetSdk 34
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
             
-            // Define signing config for release builds
-            signingConfig signingConfigs.debug // Placeholder, will be overridden by environment variables
-        }
-    }
-
-    // New signingConfigs block to handle release signing
-    signingConfigs {
-        release {
+            // This signing configuration will be used for release builds
             if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
-                storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
-                storePassword System.getenv("UDRY_STORE_PASSWORD")
-                keyAlias System.getenv("UDRY_KEY_ALIAS")
-                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+                signingConfig signingConfigs.create("release") {
+                    storeFile file("../" + System.getenv("UDRY_KEYSTORE_PATH"))
+                    storePassword System.getenv("UDRY_STORE_PASSWORD")
+                    keyAlias System.getenv("UDRY_KEY_ALIAS")
+                    keyPassword System.getenv("UDRY_KEY_PASSWORD")
+                }
+                buildTypes.release.signingConfig = signingConfigs.getByName("release")
             }
-        }
-    }
-     buildTypes {
-        release {
-            signingConfig signingConfigs.release
         }
     }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
     implementation project(':capacitor-android')
-    testImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.test.ext:junit:1.1.5"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
+    testImplementation "junit:junit:$junitVersion"
+    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
+    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-community-bluetooth-le')
