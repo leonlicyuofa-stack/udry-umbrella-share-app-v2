@@ -1,0 +1,70 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+
+buildscript {
+    ext.kotlin_version = '1.9.22' // Ensure this matches your project's Kotlin version if specified elsewhere
+
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        // Use version catalog alias for the Android Gradle Plugin
+        classpath libs.plugins.androidApplication
+        // Use version catalog alias for the Google Services plugin
+        classpath libs.plugins.googleServices
+        // It's good practice to also define the Kotlin plugin here if needed by subprojects
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
+    }
+}
+
+allprojects {
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
+
+// This block applies settings to all sub-projects, which is crucial for Capacitor
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            android {
+                // Read the compileSdkVersion from gradle.properties
+                def compileSdkVersionProp = project.rootProject.properties['compileSdkVersion']
+                if (compileSdkVersionProp != null) {
+                    compileSdkVersion compileSdkVersionProp.toInteger()
+                }
+
+                // Default config that might be needed by some Capacitor plugins
+                defaultConfig {
+                    def minSdkVersionProp = project.rootProject.properties['minSdkVersion']
+                    if (minSdkVersionProp != null) {
+                        minSdkVersion minSdkVersionProp.toInteger()
+                    }
+                    def targetSdkVersionProp = project.rootProject.properties['targetSdkVersion']
+                    if (targetSdkVersionProp != null) {
+                        targetSdkVersion targetSdkVersionProp.toInteger()
+                    }
+                }
+
+                // Ensure Java version compatibility
+                compileOptions {
+                    sourceCompatibility JavaVersion.VERSION_17
+                    targetCompatibility JavaVersion.VERSION_17
+                }
+
+                // For Kotlin options if the subproject uses Kotlin
+                if (project.plugins.hasPlugin('kotlin-android')) {
+                    kotlinOptions {
+                        jvmTarget = '17'
+                    }
+                }
+            }
+        }
+    }
+}
+
+
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
