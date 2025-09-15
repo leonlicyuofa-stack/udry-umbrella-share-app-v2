@@ -1,37 +1,18 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-buildscript {
-    ext {
-        androidxAppCompatVersion = '1.6.1'
-        androidxCoordinatorLayoutVersion = '1.2.0'
-        androidxCoreVersion = '1.13.1'
-        androidxFragmentVersion = '1.8.2'
-        junitVersion = '4.13.2'
-        androidxJunitVersion = '1.2.1'
-        androidxEspressoCoreVersion = '3.6.1'
-        cordovaAndroidVersion = '10.1.1'
-    }
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath 'com.android.tools.build:gradle:8.5.1'
-        classpath 'com.google.gms:google-services:4.4.2'
-    }
-}
-
 plugins {
     alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.kotlinAndroid) apply false
+    alias(libs.plugins.googleServices) apply false
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
+// Define compileSdkVersion globally for all sub-projects.
+// This is necessary because the Capacitor plugins do not define it themselves,
+// and the newer Android Gradle Plugin requires it explicitly.
+subprojects {
+    afterEvaluate { project ->
+        if (project.hasProperty('android')) {
+            android {
+                compileSdkVersion 35
+            }
+        }
     }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
 }
