@@ -1,23 +1,28 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
     ext {
-        compileSdkVersion = 34
-        // You can add other common versions here, for example:
-        // minSdkVersion = 22
-        // targetSdkVersion = 34
-        // coreSplashScreenVersion = '1.0.0'
+        androidxAppCompatVersion = '1.6.1'
+        androidxCoordinatorLayoutVersion = '1.2.0'
+        androidxCoreVersion = '1.13.1'
+        androidxFragmentVersion = '1.8.2'
+        junitVersion = '4.13.2'
+        androidxJunitVersion = '1.2.1'
+        androidxEspressoCoreVersion = '3.6.1'
+        cordovaAndroidVersion = '10.1.1'
     }
     repositories {
         google()
         mavenCentral()
     }
     dependencies {
-        classpath "com.android.tools.build:gradle:8.4.1"
-        classpath "com.google.gms:google-services:4.4.2"
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath 'com.android.tools.build:gradle:8.5.1'
+        classpath 'com.google.gms:google-services:4.4.2'
     }
+}
+
+plugins {
+    alias(libs.plugins.androidApplication) apply false
+    alias(libs.plugins.kotlinAndroid) apply false
 }
 
 allprojects {
