@@ -1,18 +1,19 @@
+// The official Android plugin for Gradle.
 apply plugin: 'com.android.application'
+// The official Google services plugin.
 apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace "com.udry.app"
-    compileSdkVersion 34
+    compileSdkVersion 35
     defaultConfig {
         applicationId "com.udry.app"
         minSdkVersion 23
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
     signingConfigs {
         release {
             if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
@@ -23,30 +24,35 @@ android {
             }
         }
     }
-
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android.xml'), 'proguard-rules.pro'
+            signingConfig signingConfigs.getByName("release")
         }
+    }
+    lint {
+        abortOnError false
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
 dependencies {
-    implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
-    implementation project(':capacitor-status-bar')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
-    testImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.test.ext:junit:1.1.5"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
-    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
+    implementation project(':capacitor-status-bar')
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation platform('com.google.firebase:firebase-bom:33.1.2')
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
 }
