@@ -2,7 +2,7 @@
 # See https://docs.gradle.org/current/userguide/platforms.html for details.
 
 [versions]
-androidGradlePlugin = "8.6.0"
+androidGradlePlugin = "8.4.1"
 kotlin = "1.9.24"
 googleServices = "4.4.2"
 androidxAppCompat = "1.6.1"
