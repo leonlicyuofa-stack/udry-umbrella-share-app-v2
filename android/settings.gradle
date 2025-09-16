@@ -1,4 +1,4 @@
-// This block must be at the top of the file.
+// The pluginManagement block must be the first block in the settings file
 pluginManagement {
     repositories {
         google()
@@ -7,29 +7,46 @@ pluginManagement {
     }
 }
 
-// This block must be after pluginManagement.
+// All other statements must come after pluginManagement
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    // This setting tells Gradle to use the repositories defined here for all subprojects
+    // and to only issue a warning, not fail the build, if a subproject has its own repository block.
+    // This is the key fix for the build error.
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
         mavenCentral()
+        // Point to the local Maven repository for Capacitor plugins
+        maven {
+            url(file(new File(settingsDir, "../node_modules/@capacitor/android/capacitor/build/repo")))
+        }
+        maven {
+            url(file(new File(settingsDir, "../node_modules/cordova-plugin-advanced-http/android/libs")))
+        }
     }
 }
 
 rootProject.name = "android"
+include(":app")
 
-include ':app'
-include ':capacitor-android'
-project(':capacitor-android').projectDir = new File(settingsDir, '../node_modules/@capacitor/android/capacitor')
-include ':capacitor-app'
-project(':capacitor-app').projectDir = new File(settingsDir, '../node_modules/@capacitor/app/android')
-include ':capacitor-camera'
-project(':capacitor-camera').projectDir = new File(settingsDir, '../node_modules/@capacitor/camera/android')
-include ':capacitor-community-bluetooth-le'
-project(':capacitor-community-bluetooth-le').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/bluetooth-le/android')
-include ':capacitor-community-sqlite'
-project(':capacitor-community-sqlite').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/sqlite/android')
-include ':capacitor-cordova-android-plugins'
-project(':capacitor-cordova-android-plugins').projectDir = new File(settingsDir, 'capacitor-cordova-android-plugins')
-include ':capacitor-status-bar'
-project(':capacitor-status-bar').projectDir = new File(settingsDir, '../node_modules/@capacitor/status-bar/android')
+// Load all Capacitor plugins
+include(":capacitor-android")
+project(":capacitor-android").projectDir = new File(settingsDir, "../node_modules/@capacitor/android/capacitor")
+
+include(":capacitor-app")
+project(":capacitor-app").projectDir = new File(settingsDir, "../node_modules/@capacitor/app/android")
+
+include(":capacitor-camera")
+project(":capacitor-camera").projectDir = new File(settingsDir, "../node_modules/@capacitor/camera/android")
+
+include(":capacitor-community-bluetooth-le")
+project(":capacitor-community-bluetooth-le").projectDir = new File(settingsDir, "../node_modules/@capacitor-community/bluetooth-le/android")
+
+include(":capacitor-community-sqlite")
+project(":capacitor-community-sqlite").projectDir = new File(settingsDir, "../node_modules/@capacitor-community/sqlite/android")
+
+include(":capacitor-cordova-android-plugins")
+project(":capacitor-cordova-android-plugins").projectDir = new File(settingsDir, "capacitor-cordova-android-plugins")
+
+include(":capacitor-status-bar")
+project(":capacitor-status-bar").projectDir = new File(settingsDir, "../node_modules/@capacitor/status-bar/android")
