@@ -1,19 +1,18 @@
-// This line must be at the top to load Capacitor's helper functions.
-apply from: "capacitor.build.gradle"
-
 plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
 }
 
+apply from: "capacitor.build.gradle"
+
 android {
     namespace "com.udry.app"
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "com.udry.app"
-        minSdk 22
-        targetSdk 34
+        minSdkVersion 22
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
@@ -21,11 +20,11 @@ android {
 
     signingConfigs {
         release {
-            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
-                storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
-                storePassword System.getenv("UDRY_STORE_PASSWORD")
-                keyAlias System.getenv("UDRY_KEY_ALIAS")
-                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            if (System.env.UDRY_KEYSTORE_PATH) {
+                storeFile file(System.env.UDRY_KEYSTORE_PATH)
+                storePassword System.env.UDRY_STORE_PASSWORD
+                keyAlias System.env.UDRY_KEY_ALIAS
+                keyPassword System.env.UDRY_KEY_PASSWORD
             }
         }
     }
@@ -34,40 +33,35 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            // This line tells the release build to use the signing configuration defined above.
             signingConfig signingConfigs.getByName("release")
         }
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
-    }
-
-    lint {
-        abortOnError false
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     buildFeatures {
-        buildConfig = true
+        viewBinding true
     }
 }
 
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
+    implementation(platform(libs.firebase.bom))
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
     implementation project(':capacitor-status-bar')
+
     testImplementation libs.junit
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.espresso.core
-    implementation platform(libs.firebase.bom)
-    implementation libs.firebase.auth
-    implementation libs.firebase.firestore
-    // This line applies the Cordova plugins.
-    cordovaAndroidProject(project.hasProperty('cdvMinSdkVersion') ? cdvMinSdkVersion : 22)
 }
