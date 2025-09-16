@@ -1,4 +1,4 @@
-// The pluginManagement block must be at the top of the file.
+// This block must be at the top of the file.
 pluginManagement {
     repositories {
         google()
@@ -7,6 +7,7 @@ pluginManagement {
     }
 }
 
+// This block must be after pluginManagement.
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
@@ -16,21 +17,19 @@ dependencyResolutionManagement {
 }
 
 rootProject.name = "android"
-include(":app")
 
-// The dynamic project inclusion logic should come after the management blocks.
-def capacitorProjects = new File(settingsDir, "../node_modules/@capacitor").listFiles({ f -> f.isDirectory() } as FileFilter)
-capacitorProjects.each { project ->
-    include(":" + project.name)
-    project(":${project.name}").projectDir = project
-}
-
-def capacitorCommunityProjects = new File(settingsDir, "../node_modules/@capacitor-community").listFiles({ f -> f.isDirectory() } as FileFilter)
-capacitorCommunityProjects.each { project ->
-    def projectName = "capacitor-community-" + project.name
-    include(":" + projectName)
-    project(":${projectName}").projectDir = project
-}
-
-include(":capacitor-cordova-android-plugins")
-project(":capacitor-cordova-android-plugins").projectDir = new File(settingsDir, "capacitor-cordova-android-plugins")
+include ':app'
+include ':capacitor-android'
+project(':capacitor-android').projectDir = new File(settingsDir, '../node_modules/@capacitor/android/capacitor')
+include ':capacitor-app'
+project(':capacitor-app').projectDir = new File(settingsDir, '../node_modules/@capacitor/app/android')
+include ':capacitor-camera'
+project(':capacitor-camera').projectDir = new File(settingsDir, '../node_modules/@capacitor/camera/android')
+include ':capacitor-community-bluetooth-le'
+project(':capacitor-community-bluetooth-le').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/bluetooth-le/android')
+include ':capacitor-community-sqlite'
+project(':capacitor-community-sqlite').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/sqlite/android')
+include ':capacitor-cordova-android-plugins'
+project(':capacitor-cordova-android-plugins').projectDir = new File(settingsDir, 'capacitor-cordova-android-plugins')
+include ':capacitor-status-bar'
+project(':capacitor-status-bar').projectDir = new File(settingsDir, '../node_modules/@capacitor/status-bar/android')
