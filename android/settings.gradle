@@ -1,44 +1,36 @@
-// The `dependencyResolutionManagement` block is used to configure how Gradle resolves dependencies.
-// By centralizing repository definitions here, we ensure consistency across all sub-projects
-// and align with modern Gradle best practices. This helps prevent version conflicts and build instability.
-dependencyResolutionManagement {
-    // Defines the repositories Gradle should search for dependencies.
-    repositories {
-        google()                // Google's Maven repository, essential for Android libraries.
-        mavenCentral()          // The primary repository for a vast number of Java/Kotlin libraries.
-    }
-}
-
-// The `pluginManagement` block configures where Gradle finds plugins.
-// Centralizing this prevents each sub-project from needing its own definition.
+// The pluginManagement block must be at the top of the file.
 pluginManagement {
     repositories {
         google()
         mavenCentral()
-        gradlePluginPortal()    // The official repository for Gradle plugins.
+        gradlePluginPortal()
     }
 }
 
-// Include the main application module.
-include ':app'
+dependencyResolutionManagement {
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    repositories {
+        google()
+        mavenCentral()
+    }
+}
 
-// Include Capacitor's core Android library and its essential plugins.
-// The paths correctly point from the 'android' directory to the 'node_modules' directory at the root.
-include ':capacitor-android'
-project(':capacitor-android').projectDir = new File(settingsDir, '../node_modules/@capacitor/android/capacitor')
+rootProject.name = "android"
+include(":app")
 
-include ':capacitor-app'
-project(':capacitor-app').projectDir = new File(settingsDir, '../node_modules/@capacitor/app/android')
+// The dynamic project inclusion logic should come after the management blocks.
+def capacitorProjects = new File(settingsDir, "../node_modules/@capacitor").listFiles({ f -> f.isDirectory() } as FileFilter)
+capacitorProjects.each { project ->
+    include(":" + project.name)
+    project(":${project.name}").projectDir = project
+}
 
-include ':capacitor-camera'
-project(':capacitor-camera').projectDir = new File(settingsDir, '../node_modules/@capacitor/camera/android')
+def capacitorCommunityProjects = new File(settingsDir, "../node_modules/@capacitor-community").listFiles({ f -> f.isDirectory() } as FileFilter)
+capacitorCommunityProjects.each { project ->
+    def projectName = "capacitor-community-" + project.name
+    include(":" + projectName)
+    project(":${projectName}").projectDir = project
+}
 
-include ':capacitor-status-bar'
-project(':capacitor-status-bar').projectDir = new File(settingsDir, '../node_modules/@capacitor/status-bar/android')
-
-// Include community plugins.
-include ':capacitor-community-bluetooth-le'
-project(':capacitor-community-bluetooth-le').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/bluetooth-le/android')
-
-include ':capacitor-community-sqlite'
-project(':capacitor-community-sqlite').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/sqlite/android')
+include(":capacitor-cordova-android-plugins")
+project(":capacitor-cordova-android-plugins").projectDir = new File(settingsDir, "capacitor-cordova-android-plugins")
