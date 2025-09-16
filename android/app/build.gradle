@@ -1,67 +1,52 @@
-plugins {
-    id 'com.android.application'
-    id 'com.google.gms.google-services'
-}
-
+apply plugin: 'com.android.application'
 apply from: "capacitor.build.gradle"
 
 android {
     namespace "com.udry.app"
     compileSdk 35
-
     defaultConfig {
         applicationId "com.udry.app"
-        minSdkVersion 22
+        minSdkVersion 23
         targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    signingConfigs {
-        release {
-            if (System.env.UDRY_KEYSTORE_PATH) {
-                storeFile file(System.env.UDRY_KEYSTORE_PATH)
-                storePassword System.env.UDRY_STORE_PASSWORD
-                keyAlias System.env.UDRY_KEY_ALIAS
-                keyPassword System.env.UDRY_KEY_PASSWORD
-            }
-        }
-    }
-
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            // Use environment variables to configure the signing config
             signingConfig signingConfigs.getByName("release")
         }
     }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    buildFeatures {
-        viewBinding true
+    signingConfigs {
+        release {
+            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
+                storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
+                storePassword System.getenv("UDRY_STORE_PASSWORD")
+                keyAlias System.getenv("UDRY_KEY_ALIAS")
+                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            }
+        }
     }
 }
 
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
-    implementation(platform(libs.firebase.bom))
-    implementation libs.firebase.auth
-    implementation libs.firebase.firestore
-
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
     implementation project(':capacitor-status-bar')
-
     testImplementation libs.junit
     androidTestImplementation libs.androidx.test.ext.junit
     androidTestImplementation libs.espresso.core
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
 }
+
+apply plugin: 'com.google.gms.google-services'
