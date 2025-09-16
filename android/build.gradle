@@ -1,67 +1,22 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-// Define where to find the build tools themselves
 buildscript {
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        // NOTE: This version is for the build script classpath only and does not control the plugin version.
-        // The actual plugin version is controlled by libs.versions.toml.
-        classpath 'com.google.gms:google-services:4.4.2'
+    ext {
+        compileSdkVersion = 35
     }
 }
 
-// Apply the plugins to the project
 plugins {
-    alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.googleServices) apply false
+    id 'com.android.application' version '8.4.1' apply false
+    id 'com.android.library' version '8.4.1' apply false
+    id 'com.google.gms.google-services' version '4.4.2' apply false
 }
 
-// Define versions in a single place to be used by all sub-projects
-ext {
-    minSdkVersion = 22
-    compileSdkVersion = 35
-    targetSdkVersion = 35
-    androidxActivityVersion = '1.9.0'
-    androidxAppCompatVersion = '1.7.0'
-    androidxCoordinatorLayoutVersion = '1.2.0'
-    androidxCoreVersion = '1.13.1'
-    androidxFragmentVersion = '1.8.1'
-    androidxWebkitVersion = '1.11.0'
-    junitVersion = '4.13.2'
-    androidxJunitVersion = '1.2.1'
-    androidxEspressoCoreVersion = '3.6.1'
-    cordovaAndroidVersion = '10.1.1'
-    androidxCameraCoreVersion = '1.3.4'
-    androidxCameraCamera2Version = '1.3.4'
-    androidxCameraLifecycleVersion = '1.3.4'
-    androidxCameraViewVersion = '1.3.4'
-}
-
-// Repositories for all projects
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-// Apply versions to all sub-projects, including Capacitor plugins
 subprojects {
-    afterEvaluate {project ->
-        if (project.hasProperty('android')) {
-            android {
-                compileSdkVersion rootProject.ext.compileSdkVersion
-                defaultConfig {
-                    targetSdkVersion rootProject.ext.targetSdkVersion
-                }
-            }
-        }
+    project.ext {
+        compileSdkVersion = 35
     }
 }
 
-task clean(type: Delete) {
+tasks.register('clean', Delete) {
     delete rootProject.buildDir
 }

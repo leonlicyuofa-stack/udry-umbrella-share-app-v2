@@ -3,37 +3,50 @@ apply plugin: 'com.google.gms.google-services'
 
 android {
     namespace "com.udry.app"
-    compileSdkVersion 35
+    compileSdk 35
     defaultConfig {
         applicationId "com.udry.app"
-        minSdkVersion 23
+        minSdkVersion 22
         targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
-
-    signingConfigs {
-        release {
-            if (System.getenv("UD_KEYSTORE_PATH") != null) {
-                storeFile file(System.getenv("UD_KEYSTORE_PATH"))
-                storePassword System.getenv("UD_STORE_PASSWORD")
-                keyAlias System.getenv("UD_KEY_ALIAS")
-                keyPassword System.getenv("UD_KEY_PASSWORD")
-            }
-        }
-    }
-
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            
+            // This signing configuration is now correctly read from gradle.properties
+            signingConfig signingConfigs.debug
+        }
+    }
+    
+    // This block is now required to securely load the keystore properties
+    def keystorePropertiesFile = rootProject.file("keystore.properties")
+    def keystoreProperties = new Properties()
+    if (keystorePropertiesFile.exists()) {
+        keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+    }
+
+    signingConfigs {
+        debug {
+            storeFile file(keystoreProperties['storeFile'] ?: 'my-release-key.keystore')
+            storePassword keystoreProperties['storePassword'] ?: ''
+            keyAlias keystoreProperties['keyAlias'] ?: ''
+            keyPassword keystoreProperties['keyPassword'] ?: ''
+        }
+    }
+    
+    buildTypes {
+        release {
+             signingConfig signingConfigs.debug
         }
     }
 }
 
 dependencies {
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'androidx.appcompat:appcompat:1.6.1'
     implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
     implementation project(':capacitor-android')
@@ -44,8 +57,6 @@ dependencies {
     implementation project(':capacitor-camera')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
+    implementation project(':capacitor-cordova-android-plugins')
     implementation project(':capacitor-status-bar')
-    implementation(platform("com.google.firebase:firebase-bom:33.1.2"))
-    implementation("com.google.firebase:firebase-auth")
-    implementation("com.google.firebase:firebase-firestore")
 }
