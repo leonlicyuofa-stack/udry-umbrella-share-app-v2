@@ -1,5 +1,7 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
 plugins {
-    id 'com.android.application'
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.googleServices)
 }
 
 apply from: "capacitor.build.gradle"
@@ -11,21 +13,20 @@ android {
     defaultConfig {
         applicationId "com.udry.app"
         minSdkVersion 23
-        targetSdkVersion 35
+        targetSdk 35
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        // Keep this false, as it's set in gradle.properties
-        buildConfigField("boolean", "IS_DEV_SERVER", "false")
     }
 
     signingConfigs {
         debug {
-            // Default debug config
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
         }
         release {
-            // This now correctly uses the environment variables you are providing in the terminal command.
             if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
                 storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
                 storePassword System.getenv("UDRY_STORE_PASSWORD")
@@ -38,8 +39,7 @@ android {
     buildTypes {
         release {
             minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            // This correctly links the release build type to the release signing configuration.
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
     }
@@ -49,32 +49,28 @@ android {
         targetCompatibility JavaVersion.VERSION_17
     }
 
-    lint {
+    lintOptions {
         abortOnError false
     }
 
     buildFeatures {
-        // Keep this as it is, managed by gradle.properties
+        buildConfig true
     }
 }
 
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
-
+    implementation(platform(libs.firebase.bom))
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.espresso.core
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
     implementation project(':capacitor-status-bar')
-
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.espresso.core
-
-    // Firebase
-    implementation platform(libs.firebase.bom)
-    implementation libs.firebase.auth
-    implementation libs.firebase.firestore
 }
