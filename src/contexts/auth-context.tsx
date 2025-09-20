@@ -273,6 +273,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   const startRental = async (rental: Omit<ActiveRental, 'logs'>) => {
       if (!firebaseUser || !firebaseServices?.db) return;
+      console.log(`[DIAG_LOG ${new Date().toISOString()}] [AUTH_CONTEXT] startRental: Function called.`);
       
       const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
       const stallDocRef = doc(firebaseServices.db, 'stalls', rental.stallId);
@@ -291,7 +292,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         availableUmbrellas: increment(-1),
         nextActionSlot: increment(1)
       });
+
+      console.log(`[DIAG_LOG ${new Date().toISOString()}] [AUTH_CONTEXT] startRental: Committing database batch update...`);
       await batch.commit();
+      console.log(`[DIAG_LOG ${new Date().toISOString()}] [AUTH_CONTEXT] startRental: Database batch update COMPLETE.`);
       
       toast({ title: "Rental Started!", description: `You have rented an umbrella from ${rental.stallName}.` });
   };
@@ -325,6 +329,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   
   const logMachineEvent = async ({ stallId, type, message }: { stallId?: string; type: MachineLog['type']; message: string; }) => {
+    // DIAGNOSTIC LOG
+    console.log(`[DIAG_LOG ${new Date().toISOString()}] [AUTH_CONTEXT] logMachineEvent: Type: ${type}, Message: "${message}"`);
     if (!firebaseUser?.uid || !activeRental || !firebaseServices?.db) {
       if (!firebaseUser?.uid || !firebaseServices?.db) {
         console.warn("Cannot log machine event: no user or no DB service.");

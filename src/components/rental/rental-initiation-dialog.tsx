@@ -183,6 +183,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
 
   const handleConnectAndRent = async () => {
     if (!stall) return;
+    console.log(`[DIAG_LOG ${new Date().toISOString()}] [RENTAL_DIALOG] handleConnectAndRent: Function called. Beginning Bluetooth process.`);
     isIntentionalDisconnect.current = false;
     setBluetoothError(null);
     setBluetoothState('initializing');
@@ -377,4 +378,3 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
     </>
   );
 }
-
