@@ -33,27 +33,28 @@ const getStripe = () => {
     return stripe;
 };
 
-// --- NEW UNLOCK MACHINE FUNCTION ---
+// --- CORRECTED UNLOCK MACHINE FUNCTION ---
 exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"], invoker: "public" }, async (request) => {
     logger.info("--- unlockPhysicalMachine function triggered ---");
 
     const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
-    const UTEK_APP_ID = process.env.NEXT_PUBLIC_UTEK_APP_ID || '684c01f3144cc';
+    const UTEK_APP_ID = '684c01f3144cc'; // Hardcoded as per original logic
     const UTEK_KEY = process.env.UTEK_API_KEY;
 
-    if (!UTEK_APP_ID || !UTEK_KEY) {
-        logger.error("Server is missing critical machine API configuration (APP_ID or KEY).");
+    if (!UTEK_KEY) {
+        logger.error("Server is missing critical machine API configuration (UTEK_API_KEY).");
         throw new HttpsError('internal', 'Server is missing critical machine API configuration.');
     }
 
-    const { dvid, tok, parm, cmd_type } = request.data;
+    const { dvid, tok, parm } = request.data;
+    // The cmd_type is always '1' for both rent and return operations per your instruction.
+    const cmd_type = '1';
 
-    if (!dvid || !tok || !parm || !cmd_type) {
-        logger.error("Invalid request: Missing required parameters.", { dvid, tok, parm, cmd_type });
+    if (!dvid || !tok || !parm) {
+        logger.error("Invalid request: Missing required parameters.", { dvid, tok, parm });
         throw new HttpsError('invalid-argument', 'Invalid request: Missing required parameters.');
     }
     logger.info(`Step 1: Received data - DVID: ${dvid}, Token: ${tok}, Param: ${parm}, CmdType: ${cmd_type}`);
-
 
     try {
         const url = new URL(UTEK_API_ENDPOINT);
@@ -68,16 +69,12 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"], invoker: "pu
 
         const response = await fetch(url.toString(), {
             method: 'GET',
-            headers: {
-                'Content-Type': 'application/json',
-            },
+            headers: { 'Content-Type': 'application/json' },
         });
         
         const responseData = await response.json();
         logger.info("Step 3: Received response from vendor API.", { responseData });
 
-        // **MODIFIED LOGIC:** Check for success more flexibly.
-        // A successful response might have ret: 0 OR msg: "success" but no ret code.
         const isSuccess = responseData.ret === 0 || (responseData.msg === 'success' && typeof responseData.ret === 'undefined');
 
         if (!isSuccess) {
@@ -87,7 +84,7 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"], invoker: "pu
         }
 
         const unlockDataString = responseData.data;
-        logger.info(`Step 4 SUCCESS: Successfully received unlock data string: "${unlockDataString}"`);
+        logger.info(`Step 4 SUCCESS: Successfully received command string: "${unlockDataString}"`);
         return { success: true, unlockDataString: unlockDataString };
 
     } catch (error) {
@@ -368,7 +365,9 @@ exports.endRentalTransaction = onCall(async (request) => {
         const DAILY_CAP = 25;
         let calculatedCost = 0;
 
-        if (durationHours > 72) {
+        if (activeRentalData.isFree === true) { // Explicitly check for true
+            calculatedCost = 0;
+        } else if (durationHours > 72) {
             calculatedCost = 100; // Forfeit deposit
         } else {
             const fullDays = Math.floor(durationHours / 24);
@@ -520,5 +519,4 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     
 
     
-
 
