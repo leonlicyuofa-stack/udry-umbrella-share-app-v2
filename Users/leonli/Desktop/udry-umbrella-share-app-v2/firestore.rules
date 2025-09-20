@@ -1,0 +1,90 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function to check if the requesting user is an admin.
+    // It securely checks if their UID exists in the 'admins' collection.
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    // Rules for the 'users' collection
+    match /users/{userId} {
+      // READ: 
+      // - A user can read their own document.
+      // - An admin can read any user document.
+      allow read: if request.auth.uid == userId || isAdmin();
+      
+      // CREATE:
+      // - A new user can create their own document when signing up.
+      allow create: if request.auth.uid == userId;
+
+      // UPDATE:
+      // - A user can update their own document (e.g., to start/end a rental, add balance).
+      // - An admin can update any user document (e.g., to adjust balance, clear a stuck rental).
+      allow update: if request.auth.uid == userId || isAdmin();
+      
+      // DELETE:
+      // - No one can delete user documents from the app for safety. Deletions should be handled server-side or manually.
+      allow delete: if false;
+    }
+
+    // Rules for the 'stalls' collection
+    match /stalls/{stallId} {
+      // READ:
+      // - Any authenticated user can read stall information to see it on the map.
+      allow read: if request.auth != null;
+      
+      // CREATE/DELETE:
+      // - Stalls should only be added or removed by an admin, typically through a backend or the console, not the client app.
+      allow create, delete: if isAdmin();
+      
+      // UPDATE:
+      // - An authenticated user can update a stall's umbrella count when renting or returning (this is crucial for the app to work).
+      // - An admin can update any stall detail.
+      allow update: if request.auth != null || isAdmin();
+    }
+    
+    // Rules for the 'rentals' (history) collection
+    match /rentals/{rentalId} {
+      // READ:
+      // - A user can read their own rental history.
+      // - An admin can read all rental history for the dashboard.
+      allow read: if resource.data.userId == request.auth.uid || isAdmin();
+
+      // CREATE, UPDATE, DELETE:
+      // - Rental history documents are created by a Cloud Function ('endRentalTransaction'), not directly by the client app.
+      // - Disallow client-side creation, update, or deletion to maintain data integrity.
+      allow write: if false;
+    }
+
+    // Rules for the 'admins' collection
+    match /admins/{adminId} {
+      // READ:
+      // - Only other admins can see who is an admin.
+      allow read: if isAdmin();
+      
+      // WRITE:
+      // - Admin records should be managed via the Firebase Console for maximum security.
+      allow write: if false;
+    }
+    
+    // Rules for other collections (e.g., processed_stripe_payments, refunds)
+    // These are managed by secure Cloud Functions, so we explicitly deny client access.
+    match /{path=**}/processed_stripe_payments/{docId} {
+      allow read, write: if false;
+    }
+    
+    match /{path=**}/refunds/{docId} {
+       allow read, write: if false;
+    }
+    
+    match /settings/global {
+      // Allow any authenticated user to read the announcement banner message.
+      allow read: if request.auth != null;
+      // Only admins can write/update the announcement message.
+      allow write: if isAdmin();
+    }
+  }
+}
