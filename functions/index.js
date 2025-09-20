@@ -34,7 +34,7 @@ const getStripe = () => {
 };
 
 // --- CORRECTED UNLOCK MACHINE FUNCTION ---
-exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"], invoker: "public" }, async (request) => {
+exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (request) => {
     logger.info("--- unlockPhysicalMachine function triggered ---");
 
     const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
@@ -506,7 +506,7 @@ exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker:
         if (error instanceof HttpsError) {
             throw error;
         }
-        throw new HttpsError('internal', 'An unexpected error occurred while processing your refund request.');
+        throw new HttpsError('internal', `An unexpected error occurred while processing your refund request.`);
     }
 });
 
@@ -519,4 +519,5 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
     
 
     
+
 
