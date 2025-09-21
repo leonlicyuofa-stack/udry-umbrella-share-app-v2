@@ -1,23 +1,29 @@
-plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.googleServices)
-}
-
-apply from: "capacitor.build.gradle"
+apply plugin: 'com.android.application'
 
 android {
     namespace "com.udry.app"
-    compileSdk 35
-
+    compileSdkVersion 33
     defaultConfig {
         applicationId "com.udry.app"
-        minSdkVersion 23
-        targetSdkVersion 35
-        versionCode 1
-        versionName "1.0"
+        minSdkVersion 22
+        targetSdkVersion 33
+        versionCode 2
+        versionName "1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
+        resValue "string", "ionic_app_id", "Default"
+        resValue "string", "ionic_channel_name", "Production"
+        resValue "string", "ionic_update_method", "background"
+        resValue "string", "ionic_max_versions", "2"
+        resValue "string", "ionic_min_background_duration", "30"
+        resValue "string", "ionic_update_api", "https://api.ionicjs.com"
 
+    }
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -26,46 +32,35 @@ android {
             keyPassword 'android'
         }
         release {
-            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
-                storeFile file("${rootDir}/${System.getenv("UDRY_KEYSTORE_PATH")}")
-                storePassword System.getenv("UDRY_STORE_PASSWORD")
-                keyAlias System.getenv("UDRY_KEY_ALIAS")
-                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            if (project.hasProperty('keystorePath')) {
+                storeFile file(project.property('keystorePath'))
+                storePassword project.property('keystorePassword')
+                keyAlias project.property('keyAlias')
+                keyPassword project.property('keyPassword')
             }
         }
     }
-
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+             signingConfig signingConfigs.release
         }
-    }
-
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    buildFeatures {
-        buildConfig = true
     }
 }
 
 dependencies {
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.coordinatorlayout)
-    implementation(project(':capacitor-android'))
-    implementation(project(':capacitor-app'))
-    implementation(project(':capacitor-camera'))
-    implementation(project(':capacitor-community-bluetooth-le'))
-    implementation(project(':capacitor-community-sqlite'))
-    implementation(project(':capacitor-status-bar'))
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
-    implementation platform(libs.firebase.bom)
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation project(':capacitor-android')
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation project(':capacitor-app')
+    implementation project(':capacitor-camera')
+    implementation project(':capacitor-status-bar')
+    implementation project(':capacitor-community-bluetooth-le')
+    implementation project(':capacitor-community-sqlite')
 }
+
+apply from: 'capacitor.build.gradle'
+
+apply plugin: 'com.google.gms.google-services'
