@@ -1,4 +1,3 @@
-
 // src/components/rental/rental-initiation-dialog.tsx
 "use client";
 
@@ -13,6 +12,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
 import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Info, ArrowRight, Link as LinkIcon } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/bluetooth-le/dist/esm';
 import { httpsCallable } from 'firebase/functions';
 
@@ -252,16 +252,29 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   
   const renderPreConfirmation = () => (
     <>
-       <Alert>
-          <Info className="h-4 w-4" />
-          <AlertTitle>Connection Step</AlertTitle>
-          <AlertDescription>
-            Your phone will ask for permission to connect. In the list that appears, please find and select the device with this exact name:
-            <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-3xl text-center text-green-600 font-bold">
-              {stall.btName || "Device Name Not Found"}
+        <Alert>
+            <Info className="h-4 w-4" />
+            <AlertTitle>Connection Instructions</AlertTitle>
+            <AlertDescription>
+                After clicking continue, your phone will ask for permission to connect. Please select the device with the exact name shown below.
+            </AlertDescription>
+            <div className="my-2 p-2 bg-secondary/50 rounded-lg flex flex-col sm:flex-row items-center gap-4">
+                <div className="flex-1 space-y-1">
+                    <p className="font-semibold text-primary">Device to Select:</p>
+                    <p className="font-mono text-xl text-center text-green-600 font-bold bg-background p-2 rounded-md">
+                        {stall.btName || "Device Name Not Found"}
+                    </p>
+                </div>
+                <div className="flex-shrink-0">
+                    <Image 
+                        src="/images/bluetooth-selection-guide.png" 
+                        alt="Example of Bluetooth device selection dialog with the device name highlighted."
+                        width={100} 
+                        height={100}
+                        className="rounded-md border"
+                    />
+                </div>
             </div>
-            If you do not see this name, please cancel and try again.
-          </AlertDescription>
         </Alert>
          <p className="text-xs text-center text-muted-foreground pt-2">
             By proceeding, you agree to our{' '}
