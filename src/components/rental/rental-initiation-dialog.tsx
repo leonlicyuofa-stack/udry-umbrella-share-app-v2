@@ -259,18 +259,17 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                 After clicking continue, your phone will ask for permission to connect. Please select the device with the exact name shown below.
             </AlertDescription>
             <div className="my-2 p-2 bg-secondary/50 rounded-lg flex flex-col sm:flex-row items-center gap-4">
-                <div className="flex-1 space-y-1">
-                    <p className="font-semibold text-primary">Device to Select:</p>
-                    <p className="font-mono text-xl text-center text-green-600 font-bold bg-background p-2 rounded-md">
-                        {stall.btName || "Device Name Not Found"}
+                <div className="flex-1 space-y-2">
+                    <p className="font-semibold text-primary text-center sm:text-left">
+                      Device to Select: <span className="font-mono text-xl text-green-600 font-bold">{stall.btName || "N/A"}</span>
                     </p>
                 </div>
                 <div className="flex-shrink-0">
                     <Image 
                         src="/bluetooth-selection-guide.png" 
                         alt="Example of Bluetooth device selection dialog with the device name highlighted."
-                        width={100} 
-                        height={100}
+                        width={150}
+                        height={150}
                         className="rounded-md border"
                     />
                 </div>
