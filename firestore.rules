@@ -1,56 +1,29 @@
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    
-    // Helper function to check if a user is an admin
-    function isAdmin() {
-      // Check against the user's email for simplicity and security
-      return request.auth.token.email == 'admin@u-dry.com' &&
-             exists(/databases/$(database)/documents/admins/$(request.auth.uid));
-    }
-
-    // Users can read and write ONLY to their own document.
+    // Admins can read all user and rental data for the dashboard.
+    // Normal users can still only read their own data via the rule below.
     match /users/{userId} {
-      allow read, update: if request.auth != null && request.auth.uid == userId;
+      allow read: if get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists;
+      allow read, write: if request.auth.uid == userId;
     }
 
-    // Admins collection for role-based access control. Only admins can read the list.
-    match /admins/{adminId} {
-      allow read: if isAdmin();
-    }
-
-    // Stalls can be read by any authenticated user.
-    // Stalls can be UPDATED by any auth user (for decrementing umbrella count during rental).
-    // Stalls can only be CREATED or DELETED by a verified admin.
-    match /stalls/{stallId} {
-      allow read: if request.auth != null;
-      allow update: if request.auth != null;
-      allow create, delete: if isAdmin();
-    }
-    
-    // Rentals can be created by any authenticated user.
-    // Past rentals can only be read by the user who made them or an admin.
     match /rentals/{rentalId} {
-        allow create: if request.auth != null;
-        allow read: if (request.auth != null && resource.data.userId == request.auth.uid) || isAdmin();
+      allow read: if get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists;
     }
     
-    // Processed stripe payments are internal records and should not be client-readable.
-    match /processed_stripe_payments/{paymentId} {
-        allow read, write: if false;
+    // --- Existing, working rules for Stalls ---
+    // Any logged-in user can read stall data for the map and update counts during transactions.
+    // Only admins can create new stalls.
+    match /stalls/{stallId} {
+      allow read, update: if request.auth != null;
+      allow create: if get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists;
+      allow delete: if get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists;
     }
-    
-    // Refund records are internal and should not be client-readable.
-     match /refunds/{refundId} {
-        allow read, write: if false;
-    }
-    
-    // Global settings can be read by anyone to get announcements.
-    // Only admins can write to global settings.
-    match /settings/global {
-        allow read;
-        allow write: if isAdmin();
+
+    // A special collection to list who is an admin.
+    match /admins/{userId} {
+      allow read: if request.auth.uid == userId;
     }
   }
 }
