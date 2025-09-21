@@ -1,29 +1,44 @@
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Admins can read all user and rental data for the dashboard.
-    // Normal users can still only read their own data via the rule below.
-    match /users/{userId} {
-      allow read: if get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists;
-      allow read, write: if request.auth.uid == userId;
+
+    // Helper function to check if the user is an admin by checking for their UID in the /admins collection.
+    function isAdmin() {
+      return exists(/databases/$(database)/documents/admins/$(request.auth.uid));
     }
 
-    match /rentals/{rentalId} {
-      allow read: if get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists;
+    // Admins Collection:
+    // This rule is ESSENTIAL. It allows the isAdmin() function above to work.
+    // Any authenticated user can check who is an admin, which is safe.
+    match /admins/{adminId} {
+      allow read: if request.auth != null;
     }
-    
-    // --- Existing, working rules for Stalls ---
-    // Any logged-in user can read stall data for the map and update counts during transactions.
-    // Only admins can create new stalls.
+
+    // Settings Collection:
+    // Allows any authenticated user to read global settings like the announcement banner message.
+    match /settings/{docId} {
+      allow read: if request.auth != null;
+    }
+
+    // Stalls Collection:
+    // Users can read and update (for rental counts). Only admins can create/delete.
     match /stalls/{stallId} {
       allow read, update: if request.auth != null;
-      allow create: if get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists;
-      allow delete: if get(/databases/$(database)/documents/admins/$(request.auth.uid)).exists;
+      allow create, delete: if isAdmin();
     }
 
-    // A special collection to list who is an admin.
-    match /admins/{userId} {
-      allow read: if request.auth.uid == userId;
+    // Users Collection:
+    // A user can always read/write their own document. An admin can read any user's document.
+    match /users/{userId} {
+      allow read: if request.auth.uid == userId || isAdmin();
+      allow write: if request.auth.uid == userId;
+    }
+
+    // Rentals Collection (for history):
+    // Only admins can read the full rental history of all users.
+    match /rentals/{rentalId} {
+       allow read: if isAdmin();
     }
   }
 }
