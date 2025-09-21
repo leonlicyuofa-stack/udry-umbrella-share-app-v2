@@ -267,7 +267,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                 </div>
                 <div className="flex-shrink-0">
                     <Image 
-                        src="/images/bluetooth-selection-guide.png" 
+                        src="/bluetooth-selection-guide.png" 
                         alt="Example of Bluetooth device selection dialog with the device name highlighted."
                         width={100} 
                         height={100}
