@@ -11,16 +11,7 @@ android {
         versionName "1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
-             // big size png may cause this error
-             cruncherEnabled = false
-        }
-    }
-    signingConfigs {
-        release {
-            storeFile file(UDRY_KEYSTORE_PATH)
-            storePassword UDRY_STORE_PASSWORD
-            keyAlias UDRY_KEY_ALIAS
-            keyPassword UDRY_KEY_PASSWORD
+             // You can add options here if needed
         }
     }
     buildTypes {
@@ -30,16 +21,23 @@ android {
             signingConfig signingConfigs.release
         }
     }
-
-    lintOptions {
+    signingConfigs {
+        release {
+            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
+                storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
+                storePassword System.getenv("UDRY_STORE_PASSWORD")
+                keyAlias System.getenv("UDRY_KEY_ALIAS")
+                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            }
+        }
+    }
+    lint {
         abortOnError false
     }
-
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-
 }
 
 repositories {
@@ -50,22 +48,20 @@ repositories {
 
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation "androidx.appcompat:appcompat:1.6.1"
-    implementation "androidx.coordinatorlayout:coordinatorlayout:1.2.0"
-    implementation "androidx.core:core-ktx:1.10.1" // Downgraded from 1.12.0
-    implementation "androidx.activity:activity:1.7.2" // Downgraded from 1.8.0
-    implementation 'androidx.webkit:webkit:1.8.0' // Downgraded from 1.9.0
+    implementation 'androidx.appcompat:appcompat:1.6.1'
+    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
+    implementation 'androidx.core:core-ktx:1.10.1'
+    implementation 'androidx.activity:activity:1.7.2'
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
     implementation project(':capacitor-status-bar')
-    testImplementation "junit:junit:4.13.2"
-    androidTestImplementation "androidx.test.ext:junit:1.1.5"
-    androidTestImplementation "androidx.test.espresso:espresso-core:3.5.1"
-    implementation 'com.google.firebase:firebase-analytics'
-    implementation platform('com.google.firebase:firebase-bom:33.1.2')
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation 'androidx.webkit:webkit:1.8.0'
 }
 
 apply from: 'capacitor.build.gradle'
