@@ -1,77 +1,64 @@
-
-plugins {
-    id 'com.android.application'
-}
-
-def keystoreFile = System.getenv("UDRY_KEYSTORE_PATH") ? file(System.getenv("UDRY_KEYSTORE_PATH")) : null
+apply plugin: 'com.android.application'
 
 android {
     namespace "com.udry.app"
-    compileSdkVersion 35
+    compileSdk 35
     defaultConfig {
         applicationId "com.udry.app"
         minSdkVersion 22
-        targetSdkVersion 33
+        targetSdkVersion 35
         versionCode 2
         versionName "1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    signingConfigs {
-        release {
-            if (keystoreFile != null && keystoreFile.exists()) {
-                storeFile keystoreFile
-                storePassword System.getenv("UDRY_STORE_PASSWORD")
-                keyAlias System.getenv("UDRY_KEY_ALIAS")
-                keyPassword System.getenv("UDRY_KEY_PASSWORD")
-            } else {
-                println "Keystore file not found. Signing will be skipped."
-            }
-        }
-    }
-
-    buildTypes {
-        release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
-            if (keystoreFile != null && keystoreFile.exists()) {
-                signingConfig signingConfigs.release
-            }
+        vectorDrawables {
+            useSupportLibrary true
         }
     }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
     }
-    buildFeatures {
-        buildConfig false
+    kotlinOptions {
+        jvmTarget = '17'
     }
-}
-
-repositories {
-    flatDir {
-        dirs '../capacitor-cordova-android-plugins/src/main/libs', 'libs'
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.5.1'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
+    }
+    signingConfigs {
+        release {
+            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
+                storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
+                storePassword System.getenv("UDRY_STORE_PASSWORD")
+                keyAlias System.getenv("UDRY_KEY_ALIAS")
+                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            }
+        }
+    }
+    buildTypes {
+        release {
+            minifyEnabled true
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
+        }
     }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
-    implementation 'androidx.appcompat:appcompat:1.6.1'
-    implementation 'androidx.coordinatorlayout:coordinatorlayout:1.2.0'
-    implementation 'androidx.core:core-ktx:1.12.0'
-
-    // Capacitor libraries
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.coordinatorlayout
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.espresso.core
     implementation project(':capacitor-android')
-    implementation project(':capacitor-app')
-    implementation project(':capacitor-camera')
-    implementation project(':capacitor-status-bar')
-    implementation project(':capacitor-community-bluetooth-le')
-    implementation project(':capacitor-community-sqlite')
-
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
-    implementation 'com.google.android.gms:play-services-location:21.2.0'
 }
-
-apply from: 'capacitor.build.gradle'
