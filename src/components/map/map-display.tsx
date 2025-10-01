@@ -271,7 +271,7 @@ export function MapDisplay() {
               {isLocating ? <Loader2 className="h-5 w-5 animate-spin" /> : <LocateFixed className="h-5 w-5" />}
           </Button>
         </div>
-        <div className="absolute bottom-4 left-1/2 -translate-x-1/2 z-10">
+        <div className="absolute top-4 left-1/2 -translate-x-1/2 z-10">
            <Button
               onClick={() => setIsScanDialogOpen(true)}
               size="lg"
