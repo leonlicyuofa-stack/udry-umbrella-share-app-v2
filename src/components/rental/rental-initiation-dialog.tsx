@@ -31,7 +31,7 @@ const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, 
   getting_token: "Connected. Authenticating...",
   getting_command: "Authenticated. Getting unlock command...",
   sending_command: "Sending unlock command to machine...",
-  awaiting_final_confirmation: "Unlock command sent! Please take the umbrella from the machine.",
+  awaiting_final_confirmation: "Your umbrella is unlocked. Please remove it from the stall to begin your rental.", // Wording updated here
   success: "Command sent! Your umbrella should unlock.",
   error: "An error occurred."
 });
@@ -361,10 +361,10 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
             <AlertDialogTitle className="flex items-center text-xl text-primary">
-              <Loader2 className="mr-2 h-6 w-6 animate-spin" /> Waiting for Confirmation
+              <Umbrella className="mr-2 h-6 w-6" /> Action Required
             </AlertDialogTitle>
             <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
-              {bluetoothStateMessages.awaiting_final_confirmation}
+              Your umbrella is unlocked. Please remove it from the stall to begin your rental.
             </AlertDialogDescription>
           </AlertDialogHeader>
         </AlertDialogContent>
@@ -377,7 +377,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
               <Umbrella className="mr-2 h-8 w-8" /> Rental Started!
             </AlertDialogTitle>
             <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
-              You can now take the umbrella from the machine. Enjoy!
+              Your rental is active. You can close this window. Enjoy your day!
             </AlertDialogDescription>
           </AlertDialogHeader>
         </AlertDialogContent>
