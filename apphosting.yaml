@@ -3,6 +3,13 @@
 runConfig:
   cpu: 1
   memoryMiB: 512
+redirects:
+  - type: 302
+    # This glob matches rental deep link URLs.
+    glob: /rent/**
+    # The location of your app on the App Store.
+    # This is a placeholder URL and should be updated with your actual App Store link.
+    location: https://apps.apple.com/app/idYOUR_APP_ID
 headers:
   - path: /payment/success**
     headers:
