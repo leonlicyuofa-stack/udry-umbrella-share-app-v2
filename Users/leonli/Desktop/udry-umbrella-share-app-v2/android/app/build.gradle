@@ -36,6 +36,7 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            // This uses the correct syntax to find and apply the 'release' signing config.
             signingConfig signingConfigs.getByName("release")
         }
     }
