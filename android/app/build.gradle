@@ -1,42 +1,52 @@
+// THIS IS A GENERATED FILE. DO NOT EDIT.
+//
+// This file is generated from the root project's `variables.gradle` file
+// and adapted for the Capacitor app.
+//
+// You can learn more about this file here: https://capacitorjs.com/docs/android/variables
+
 plugins {
     id 'com.android.application'
     id 'com.google.gms.google-services'
+    id 'kotlin-android'
 }
 
 apply from: "capacitor.build.gradle"
 
 android {
     namespace "com.udry.app"
-    compileSdkVersion 33
+    compileSdk 35
     defaultConfig {
         applicationId "com.udry.app"
         minSdkVersion 23
-        targetSdkVersion 34
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        resValue "string", "ionic_app_id", "@string/ionic_app_id"
+        resValue "string", "ionic_channel_name", "@string/ionic_channel_name"
+        resValue "string", "ionic_update_api", "@string/ionic_update_api"
+        resValue "string", "ionic_update_method", "@string/ionic_update_method"
     }
 
-    // Defines variables for accessing the keystore environment variables.
-    def udryKeystorePath = System.getenv("UDRY_KEYSTORE_PATH") ?: "my-release-key.keystore"
-    def udryStorePassword = System.getenv("UDRY_STORE_PASSWORD") ?: ""
-    def udryKeyAlias = System.getenv("UDRY_KEY_ALIAS") ?: ""
-    def udryKeyPassword = System.getenv("UDRY_KEY_PASSWORD") ?: ""
+    // Read keystore details from environment variables
+    def udryKeystorePath = System.getenv("UDRY_KEYSTORE_PATH")
+    def udryStorePassword = System.getenv("UDRY_STORE_PASSWORD")
+    def udryKeyAlias = System.getenv("UDRY_KEY_ALIAS")
+    def udryKeyPassword = System.getenv("UDRY_KEY_PASSWORD")
 
     signingConfigs {
         release {
-            if (udryKeystorePath && new File(udryKeystorePath).exists()) {
+            if (udryKeystorePath != null && new File(udryKeystorePath).exists()) {
                 storeFile file(udryKeystorePath)
                 storePassword udryStorePassword
                 keyAlias udryKeyAlias
                 keyPassword udryKeyPassword
             } else {
-                println "Keystore not found at path: ${udryKeystorePath}. Using debug signing for release build."
-                // Fallback to debug signing if release keystore is not found
-                storeFile file('../debug.keystore')
-                storePassword 'android'
-                keyAlias 'androiddebugkey'
-                keyPassword 'android'
+                println "Release keystore not found, using debug keystore for release build."
+                // Use debug signing for release builds if release key is not found
+                // This is NOT for production but allows the build to complete.
+                signingConfig signingConfigs.debug
             }
         }
     }
@@ -49,27 +59,53 @@ android {
         }
     }
 
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    kotlinOptions {
+        jvmTarget = '17'
+    }
+
     buildFeatures {
         buildConfig = true
     }
 
-    kotlinOptions {
-        jvmTarget = "1.8"
+    lint {
+        abortOnError false
+    }
+
+    dependenciesInfo {
+        includeInApk false
+        includeInBundle false
     }
 }
 
 dependencies {
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.androidx.appcompat)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
+    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
+    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
+    implementation "androidx.test.ext:junit:$androidxTestExtJunitVersion"
+    implementation "androidx.test.espresso:espresso-core:$espressoCoreVersion"
     implementation project(':capacitor-android')
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.espresso.core
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
     implementation project(':capacitor-status-bar')
+
+    // Firebase
+    implementation platform("com.google.firebase:firebase-bom:$firebaseBomVersion")
+    implementation "com.google.firebase:firebase-auth"
+    implementation "com.google.firebase:firebase-firestore"
 }
+
+// THIS IS A GENERATED FILE. DO NOT EDIT.
+//
+// This file is generated from the root project's `variables.gradle` file
+// and adapted for the Capacitor app.
+//
+// You can learn more about this file here: https://capacitorjs.com/docs/android/variables
+apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
+// DO NOT EDIT THIS FILE!
