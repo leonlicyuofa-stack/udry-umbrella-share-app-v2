@@ -4,7 +4,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.udry.app',
   appName: 'udry 共享雨傘 ',
-  webDir: '.next', // Use .next to align with Capacitor's expectation for synced dev assets
+  webDir: 'out', // Corrected to point to the static export directory
   // The server block is removed to prevent loading from a live URL in development.
   // This forces the app to use the local files in the webDir.
   
