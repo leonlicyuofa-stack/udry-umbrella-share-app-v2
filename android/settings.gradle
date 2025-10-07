@@ -1,18 +1,10 @@
-// The base project's settings.gradle file
-
-include ':app'
-include ':capacitor-android'
-project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')
-include ':capacitor-app'
-project(':capacitor-app').projectDir = new File('../node_modules/@capacitor/app/android')
-include ':capacitor-camera'
-project(':capacitor-camera').projectDir = new File('../node_modules/@capacitor/camera/android')
-include ':capacitor-status-bar'
-project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacitor/status-bar/android')
-include ':capacitor-community-bluetooth-le'
-project(':capacitor-community-bluetooth-le').projectDir = new File('../node_modules/@capacitor-community/bluetooth-le/android')
-include ':capacitor-community-sqlite'
-project(':capacitor-community-sqlite').projectDir = new File('../node_modules/@capacitor-community/sqlite/android')
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -20,11 +12,30 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
     }
-    resolutionStrategy {
-        eachDependency { DependencyResolveDetails details ->
-            if (details.requested.group == 'androidx.webkit' && details.requested.name == 'webkit' && details.requested.version == '1.4.0') {
-                details.useVersion '1.9.0'
+    components.all {
+        if (it.id.group == "com.getcapacitor.community.database.sqlite" && it.id.name == "sqlite") {
+            it.withVariants {
+                withVariant("debug") {
+                    attributes {
+                        attribute(Attribute.of("cap_sqlite_debug", Boolean.TYPE), true)
+                    }
+                }
             }
         }
     }
 }
+
+rootProject.name = "android"
+include ':app'
+include ':capacitor-android'
+project(':capacitor-android').projectDir = new File(settingsDir, '../node_modules/@capacitor/android/capacitor')
+include ':capacitor-app'
+project(':capacitor-app').projectDir = new File(settingsDir, '../node_modules/@capacitor/app/android')
+include ':capacitor-camera'
+project(':capacitor-camera').projectDir = new File(settingsDir, '../node_modules/@capacitor/camera/android')
+include ':capacitor-status-bar'
+project(':capacitor-status-bar').projectDir = new File(settingsDir, '../node_modules/@capacitor/status-bar/android')
+include ':capacitor-community-bluetooth-le'
+project(':capacitor-community-bluetooth-le').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/bluetooth-le/android')
+include ':capacitor-community-sqlite'
+project(':capacitor-community-sqlite').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/sqlite/android')
