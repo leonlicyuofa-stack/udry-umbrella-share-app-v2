@@ -1,41 +1,30 @@
 
-// The plugins block is required for Gradle to apply the version catalog and other settings.
-// It must be at the top of the file.
-@file:Suppress("UnstableApiUsage")
-
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
+// The dependencyResolutionManagement block is the standard, modern way to
+// centralize repository definitions for all sub-projects in Gradle.
+// It ensures consistency and prevents errors from misconfigured repositories
+// in third-party plugins.
 
 dependencyResolutionManagement {
-    // This is the CRITICAL line. It forces all projects and sub-projects to use the repositories
-    // defined below, and IGNORES any repositories defined in individual build.gradle files
-    // (like the ones inside node_modules). This solves the "repository 'Google' was added by build file" error.
+    // This setting enforces that all projects MUST use the repositories defined below.
+    // It prevents plugins (like Capacitor's) from adding their own, which causes build failures.
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
 
     repositories {
         google()
         mavenCentral()
-        // Added for Capacitor Community plugins
-        maven { url 'https://jitpack.io' }
     }
 }
 
-rootProject.name = "android"
 include ':app'
 include ':capacitor-android'
-project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')
+project(':capacitor-android').projectDir = new File(project.projectDir, '../node_modules/@capacitor/android/capacitor')
 include ':capacitor-app'
-project(':capacitor-app').projectDir = new File('../node_modules/@capacitor/app/android')
+project(':capacitor-app').projectDir = new File(project.projectDir, '../node_modules/@capacitor/app/android')
 include ':capacitor-camera'
-project(':capacitor-camera').projectDir = new File('../node_modules/@capacitor/camera/android')
+project(':capacitor-camera').projectDir = new File(project.projectDir, '../node_modules/@capacitor/camera/android')
 include ':capacitor-status-bar'
-project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacitor/status-bar/android')
-include ':capacitor-community-sqlite'
-project(':capacitor-community-sqlite').projectDir = new File('../node_modules/@capacitor-community/sqlite/android')
+project(':capacitor-status-bar').projectDir = new File(project.projectDir, '../node_modules/@capacitor/status-bar/android')
 include ':capacitor-community-bluetooth-le'
-project(':capacitor-community-bluetooth-le').projectDir = new File('../node_modules/@capacitor-community/bluetooth-le/android')
+project(':capacitor-community-bluetooth-le').projectDir = new File(project.projectDir, '../node_modules/@capacitor-community/bluetooth-le/android')
+include ':capacitor-community-sqlite'
+project(':capacitor-community-sqlite').projectDir = new File(project.projectDir, '../node_modules/@capacitor-community/sqlite/android')
