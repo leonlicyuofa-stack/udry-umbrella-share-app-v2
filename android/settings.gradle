@@ -1,3 +1,10 @@
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
 
 dependencyResolutionManagement {
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
@@ -7,17 +14,6 @@ dependencyResolutionManagement {
     }
 }
 
+rootProject.name = "android"
 include ':app'
-include ':capacitor-android'
-include ':capacitor-app'
-include ':capacitor-camera'
-include ':capacitor-status-bar'
-include ':capacitor-community-bluetooth-le'
-include ':capacitor-community-sqlite'
-
-project(':capacitor-android').projectDir = new File(project.projectDir, '../node_modules/@capacitor/android/capacitor')
-project(':capacitor-app').projectDir = new File(project.projectDir, '../node_modules/@capacitor/app/android')
-project(':capacitor-camera').projectDir = new File(project.projectDir, '../node_modules/@capacitor/camera/android')
-project(':capacitor-status-bar').projectDir = new File(project.projectDir, '../node_modules/@capacitor/status-bar/android')
-project(':capacitor-community-bluetooth-le').projectDir = new File(project.projectDir, '../node_modules/@capacitor-community/bluetooth-le/android')
-project(':capacitor-community-sqlite').projectDir = new File(project.projectDir, '../node_modules/@capacitor-community/sqlite/android')
+include ':capacitor-cordova-android-plugins'
