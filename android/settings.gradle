@@ -14,18 +14,18 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "android"
 include ':app'
 include ':capacitor-android'
 include ':capacitor-app'
 include ':capacitor-camera'
 include ':capacitor-status-bar'
+project(':capacitor-android').projectDir = new File(settingsDir, '../node_modules/@capacitor/android/capacitor')
+project(':capacitor-app').projectDir = new File(settingsDir, '../node_modules/@capacitor/app/android')
+project(':capacitor-camera').projectDir = new File(settingsDir, '../node_modules/@capacitor/camera/android')
+project(':capacitor-status-bar').projectDir = new File(settingsDir, '../node_modules/@capacitor/status-bar/android')
 include ':capacitor-community-bluetooth-le'
+project(':capacitor-community-bluetooth-le').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/bluetooth-le/android')
 include ':capacitor-community-sqlite'
-
-project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')
-project(':capacitor-app').projectDir = new File('../node_modules/@capacitor/app/android')
-project(':capacitor-camera').projectDir = new File('../node_modules/@capacitor/camera/android')
-project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacitor/status-bar/android')
-project(':capacitor-community-bluetooth-le').projectDir = new File('../node_modules/@capacitor-community/bluetooth-le/android')
-project(':capacitor-community-sqlite').projectDir = new File('../node_modules/@capacitor-community/sqlite/android')
+project(':capacitor-community-sqlite').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/sqlite/android')
+include ':capacitor-cordova-android-plugins'
+project(':capacitor-cordova-android-plugins').projectDir = new File(settingsDir, 'capacitor-cordova-android-plugins')
