@@ -7,25 +7,18 @@ buildscript {
     dependencies {
         classpath "com.android.tools.build:gradle:8.4.1"
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24"
-        classpath 'com.google.gms:google-services:4.4.2'
     }
 }
 
-// This pluginManagement block enforces that all sub-projects use the repositories defined in settings.gradle.
-// This is the definitive fix for the "repository 'Google' was added by build file" error.
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
+// Apply the Capacitor build logic to all sub-projects.
+// This is the correct location for this logic.
 allprojects {
     repositories {
         google()
         mavenCentral()
     }
+    // Required for Capacitor plugins
+    apply from: "../../node_modules/@capacitor/android/capacitor.build.gradle"
 }
 
 task clean(type: Delete) {

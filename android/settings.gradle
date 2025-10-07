@@ -1,14 +1,6 @@
 
-// The dependencyResolutionManagement block is the standard, modern way to
-// centralize repository definitions for all sub-projects in Gradle.
-// It ensures consistency and prevents errors from misconfigured repositories
-// in third-party plugins.
-
 dependencyResolutionManagement {
-    // This setting enforces that all projects MUST use the repositories defined below.
-    // It prevents plugins (like Capacitor's) from adding their own, which causes build failures.
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
-
     repositories {
         google()
         mavenCentral()
@@ -17,14 +9,15 @@ dependencyResolutionManagement {
 
 include ':app'
 include ':capacitor-android'
-project(':capacitor-android').projectDir = new File(project.projectDir, '../node_modules/@capacitor/android/capacitor')
 include ':capacitor-app'
-project(':capacitor-app').projectDir = new File(project.projectDir, '../node_modules/@capacitor/app/android')
 include ':capacitor-camera'
-project(':capacitor-camera').projectDir = new File(project.projectDir, '../node_modules/@capacitor/camera/android')
 include ':capacitor-status-bar'
-project(':capacitor-status-bar').projectDir = new File(project.projectDir, '../node_modules/@capacitor/status-bar/android')
 include ':capacitor-community-bluetooth-le'
-project(':capacitor-community-bluetooth-le').projectDir = new File(project.projectDir, '../node_modules/@capacitor-community/bluetooth-le/android')
 include ':capacitor-community-sqlite'
+
+project(':capacitor-android').projectDir = new File(project.projectDir, '../node_modules/@capacitor/android/capacitor')
+project(':capacitor-app').projectDir = new File(project.projectDir, '../node_modules/@capacitor/app/android')
+project(':capacitor-camera').projectDir = new File(project.projectDir, '../node_modules/@capacitor/camera/android')
+project(':capacitor-status-bar').projectDir = new File(project.projectDir, '../node_modules/@capacitor/status-bar/android')
+project(':capacitor-community-bluetooth-le').projectDir = new File(project.projectDir, '../node_modules/@capacitor-community/bluetooth-le/android')
 project(':capacitor-community-sqlite').projectDir = new File(project.projectDir, '../node_modules/@capacitor-community/sqlite/android')
