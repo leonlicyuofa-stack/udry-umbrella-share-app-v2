@@ -1,8 +1,6 @@
-
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
-    id 'com.google.gms.google-services'
 }
 
 apply from: "capacitor.build.gradle"
@@ -18,10 +16,6 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        resValue "string", "ionic_app_id", ""
-        resValue "string", "ionic_channel_name", "Production"
-        resValue "string", "ionic_update_api", "https://api.ionicjs.com"
-        resValue "string", "ionic_update_method", "background"
     }
 
     signingConfigs {
@@ -32,7 +26,7 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile rootProject.file(System.getenv("UDRY_KEYSTORE_PATH"))
+            storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
             storePassword System.getenv("UDRY_STORE_PASSWORD")
             keyAlias System.getenv("UDRY_KEY_ALIAS")
             keyPassword System.getenv("UDRY_KEY_PASSWORD")
@@ -41,9 +35,9 @@ android {
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
+            signingConfig signingConfigs.getByName("release")
         }
     }
 
@@ -51,29 +45,29 @@ android {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
-    
+
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+
     buildFeatures {
         buildConfig = true
+        viewBinding true
     }
 }
 
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
-    implementation platform('com.google.firebase:firebase-bom:33.1.2')
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+
+    // Capacitor
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-status-bar')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.espresso.core
-}
-
-kotlinOptions {
-    jvmTarget = '1.8'
 }
