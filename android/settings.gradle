@@ -1,18 +1,6 @@
-
-// The `pluginManagement` block is used to configure how Gradle finds plugins.
-pluginManagement {
-    repositories {
-        google()
-        mavenCentral()
-        gradlePluginPortal()
-    }
-}
-
-// The `dependencyResolutionManagement` block is the modern, centralized way to control
-// where Gradle downloads dependencies for the entire project.
+// The `dependencyResolutionManagement` block is required for modern Android Gradle builds.
+// It centralizes repository configurations for all modules in the project.
 dependencyResolutionManagement {
-    // This setting enforces that all modules use the repositories defined here.
-    // It prevents sub-projects from adding their own, which was the source of our errors.
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
@@ -20,9 +8,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = 'android'
+rootProject.name = "android"
 include ':app'
 include ':capacitor-cordova-android-plugins'
-
-// This applies Capacitor's specific build logic after all settings are configured.
-apply from: 'capacitor.build.gradle'
