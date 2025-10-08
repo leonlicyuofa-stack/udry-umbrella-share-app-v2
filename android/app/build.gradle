@@ -1,22 +1,25 @@
-apply from: "../node_modules/@capacitor/android/capacitor.build.gradle"
+// The plugins block must be the first block in the file.
 plugins {
     id 'com.android.application'
+    id 'kotlin-android'
 }
+
+// Applying the Capacitor script AFTER the plugins block.
+apply from: rootProject.file('app/capacitor.build.gradle')
 
 android {
     namespace "com.udry.app"
     compileSdk 35
+
     defaultConfig {
         applicationId "com.udry.app"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 4
-        versionName "1.0.4"
+        versionCode 1
+        versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        ndk {
-            abiFilters 'armeabi-v7a', 'arm64-v8a', 'x86', 'x86_64'
-        }
     }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -25,43 +28,49 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
-            storePassword System.getenv("UDRY_STORE_PASSWORD")
-            keyAlias System.getenv("UDRY_KEY_ALIAS")
-            keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
+                storeFile rootProject.file(System.getenv("UDRY_KEYSTORE_PATH"))
+                storePassword System.getenv("UDRY_STORE_PASSWORD")
+                keyAlias System.getenv("UDRY_KEY_ALIAS")
+                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            }
         }
     }
+
     buildTypes {
         release {
-            minifyEnabled true
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled false
             signingConfig signingConfigs.release
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '1.8'
     }
+
     buildFeatures {
-        buildConfig true
+        buildConfig = true
     }
 }
 
 dependencies {
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.coordinatorlayout)
-    implementation(libs.firebase.auth)
-    implementation(libs.firebase.firestore)
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.coordinatorlayout
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
     implementation project(':capacitor-android')
-    testImplementation(libs.junit)
-    androidTestImplementation(libs.androidx.test.ext.junit)
-    androidTestImplementation(libs.espresso.core)
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-status-bar')
     implementation project(':capacitor-community-sqlite')
     implementation project(':capacitor-community-bluetooth-le')
+    testImplementation libs.junit
+    androidTestImplementation libs.androidx.test.ext.junit
+    androidTestImplementation libs.espresso.core
 }
