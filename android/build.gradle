@@ -1,31 +1,34 @@
+
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
+    // Defines the central versions for key build tools.
+    ext {
+        // These versions are sourced from your project's `gradle/libs.versions.toml` file.
+        androidGradlePluginVersion = '8.4.1'
+        kotlinVersion = '1.9.24'
+    }
+    // Defines the repositories for the build script's own dependencies (the plugins).
     repositories {
         google()
         mavenCentral()
     }
+    // Defines the actual plugin dependencies for the build script.
     dependencies {
-        classpath 'com.android.tools.build:gradle:8.4.1'
-        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.9.24"
-        classpath 'com.google.gms:google-services:4.4.2'
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        classpath "com.android.tools.build:gradle:$androidGradlePluginVersion"
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlinVersion"
+        // NOTE: Do not add other dependencies here. App dependencies go in app/build.gradle.
     }
 }
 
+// The 'allprojects' block applies the enclosed configuration to every module in the project.
 allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
+    // This is the correct place to apply the Capacitor plugin logic.
+    // It ensures that any project (like ':app') gets the necessary Capacitor configurations.
+    apply from: "../node_modules/@capacitor/android/capacitor/build.gradle"
 
-// This applies the capacitor.build.gradle script to each project.
-// This is the correct location for this logic.
-subprojects {
-    apply from: "../node_modules/@capacitor/android/capacitor.build.gradle"
+    // DO NOT ADD a repositories {} block here. It is managed by settings.gradle.
+    // My previous error was adding a repositories block here, which is forbidden.
 }
-
 
 task clean(type: Delete) {
     delete rootProject.buildDir

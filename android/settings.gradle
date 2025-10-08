@@ -1,3 +1,5 @@
+
+// The `pluginManagement` block is used to configure how Gradle finds plugins.
 pluginManagement {
     repositories {
         google()
@@ -6,7 +8,11 @@ pluginManagement {
     }
 }
 
+// The `dependencyResolutionManagement` block is the modern, centralized way to control
+// where Gradle downloads dependencies for the entire project.
 dependencyResolutionManagement {
+    // This setting enforces that all modules use the repositories defined here.
+    // It prevents sub-projects from adding their own, which was the source of our errors.
     repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
@@ -14,18 +20,9 @@ dependencyResolutionManagement {
     }
 }
 
+rootProject.name = 'android'
 include ':app'
-include ':capacitor-android'
-include ':capacitor-app'
-include ':capacitor-camera'
-include ':capacitor-status-bar'
-project(':capacitor-android').projectDir = new File(settingsDir, '../node_modules/@capacitor/android/capacitor')
-project(':capacitor-app').projectDir = new File(settingsDir, '../node_modules/@capacitor/app/android')
-project(':capacitor-camera').projectDir = new File(settingsDir, '../node_modules/@capacitor/camera/android')
-project(':capacitor-status-bar').projectDir = new File(settingsDir, '../node_modules/@capacitor/status-bar/android')
-include ':capacitor-community-bluetooth-le'
-project(':capacitor-community-bluetooth-le').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/bluetooth-le/android')
-include ':capacitor-community-sqlite'
-project(':capacitor-community-sqlite').projectDir = new File(settingsDir, '../node_modules/@capacitor-community/sqlite/android')
 include ':capacitor-cordova-android-plugins'
-project(':capacitor-cordova-android-plugins').projectDir = new File(settingsDir, 'capacitor-cordova-android-plugins')
+
+// This applies Capacitor's specific build logic after all settings are configured.
+apply from: 'capacitor.build.gradle'
