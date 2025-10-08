@@ -1,7 +1,14 @@
-// The `dependencyResolutionManagement` block is required for modern Android Gradle builds.
-// It centralizes repository configurations for all modules in the project.
+// The `dependencyResolutionManagement` block is the modern, centralized way to declare repositories.
+// It ensures that all sub-projects in this build use the same repository configuration,
+// preventing conflicts and ensuring consistent dependency resolution.
+// This is a requirement for modern Android Gradle Plugin versions.
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
+    // PREFER_SETTINGS is used here as a compatibility measure. While we want to enforce
+    // central repository management, some older plugins (like those used by Capacitor)
+    // still declare their own repositories. FAIL_ON_PROJECT_REPOS would break the build.
+    // PREFER_SETTINGS allows our centrally-defined repositories to take precedence
+    // while still allowing the older plugins to function, resolving the build error.
+    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
     repositories {
         google()
         mavenCentral()
