@@ -1,224 +1,239 @@
 Executing tasks: [:app:assembleDebug] in project /Users/leonli/Desktop/udry-umbrella-share-app-v2/android
 
-
-> Configure project :
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-
-> Configure project :capacitor-android
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/android/capacitor/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/android/capacitor/build.gradle'
-
-> Configure project :capacitor-app
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/app/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/app/android/build.gradle'
-
-> Configure project :capacitor-camera
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/camera/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/camera/android/build.gradle'
-
-> Configure project :capacitor-community-bluetooth-le
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor-community/bluetooth-le/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor-community/bluetooth-le/android/build.gradle'
-
-> Configure project :capacitor-community-sqlite
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor-community/sqlite/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor-community/sqlite/android/build.gradle'
-
-> Configure project :capacitor-cordova-android-plugins
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file 'capacitor-cordova-android-plugins/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file 'capacitor-cordova-android-plugins/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'flatDir' was added by build file 'capacitor-cordova-android-plugins/build.gradle'
-AGPBI: {"kind":"warning","text":"Using flatDir should be avoided because it doesn't support any meta-data formats.","sources":[{}]}
-
-> Configure project :capacitor-status-bar
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
-
+> Task :capacitor-android:preBuild UP-TO-DATE
 > Task :capacitor-camera:preBuild UP-TO-DATE
+> Task :capacitor-app:preBuild UP-TO-DATE
 > Task :capacitor-community-sqlite:preBuild UP-TO-DATE
-> Task :capacitor-status-bar:preBuild UP-TO-DATE
 > Task :app:preBuild UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:preBuild UP-TO-DATE
-> Task :capacitor-android:preBuild UP-TO-DATE
-> Task :capacitor-app:preBuild UP-TO-DATE
-> Task :capacitor-android:preDebugBuild UP-TO-DATE
-> Task :capacitor-camera:preDebugBuild UP-TO-DATE
-> Task :capacitor-app:preDebugBuild UP-TO-DATE
-> Task :capacitor-status-bar:preDebugBuild UP-TO-DATE
+> Task :capacitor-status-bar:preBuild UP-TO-DATE
 > Task :app:preDebugBuild UP-TO-DATE
 > Task :capacitor-community-sqlite:preDebugBuild UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:preDebugBuild UP-TO-DATE
+> Task :capacitor-status-bar:preDebugBuild UP-TO-DATE
+> Task :capacitor-camera:preDebugBuild UP-TO-DATE
+> Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-app:preDebugBuild UP-TO-DATE
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
-> Task :capacitor-community-sqlite:writeDebugAarMetadata UP-TO-DATE
 > Task :app:checkKotlinGradlePluginConfigurationErrors
-> Task :capacitor-status-bar:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-android:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-app:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-camera:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-android:generateDebugResValues UP-TO-DATE
-> Task :capacitor-status-bar:generateDebugResValues UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugResValues UP-TO-DATE
-> Task :capacitor-community-sqlite:generateDebugResValues UP-TO-DATE
-> Task :app:generateDebugBuildConfig UP-TO-DATE
-> Task :capacitor-app:generateDebugResValues UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugResources UP-TO-DATE
-> Task :capacitor-camera:generateDebugResValues UP-TO-DATE
-> Task :capacitor-status-bar:generateDebugResources UP-TO-DATE
-> Task :capacitor-community-sqlite:generateDebugResources UP-TO-DATE
-> Task :capacitor-app:generateDebugResources UP-TO-DATE
-> Task :capacitor-camera:generateDebugResources UP-TO-DATE
-> Task :capacitor-android:generateDebugResources UP-TO-DATE
-> Task :capacitor-status-bar:packageDebugResources UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:packageDebugResources UP-TO-DATE
-> Task :capacitor-app:packageDebugResources UP-TO-DATE
-> Task :capacitor-camera:packageDebugResources UP-TO-DATE
-> Task :capacitor-android:packageDebugResources UP-TO-DATE
-> Task :capacitor-status-bar:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-android:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-app:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-camera:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:packageDebugResources UP-TO-DATE
-> Task :capacitor-status-bar:processDebugManifest UP-TO-DATE
-> Task :capacitor-android:processDebugManifest UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:processDebugManifest UP-TO-DATE
-> Task :capacitor-community-sqlite:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-camera:processDebugManifest UP-TO-DATE
-> Task :capacitor-app:processDebugManifest UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-android:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-community-sqlite:processDebugManifest UP-TO-DATE
-> Task :capacitor-status-bar:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-camera:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-app:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-community-sqlite:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-status-bar:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-camera:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-app:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-status-bar:generateDebugRFile UP-TO-DATE
-> Task :capacitor-community-sqlite:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-camera:generateDebugRFile UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugRFile UP-TO-DATE
-> Task :capacitor-android:generateDebugRFile UP-TO-DATE
-> Task :capacitor-status-bar:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-app:generateDebugResValues
+> Task :capacitor-status-bar:generateDebugResValues
+> Task :capacitor-camera:generateDebugResValues
+> Task :capacitor-community-bluetooth-le:generateDebugResValues
+> Task :app:generateDebugBuildConfig
+> Task :capacitor-app:writeDebugAarMetadata
+> Task :capacitor-status-bar:writeDebugAarMetadata
+> Task :capacitor-android:writeDebugAarMetadata
+> Task :capacitor-app:generateDebugResources
+> Task :capacitor-camera:generateDebugResources
+> Task :capacitor-camera:writeDebugAarMetadata
+> Task :app:generateDebugResValues
+> Task :capacitor-community-sqlite:writeDebugAarMetadata
+> Task :capacitor-community-bluetooth-le:writeDebugAarMetadata
+> Task :capacitor-community-bluetooth-le:generateDebugResources
+> Task :capacitor-android:generateDebugResValues
+> Task :capacitor-community-sqlite:generateDebugResValues
+> Task :capacitor-status-bar:generateDebugResources
+> Task :capacitor-community-sqlite:generateDebugResources
+> Task :app:generateDebugResources
+> Task :capacitor-android:generateDebugResources
+> Task :capacitor-community-bluetooth-le:packageDebugResources
+> Task :capacitor-app:packageDebugResources
+> Task :capacitor-camera:packageDebugResources
+> Task :capacitor-status-bar:packageDebugResources
+> Task :capacitor-community-sqlite:packageDebugResources
+> Task :capacitor-community-bluetooth-le:extractDeepLinksDebug
+> Task :capacitor-app:extractDeepLinksDebug
+> Task :capacitor-camera:extractDeepLinksDebug
+> Task :capacitor-status-bar:extractDeepLinksDebug
+> Task :capacitor-community-sqlite:extractDeepLinksDebug
+> Task :capacitor-android:packageDebugResources
+> Task :capacitor-android:extractDeepLinksDebug
+> Task :app:packageDebugResources
+> Task :capacitor-community-bluetooth-le:processDebugManifest
+> Task :capacitor-status-bar:processDebugManifest
+> Task :capacitor-camera:processDebugManifest
+> Task :capacitor-community-sqlite:processDebugManifest
+> Task :capacitor-android:processDebugManifest
+> Task :capacitor-app:processDebugManifest
+> Task :app:checkDebugAarMetadata FAILED
+> Task :capacitor-community-bluetooth-le:compileDebugLibraryResources
+> Task :capacitor-status-bar:compileDebugLibraryResources
+> Task :capacitor-app:compileDebugLibraryResources
+> Task :capacitor-community-sqlite:parseDebugLocalResources
+> Task :capacitor-community-sqlite:compileDebugLibraryResources
+> Task :capacitor-status-bar:parseDebugLocalResources
+> Task :capacitor-community-sqlite:generateDebugRFile
+> Task :capacitor-camera:parseDebugLocalResources
+> Task :capacitor-status-bar:generateDebugRFile
+> Task :capacitor-camera:compileDebugLibraryResources
+> Task :capacitor-camera:javaPreCompileDebug
 > Task :capacitor-community-bluetooth-le:checkKotlinGradlePluginConfigurationErrors
-> Task :capacitor-camera:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-app:generateDebugRFile UP-TO-DATE
-> Task :capacitor-community-sqlite:generateDebugRFile UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-status-bar:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-camera:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-app:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
-> Task :capacitor-community-bluetooth-le:compileDebugShaders NO-SOURCE
-> Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugAssets UP-TO-DATE
-> Task :capacitor-camera:compileDebugShaders NO-SOURCE
-> Task :capacitor-camera:generateDebugAssets UP-TO-DATE
-> Task :capacitor-app:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:packageDebugAssets UP-TO-DATE
+> Task :capacitor-app:parseDebugLocalResources
+> Task :capacitor-android:javaPreCompileDebug
+> Task :capacitor-community-sqlite:javaPreCompileDebug FAILED
+> Task :capacitor-app:javaPreCompileDebug
+> Task :capacitor-app:generateDebugRFile
+> Task :capacitor-app:mergeDebugShaders
+> Task :capacitor-android:compileDebugLibraryResources
+> Task :capacitor-android:parseDebugLocalResources
 > Task :capacitor-app:compileDebugShaders NO-SOURCE
 > Task :capacitor-app:generateDebugAssets UP-TO-DATE
-> Task :capacitor-camera:packageDebugAssets UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-camera:processDebugJavaRes NO-SOURCE
-> Task :capacitor-status-bar:packageDebugAssets UP-TO-DATE
-> Task :capacitor-app:packageDebugAssets UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-camera:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
-> Task :capacitor-community-bluetooth-le:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-status-bar:javaPreCompileDebug
+> Task :capacitor-community-bluetooth-le:parseDebugLocalResources
+> Task :capacitor-community-bluetooth-le:javaPreCompileDebug
+> Task :capacitor-camera:mergeDebugShaders
+> Task :capacitor-camera:compileDebugShaders NO-SOURCE
+> Task :capacitor-camera:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:mergeDebugShaders
+> Task :capacitor-status-bar:mergeDebugShaders
+> Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
+> Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
+> Task :capacitor-app:packageDebugAssets
 > Task :capacitor-app:processDebugJavaRes NO-SOURCE
-> Task :capacitor-camera:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-app:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-status-bar:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-app:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-status-bar:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-community-sqlite:javaPreCompileDebug FAILED
-> Task :capacitor-community-sqlite:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-status-bar:packageDebugAssets
+> Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
+> Task :capacitor-community-bluetooth-le:mergeDebugShaders
+> Task :capacitor-community-sqlite:mergeDebugShaders
 > Task :capacitor-community-sqlite:compileDebugShaders NO-SOURCE
+> Task :capacitor-community-bluetooth-le:compileDebugShaders NO-SOURCE
+> Task :capacitor-community-bluetooth-le:generateDebugAssets UP-TO-DATE
+> Task :capacitor-camera:generateDebugRFile
 > Task :capacitor-community-sqlite:generateDebugAssets UP-TO-DATE
-> Task :capacitor-community-sqlite:packageDebugAssets UP-TO-DATE
-> Task :capacitor-community-sqlite:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-community-sqlite:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-android:compileDebugJavaWithJavac FAILED
-> Task :capacitor-android:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-community-sqlite:packageDebugAssets
+> Task :capacitor-camera:packageDebugAssets
 > Task :capacitor-android:compileDebugShaders NO-SOURCE
+> Task :capacitor-camera:processDebugJavaRes NO-SOURCE
 > Task :capacitor-android:generateDebugAssets UP-TO-DATE
-> Task :capacitor-android:packageDebugAssets UP-TO-DATE
+> Task :capacitor-android:generateDebugRFile
+> Task :capacitor-community-bluetooth-le:packageDebugAssets
+> Task :capacitor-android:packageDebugAssets
+> Task :capacitor-android:compileDebugJavaWithJavac FAILED
 > Task :capacitor-android:processDebugJavaRes NO-SOURCE
-> Task :capacitor-android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugRFile
+> Task :capacitor-community-sqlite:mergeDebugJniLibFolders
+> Task :capacitor-community-sqlite:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly
+> Task :capacitor-status-bar:mergeDebugJniLibFolders
+> Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-status-bar:copyDebugJniLibsProjectOnly
+> Task :capacitor-app:mergeDebugJniLibFolders
+> Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-app:copyDebugJniLibsProjectOnly
+> Task :capacitor-android:mergeDebugJniLibFolders
 > Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-android:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :app:checkDebugAarMetadata FAILED
-> Task :app:generateDebugResValues UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:mergeDebugJniLibFolders
+> Task :capacitor-community-bluetooth-le:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-community-bluetooth-le:copyDebugJniLibsProjectOnly
+> Task :capacitor-android:copyDebugJniLibsProjectOnly
+> Task :capacitor-camera:mergeDebugJniLibFolders
+> Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-camera:copyDebugJniLibsProjectOnly
 > Task :app:mapDebugSourceSetPaths
-> Task :app:generateDebugResources UP-TO-DATE
-> Task :app:packageDebugResources UP-TO-DATE
-> Task :app:parseDebugLocalResources UP-TO-DATE
-> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
-> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :app:parseDebugLocalResources
 > Task :app:processDebugMainManifest
 > Task :app:processDebugManifest
-> Task :app:javaPreCompileDebug UP-TO-DATE
-> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:javaPreCompileDebug
+> Task :app:mergeDebugShaders
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
 > Task :app:mergeDebugAssets
+> Task :app:mergeDebugResources
 > Task :app:compressDebugAssets
 > Task :app:desugarDebugFileDependencies
-> Task :app:mergeDebugStartupProfile UP-TO-DATE
-> Task :app:mergeDebugJniLibFolders UP-TO-DATE
-> Task :app:mergeDebugNativeLibs UP-TO-DATE
-> Task :app:stripDebugDebugSymbols UP-TO-DATE
-> Task :app:validateSigningDebug UP-TO-DATE
-> Task :app:writeDebugAppMetadata UP-TO-DATE
-> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
-> Task :app:processDebugManifestForPackage
-> Task :app:mergeDebugResources
+> Task :app:mergeDebugStartupProfile
+> Task :app:mergeDebugJniLibFolders
 > Task :app:checkDebugDuplicateClasses
+> Task :app:mergeDebugNativeLibs
+> Task :app:validateSigningDebug FAILED
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:processDebugManifestForPackage
+
+> Task :app:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libsqlcipher.so.
+
 > Task :app:mergeExtDexDebug
 
-FAILURE: Build completed with 3 failures.
+FAILURE: Build completed with 4 failures.
 
 1: Task failed with an exception.
 -----------
 * What went wrong:
-Execution failed for task ':capacitor-community-sqlite:javaPreCompileDebug'.
-> Configuration `:capacitor-community-sqlite:debugAnnotationProcessorClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
+Execution failed for task ':app:checkDebugAarMetadata'.
+> Configuration `:app:debugRuntimeClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
   Set `android.useAndroidX=true` in the `gradle.properties` file and retry.
   The following AndroidX dependencies are detected:
-  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1
-  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-common:2.6.1
-  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.annotation:annotation:1.3.0
-  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-compiler-processing:2.6.1
-  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1
+  :app:debugRuntimeClasspath -> project :capacitor-android -> androidx.activity:activity:1.8.0
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.annotation:annotation:1.6.0
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.annotation:annotation:1.6.0 -> androidx.annotation:annotation-jvm:1.6.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.collection:collection:1.1.0
+  :app:debugRuntimeClasspath -> project :capacitor-status-bar -> androidx.core:core:1.12.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.annotation:annotation-experimental:1.3.0
+  :app:debugRuntimeClasspath -> com.google.firebase:firebase-bom:33.1.2 -> com.google.firebase:firebase-common:21.0.0 -> androidx.concurrent:concurrent-futures:1.1.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0 -> androidx.interpolator:interpolator:1.0.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.lifecycle:lifecycle-runtime:2.6.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1 -> androidx.arch.core:core-common:2.2.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1 -> androidx.arch.core:core-runtime:2.2.0
+  :app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:core:1.5.0 -> androidx.lifecycle:lifecycle-common:2.6.1
+  :app:debugRuntimeClasspath -> project :capacitor-android -> androidx.fragment:fragment:1.6.2
+  :app:debugRuntimeClasspath -> project :capacitor-community-bluetooth-le -> androidx.core:core-ktx:1.12.0
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.lifecycle:lifecycle-livedata-core:2.6.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.lifecycle:lifecycle-process:2.6.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.startup:startup-runtime:1.1.1
+  :app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:core:1.5.0 -> androidx.tracing:tracing:1.0.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.lifecycle:lifecycle-viewmodel:2.6.1
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1 -> androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.lifecycle:lifecycle-runtime:2.6.1 -> androidx.profileinstaller:profileinstaller:1.3.0
+  :app:debugRuntimeClasspath -> project :capacitor-android -> androidx.fragment:fragment:1.6.2 -> androidx.viewpager:viewpager:1.0.0
+  :app:debugRuntimeClasspath -> androidx.coordinatorlayout:coordinatorlayout:1.2.0 -> androidx.customview:customview:1.1.0
+  :app:debugRuntimeClasspath -> project :capacitor-status-bar -> androidx.core:core:1.12.0 -> androidx.versionedparcelable:versionedparcelable:1.1.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.vectordrawable:vectordrawable:1.1.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.cursoradapter:cursoradapter:1.0.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.drawerlayout:drawerlayout:1.1.1
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0
+  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2-views-helper:1.2.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.resourceinspection:resourceinspection-annotation:1.0.1
+  :app:debugRuntimeClasspath -> androidx.coordinatorlayout:coordinatorlayout:1.2.0
+  :app:debugRuntimeClasspath -> project :capacitor-android -> androidx.webkit:webkit:1.9.0
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1 -> androidx.room:room-common:2.6.1
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.sqlite:sqlite:2.4.0
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1 -> androidx.sqlite:sqlite-framework:2.4.0
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.security:security-crypto:1.1.0-alpha06
+  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> androidx.exifinterface:exifinterface:1.3.6
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.cardview:cardview:1.0.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.constraintlayout:constraintlayout:2.0.1
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.constraintlayout:constraintlayout:2.0.1 -> androidx.constraintlayout:constraintlayout-solver:2.0.1
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.documentfile:documentfile:1.0.0
+  :app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.localbroadcastmanager:localbroadcastmanager:1.0.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.print:print:1.0.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.recyclerview:recyclerview:1.1.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.transition:transition:1.2.0
+  :app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.viewpager2:viewpager2:1.0.0
+  :app:debugRuntimeClasspath -> androidx.test.ext:junit:1.1.5
+  :app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:core:1.5.0
+  :app:debugRuntimeClasspath -> androidx.test.ext:junit:1.1.5 -> androidx.test:monitor:1.6.1
+  :app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:annotation:1.0.1
+  :app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:core:1.5.0 -> androidx.test.services:storage:1.4.2
+  :app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1
+  :app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:runner:1.5.2
+  :app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test.espresso:espresso-idling-resource:3.5.1
+  :app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.browser:browser:1.4.0
+  :app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.credentials:credentials:1.2.0-rc01
+  :app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.credentials:credentials-play-services-auth:1.2.0-rc01
 
 * Try:
 > Run with --info or --debug option to get more log output.
@@ -226,7 +241,7 @@ Execution failed for task ':capacitor-community-sqlite:javaPreCompileDebug'.
 > Get more help at https://help.gradle.org.
 
 * Exception is:
-org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':capacitor-community-sqlite:javaPreCompileDebug'.
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:checkDebugAarMetadata'.
 	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:38)
 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
@@ -251,14 +266,77 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':capacit
 	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
 	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
-Caused by: com.android.builder.errors.EvalIssueException: Configuration `:capacitor-community-sqlite:debugAnnotationProcessorClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
+Caused by: com.android.builder.errors.EvalIssueException: Configuration `:app:debugRuntimeClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
 Set `android.useAndroidX=true` in the `gradle.properties` file and retry.
 The following AndroidX dependencies are detected:
-:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1
-:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-common:2.6.1
-:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.annotation:annotation:1.3.0
-:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-compiler-processing:2.6.1
-:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1
+:app:debugRuntimeClasspath -> project :capacitor-android -> androidx.activity:activity:1.8.0
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.annotation:annotation:1.6.0
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.annotation:annotation:1.6.0 -> androidx.annotation:annotation-jvm:1.6.0
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.collection:collection:1.1.0
+:app:debugRuntimeClasspath -> project :capacitor-status-bar -> androidx.core:core:1.12.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.annotation:annotation-experimental:1.3.0
+:app:debugRuntimeClasspath -> com.google.firebase:firebase-bom:33.1.2 -> com.google.firebase:firebase-common:21.0.0 -> androidx.concurrent:concurrent-futures:1.1.0
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0 -> androidx.interpolator:interpolator:1.0.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.lifecycle:lifecycle-runtime:2.6.1
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1 -> androidx.arch.core:core-common:2.2.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1 -> androidx.arch.core:core-runtime:2.2.0
+:app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:core:1.5.0 -> androidx.lifecycle:lifecycle-common:2.6.1
+:app:debugRuntimeClasspath -> project :capacitor-android -> androidx.fragment:fragment:1.6.2
+:app:debugRuntimeClasspath -> project :capacitor-community-bluetooth-le -> androidx.core:core-ktx:1.12.0
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.lifecycle:lifecycle-livedata-core:2.6.1
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.lifecycle:lifecycle-process:2.6.1
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.startup:startup-runtime:1.1.1
+:app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:core:1.5.0 -> androidx.tracing:tracing:1.0.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.lifecycle:lifecycle-viewmodel:2.6.1
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1 -> androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.lifecycle:lifecycle-runtime:2.6.1 -> androidx.profileinstaller:profileinstaller:1.3.0
+:app:debugRuntimeClasspath -> project :capacitor-android -> androidx.fragment:fragment:1.6.2 -> androidx.viewpager:viewpager:1.0.0
+:app:debugRuntimeClasspath -> androidx.coordinatorlayout:coordinatorlayout:1.2.0 -> androidx.customview:customview:1.1.0
+:app:debugRuntimeClasspath -> project :capacitor-status-bar -> androidx.core:core:1.12.0 -> androidx.versionedparcelable:versionedparcelable:1.1.1
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.vectordrawable:vectordrawable:1.1.0
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.cursoradapter:cursoradapter:1.0.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.drawerlayout:drawerlayout:1.1.1
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0
+:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2-views-helper:1.2.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.resourceinspection:resourceinspection-annotation:1.0.1
+:app:debugRuntimeClasspath -> androidx.coordinatorlayout:coordinatorlayout:1.2.0
+:app:debugRuntimeClasspath -> project :capacitor-android -> androidx.webkit:webkit:1.9.0
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1 -> androidx.room:room-common:2.6.1
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.sqlite:sqlite:2.4.0
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1 -> androidx.sqlite:sqlite-framework:2.4.0
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.security:security-crypto:1.1.0-alpha06
+:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> androidx.exifinterface:exifinterface:1.3.6
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.cardview:cardview:1.0.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.constraintlayout:constraintlayout:2.0.1
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.constraintlayout:constraintlayout:2.0.1 -> androidx.constraintlayout:constraintlayout-solver:2.0.1
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.documentfile:documentfile:1.0.0
+:app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.localbroadcastmanager:localbroadcastmanager:1.0.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.print:print:1.0.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.recyclerview:recyclerview:1.1.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.transition:transition:1.2.0
+:app:debugRuntimeClasspath -> project :capacitor-camera -> com.google.android.material:material:1.10.0 -> androidx.viewpager2:viewpager2:1.0.0
+:app:debugRuntimeClasspath -> androidx.test.ext:junit:1.1.5
+:app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:core:1.5.0
+:app:debugRuntimeClasspath -> androidx.test.ext:junit:1.1.5 -> androidx.test:monitor:1.6.1
+:app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:annotation:1.0.1
+:app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:core:1.5.0 -> androidx.test.services:storage:1.4.2
+:app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1
+:app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test:runner:1.5.2
+:app:debugRuntimeClasspath -> androidx.test.espresso:espresso-core:3.5.1 -> androidx.test.espresso:espresso-idling-resource:3.5.1
+:app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.browser:browser:1.4.0
+:app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.credentials:credentials:1.2.0-rc01
+:app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.credentials:credentials-play-services-auth:1.2.0-rc01
 	at com.android.builder.errors.IssueReporter.reportError(IssueReporter.kt:116)
 	at com.android.builder.errors.IssueReporter.reportError$default(IssueReporter.kt:112)
 	at com.android.build.gradle.internal.dependency.AndroidXDependencyCheck$AndroidXDisabledJetifierDisabled.execute(AndroidXDependencyCheck.kt:72)
@@ -384,6 +462,189 @@ The following AndroidX dependencies are detected:
 ==============================================================================
 
 2: Task failed with an exception.
+-----------
+* What went wrong:
+Execution failed for task ':capacitor-community-sqlite:javaPreCompileDebug'.
+> Configuration `:capacitor-community-sqlite:debugAnnotationProcessorClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
+  Set `android.useAndroidX=true` in the `gradle.properties` file and retry.
+  The following AndroidX dependencies are detected:
+  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1
+  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-common:2.6.1
+  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.annotation:annotation:1.3.0
+  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-compiler-processing:2.6.1
+  :capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1
+
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
+
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':capacitor-community-sqlite:javaPreCompileDebug'.
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:38)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:200)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:195)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:80)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:463)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+Caused by: com.android.builder.errors.EvalIssueException: Configuration `:capacitor-community-sqlite:debugAnnotationProcessorClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
+Set `android.useAndroidX=true` in the `gradle.properties` file and retry.
+The following AndroidX dependencies are detected:
+:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1
+:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-common:2.6.1
+:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.annotation:annotation:1.3.0
+:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.room:room-migration:2.6.1 -> androidx.room:room-compiler-processing:2.6.1
+:capacitor-community-sqlite:debugAnnotationProcessorClasspath -> androidx.room:room-compiler:2.6.1 -> androidx.room:room-common:2.6.1 -> androidx.room:room-compiler-processing:2.6.1 -> androidx.room:room-migration:2.6.1
+	at com.android.builder.errors.IssueReporter.reportError(IssueReporter.kt:116)
+	at com.android.builder.errors.IssueReporter.reportError$default(IssueReporter.kt:112)
+	at com.android.build.gradle.internal.dependency.AndroidXDependencyCheck$AndroidXDisabledJetifierDisabled.execute(AndroidXDependencyCheck.kt:72)
+	at com.android.build.gradle.internal.dependency.AndroidXDependencyCheck$AndroidXDisabledJetifierDisabled.execute(AndroidXDependencyCheck.kt:40)
+	at org.gradle.internal.code.DefaultUserCodeApplicationContext$CurrentApplication$1.execute(DefaultUserCodeApplicationContext.java:122)
+	at org.gradle.internal.event.BroadcastDispatch$ActionInvocationHandler.dispatch(BroadcastDispatch.java:99)
+	at org.gradle.internal.event.BroadcastDispatch$ActionInvocationHandler.dispatch(BroadcastDispatch.java:87)
+	at org.gradle.internal.event.AbstractBroadcastDispatch.dispatch(AbstractBroadcastDispatch.java:43)
+	at org.gradle.internal.event.BroadcastDispatch$SingletonDispatch.dispatch(BroadcastDispatch.java:268)
+	at org.gradle.internal.event.BroadcastDispatch$SingletonDispatch.dispatch(BroadcastDispatch.java:170)
+	at org.gradle.internal.event.AbstractBroadcastDispatch.dispatch(AbstractBroadcastDispatch.java:83)
+	at org.gradle.internal.event.AbstractBroadcastDispatch.dispatch(AbstractBroadcastDispatch.java:69)
+	at org.gradle.internal.event.BroadcastDispatch$CompositeDispatch.dispatch(BroadcastDispatch.java:381)
+	at org.gradle.internal.event.BroadcastDispatch$CompositeDispatch.dispatch(BroadcastDispatch.java:272)
+	at org.gradle.internal.event.ListenerBroadcast.dispatch(ListenerBroadcast.java:148)
+	at org.gradle.internal.event.ListenerBroadcast.dispatch(ListenerBroadcast.java:37)
+	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
+	at jdk.proxy1/jdk.proxy1.$Proxy55.afterResolve(Unknown Source)
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration$1.call(DefaultConfiguration.java:766)
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration$1.call(DefaultConfiguration.java:739)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:200)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:195)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.resolveGraphInBuildOperation(DefaultConfiguration.java:739)
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.lambda$resolveExclusivelyIfRequired$6(DefaultConfiguration.java:731)
+	at org.gradle.api.internal.project.DefaultProjectStateRegistry$CalculatedModelValueImpl.update(DefaultProjectStateRegistry.java:505)
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.resolveExclusivelyIfRequired(DefaultConfiguration.java:723)
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.resolveGraphIfRequired(DefaultConfiguration.java:716)
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.access$500(DefaultConfiguration.java:154)
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration$ResolverResultsResolutionResultProvider.getValue(DefaultConfiguration.java:690)
+	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration$ResolverResultsResolutionResultProvider.getValue(DefaultConfiguration.java:651)
+	at org.gradle.api.internal.artifacts.configurations.ResolutionResultProvider$1.getValue(ResolutionResultProvider.java:53)
+	at org.gradle.api.internal.artifacts.configurations.ResolutionBackedFileCollection.getSelectedArtifacts(ResolutionBackedFileCollection.java:95)
+	at org.gradle.api.internal.artifacts.configurations.ResolutionBackedFileCollection.visitContents(ResolutionBackedFileCollection.java:73)
+	at org.gradle.api.internal.file.AbstractFileCollection.visitStructure(AbstractFileCollection.java:361)
+	at org.gradle.api.internal.file.CompositeFileCollection.lambda$visitContents$0(CompositeFileCollection.java:113)
+	at org.gradle.api.internal.file.collections.UnpackingVisitor.add(UnpackingVisitor.java:67)
+	at org.gradle.api.internal.file.collections.UnpackingVisitor.add(UnpackingVisitor.java:92)
+	at org.gradle.api.internal.file.DefaultFileCollectionFactory$ResolvingFileCollection.visitChildren(DefaultFileCollectionFactory.java:285)
+	at org.gradle.api.internal.file.CompositeFileCollection.visitContents(CompositeFileCollection.java:113)
+	at org.gradle.api.internal.file.AbstractFileCollection.visitStructure(AbstractFileCollection.java:361)
+	at org.gradle.api.internal.file.CompositeFileCollection.lambda$visitContents$0(CompositeFileCollection.java:113)
+	at org.gradle.api.internal.tasks.PropertyFileCollection.visitChildren(PropertyFileCollection.java:48)
+	at org.gradle.api.internal.file.CompositeFileCollection.visitContents(CompositeFileCollection.java:113)
+	at org.gradle.api.internal.file.AbstractFileCollection.visitStructure(AbstractFileCollection.java:361)
+	at org.gradle.internal.fingerprint.impl.DefaultFileCollectionSnapshotter.snapshot(DefaultFileCollectionSnapshotter.java:47)
+	at org.gradle.internal.execution.impl.DefaultInputFingerprinter$InputCollectingVisitor.visitInputFileProperty(DefaultInputFingerprinter.java:133)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.visitRegularInputs(TaskExecution.java:324)
+	at org.gradle.internal.execution.impl.DefaultInputFingerprinter.fingerprintInputProperties(DefaultInputFingerprinter.java:63)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.captureExecutionStateWithOutputs(AbstractCaptureStateBeforeExecutionStep.java:109)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.lambda$captureExecutionState$0(AbstractCaptureStateBeforeExecutionStep.java:74)
+	at org.gradle.internal.execution.steps.BuildOperationStep$1.call(BuildOperationStep.java:37)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:200)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:195)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.internal.execution.steps.BuildOperationStep.operation(BuildOperationStep.java:34)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.captureExecutionState(AbstractCaptureStateBeforeExecutionStep.java:69)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:62)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:56)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:36)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:75)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:41)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$execute$0(AssignMutableWorkspaceStep.java:35)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:289)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:31)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:22)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at java.base/java.util.Optional.orElseGet(Unknown Source)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:61)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:127)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:200)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:195)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:80)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:463)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
+	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
+	at java.base/java.lang.Thread.run(Unknown Source)
+
+==============================================================================
+
+3: Task failed with an exception.
 -----------
 * What went wrong:
 Execution failed for task ':capacitor-android:compileDebugJavaWithJavac'.
@@ -806,73 +1067,11 @@ The following AndroidX dependencies are detected:
 
 ==============================================================================
 
-3: Task failed with an exception.
+4: Task failed with an exception.
 -----------
 * What went wrong:
-Execution failed for task ':app:checkDebugAarMetadata'.
-> Configuration `:app:debugRuntimeClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
-  Set `android.useAndroidX=true` in the `gradle.properties` file and retry.
-  The following AndroidX dependencies are detected:
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1
-  :app:debugRuntimeClasspath -> project :capacitor-android -> androidx.activity:activity:1.8.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.annotation:annotation:1.6.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.annotation:annotation:1.6.0 -> androidx.annotation:annotation-jvm:1.6.0
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.collection:collection:1.1.0
-  :app:debugRuntimeClasspath -> project :capacitor-status-bar -> androidx.core:core:1.12.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.annotation:annotation-experimental:1.3.0
-  :app:debugRuntimeClasspath -> com.google.firebase:firebase-bom:33.1.2 -> com.google.firebase:firebase-common:21.0.0 -> androidx.concurrent:concurrent-futures:1.1.0
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0 -> androidx.interpolator:interpolator:1.0.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.lifecycle:lifecycle-runtime:2.6.1
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1 -> androidx.arch.core:core-common:2.2.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1 -> androidx.arch.core:core-runtime:2.2.0
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1 -> androidx.lifecycle:lifecycle-common:2.6.1
-  :app:debugRuntimeClasspath -> project :capacitor-android -> androidx.fragment:fragment:1.6.2
-  :app:debugRuntimeClasspath -> project :capacitor-community-bluetooth-le -> androidx.core:core-ktx:1.12.0
-  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.lifecycle:lifecycle-livedata-core:2.6.1
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.lifecycle:lifecycle-process:2.6.1
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.startup:startup-runtime:1.1.1
-  :app:debugRuntimeClasspath -> project :capacitor-android -> androidx.activity:activity:1.8.0 -> androidx.tracing:tracing:1.0.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1
-  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.lifecycle:lifecycle-viewmodel:2.6.1
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1 -> androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.lifecycle:lifecycle-runtime:2.6.1 -> androidx.profileinstaller:profileinstaller:1.3.0
-  :app:debugRuntimeClasspath -> project :capacitor-android -> androidx.fragment:fragment:1.6.2 -> androidx.viewpager:viewpager:1.0.0
-  :app:debugRuntimeClasspath -> androidx.coordinatorlayout:coordinatorlayout:1.2.0 -> androidx.customview:customview:1.1.0
-  :app:debugRuntimeClasspath -> project :capacitor-status-bar -> androidx.core:core:1.12.0 -> androidx.versionedparcelable:versionedparcelable:1.1.1
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.vectordrawable:vectordrawable:1.1.0
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.cursoradapter:cursoradapter:1.0.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.drawerlayout:drawerlayout:1.1.1
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0
-  :app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2-views-helper:1.2.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.resourceinspection:resourceinspection-annotation:1.0.1
-  :app:debugRuntimeClasspath -> androidx.coordinatorlayout:coordinatorlayout:1.2.0
-  :app:debugRuntimeClasspath -> project :capacitor-android -> androidx.webkit:webkit:1.9.0
-  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1
-  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1 -> androidx.room:room-common:2.6.1
-  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.sqlite:sqlite:2.4.0
-  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1 -> androidx.sqlite:sqlite-framework:2.4.0
-  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.security:security-crypto:1.1.0-alpha06
-  :app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0
-  :app:debugRuntimeClasspath -> project :capacitor-camera -> androidx.exifinterface:exifinterface:1.3.6
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.cardview:cardview:1.0.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.constraintlayout:constraintlayout:2.0.1
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.constraintlayout:constraintlayout:2.0.1 -> androidx.constraintlayout:constraintlayout-solver:2.0.1
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.documentfile:documentfile:1.0.0
-  :app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.localbroadcastmanager:localbroadcastmanager:1.0.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.print:print:1.0.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.recyclerview:recyclerview:1.1.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.transition:transition:1.2.0
-  :app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.viewpager2:viewpager2:1.0.0
-  :app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.browser:browser:1.4.0
-  :app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.credentials:credentials:1.2.0-rc01
-  :app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.credentials:credentials-play-services-auth:1.2.0-rc01
+Execution failed for task ':app:validateSigningDebug'.
+> Keystore file '/Users/leonli/Desktop/udry-umbrella-share-app-v2/android/app/debug.keystore' not found for signing config 'debug'.
 
 * Try:
 > Run with --info or --debug option to get more log output.
@@ -880,8 +1079,16 @@ Execution failed for task ':app:checkDebugAarMetadata'.
 > Get more help at https://help.gradle.org.
 
 * Exception is:
-org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:checkDebugAarMetadata'.
-	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:38)
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:validateSigningDebug'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:282)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
 	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
@@ -908,89 +1115,34 @@ org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:che
 	at java.base/java.util.concurrent.ThreadPoolExecutor.runWorker(Unknown Source)
 	at java.base/java.util.concurrent.ThreadPoolExecutor$Worker.run(Unknown Source)
 	at java.base/java.lang.Thread.run(Unknown Source)
-Caused by: com.android.builder.errors.EvalIssueException: Configuration `:app:debugRuntimeClasspath` contains AndroidX dependencies, but the `android.useAndroidX` property is not enabled, which may cause runtime issues.
-Set `android.useAndroidX=true` in the `gradle.properties` file and retry.
-The following AndroidX dependencies are detected:
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1
-:app:debugRuntimeClasspath -> project :capacitor-android -> androidx.activity:activity:1.8.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.annotation:annotation:1.6.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.annotation:annotation:1.6.0 -> androidx.annotation:annotation-jvm:1.6.0
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.collection:collection:1.1.0
-:app:debugRuntimeClasspath -> project :capacitor-status-bar -> androidx.core:core:1.12.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.annotation:annotation-experimental:1.3.0
-:app:debugRuntimeClasspath -> com.google.firebase:firebase-bom:33.1.2 -> com.google.firebase:firebase-common:21.0.0 -> androidx.concurrent:concurrent-futures:1.1.0
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0 -> androidx.interpolator:interpolator:1.0.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.lifecycle:lifecycle-runtime:2.6.1
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1 -> androidx.arch.core:core-common:2.2.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1 -> androidx.arch.core:core-runtime:2.2.0
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1 -> androidx.lifecycle:lifecycle-common:2.6.1
-:app:debugRuntimeClasspath -> project :capacitor-android -> androidx.fragment:fragment:1.6.2
-:app:debugRuntimeClasspath -> project :capacitor-community-bluetooth-le -> androidx.core:core-ktx:1.12.0
-:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.lifecycle:lifecycle-livedata-core:2.6.1
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.lifecycle:lifecycle-process:2.6.1
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0 -> androidx.startup:startup-runtime:1.1.1
-:app:debugRuntimeClasspath -> project :capacitor-android -> androidx.activity:activity:1.8.0 -> androidx.tracing:tracing:1.0.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1
-:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0 -> androidx.lifecycle:lifecycle-viewmodel:2.6.1
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0 -> androidx.lifecycle:lifecycle-livedata:2.6.1 -> androidx.lifecycle:lifecycle-viewmodel-savedstate:2.6.1
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.savedstate:savedstate:1.2.1
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.loader:loader:1.0.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.lifecycle:lifecycle-runtime:2.6.1 -> androidx.profileinstaller:profileinstaller:1.3.0
-:app:debugRuntimeClasspath -> project :capacitor-android -> androidx.fragment:fragment:1.6.2 -> androidx.viewpager:viewpager:1.0.0
-:app:debugRuntimeClasspath -> androidx.coordinatorlayout:coordinatorlayout:1.2.0 -> androidx.customview:customview:1.1.0
-:app:debugRuntimeClasspath -> project :capacitor-status-bar -> androidx.core:core:1.12.0 -> androidx.versionedparcelable:versionedparcelable:1.1.1
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.vectordrawable:vectordrawable:1.1.0
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.appcompat:appcompat-resources:1.6.1 -> androidx.vectordrawable:vectordrawable-animated:1.1.0
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.cursoradapter:cursoradapter:1.0.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.drawerlayout:drawerlayout:1.1.1
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2:1.2.0
-:app:debugRuntimeClasspath -> androidx.appcompat:appcompat:1.6.1 -> androidx.emoji2:emoji2-views-helper:1.2.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.resourceinspection:resourceinspection-annotation:1.0.1
-:app:debugRuntimeClasspath -> androidx.coordinatorlayout:coordinatorlayout:1.2.0
-:app:debugRuntimeClasspath -> project :capacitor-android -> androidx.webkit:webkit:1.9.0
-:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1
-:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1 -> androidx.room:room-common:2.6.1
-:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.sqlite:sqlite:2.4.0
-:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.room:room-runtime:2.6.1 -> androidx.sqlite:sqlite-framework:2.4.0
-:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.security:security-crypto:1.1.0-alpha06
-:app:debugRuntimeClasspath -> project :capacitor-community-sqlite -> androidx.biometric:biometric:1.1.0
-:app:debugRuntimeClasspath -> project :capacitor-camera -> androidx.exifinterface:exifinterface:1.3.6
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.cardview:cardview:1.0.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.constraintlayout:constraintlayout:2.0.1
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.constraintlayout:constraintlayout:2.0.1 -> androidx.constraintlayout:constraintlayout-solver:2.0.1
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.documentfile:documentfile:1.0.0
-:app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.localbroadcastmanager:localbroadcastmanager:1.0.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.dynamicanimation:dynamicanimation:1.0.0 -> androidx.legacy:legacy-support-core-utils:1.0.0 -> androidx.print:print:1.0.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.recyclerview:recyclerview:1.1.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.transition:transition:1.2.0
-:app:debugRuntimeClasspath -> com.google.android.material:material:1.10.0 -> androidx.viewpager2:viewpager2:1.0.0
-:app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.browser:browser:1.4.0
-:app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.credentials:credentials:1.2.0-rc01
-:app:debugRuntimeClasspath -> com.google.firebase:firebase-auth:23.0.0 -> androidx.credentials:credentials-play-services-auth:1.2.0-rc01
-	at com.android.builder.errors.IssueReporter.reportError(IssueReporter.kt:116)
-	at com.android.builder.errors.IssueReporter.reportError$default(IssueReporter.kt:112)
-	at com.android.build.gradle.internal.dependency.AndroidXDependencyCheck$AndroidXDisabledJetifierDisabled.execute(AndroidXDependencyCheck.kt:72)
-	at com.android.build.gradle.internal.dependency.AndroidXDependencyCheck$AndroidXDisabledJetifierDisabled.execute(AndroidXDependencyCheck.kt:40)
-	at org.gradle.internal.code.DefaultUserCodeApplicationContext$CurrentApplication$1.execute(DefaultUserCodeApplicationContext.java:122)
-	at org.gradle.internal.event.BroadcastDispatch$ActionInvocationHandler.dispatch(BroadcastDispatch.java:99)
-	at org.gradle.internal.event.BroadcastDispatch$ActionInvocationHandler.dispatch(BroadcastDispatch.java:87)
-	at org.gradle.internal.event.AbstractBroadcastDispatch.dispatch(AbstractBroadcastDispatch.java:43)
-	at org.gradle.internal.event.BroadcastDispatch$SingletonDispatch.dispatch(BroadcastDispatch.java:268)
-	at org.gradle.internal.event.BroadcastDispatch$SingletonDispatch.dispatch(BroadcastDispatch.java:170)
-	at org.gradle.internal.event.AbstractBroadcastDispatch.dispatch(AbstractBroadcastDispatch.java:83)
-	at org.gradle.internal.event.AbstractBroadcastDispatch.dispatch(AbstractBroadcastDispatch.java:69)
-	at org.gradle.internal.event.BroadcastDispatch$CompositeDispatch.dispatch(BroadcastDispatch.java:381)
-	at org.gradle.internal.event.BroadcastDispatch$CompositeDispatch.dispatch(BroadcastDispatch.java:272)
-	at org.gradle.internal.event.ListenerBroadcast.dispatch(ListenerBroadcast.java:148)
-	at org.gradle.internal.event.ListenerBroadcast.dispatch(ListenerBroadcast.java:37)
-	at org.gradle.internal.dispatch.ProxyDispatchAdapter$DispatchingInvocationHandler.invoke(ProxyDispatchAdapter.java:94)
-	at jdk.proxy1/jdk.proxy1.$Proxy55.afterResolve(Unknown Source)
-	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration$1.call(DefaultConfiguration.java:766)
-	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration$1.call(DefaultConfiguration.java:739)
+Caused by: org.gradle.api.InvalidUserDataException: Keystore file '/Users/leonli/Desktop/udry-umbrella-share-app-v2/android/app/debug.keystore' not found for signing config 'debug'.
+	at com.android.build.gradle.internal.tasks.ValidateSigningTask.doTaskAction(ValidateSigningTask.kt:93)
+	at com.android.build.gradle.internal.tasks.NonIncrementalTask$taskAction$$inlined$recordTaskAction$1.invoke(BaseTask.kt:66)
+	at com.android.build.gradle.internal.tasks.Blocks.recordSpan(Blocks.java:51)
+	at com.android.build.gradle.internal.tasks.NonIncrementalTask.taskAction(NonIncrementalTask.kt:97)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at java.base/java.lang.reflect.Method.invoke(Unknown Source)
+	at org.gradle.internal.reflect.JavaMethod.invoke(JavaMethod.java:125)
+	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.doExecute(StandardTaskAction.java:58)
+	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:51)
+	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:29)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:244)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.run(DefaultBuildOperationExecutor.java:68)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:229)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:212)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:195)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:162)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:200)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:195)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
@@ -999,46 +1151,45 @@ The following AndroidX dependencies are detected:
 	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
 	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
 	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
-	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.resolveGraphInBuildOperation(DefaultConfiguration.java:739)
-	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.lambda$resolveExclusivelyIfRequired$6(DefaultConfiguration.java:731)
-	at org.gradle.api.internal.project.DefaultProjectStateRegistry$CalculatedModelValueImpl.update(DefaultProjectStateRegistry.java:505)
-	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.resolveExclusivelyIfRequired(DefaultConfiguration.java:723)
-	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.resolveGraphIfRequired(DefaultConfiguration.java:716)
-	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration.access$500(DefaultConfiguration.java:154)
-	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration$ResolverResultsResolutionResultProvider.getValue(DefaultConfiguration.java:690)
-	at org.gradle.api.internal.artifacts.configurations.DefaultConfiguration$ResolverResultsResolutionResultProvider.getValue(DefaultConfiguration.java:651)
-	at org.gradle.api.internal.artifacts.configurations.ResolutionResultProvider$1.getValue(ResolutionResultProvider.java:53)
-	at org.gradle.api.internal.artifacts.configurations.ResolutionBackedFileCollection.getSelectedArtifacts(ResolutionBackedFileCollection.java:95)
-	at org.gradle.api.internal.artifacts.configurations.ResolutionBackedFileCollection.visitContents(ResolutionBackedFileCollection.java:73)
-	at org.gradle.api.internal.file.AbstractFileCollection.visitStructure(AbstractFileCollection.java:361)
-	at org.gradle.api.internal.file.CompositeFileCollection.lambda$visitContents$0(CompositeFileCollection.java:113)
-	at org.gradle.api.internal.file.collections.UnpackingVisitor.add(UnpackingVisitor.java:67)
-	at org.gradle.api.internal.file.collections.UnpackingVisitor.add(UnpackingVisitor.java:92)
-	at org.gradle.api.internal.file.DefaultFileCollectionFactory$ResolvingFileCollection.visitChildren(DefaultFileCollectionFactory.java:285)
-	at org.gradle.api.internal.file.CompositeFileCollection.visitContents(CompositeFileCollection.java:113)
-	at org.gradle.api.internal.file.AbstractFileCollection.visitStructure(AbstractFileCollection.java:361)
-	at org.gradle.api.internal.file.CompositeFileCollection.lambda$visitContents$0(CompositeFileCollection.java:113)
-	at org.gradle.api.internal.tasks.PropertyFileCollection.visitChildren(PropertyFileCollection.java:48)
-	at org.gradle.api.internal.file.CompositeFileCollection.visitContents(CompositeFileCollection.java:113)
-	at org.gradle.api.internal.file.AbstractFileCollection.visitStructure(AbstractFileCollection.java:361)
-	at org.gradle.internal.fingerprint.impl.DefaultFileCollectionSnapshotter.snapshot(DefaultFileCollectionSnapshotter.java:47)
-	at org.gradle.internal.execution.impl.DefaultInputFingerprinter$InputCollectingVisitor.visitInputFileProperty(DefaultInputFingerprinter.java:133)
-	at org.gradle.api.internal.tasks.execution.TaskExecution.visitRegularInputs(TaskExecution.java:324)
-	at org.gradle.internal.execution.impl.DefaultInputFingerprinter.fingerprintInputProperties(DefaultInputFingerprinter.java:63)
-	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.captureExecutionStateWithOutputs(AbstractCaptureStateBeforeExecutionStep.java:109)
-	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.lambda$captureExecutionState$0(AbstractCaptureStateBeforeExecutionStep.java:74)
-	at org.gradle.internal.execution.steps.BuildOperationStep$1.call(BuildOperationStep.java:37)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:200)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:195)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
-	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
-	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
-	at org.gradle.internal.execution.steps.BuildOperationStep.operation(BuildOperationStep.java:34)
-	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.captureExecutionState(AbstractCaptureStateBeforeExecutionStep.java:69)
-	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:62)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:41)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:74)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:67)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:45)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:75)
+	at org.gradle.internal.Either$Right.fold(Either.java:175)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:76)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:54)
+	at java.base/java.util.Optional.orElseGet(Unknown Source)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:54)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:36)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:49)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:27)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:106)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:55)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
 	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
 	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
 	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:56)
@@ -1099,5 +1250,5 @@ The following AndroidX dependencies are detected:
 
 ==============================================================================
 
-BUILD FAILED in 12s
-114 actionable tasks: 15 executed, 99 up-to-date
+BUILD FAILED in 20s
+114 actionable tasks: 114 executed
