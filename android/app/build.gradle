@@ -17,8 +17,7 @@ android {
         
         buildConfigField "String", "UTEK_APP_ID", "\"684c01f3144cc\""
     }
-    
-    // This tells Gradle where to find the native Java/Kotlin source files.
+
     sourceSets {
         main {
             java.srcDirs = ['src/main/java']
