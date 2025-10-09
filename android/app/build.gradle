@@ -19,13 +19,6 @@ android {
     }
 
     signingConfigs {
-        debug {
-            storeFile file("debug.keystore")
-            storePassword "android"
-            keyAlias "androiddebugkey"
-            keyPassword "android"
-        }
-
         release {
             def keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
             def storePwd = System.getenv("UDRY_STORE_PASSWORD")
@@ -34,6 +27,7 @@ android {
 
             if (keystorePath == null || keystorePath.trim().isEmpty()) {
                 println("⚠️  UDRY_KEYSTORE_PATH not set — using debug keystore for release build.")
+                // Fallback to a default debug sign for local release testing if vars are not set
                 storeFile file("debug.keystore")
                 storePassword "android"
                 keyAlias "androiddebugkey"
