@@ -1,21 +1,21 @@
 # See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
 
-# Dependencies
+# dependencies
 /node_modules
 /.pnp
 .pnp.js
 
-# Testing
+# testing
 /coverage
 
-# Next.js
+# next.js
 /.next/
 /out/
 
-# Production
+# production
 /build
 
-# Misc
+# misc
 .DS_Store
 *.pem
 
@@ -23,14 +23,18 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-.vercel
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
+*.hprof
 
-# Capacitor
-# The android and ios directories are NOT ignored to allow for native project changes to be version controlled.
-# /android
-# /ios
-/www/
+# local env files
+.env*.local
+
+# vercel
+.vercel
+
+# typescript
+*.tsbuildinfo
+next-env.d.ts
+
+# capacitor
+# We do not ignore the /android and /ios folders as they are part of the native project
+# that needs to be checked into source control.
