@@ -1,29 +1,22 @@
-// Centralized dependency resolution (modern Gradle syntax)
+pluginManagement {
+    repositories {
+        google()
+        mavenCentral()
+        gradlePluginPortal()
+    }
+}
 dependencyResolutionManagement {
-    repositoriesMode.set(RepositoriesMode.PREFER_SETTINGS)
+    repositoriesMode.set(RepositoriesMode.FAIL_ON_PROJECT_REPOS)
     repositories {
         google()
         mavenCentral()
     }
 }
-
 rootProject.name = "android"
-
-// App and core Capacitor modules
 include ':app'
-include ':capacitor-android'
-include ':capacitor-app'
-include ':capacitor-camera'
-include ':capacitor-status-bar'
-include ':capacitor-community-bluetooth-le'
-include ':capacitor-community-sqlite'
-include ':capacitor-cordova-android-plugins'
-
-// Link each module to its actual location inside node_modules
-project(':capacitor-android').projectDir = new File('../node_modules/@capacitor/android/capacitor')
-project(':capacitor-app').projectDir = new File('../node_modules/@capacitor/app/android')
-project(':capacitor-camera').projectDir = new File('../node_modules/@capacitor/camera/android')
-project(':capacitor-status-bar').projectDir = new File('../node_modules/@capacitor/status-bar/android')
-project(':capacitor-community-bluetooth-le').projectDir = new File('../node_modules/@capacitor-community/bluetooth-le/android')
-project(':capacitor-community-sqlite').projectDir = new File('../node_modules/@capacitor-community/sqlite/android')
-project(':capacitor-cordova-android-plugins').projectDir = new File('./capacitor-cordova-android-plugins')
+include ':/Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android'
+include ':/Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/sqlite/android'
+include ':/Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor/app/android'
+include ':/Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor/camera/android'
+include ':/Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor/status-bar/android'
+include ':/Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor/android/capacitor'
