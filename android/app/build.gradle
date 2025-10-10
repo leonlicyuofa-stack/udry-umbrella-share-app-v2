@@ -1,72 +1,91 @@
-// The plugins block must be the first block in the file.
 plugins {
     id 'com.android.application'
-    id 'kotlin-android'
-    id 'com.google.gms.google-services'
+    id 'org.jetbrains.kotlin.android'
 }
-
-// Apply the main capacitor build script.
-apply from: "capacitor.build.gradle"
 
 android {
     namespace "com.udry.app"
     compileSdk 35
+
     defaultConfig {
         applicationId "com.udry.app"
-        minSdk 23
-        targetSdk 35
+        minSdkVersion 23
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        
+        buildConfigField "String", "UTEK_APP_ID", "\"684c01f3144cc\""
     }
+
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
+            storeFile file("debug.keystore")
+            storePassword "android"
+            keyAlias "androiddebugkey"
+            keyPassword "android"
         }
+
         release {
-            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
-                storeFile rootProject.file(System.getenv("UDRY_KEYSTORE_PATH"))
-                storePassword System.getenv("UDRY_STORE_PASSWORD")
-                keyAlias System.getenv("UDRY_KEY_ALIAS")
-                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            def keystorePath = System.getenv("UDRY_KEYSTORE_PATH")
+            def storePwd = System.getenv("UDRY_STORE_PASSWORD")
+            def alias = System.getenv("UDRY_KEY_ALIAS")
+            def keyPwd = System.getenv("UDRY_KEY_PASSWORD")
+
+            if (keystorePath == null || keystorePath.trim().isEmpty()) {
+                println("⚠️  UDRY_KEYSTORE_PATH not set — using debug keystore for release build.")
+                storeFile file("debug.keystore")
+                storePassword "android"
+                keyAlias "androiddebugkey"
+                keyPassword "android"
+            } else {
+                storeFile rootProject.file(keystorePath)
+                storePassword storePwd
+                keyAlias alias
+                keyPassword keyPwd
             }
         }
     }
+
     buildTypes {
         release {
-            minifyEnabled false
-            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            minifyEnabled true
+            shrinkResources true
+            proguardFiles getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = "1.8"
     }
+
     buildFeatures {
         buildConfig true
     }
 }
 
+// 👇 Move this *after* android { ... }
+apply from: 'capacitor.build.gradle'
+
 dependencies {
-    implementation platform(libs.firebase.bom)
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
+    implementation libs.androidx.test.ext.junit
+    implementation libs.espresso.core
+    implementation libs.junit
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-status-bar')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.espresso.core
 }

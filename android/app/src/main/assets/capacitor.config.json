@@ -1,5 +1,19 @@
 {
 	"appId": "com.udry.app",
 	"appName": "udry 共享雨傘 ",
-	"webDir": ".next"
+	"webDir": "out",
+	"ios": {
+		"contentInset": "always"
+	},
+	"plugins": {
+		"App": {
+			"ios": {
+				"urlScheme": "udry"
+			}
+		},
+		"StatusBar": {
+			"overlaysWebView": true,
+			"style": "light"
+		}
+	}
 }

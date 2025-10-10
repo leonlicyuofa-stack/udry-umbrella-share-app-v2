@@ -1,0 +1,37 @@
+{
+	"appId": "com.udry.app",
+	"appName": "udry 共享雨傘 ",
+	"webDir": "out",
+	"server": {
+		"hostname": "udry-app-dev.web.app",
+		"androidScheme": "https",
+		"allowNavigation": [
+			"udry-app-dev.web.app",
+			"udry-app-dev.firebaseapp.com",
+			"identitytoolkit.googleapis.com"
+		]
+	},
+	"ios": {
+		"contentInset": "always"
+	},
+	"plugins": {
+		"App": {
+			"ios": {
+				"urlScheme": "udry"
+			}
+		},
+		"StatusBar": {
+			"overlaysWebView": true,
+			"style": "light"
+		}
+	},
+	"packageClassList": [
+		"BluetoothLe",
+		"BluetoothLe",
+		"CapacitorSQLitePlugin",
+		"CapacitorSQLitePlugin",
+		"AppPlugin",
+		"CAPCameraPlugin",
+		"StatusBarPlugin"
+	]
+}

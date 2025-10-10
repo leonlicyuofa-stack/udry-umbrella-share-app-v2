@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>U-Dry App</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; text-align: center; padding-top: 50px; }
+        a { color: #007aff; }
+    </style>
+    <script>
+        function attemptOpenApp() {
+            var appURL = "udry://";
+            var appStoreURL = "https://apps.apple.com/us/app/udry/id6751819661"; // Your actual App Store URL
+
+            var fallbackTimeout = setTimeout(redirectToStore, 1000);
+
+            var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            var isAndroid = /Android/.test(navigator.userAgent);
+            
+            // For iOS 9+, try to open the app directly.
+            // For older versions or other OS, this might not work as smoothly.
+            window.location.href = appURL;
+
+            // This part helps detect if the app was successfully opened.
+            // If the browser is blurred (app takes focus), we clear the timeout.
+            window.addEventListener('blur', function() {
+                clearTimeout(fallbackTimeout);
+            });
+            // visibilitychange is a more reliable modern approach
+            document.addEventListener("visibilitychange", function() {
+                if (document.hidden) {
+                    clearTimeout(fallbackTimeout);
+                }
+            });
+
+            function redirectToStore() {
+                // This will only run if the app did not open and clear the timeout.
+                window.location.href = appStoreURL;
+            }
+        }
+
+        window.onload = attemptOpenApp;
+    </script>
+</head>
+<body>
+    <p>If you are not redirected automatically, <a href="udry://">click here to open the app</a> or visit the <a href="https://apps.apple.com/us/app/udry/id6751819661">App Store</a>.</p>
+</body>
+</html>
