@@ -1,9 +1,10 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-// This file is now using the modern plugins block to align with the Gradle Version Catalog.
 plugins {
-    alias(libs.plugins.androidApplication) apply false
-    alias(libs.plugins.kotlinAndroid) apply false
+    alias(libs.plugins.android.application) apply false
     alias(libs.plugins.googleServices) apply false
+    alias(libs.plugins.kotlin.android) apply false
 }
 
-// The allprojects block is no longer needed here as repositories are defined in settings.gradle
+task clean(type: Delete) {
+    delete rootProject.buildDir
+}
