@@ -1,34 +1,9 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
-
-buildscript {
-    ext {
-        androidxAppCompatVersion = '1.6.1'
-        androidxCoordinatorLayoutVersion = '1.2.0'
-        androidxCoreVersion = '1.12.0'
-        androidxFragmentVersion = '1.6.2'
-        junitVersion = '4.13.2'
-        androidxJunitVersion = '1.1.5'
-        androidxEspressoCoreVersion = '3.5.1'
-        cordovaAndroidVersion = '10.1.1'
-    }
-    repositories {
-        google()
-        mavenCentral()
-    }
-    dependencies {
-        classpath libs.plugins.androidApplication
-        classpath libs.plugins.googleServices
-        classpath libs.plugins.kotlinAndroid
-    }
+// This file is now using the modern plugins block to align with the Gradle Version Catalog.
+plugins {
+    alias(libs.plugins.androidApplication) apply false
+    alias(libs.plugins.kotlinAndroid) apply false
+    alias(libs.plugins.googleServices) apply false
 }
 
-allprojects {
-    repositories {
-        google()
-        mavenCentral()
-    }
-}
-
-task clean(type: Delete) {
-    delete rootProject.buildDir
-}
+// The allprojects block is no longer needed here as repositories are defined in settings.gradle
