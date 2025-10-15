@@ -4,9 +4,10 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.udry.app',
   appName: 'udry 共享雨傘 ',
-  webDir: 'out', // Corrected to point to the static export directory
-  // The server block is removed to prevent loading from a live URL in development.
-  // This forces the app to use the local files in the webDir.
+  // The webDir MUST be 'out' for a Next.js static export.
+  webDir: 'out',
+  // The server block is REMOVED. For production builds, the app must load
+  // from local files, not a live URL. This is a critical fix.
   
   // This setting is crucial for iOS to allow the webview to use the safe area.
   ios: {
