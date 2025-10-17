@@ -1,0 +1,316 @@
+Log cat 
+
+2025-10-17 13:06:19.633 29807-29807 nativeloader            com.udry.app                         D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2025-10-17 13:06:19.699 29807-29807 nativeloader            com.udry.app                         D  Load /data/user/0/com.udry.app/code_cache/startup_agents/3fc68f17-agent.so using system ns (caller=<unknown>): ok
+2025-10-17 13:06:19.709 29807-29807 com.udry.app            com.udry.app                         W  hiddenapi: DexFile /data/data/com.udry.app/code_cache/.studio/instruments-c9b0d10a.jar is in boot class path but is not in a known location
+2025-10-17 13:06:19.787 29807-29807 com.udry.app            com.udry.app                         W  Redefining intrinsic method java.lang.Thread java.lang.Thread.currentThread(). This may cause the unexpected use of the original definition of java.lang.Thread java.lang.Thread.currentThread()in methods that have already been compiled.
+2025-10-17 13:06:19.787 29807-29807 com.udry.app            com.udry.app                         W  Redefining intrinsic method boolean java.lang.Thread.interrupted(). This may cause the unexpected use of the original definition of boolean java.lang.Thread.interrupted()in methods that have already been compiled.
+---------------------------- PROCESS STARTED (29807) for package com.udry.app ----------------------------
+2025-10-17 13:06:20.042 29807-29807 nativeloader            com.udry.app                         D  Configuring clns-9 for other apk /data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/lib/arm64:/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.udry.app
+2025-10-17 13:06:20.043 29807-29807 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 202956589; UID 10217; state: ENABLED
+2025-10-17 13:06:20.045 29807-29807 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a3cb38) locale list changing from [] to [en-US]
+2025-10-17 13:06:20.046 29807-29807 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a40058) locale list changing from [] to [en-US]
+2025-10-17 13:06:20.050 29807-29807 GraphicsEnvironment     com.udry.app                         V  Currently set values for:
+2025-10-17 13:06:20.050 29807-29807 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_pkgs=[]
+2025-10-17 13:06:20.050 29807-29807 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_values=[]
+2025-10-17 13:06:20.050 29807-29807 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in per-application setting
+2025-10-17 13:06:20.054 29807-29807 GraphicsEnvironment     com.udry.app                         V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+2025-10-17 13:06:20.054 29807-29807 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in ANGLE allowlist or settings, returning default
+2025-10-17 13:06:20.054 29807-29807 GraphicsEnvironment     com.udry.app                         V  Neither updatable production driver nor prerelease driver is supported.
+2025-10-17 13:06:20.070 29807-29807 FirebaseApp             com.udry.app                         W  Default FirebaseApp failed to initialize because no default options were found. This usually means that com.google.gms:google-services was not applied to your gradle project.
+2025-10-17 13:06:20.071 29807-29807 FirebaseInitProvider    com.udry.app                         I  FirebaseApp initialization unsuccessful
+2025-10-17 13:06:20.075 29807-29807 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 279646685; UID 10217; state: ENABLED
+2025-10-17 13:06:20.093 29807-29807 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a40698) locale list changing from [] to [en-US]
+2025-10-17 13:06:20.094 29807-29822 DisplayManager          com.udry.app                         I  Choreographer implicitly registered for the refresh rate.
+2025-10-17 13:06:20.096 29807-29807 TransactionExecutor     com.udry.app                         E  Failed to execute the transaction: tId:1637354174 ClientTransaction{
+                                                                                                    tId:1637354174   transactionItems=[
+                                                                                                    tId:1637354174     LaunchActivityItem{activityToken=android.os.BinderProxy@af137cb,intent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.udry.app/.MainActivity },ident=8734781,info=ActivityInfo{4285dfd com.udry.app.MainActivity},curConfig={1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.30 fontWeightAdjustment=0},overrideConfig={1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} s.2 fontWeightAdjustment=0},deviceId=0,referrer=com.android.shell,procState=2,state=null,persistentState=null,pendingResults=null,pendingNewIntents=null,sceneTransitionInfo=null,profilerInfo=null,assistToken=android.os.BinderProxy@6a8ae66,shareableActivityToken=android.os.BinderProxy@3d985a7,activityWindowInfo=ActivityWindowInfo{isEmbedded=false, taskBounds=Rect(0, 0 - 1080, 2400), taskFragmentBounds=Rect(0, 0 - 1080, 2400)}}
+                                                                                                    tId:1637354174     ResumeActivityItem{mActivityToken=android.os.BinderProxy@af137cb,procState=-1,isForward=true,shouldSendCompatFakeFocus=false}
+                                                                                                    tId:1637354174     Target activity: Not found for token: android.os.BinderProxy@af137cb
+                                                                                                    tId:1637354174   ]
+                                                                                                    tId:1637354174 }
+2025-10-17 13:06:20.096 29807-29807 AndroidRuntime          com.udry.app                         D  Shutting down VM
+2025-10-17 13:06:20.098 29807-29807 AndroidRuntime          com.udry.app                         E  FATAL EXCEPTION: main
+                                                                                                    Process: com.udry.app, PID: 29807
+                                                                                                    java.lang.RuntimeException: Unable to instantiate activity ComponentInfo{com.udry.app/com.udry.app.MainActivity}: java.lang.ClassNotFoundException: Didn't find class "com.udry.app.MainActivity" on path: DexPathList[[zip file "/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk"],nativeLibraryDirectories=[/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/lib/arm64, /data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk!/lib/arm64-v8a, /system/lib64, /system_ext/lib64]]
+                                                                                                    	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4186)
+                                                                                                    	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4467)
+                                                                                                    	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:222)
+                                                                                                    	at android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:133)
+                                                                                                    	at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:103)
+                                                                                                    	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:80)
+                                                                                                    	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2823)
+                                                                                                    	at android.os.Handler.dispatchMessage(Handler.java:110)
+                                                                                                    	at android.os.Looper.loopOnce(Looper.java:248)
+                                                                                                    	at android.os.Looper.loop(Looper.java:338)
+                                                                                                    	at android.app.ActivityThread.main(ActivityThread.java:9067)
+                                                                                                    	at java.lang.reflect.Method.invoke(Native Method)
+                                                                                                    	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
+                                                                                                    	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
+                                                                                                    Caused by: java.lang.ClassNotFoundException: Didn't find class "com.udry.app.MainActivity" on path: DexPathList[[zip file "/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk"],nativeLibraryDirectories=[/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/lib/arm64, /data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk!/lib/arm64-v8a, /system/lib64, /system_ext/lib64]]
+                                                                                                    	at dalvik.system.BaseDexClassLoader.findClass(BaseDexClassLoader.java:259)
+                                                                                                    	at java.lang.ClassLoader.loadClass(ClassLoader.java:637)
+                                                                                                    	at java.lang.ClassLoader.loadClass(ClassLoader.java:573)
+                                                                                                    	at android.app.AppComponentFactory.instantiateActivity(AppComponentFactory.java:95)
+                                                                                                    	at androidx.core.app.CoreComponentFactory.instantiateActivity(CoreComponentFactory.java:44)
+                                                                                                    	at android.app.Instrumentation.newActivity(Instrumentation.java:1443)
+                                                                                                    	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4173)
+                                                                                                    	... 13 more
+2025-10-17 13:06:20.108 29807-29807 Process                 com.udry.app                         I  Sending signal. PID: 29807 SIG: 9
+---------------------------- PROCESS ENDED (29807) for package com.udry.app ----------------------------
+
+Build log 
+
+Executing tasks: [:app:assembleDebug] in project /Users/leonli/Desktop/udry-umbrella-share-app-v2/android
+
+Starting Gradle Daemon...
+Gradle Daemon started in 576 ms
+
+> Configure project :
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by script '../node_modules/@capacitor/android/capacitor/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by script '../node_modules/@capacitor/android/capacitor/build.gradle'
+
+> Configure project :capacitor-android
+Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/android/capacitor/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/android/capacitor/build.gradle'
+
+> Configure project :capacitor-app
+Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/app/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/app/android/build.gradle'
+
+> Configure project :capacitor-camera
+Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/camera/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/camera/android/build.gradle'
+
+> Configure project :capacitor-community-bluetooth-le
+Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor-community/bluetooth-le/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor-community/bluetooth-le/android/build.gradle'
+
+> Configure project :capacitor-community-sqlite
+Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor-community/sqlite/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor-community/sqlite/android/build.gradle'
+
+> Configure project :capacitor-cordova-android-plugins
+Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file 'capacitor-cordova-android-plugins/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file 'capacitor-cordova-android-plugins/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'flatDir' was added by build file 'capacitor-cordova-android-plugins/build.gradle'
+AGPBI: {"kind":"warning","text":"Using flatDir should be avoided because it doesn't support any meta-data formats.","sources":[{}]}
+
+> Configure project :capacitor-status-bar
+Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
+
+> Task :capacitor-status-bar:preBuild UP-TO-DATE
+> Task :capacitor-camera:preBuild UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:preBuild UP-TO-DATE
+> Task :capacitor-app:preBuild UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
+> Task :capacitor-community-sqlite:preBuild UP-TO-DATE
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :capacitor-community-sqlite:preDebugBuild UP-TO-DATE
+> Task :capacitor-status-bar:preDebugBuild UP-TO-DATE
+> Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:preDebugBuild UP-TO-DATE
+> Task :capacitor-app:preDebugBuild UP-TO-DATE
+> Task :capacitor-camera:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :capacitor-app:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-community-sqlite:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-status-bar:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-camera:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:writeDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :capacitor-android:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugResValues UP-TO-DATE
+> Task :capacitor-android:generateDebugResValues UP-TO-DATE
+> Task :capacitor-camera:generateDebugResValues UP-TO-DATE
+> Task :capacitor-status-bar:generateDebugResValues UP-TO-DATE
+> Task :capacitor-app:generateDebugResValues UP-TO-DATE
+> Task :capacitor-community-sqlite:generateDebugResValues UP-TO-DATE
+> Task :capacitor-android:generateDebugResources UP-TO-DATE
+> Task :capacitor-status-bar:generateDebugResources UP-TO-DATE
+> Task :capacitor-community-sqlite:generateDebugResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugResources UP-TO-DATE
+> Task :capacitor-app:generateDebugResources UP-TO-DATE
+> Task :capacitor-camera:generateDebugResources UP-TO-DATE
+> Task :capacitor-android:packageDebugResources UP-TO-DATE
+> Task :capacitor-camera:packageDebugResources UP-TO-DATE
+> Task :capacitor-community-sqlite:packageDebugResources UP-TO-DATE
+> Task :capacitor-status-bar:packageDebugResources UP-TO-DATE
+> Task :capacitor-app:packageDebugResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:packageDebugResources UP-TO-DATE
+> Task :capacitor-camera:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-status-bar:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-app:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-android:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-android:processDebugManifest UP-TO-DATE
+> Task :capacitor-camera:processDebugManifest UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:processDebugManifest UP-TO-DATE
+> Task :capacitor-status-bar:processDebugManifest UP-TO-DATE
+> Task :capacitor-community-sqlite:processDebugManifest UP-TO-DATE
+> Task :capacitor-app:processDebugManifest UP-TO-DATE
+> Task :capacitor-camera:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-community-sqlite:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-status-bar:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-app:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-android:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-community-sqlite:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-camera:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-status-bar:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-app:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-android:generateDebugRFile UP-TO-DATE
+> Task :capacitor-camera:generateDebugRFile UP-TO-DATE
+> Task :capacitor-status-bar:generateDebugRFile UP-TO-DATE
+> Task :capacitor-app:generateDebugRFile UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugRFile UP-TO-DATE
+> Task :capacitor-community-sqlite:generateDebugRFile UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:checkKotlinGradlePluginConfigurationErrors
+> Task :capacitor-status-bar:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-app:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-camera:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-app:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-status-bar:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-camera:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:compileDebugShaders NO-SOURCE
+> Task :capacitor-app:compileDebugShaders NO-SOURCE
+> Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
+> Task :capacitor-camera:compileDebugShaders NO-SOURCE
+> Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugAssets UP-TO-DATE
+> Task :capacitor-app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-camera:generateDebugAssets UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:packageDebugAssets UP-TO-DATE
+> Task :capacitor-camera:packageDebugAssets UP-TO-DATE
+> Task :capacitor-status-bar:packageDebugAssets UP-TO-DATE
+> Task :capacitor-app:packageDebugAssets UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
+> Task :capacitor-app:processDebugJavaRes NO-SOURCE
+> Task :capacitor-camera:processDebugJavaRes NO-SOURCE
+> Task :capacitor-community-bluetooth-le:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-status-bar:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-camera:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-app:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-status-bar:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-camera:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-community-sqlite:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-community-sqlite:compileDebugShaders NO-SOURCE
+> Task :capacitor-community-sqlite:generateDebugAssets UP-TO-DATE
+> Task :capacitor-community-sqlite:packageDebugAssets UP-TO-DATE
+> Task :capacitor-community-sqlite:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-community-sqlite:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-android:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-app:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-status-bar:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-status-bar:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-android:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-android:compileDebugShaders NO-SOURCE
+> Task :capacitor-android:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:packageDebugAssets UP-TO-DATE
+> Task :capacitor-app:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :capacitor-status-bar:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :capacitor-android:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :capacitor-app:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-android:processDebugJavaRes NO-SOURCE
+> Task :capacitor-status-bar:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-android:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-android:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:compileDebugKotlin UP-TO-DATE
+> Task :capacitor-camera:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:compileDebugJavaWithJavac NO-SOURCE
+> Task :capacitor-camera:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :capacitor-camera:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:bundleLibRuntimeToJarDebug UP-TO-DATE
+> Task :capacitor-camera:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:processDebugJavaRes UP-TO-DATE
+> Task :capacitor-community-sqlite:processDebugJavaRes UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
+> Task :app:parseDebugLocalResources UP-TO-DATE
+> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:processDebugMainManifest UP-TO-DATE
+> Task :app:processDebugManifest UP-TO-DATE
+> Task :app:processDebugManifestForPackage UP-TO-DATE
+> Task :app:processDebugResources UP-TO-DATE
+> Task :app:compileDebugKotlin NO-SOURCE
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets UP-TO-DATE
+> Task :app:compressDebugAssets UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
+> Task :app:dexBuilderDebug UP-TO-DATE
+> Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
+> Task :app:processDebugJavaRes NO-SOURCE
+> Task :app:mergeDebugJavaResource UP-TO-DATE
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:mergeDebugStartupProfile UP-TO-DATE
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :app:mergeProjectDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs UP-TO-DATE
+> Task :app:stripDebugDebugSymbols UP-TO-DATE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
+> Task :app:packageDebug UP-TO-DATE
+> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
+> Task :app:assembleDebug UP-TO-DATE
+
+BUILD SUCCESSFUL in 5s
+148 actionable tasks: 2 executed, 146 up-to-date
+
+Build Analyzer results available

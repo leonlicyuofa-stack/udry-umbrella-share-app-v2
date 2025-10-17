@@ -1,4 +1,4 @@
-package com.getcapacitor.myapp;
+package com.udry.app;
 
 import android.content.Context;
 import androidx.room.Database;
