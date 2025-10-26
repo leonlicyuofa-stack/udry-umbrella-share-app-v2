@@ -16,12 +16,18 @@ public class MainActivity extends BridgeActivity {
     Log.d(TAG, "--- MainActivity.onCreate() START ---");
     
     // TEMPORARY DIAGNOSTIC OVERRIDE
+    // This block creates a new CapConfig builder, sets the *server URL* before the bridge is initialized,
+    // and then creates the bridge with this temporary config. This is the correct way to
+    // force the app to load a specific page for debugging.
     CapConfig.Builder configBuilder = new CapConfig.Builder(this);
     configBuilder.setServerUrl("file:///android_asset/public/diag.html");
-    this.setBridge(new Bridge.Builder(this).setConfig(configBuilder.create()).create());
+    CapConfig config = configBuilder.create();
+    this.init(savedInstanceState, config);
     // END TEMPORARY OVERRIDE
     
-    super.onCreate(savedInstanceState);
+    // We are calling init() above instead of super.onCreate() to use our custom config.
+    // super.onCreate(savedInstanceState); 
+    
     Log.d(TAG, "--- MainActivity.onCreate() (super.onCreate() finished) ---");
   }
 
