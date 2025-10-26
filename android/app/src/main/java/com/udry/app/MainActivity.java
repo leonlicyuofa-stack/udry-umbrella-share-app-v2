@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.util.Log;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Logger;
+import com.getcapacitor.Bridge;
+import com.getcapacitor.JSObject;
+import org.json.JSONException;
 
 public class MainActivity extends BridgeActivity {
 
@@ -14,26 +17,38 @@ public class MainActivity extends BridgeActivity {
   public void onCreate(Bundle savedInstanceState) {
     Log.d(TAG, "--- MainActivity.onCreate() START ---");
     
-    // The server URL is now controlled by capacitor.config.ts.
-    // This native override has been removed to fix the build error.
-    
     super.onCreate(savedInstanceState);
     
-    // --- DEEPER DIAGNOSTIC LOGGING ---
-    // This block will definitively log what server URL the compiled app is using.
+    // --- DEEPER DIAGNOSTIC LOGGING AND FIX ---
+    // This block will log what Capacitor is trying to do and then
+    // programmatically remove the incorrect localhost override if it exists.
     try {
-        // The 'bridge' object is available after super.onCreate() is called.
-        String serverUrl = bridge.getConfig().getServerUrl(); 
-        if (serverUrl != null) {
-            Log.d(TAG, "DEEP_DIAGNOSIS: Capacitor is loading from an explicit Server URL: " + serverUrl);
+        Bridge bridge = this.getBridge();
+        if (bridge != null) {
+            JSObject config = bridge.getConfig();
+            if (config.has("server")) {
+                JSObject serverConfig = config.getJSObject("server");
+                if (serverConfig != null && serverConfig.has("url")) {
+                    String serverUrl = serverConfig.getString("url");
+                    Log.d(TAG, "DEEP_DIAGNOSIS: Detected 'server.url' override: " + serverUrl);
+                    // This is the critical fix: remove the incorrect URL override.
+                    serverConfig.remove("url");
+                    config.put("server", serverConfig);
+                    // We must apply this modified config back to the bridge.
+                    bridge.setConfig(config);
+                    Log.d(TAG, "DEEP_DIAGNOSIS: Successfully REMOVED server.url override at runtime.");
+                }
+            } else {
+                 Log.d(TAG, "DEEP_DIAGNOSIS: No 'server.url' override was found in the configuration.");
+            }
         } else {
-            Log.d(TAG, "DEEP_DIAGNOSIS: Capacitor is loading from the default webDir (file:// protocol). No server override detected.");
+            Log.e(TAG, "DEEP_DIAGNOSIS: CRITICAL - Bridge object was null. Cannot inspect config.");
         }
     } catch (Exception e) {
-        Log.e(TAG, "DEEP_DIAGNOSIS: CRITICAL - Could not read Capacitor config from the bridge.", e);
+        Log.e(TAG, "DEEP_DIAGNOSIS: CRITICAL - An error occurred while trying to modify the Capacitor config.", e);
     }
     
-    Log.d(TAG, "--- MainActivity.onCreate() END --- (super.onCreate() has been called)");
+    Log.d(TAG, "--- MainActivity.onCreate() END ---");
   }
 
   @Override
