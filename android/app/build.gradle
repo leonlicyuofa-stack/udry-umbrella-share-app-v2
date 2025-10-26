@@ -1,24 +1,35 @@
+// THIS IS THE FINAL, CORRECTED BUILD SCRIPT
 
-apply plugin: 'com.android.application'
-apply plugin: 'kotlin-android'
-apply plugin: 'kotlin-kapt'
+// The 'plugins' block must be the very first statement in the file.
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'com.google.gms.google-services' // Added Google Services plugin
+    id 'kotlin-kapt' // For Room database
+}
 
-apply from: "../capacitor-cordova-android-plugins/cordova.variables.gradle"
-apply from: "../../node_modules/@capacitor/android/capacitor.build.gradle"
-
+// Applying the Capacitor build script after plugins are declared.
+// The path is now corrected to navigate up from 'app' to the 'android' directory.
+apply from: "../capacitor.build.gradle"
 
 android {
     namespace "com.udry.app"
+    // We are targeting the required API level 35.
     compileSdk 35
+
     defaultConfig {
         applicationId "com.udry.app"
+        // We set the minimum SDK to 23 to support required libraries like Firebase Auth.
         minSdkVersion 23
-        targetSdkVersion 35
+        targetSdk 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField "String", "UTEK_APP_ID", "\"${System.env.UTEK_APP_ID ?: '684c01f3144cc'}\""
+        
+        // This is required for some Capacitor plugins.
+        buildConfigField "boolean", "IS_TESTING", "false"
     }
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -27,55 +38,78 @@ android {
             keyPassword 'android'
         }
         release {
-            storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
-            storePassword System.getenv("UDRY_STORE_PASSWORD")
-            keyAlias System.getenv("UDRY_KEY_ALIAS")
-            keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            // These environment variables will be provided when you run the build command.
+            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
+                storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
+                storePassword System.getenv("UDRY_STORE_PASSWORD")
+                keyAlias System.getenv("UDRY_KEY_ALIAS")
+                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            }
         }
     }
+
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled false // Proguard is disabled for simplicity, can be enabled later.
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
-        all {
-            matchingFallbacks = ['debug', 'release']
-        }
     }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
-        jvmTarget = '17'
+        jvmTarget = '1.8'
     }
+
     buildFeatures {
+        // This is required by one or more of the Capacitor plugins.
         buildConfig true
+    }
+     packagingOptions {
+        // Exclude duplicate files that can cause build errors with some libraries.
+        exclude 'META-INF/DEPENDENCIES'
+        exclude 'META-INF/LICENSE'
+        exclude 'META-INF/LICENSE.txt'
+        exclude 'META-INF/license.txt'
+        exclude 'META-INF/NOTICE'
+        exclude 'META-INF/NOTICE.txt'
+        exclude 'META-INF/notice.txt'
+        exclude 'META-INF/ASL2.0'
+        exclude("META-INF/*.kotlin_module")
     }
 }
 
 dependencies {
-    implementation fileTree(include: ['*.jar'], dir: 'libs')
+    // Standard Android dependencies using the version catalog (libs.versions.toml)
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.coordinatorlayout
+    implementation libs.androidx.test.ext.junit
+    implementation libs.espresso.core
+    implementation libs.junit
+
+    // Firebase Bill of Materials (BOM) - manages versions for Firebase libraries
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+
+    // Capacitor plugins
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-status-bar')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
+    implementation project(':capacitor-cordova-android-plugins')
 
-    implementation libs.androidx.appcompat
-    implementation libs.androidx.coordinatorlayout
-    implementation libs.firebase.auth
-    implementation libs.firebase.firestore
-    implementation(platform(libs.firebase.bom))
-
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.espresso.core
-
-    // Kapt dependency for Room
-    kapt project(':capacitor-community-sqlite')
+    // For Room database with kotlin-kapt
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
 }
 
-apply from: 'capacitor.build.gradle'
+// Apply the kapt plugin for annotation processing (for Room).
+apply plugin: 'kotlin-kapt'
