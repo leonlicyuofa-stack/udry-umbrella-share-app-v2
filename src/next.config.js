@@ -1,10 +1,11 @@
 
 /** @type {import('next').NextConfig} */
 
-// This configuration has been updated to use 'standalone' output, which is better
-// suited for server-like environments such as the one provided by Capacitor.
+// This configuration has been updated to force a static export ('out') for all builds.
+// This is the standard and required configuration for Capacitor apps.
 const nextConfig = {
-  output: 'standalone',
+  // The `output: 'export'` option is required by Capacitor.
+  output: 'export',
 
   // This setting is required for static exports to work correctly with the Next.js Image component.
   images: {

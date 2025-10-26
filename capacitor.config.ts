@@ -4,7 +4,7 @@ import type { CapacitorConfig } from '@capacitor/cli';
 const config: CapacitorConfig = {
   appId: 'com.udry.app',
   appName: 'udry 共享雨傘 ',
-  webDir: '.next/standalone',
+  webDir: 'out',
   server: {
     hostname: 'udry.app',
     androidScheme: 'https'
