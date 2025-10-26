@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -153,13 +152,13 @@ export default function DiagPage() {
                 <AlertDescription>
                     <ol className="list-decimal list-inside space-y-2">
                         <li>In Android Studio's Project View, find the "Project" dropdown at the top-left and select "Project" (instead of "Android").</li>
-                        <li>Navigate to the following file: <br/><code className="text-xs font-mono bg-muted p-1 rounded">udry-umbrella-share-app-v2/node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorConfig.java</code></li>
+                        <li>Navigate to the following file: <br/><code className="text-xs font-mono bg-muted p-1 rounded">udry-umbrella-share-app-v2/node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapConfig.java</code></li>
                         <li>Open the file, copy its entire contents, and paste it into the text box below.</li>
                     </ol>
                 </AlertDescription>
               </Alert>
               <div className="space-y-2">
-                <Label htmlFor="config-contents">Contents of CapacitorConfig.java</Label>
+                <Label htmlFor="config-contents">Contents of CapConfig.java</Label>
                 <Textarea id="config-contents" placeholder="Paste the contents of the file here." className="h-48 font-mono text-xs" />
               </div>
             </CardContent>
