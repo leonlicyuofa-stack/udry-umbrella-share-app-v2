@@ -14,7 +14,10 @@ public class MainActivity extends BridgeActivity {
   public void onCreate(Bundle savedInstanceState) {
     Log.d(TAG, "--- MainActivity.onCreate() START ---");
     
-    // Initialize Capacitor plugins and the Bridge first
+    // This forces the app to use the bundled `out` directory instead of a localhost server.
+    // It's the definitive fix for the "white screen" issue caused by server config overrides.
+    this.getBridge().getWebView().setServerBaseUrl("file:///android_asset/public");
+    
     super.onCreate(savedInstanceState);
     
     // --- DEEPER DIAGNOSTIC LOGGING ---
