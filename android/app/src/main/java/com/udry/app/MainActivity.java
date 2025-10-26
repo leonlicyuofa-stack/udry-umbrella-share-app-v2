@@ -22,21 +22,20 @@ public class MainActivity extends BridgeActivity {
     
     // --- DEEPER DIAGNOSTIC LOGGING AND FIX ---
     // This block will log what Capacitor is trying to do and then
-    // programmatically remove the incorrect localhost override if it exists.
+    // programmatically force the server URL to the local asset path.
     try {
         Bridge bridge = this.getBridge();
         if (bridge != null) {
             CapConfig config = bridge.getConfig();
-            if (config != null && config.getServerUrl() != null) {
-                Log.d(TAG, "DEEP_DIAGNOSIS: Detected 'server.url' override in config: " + config.getServerUrl());
-                // This is the critical fix: set the server URL back to the local file path.
-                config.setServerUrl("file:///android_asset/public");
+            if (config != null) {
+                // This is the critical fix: use putString to force the server URL.
+                config.putString("server.url", "file:///android_asset/public");
                 Log.d(TAG, "DEEP_DIAGNOSIS: Successfully FORCED server URL back to local asset path.");
             } else {
-                 Log.d(TAG, "DEEP_DIAGNOSIS: No 'server.url' override was detected in the runtime configuration.");
+                 Log.d(TAG, "DEEP_DIAGNOSIS: CapConfig object was null. Cannot apply fix.");
             }
         } else {
-            Log.e(TAG, "DEEP_DIAGNOSIS: CRITICAL - Bridge object was null. Cannot inspect config.");
+            Log.e(TAG, "DEEP_DIAGNOSIS: CRITICAL - Bridge object was null. Cannot inspect or modify config.");
         }
     } catch (Exception e) {
         Log.e(TAG, "DEEP_DIAGNOSIS: CRITICAL - An error occurred while trying to modify the Capacitor config.", e);
