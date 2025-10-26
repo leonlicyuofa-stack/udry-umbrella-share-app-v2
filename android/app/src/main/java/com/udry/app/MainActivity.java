@@ -1,3 +1,4 @@
+
 package com.udry.app;
 
 import android.os.Bundle;
@@ -16,18 +17,8 @@ public class MainActivity extends BridgeActivity {
     // Initialize Capacitor plugins and the Bridge first
     super.onCreate(savedInstanceState);
     
-    // Now that the bridge is initialized, we can safely log the config
-    try {
-        // This is a protected method from BridgeActivity
-        String serverUrl = getServerUrl();
-        if (serverUrl != null) {
-            Log.d(TAG, "Capacitor Config: Server URL is defined as: " + serverUrl);
-        } else {
-            Log.d(TAG, "Capacitor Config: Server URL is null. App should be loading from local webDir.");
-        }
-    } catch (Exception e) {
-        Log.e(TAG, "Error accessing Capacitor config after super.onCreate()", e);
-    }
+    // The previous attempt to log the server URL here was incorrect and broke the build.
+    // That code has been removed. We are keeping the other lifecycle logs for diagnostics.
     
     Log.d(TAG, "--- MainActivity.onCreate() END --- (super.onCreate() has been called)");
   }
