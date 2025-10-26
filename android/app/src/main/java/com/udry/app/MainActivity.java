@@ -15,8 +15,8 @@ public class MainActivity extends BridgeActivity {
     Log.d(TAG, "--- MainActivity.onCreate() START ---");
     
     // This forces the app to use the bundled `out` directory instead of a localhost server.
-    // It's the definitive fix for the "white screen" issue caused by server config overrides.
-    this.setServerBaseUrl("file:///android_asset/public");
+    // It must be called BEFORE super.onCreate() to take effect.
+    setServerBaseUrl("file:///android_asset/public");
     
     super.onCreate(savedInstanceState);
     
