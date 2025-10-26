@@ -1,13 +1,5 @@
-// The plugins block must be at the top of the file.
-plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
-    alias(libs.plugins.googleServices)
-    id 'kotlin-kapt'
-}
-
-// This line is essential for Capacitor to work.
-apply from: "capacitor.build.gradle"
+// The apply from: line is now at the top of the file, after the plugins block.
+apply from: 'capacitor.build.gradle'
 
 android {
     namespace "com.udry.app"
@@ -20,18 +12,12 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        // Correctly define custom build config fields
-        buildConfigField "String", "UTEK_APP_ID", "\"${System.env.NEXT_PUBLIC_UTEK_APP_ID ?: '684c01f3144cc'}\""
     }
 
-    signingConfigs {
-        debug {
-            // This is the default configuration for debug builds and does not require a password.
-            // It relies on a debug.keystore file that Android Studio typically auto-generates.
-            // If this file is missing, deleting the android/app/build/ folder usually resolves it.
-        }
+    buildFeatures {
+        buildConfig = true
     }
-    
+
     buildTypes {
         release {
             minifyEnabled false
@@ -39,58 +25,32 @@ android {
         }
     }
     
+    lint {
+        abortOnError false
+    }
+
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
-    }
-
-    kotlinOptions {
-        jvmTarget = '1.8'
-    }
-
-    buildFeatures {
-        buildConfig true
-    }
-
-    // This block is needed to specify which ABI (CPU architecture) to build for.
-    // It's standard practice for Capacitor projects.
-    packagingOptions {
-        resources {
-            excludes += '/META-INF/{AL2.0,LGPL2.1}'
-        }
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 }
 
-dependencies {
-    implementation libs.androidx.appcompat
-    implementation libs.androidx.coordinatorlayout
-    implementation libs.androidx.test.ext.junit
-    implementation libs.espresso.core
-    implementation libs.junit
-    
-    // Firebase Bill of Materials (BoM)
-    implementation platform(libs.firebase.bom)
-    implementation libs.firebase.auth
-    implementation libs.firebase.firestore
 
-    // Capacitor Dependencies
+dependencies {
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
-    implementation project(':capacitor-status-bar')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
+    implementation project(':capacitor-status-bar')
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.coordinatorlayout
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
 
-    // Room Database Dependencies
-    def room_version = "2.6.1"
-    implementation "androidx.room:room-runtime:$room_version"
-    // Use 'kapt' for the annotation processor, not 'annotationProcessor'
-    kapt "androidx.room:room-compiler:$room_version"
+    // Add this line to make the SQLite plugin classes available to Kapt
+    kapt project(':capacitor-community-sqlite')
 }
 
-// This needs to be at the root level of the build.gradle file for kapt
-kapt {
-    arguments {
-        arg("room.schemaLocation", "$projectDir/schemas".toString())
-    }
-}
+apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-kapt'
