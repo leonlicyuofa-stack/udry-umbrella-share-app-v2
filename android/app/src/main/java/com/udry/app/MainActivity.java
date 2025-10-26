@@ -4,8 +4,6 @@ package com.udry.app;
 import android.os.Bundle;
 import android.util.Log;
 import com.getcapacitor.BridgeActivity;
-import com.getcapacitor.Bridge;
-import com.getcapacitor.CapConfig;
 
 public class MainActivity extends BridgeActivity {
 
@@ -46,16 +44,5 @@ public class MainActivity extends BridgeActivity {
   public void onDestroy() {
       super.onDestroy();
       Log.d(TAG, "--- MainActivity.onDestroy() --- The activity is being destroyed.");
-  }
-
-  // This override is the definitive fix. It allows us to set the server URL
-  // correctly *before* the bridge and webview are fully initialized,
-  // preventing the incorrect 'localhost' default.
-  @Override
-  public void load() {
-    CapConfig config = this.getBridge().getConfig();
-    config.setServerUrl("file:///android_asset/public");
-    Log.d(TAG, "DEEP_DIAGNOSIS: Successfully FORCED server URL to local asset path via load() override.");
-    super.load();
   }
 }
