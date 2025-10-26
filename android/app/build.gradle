@@ -1,13 +1,11 @@
-// The plugins block must be the first block in the file.
+
+apply from: "../capacitor.build.gradle"
+
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
 }
-
-// Applying the Capacitor gradle script requires the plugins to be declared first.
-// The path is corrected to navigate up two directories from 'app' to the project root.
-apply from: '../../node_modules/@capacitor/android/capacitor.build.gradle'
 
 android {
     namespace "com.udry.app"
@@ -17,19 +15,9 @@ android {
         applicationId "com.udry.app"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        
-        // This ensures the variables from the build command are available.
-        def keystorePropertiesFile = rootProject.file("keystore.properties")
-        if (keystorePropertiesFile.exists()) {
-            def keystoreProperties = new Properties()
-            keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
-            buildConfigField "String", "UTEK_APP_ID", "\"${keystoreProperties['UTEK_APP_ID']}\""
-        } else {
-             buildConfigField "String", "UTEK_APP_ID", "\"684c01f3144cc\"" // Fallback
-        }
     }
 
     signingConfigs {
@@ -55,37 +43,43 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
             signingConfig signingConfigs.release
         }
-        // This is necessary to resolve dependency ambiguity between debug and release variants.
-        all {
-            matchingFallbacks = ['debug', 'release']
-        }
     }
-    
-    buildFeatures {
-        buildConfig = true
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    buildTypes.all {
+        matchingFallbacks = ['debug', 'release']
+    }
 }
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
-    implementation "androidx.appcompat:appcompat:$androidxAppCompatVersion"
-    implementation "androidx.coordinatorlayout:coordinatorlayout:$androidxCoordinatorLayoutVersion"
-    testImplementation "junit:junit:$junitVersion"
-    androidTestImplementation "androidx.test.ext:junit:$androidxJunitVersion"
-    androidTestImplementation "androidx.test.espresso:espresso-core:$androidxEspressoCoreVersion"
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.coordinatorlayout
+    implementation libs.androidx.test.ext.junit
+    implementation libs.espresso.core
+    implementation libs.junit
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-status-bar')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
-    implementation 'androidx.room:room-runtime:2.6.1'
-    annotationProcessor 'androidx.room:room-compiler:2.6.1'
-    kapt 'androidx.room:room-compiler:2.6.1'
-    // This explicit dependency for kapt is required for Room to find the SQLite plugin's classes.
     kapt project(':capacitor-community-sqlite')
 }
+
+apply from: 'capacitor.build.gradle'
