@@ -1,12 +1,12 @@
-// Top-level build file where you can add configuration options common to all sub-projects/modules.
-apply from: "capacitor.build.gradle"
-
+// The plugins block must be the first block in the file.
 plugins {
     id 'com.android.application'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'com.google.gms.google-services'
 }
+
+// Applying the Capacitor script after the plugins are declared.
+apply from: '../../node_modules/@capacitor/android/capacitor.build.gradle'
 
 android {
     namespace "com.udry.app"
@@ -14,16 +14,11 @@ android {
 
     defaultConfig {
         applicationId "com.udry.app"
-        minSdkVersion 23
-        targetSdkVersion 35
-        versionCode 4
-        versionName "1.0.4"
+        minSdk 23
+        targetSdk 35
+        versionCode 1
+        versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-    }
-
-    // This block resolves the build variant ambiguity for dependencies.
-    buildTypes.all {
-        matchingFallbacks = ['debug', 'release']
     }
 
     signingConfigs {
@@ -33,13 +28,27 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
+        release {
+            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
+                storeFile file(System.getenv("UDRY_KEYSTORE_PATH"))
+                storePassword System.getenv("UDRY_STORE_PASSWORD")
+                keyAlias System.getenv("UDRY_KEY_ALIAS")
+                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
-            minifyEnabled false
+            minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
+    }
+    
+    // This resolves the variant ambiguity error for dependencies like SQLite.
+    buildTypes.all {
+        matchingFallbacks = ['debug', 'release']
     }
 
     compileOptions {
@@ -52,25 +61,35 @@ android {
     }
 
     buildFeatures {
-        buildConfig = true
-        viewBinding = true
+        buildConfig true
     }
 }
 
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
+    implementation libs.androidx.test.ext.junit
+    implementation libs.espresso.core
+    implementation libs.junit
+    
+    // Firebase
+    implementation platform(libs.firebase.bom)
     implementation libs.firebase.auth
     implementation libs.firebase.firestore
 
-    implementation(platform(libs.firebase.bom))
-
-    // This line is crucial to make the SQLite plugin's classes available to the app
+    // Capacitor
+    implementation project(':capacitor-android')
+    implementation project(':capacitor-app')
+    implementation project(':capacitor-camera')
+    implementation project(':capacitor-status-bar')
+    implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
-    
-    // This line makes the SQLite plugin's classes available to the annotation processor
+
+    // Room Database
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    implementation "androidx.room:room-ktx:$room_version"
+    kapt "androidx.room:room-compiler:$room_version"
+    // This is the critical line to make Room aware of the SQLite plugin's classes
     kapt project(':capacitor-community-sqlite')
 }
-
-// apply from: '../node_modules/cordova-plugin-purchase/src/android/extra-repo.gradle'
-// apply from: '../node_modules/phonegap-plugin-barcodescanner/src/android/barcodescanner.gradle'
