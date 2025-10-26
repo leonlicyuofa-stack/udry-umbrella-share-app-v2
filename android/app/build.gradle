@@ -1,9 +1,12 @@
+// The plugins block must be at the top of the file.
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.googleServices)
     id 'kotlin-kapt'
 }
 
+// This line is essential for Capacitor to work.
 apply from: "capacitor.build.gradle"
 
 android {
@@ -12,54 +15,45 @@ android {
 
     defaultConfig {
         applicationId "com.udry.app"
-        minSdk 23
-        targetSdk 35
+        minSdkVersion 23
+        targetSdkVersion 35
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
-        vectorDrawables {
-            useSupportLibrary true
-        }
+        // Correctly define custom build config fields
+        buildConfigField "String", "UTEK_APP_ID", "\"${System.env.NEXT_PUBLIC_UTEK_APP_ID ?: '684c01f3144cc'}\""
     }
 
     signingConfigs {
         debug {
-            storeFile file('debug.keystore')
-            storePassword 'android'
-            keyAlias 'androiddebugkey'
-            keyPassword 'android'
-        }
-        release {
-            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
-                storeFile rootProject.file(System.getenv("UDRY_KEYSTORE_PATH"))
-                storePassword System.getenv("UDRY_STORE_PASSWORD")
-                keyAlias System.getenv("UDRY_KEY_ALIAS")
-                keyPassword System.getenv("UDRY_KEY_PASSWORD")
-            }
+            // This is the default configuration for debug builds and does not require a password.
+            // It relies on a debug.keystore file that Android Studio typically auto-generates.
+            // If this file is missing, deleting the android/app/build/ folder usually resolves it.
         }
     }
-
+    
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.getByName("release")
         }
     }
+    
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
     buildFeatures {
         buildConfig true
-        compose true
     }
-    composeOptions {
-        kotlinCompilerExtensionVersion '1.5.14'
-    }
+
+    // This block is needed to specify which ABI (CPU architecture) to build for.
+    // It's standard practice for Capacitor projects.
     packagingOptions {
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
@@ -70,25 +64,33 @@ android {
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
-    implementation platform('com.google.firebase:firebase-bom:33.1.2')
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
-
-    // Room for local database
-    def room_version = "2.6.1"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    // To use Kotlin annotation processing tool (kapt)
-    kapt "androidx.room:room-compiler:$room_version"
-
-    // Capacitor SQLite
-    implementation project(':capacitor-community-sqlite')
+    implementation libs.androidx.test.ext.junit
+    implementation libs.espresso.core
+    implementation libs.junit
     
+    // Firebase Bill of Materials (BoM)
+    implementation platform(libs.firebase.bom)
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
+
+    // Capacitor Dependencies
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-status-bar')
-    testImplementation 'junit:junit:4.13.2'
-    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
-    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
+    implementation project(':capacitor-community-bluetooth-le')
+    implementation project(':capacitor-community-sqlite')
+
+    // Room Database Dependencies
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    // Use 'kapt' for the annotation processor, not 'annotationProcessor'
+    kapt "androidx.room:room-compiler:$room_version"
+}
+
+// This needs to be at the root level of the build.gradle file for kapt
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas".toString())
+    }
 }
