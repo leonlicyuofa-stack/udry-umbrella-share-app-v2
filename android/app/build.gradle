@@ -1,3 +1,5 @@
+// Top-level build file where you can add configuration options common to all sub-projects/modules.
+apply from: "capacitor.build.gradle"
 
 plugins {
     id 'com.android.application'
@@ -5,8 +7,6 @@ plugins {
     id 'kotlin-kapt'
     id 'com.google.gms.google-services'
 }
-
-apply from: 'capacitor.build.gradle'
 
 android {
     namespace "com.udry.app"
@@ -16,9 +16,14 @@ android {
         applicationId "com.udry.app"
         minSdkVersion 23
         targetSdkVersion 35
-        versionCode 1
-        versionName "1.0"
+        versionCode 4
+        versionName "1.0.4"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    // This block resolves the build variant ambiguity for dependencies.
+    buildTypes.all {
+        matchingFallbacks = ['debug', 'release']
     }
 
     signingConfigs {
@@ -28,71 +33,44 @@ android {
             keyAlias 'androiddebugkey'
             keyPassword 'android'
         }
-        release {
-            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
-                storeFile rootProject.file(System.getenv("UDRY_KEYSTORE_PATH"))
-                storePassword System.getenv("UDRY_STORE_PASSWORD")
-                keyAlias System.getenv("UDRY_KEY_ALIAS")
-                keyPassword System.getenv("UDRY_KEY_PASSWORD")
-            }
-        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
         }
     }
 
-    buildFeatures {
-        buildConfig true
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = '1.8'
+        jvmTarget = '17'
     }
 
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+    buildFeatures {
+        buildConfig = true
+        viewBinding = true
     }
 }
 
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
-    implementation libs.androidx.test.ext.junit
-    implementation libs.espresso.core
-    implementation libs.junit
-    
-    // Firebase
-    implementation platform(libs.firebase.bom)
-    implementation 'com.google.firebase:firebase-auth'
-    implementation 'com.google.firebase:firebase-firestore'
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
 
-    // Capacitor
-    implementation project(':capacitor-android')
-    implementation project(':capacitor-app')
-    implementation project(':capacitor-camera')
-    implementation project(':capacitor-community-bluetooth-le')
+    implementation(platform(libs.firebase.bom))
+
+    // This line is crucial to make the SQLite plugin's classes available to the app
     implementation project(':capacitor-community-sqlite')
-    implementation project(':capacitor-status-bar')
-
-    // Room Database
-    def room_version = "2.6.1"
-    implementation "androidx.room:room-runtime:$room_version"
-    annotationProcessor "androidx.room:room-compiler:$room_version"
-    // To use Kotlin annotation processing tool (kapt)
-    kapt "androidx.room:room-compiler:$room_version"
     
-    // Explicitly add capacitor-community-sqlite for KAPT
+    // This line makes the SQLite plugin's classes available to the annotation processor
     kapt project(':capacitor-community-sqlite')
 }
 
-kapt {
-    arguments {
-        arg("room.schemaLocation", "$projectDir/schemas".toString())
-    }
-}
+// apply from: '../node_modules/cordova-plugin-purchase/src/android/extra-repo.gradle'
+// apply from: '../node_modules/phonegap-plugin-barcodescanner/src/android/barcodescanner.gradle'
