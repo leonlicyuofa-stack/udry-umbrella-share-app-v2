@@ -3,7 +3,9 @@ package com.udry.app;
 
 import android.os.Bundle;
 import android.util.Log;
+import com.getcapacitor.Bridge;
 import com.getcapacitor.BridgeActivity;
+import com.getcapacitor.CapConfig;
 
 public class MainActivity extends BridgeActivity {
 
@@ -12,6 +14,13 @@ public class MainActivity extends BridgeActivity {
   @Override
   public void onCreate(Bundle savedInstanceState) {
     Log.d(TAG, "--- MainActivity.onCreate() START ---");
+    
+    // TEMPORARY DIAGNOSTIC OVERRIDE
+    CapConfig.Builder configBuilder = new CapConfig.Builder(this);
+    configBuilder.setServerUrl("file:///android_asset/public/diag.html");
+    this.setBridge(new Bridge.Builder(this).setConfig(configBuilder.create()).create());
+    // END TEMPORARY OVERRIDE
+    
     super.onCreate(savedInstanceState);
     Log.d(TAG, "--- MainActivity.onCreate() (super.onCreate() finished) ---");
   }
