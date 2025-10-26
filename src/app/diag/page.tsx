@@ -4,7 +4,7 @@
 import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { Loader2, AlertTriangle, CheckCircle, XCircle, HardDrive, Database, UserCheck, ArrowRight, Home, Server, Link as LinkIcon } from 'lucide-react';
+import { Loader2, AlertTriangle, CheckCircle, XCircle, HardDrive, Database, UserCheck, ArrowRight, Home, Server, Link as LinkIcon, FileSearch, ClipboardPaste } from 'lucide-react';
 import { initializeFirebaseServices } from '@/lib/firebase';
 import { collection, getDocs, doc, setDoc, writeBatch } from 'firebase/firestore';
 import Link from 'next/link';
@@ -13,7 +13,8 @@ import { mockStalls } from '@/lib/mock-data';
 import type { Stall } from '@/lib/types';
 import { GeoPoint } from 'firebase/firestore';
 import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
-
+import { Textarea } from '@/components/ui/textarea';
+import { Label } from '@/components/ui/label';
 
 type CheckStatus = 'pending' | 'success' | 'error';
 
@@ -115,7 +116,7 @@ export default function DiagPage() {
             This page runs tests to check the application's configuration and connectivity.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
+        <CardContent className="space-y-6">
           <div className="space-y-3 p-4 border rounded-lg bg-background">
             {results.length === 0 ? (
               <div className="flex items-center text-muted-foreground">
@@ -134,6 +135,41 @@ export default function DiagPage() {
               ))
             )}
           </div>
+
+          <Card className="bg-amber-50 border-amber-200">
+            <CardHeader>
+                <CardTitle className="text-lg flex items-center text-amber-800">
+                    <FileSearch className="mr-2 h-5 w-5"/>
+                    Creative Diagnosis: Inspect Compiled Config
+                </CardTitle>
+                <CardDescription className="text-amber-700">
+                    The app is still loading a white screen because it's trying to connect to 'localhost'. This test will help us find the exact auto-generated file that is causing this behavior.
+                </CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-4">
+               <Alert>
+                <AlertTriangle className="h-4 w-4" />
+                <AlertTitle>Instructions</AlertTitle>
+                <AlertDescription>
+                    <ol className="list-decimal list-inside space-y-2">
+                        <li>In Android Studio's Project View, find the "Project" dropdown at the top-left and select "Project" (instead of "Android").</li>
+                        <li>Navigate to the following file: <br/><code className="text-xs font-mono bg-muted p-1 rounded">udry-umbrella-share-app-v2/node_modules/@capacitor/android/capacitor/src/main/java/com/getcapacitor/CapacitorConfig.java</code></li>
+                        <li>Open the file, copy its entire contents, and paste it into the text box below.</li>
+                    </ol>
+                </AlertDescription>
+              </Alert>
+              <div className="space-y-2">
+                <Label htmlFor="config-contents">Contents of CapacitorConfig.java</Label>
+                <Textarea id="config-contents" placeholder="Paste the contents of the file here." className="h-48 font-mono text-xs" />
+              </div>
+            </CardContent>
+            <CardFooter>
+                 <Button onClick={() => toast({ title: "Content Received", description: "Thank you. Please copy the text you just pasted and send it in the chat." })}>
+                    <ClipboardPaste className="mr-2 h-4 w-4"/> I Have Pasted the Content
+                </Button>
+            </CardFooter>
+          </Card>
+
 
           <Card className="bg-secondary/50">
             <CardHeader>
@@ -193,5 +229,3 @@ export default function DiagPage() {
     </div>
   );
 }
-
-    
