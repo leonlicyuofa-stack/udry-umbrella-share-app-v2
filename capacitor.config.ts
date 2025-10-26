@@ -8,7 +8,7 @@ const config: CapacitorConfig = {
   // TEMPORARY DIAGNOSTIC CONFIG: This forces the app to load the diagnostic page.
   // We will remove this after debugging.
   server: {
-    url: 'file:///android_asset/public/diag.html',
+    url: 'file:///android_asset/public/diag/index.html',
     cleartext: true,
   },
   android: {
