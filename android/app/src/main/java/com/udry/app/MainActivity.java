@@ -17,8 +17,19 @@ public class MainActivity extends BridgeActivity {
     // Initialize Capacitor plugins and the Bridge first
     super.onCreate(savedInstanceState);
     
-    // The previous attempt to log the server URL here was incorrect and broke the build.
-    // That code has been removed. We are keeping the other lifecycle logs for diagnostics.
+    // --- DEEPER DIAGNOSTIC LOGGING ---
+    // This block will definitively log what server URL the compiled app is using.
+    try {
+        // The 'bridge' object is available after super.onCreate() is called.
+        String serverUrl = bridge.getConfig().getServerUrl(); 
+        if (serverUrl != null) {
+            Log.d(TAG, "DEEP_DIAGNOSIS: Capacitor is loading from an explicit Server URL: " + serverUrl);
+        } else {
+            Log.d(TAG, "DEEP_DIAGNOSIS: Capacitor is loading from the default webDir (file:// protocol). No server override detected.");
+        }
+    } catch (Exception e) {
+        Log.e(TAG, "DEEP_DIAGNOSIS: CRITICAL - Could not read Capacitor config from the bridge.", e);
+    }
     
     Log.d(TAG, "--- MainActivity.onCreate() END --- (super.onCreate() has been called)");
   }
