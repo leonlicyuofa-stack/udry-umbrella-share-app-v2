@@ -1,174 +1,176 @@
-2025-10-26 23:21:57.886 20395-20395 nativeloader            com.udry.app                         D  Configuring clns-9 for other apk /data/app/~~u2Rp2T--_xXOEnu_P2k9NQ==/com.udry.app-4eGgX3YsIYTgx-qIgtBIwg==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~u2Rp2T--_xXOEnu_P2k9NQ==/com.udry.app-4eGgX3YsIYTgx-qIgtBIwg==/lib/arm64:/data/app/~~u2Rp2T--_xXOEnu_P2k9NQ==/com.udry.app-4eGgX3YsIYTgx-qIgtBIwg==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.udry.app
-2025-10-26 23:21:57.888 20395-20395 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 202956589; UID 10220; state: ENABLED
-2025-10-26 23:21:57.890 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a3cb38) locale list changing from [] to [en-US]
-2025-10-26 23:21:57.894 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a40058) locale list changing from [] to [en-US]
-2025-10-26 23:21:57.897 20395-20395 GraphicsEnvironment     com.udry.app                         V  Currently set values for:
-2025-10-26 23:21:57.898 20395-20395 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_pkgs=[]
-2025-10-26 23:21:57.898 20395-20395 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_values=[]
-2025-10-26 23:21:57.898 20395-20395 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in per-application setting
-2025-10-26 23:21:57.899 20395-20395 GraphicsEnvironment     com.udry.app                         V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
-2025-10-26 23:21:57.899 20395-20395 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in ANGLE allowlist or settings, returning default
-2025-10-26 23:21:57.904 20395-20395 GraphicsEnvironment     com.udry.app                         V  Neither updatable production driver nor prerelease driver is supported.
-2025-10-26 23:21:57.929 20395-20395 FirebaseApp             com.udry.app                         I  Device unlocked: initializing all Firebase APIs for app [DEFAULT]
-2025-10-26 23:21:57.931 20395-20395 FirebaseInitProvider    com.udry.app                         I  FirebaseApp initialization successful
-2025-10-26 23:21:57.934 20395-20395 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 279646685; UID 10220; state: ENABLED
-2025-10-26 23:21:57.945 20395-20413 DisplayManager          com.udry.app                         I  Choreographer implicitly registered for the refresh rate.
-2025-10-26 23:21:57.947 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a40698) locale list changing from [] to [en-US]
-2025-10-26 23:21:57.957 20395-20395 AppCompatDelegate       com.udry.app                         D  Checking for metadata for AppLocalesMetadataHolderService : Service not found
-2025-10-26 23:21:57.958 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a43578) locale list changing from [] to [en-US]
-2025-10-26 23:21:57.961 20395-20395 ashmem                  com.udry.app                         E  Pinning is deprecated since Android Q. Please use trim or other methods.
-2025-10-26 23:21:57.966 20395-20395 UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onCreate() START ---
-2025-10-26 23:21:57.978 20395-20395 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 309578419; UID 10220; state: ENABLED
-2025-10-26 23:21:57.979 20395-20395 DesktopModeFlags        com.udry.app                         D  Toggle override initialized to: OVERRIDE_UNSET
-2025-10-26 23:21:58.008 20395-20413 EGL_emulation           com.udry.app                         I  Opening libGLESv1_CM_emulation.so
-2025-10-26 23:21:58.009 20395-20413 EGL_emulation           com.udry.app                         I  Opening libGLESv2_emulation.so
-2025-10-26 23:21:58.009 20395-20395 HWUI                    com.udry.app                         W  Image decoding logging dropped!
-2025-10-26 23:21:58.016 20395-20395 com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
-2025-10-26 23:21:58.016 20395-20395 com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
-2025-10-26 23:21:58.019 20395-20413 HWUI                    com.udry.app                         W  Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
-2025-10-26 23:21:58.021 20395-20413 HWUI                    com.udry.app                         W  Failed to initialize 101010-2 format, error = EGL_SUCCESS
-2025-10-26 23:21:58.028 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a409b8) locale list changing from [] to [en-US]
-2025-10-26 23:21:58.028 20395-20395 WebViewFactory          com.udry.app                         I  Loading com.google.android.webview version 141.0.7390.43 (code 739004333)
-2025-10-26 23:21:58.029 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a43bb8) locale list changing from [] to [en-US]
-2025-10-26 23:21:58.030 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a45198) locale list changing from [] to [en-US]
-2025-10-26 23:21:58.032 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a47718) locale list changing from [] to [en-US]
-2025-10-26 23:21:58.033 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a43258) locale list changing from [] to [en-US]
-2025-10-26 23:21:58.034 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a441f8) locale list changing from [] to [en-US]
-2025-10-26 23:21:58.034 20395-20395 ResourcesManager        com.udry.app                         V  The following library key has been added: ResourcesKey{ mHash=cbf767fa mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk,/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={420dpi always-compat} mLoaders=[]}
-2025-10-26 23:21:58.035 20395-20395 com.udry.app            com.udry.app                         W  Failed to find entry 'classes.dex': Entry not found
-2025-10-26 23:21:58.036 20395-20395 nativeloader            com.udry.app                         D  Configuring clns-10 for other apk /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
-2025-10-26 23:21:58.038 20395-20395 ApplicationLoaders      com.udry.app                         D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
-2025-10-26 23:21:58.039 20395-20395 com.udry.app            com.udry.app                         W  Loading /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/oat/arm64/base.odex non-executable as it requires an image which we failed to load
-2025-10-26 23:21:58.040 20395-20395 nativeloader            com.udry.app                         D  Configuring clns-11 for other apk /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
-2025-10-26 23:21:58.059 20395-20395 cr_WVCFactoryProvider   com.udry.app                         I  version=141.0.7390.43 (739004333) minSdkVersion=29 multiprocess=true packageId=2 splits=<none>
-2025-10-26 23:21:58.060 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a41f98) locale list changing from [] to [en-US]
-2025-10-26 23:21:58.070 20395-20395 nativeloader            com.udry.app                         D  Load /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
-2025-10-26 23:21:58.076 20395-20395 nativeloader            com.udry.app                         D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
-2025-10-26 23:21:58.085 20395-20419 chromium                com.udry.app                         E  [1026/232158.082941:ERROR:android_webview/browser/variations/variations_seed_loader.cc:39] Seed missing signature.
-2025-10-26 23:21:58.098 20395-20419 chromium                com.udry.app                         I  [1026/232158.092992:INFO:android_webview/browser/variations/variations_seed_loader.cc:67] Failed to open file for reading.: No such file or directory (2)
-2025-10-26 23:21:58.110 20395-20395 HWUI                    com.udry.app                         W  Image decoding logging dropped!
-2025-10-26 23:21:58.122 20395-20395 cr_LibraryLoader        com.udry.app                         I  Successfully loaded native library
-2025-10-26 23:21:58.129 20395-20395 cr_CachingUmaRecorder   com.udry.app                         I  Flushed 16 samples from 16 histograms, 0 samples were dropped.
-2025-10-26 23:21:58.135 20395-20395 cr_CombinedPProvider    com.udry.app                         I  #registerProvider() provider:WV.ak@f825893 isPolicyCacheEnabled:false policyProvidersSize:0
-2025-10-26 23:21:58.137 20395-20395 cr_PolicyProvider       com.udry.app                         I  #setManagerAndSource() 0
-2025-10-26 23:21:58.145 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a39c58) locale list changing from [] to [en-US]
-2025-10-26 23:21:58.148 20395-20395 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a41318) locale list changing from [] to [en-US]
-2025-10-26 23:21:58.210 20395-20395 cr_CombinedPProvider    com.udry.app                         I  #linkNativeInternal() 1
-2025-10-26 23:21:58.210 20395-20395 cr_AppResProvider       com.udry.app                         I  #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
-2025-10-26 23:21:58.210 20395-20395 cr_PolicyProvider       com.udry.app                         I  #notifySettingsAvailable() 0
-2025-10-26 23:21:58.210 20395-20395 cr_CombinedPProvider    com.udry.app                         I  #onSettingsAvailable() 0
-2025-10-26 23:21:58.211 20395-20395 cr_CombinedPProvider    com.udry.app                         I  #flushPolicies()
-2025-10-26 23:21:58.265 20395-20395 chromium                com.udry.app                         W  [WARNING:android_webview/browser/network_service/net_helpers.cc:143] HTTP Cache size is: 20971520
-2025-10-26 23:21:58.292 20395-20395 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 352594277; UID 10220; state: ENABLED
-2025-10-26 23:21:58.298 20395-20395 Capacitor               com.udry.app                         D  Starting BridgeActivity
-2025-10-26 23:21:58.304 20395-20395 Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorCookies
-2025-10-26 23:21:58.306 20395-20395 Capacitor               com.udry.app                         D  Registering plugin instance: WebView
-2025-10-26 23:21:58.307 20395-20395 Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorHttp
-2025-10-26 23:21:58.308 20395-20395 Capacitor               com.udry.app                         D  Registering plugin instance: BluetoothLe
-2025-10-26 23:21:58.309 20395-20395 Capacitor               com.udry.app                         D  Registering plugin instance: App
-2025-10-26 23:21:58.310 20395-20395 Capacitor               com.udry.app                         D  Registering plugin instance: Camera
-2025-10-26 23:21:58.310 20395-20395 Capacitor               com.udry.app                         D  Registering plugin instance: StatusBar
-2025-10-26 23:21:58.324 20395-20395 Capacitor               com.udry.app                         W  Unable to read file at path public/plugins
-2025-10-26 23:21:58.326 20395-20395 Capacitor               com.udry.app                         D  Loading app at https://localhost
-2025-10-26 23:21:58.335 20395-20458 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log"
-2025-10-26 23:21:58.335 20395-20444 cr_media                com.udry.app                         W  BLUETOOTH_CONNECT permission is missing.
-2025-10-26 23:21:58.336 20395-20444 cr_media                com.udry.app                         W  getBluetoothAdapter() requires BLUETOOTH permission
-2025-10-26 23:21:58.337 20395-20458 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log.file"
-2025-10-26 23:21:58.337 20395-20444 cr_media                com.udry.app                         W  registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
-2025-10-26 23:21:58.338 20395-20458 MESA                    com.udry.app                         E  Failed to open rendernode: No such file or directory
-2025-10-26 23:21:58.346 20395-20435 Capacitor               com.udry.app                         D  Handling local request: https://localhost/
-2025-10-26 23:21:58.349 20395-20395 UDRY_DIAGNOSTIC         com.udry.app                         D  DEEP_DIAGNOSIS: Capacitor is loading from the default webDir (file:// protocol). No server override detected.
-2025-10-26 23:21:58.350 20395-20395 UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onCreate() END --- (super.onCreate() has been called)
-2025-10-26 23:21:58.361 20395-20395 Capacitor               com.udry.app                         D  App started
-2025-10-26 23:21:58.361 20395-20395 UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onStart() --- The activity is becoming visible to the user.
-2025-10-26 23:21:58.361 20395-20395 WindowOnBackDispatcher  com.udry.app                         W  OnBackInvokedCallback is not enabled for the application.
+2025-10-26 23:53:58.862 11944-11995 Finsky                  com.android.vending                  E  [92] ItemStore: getItems RPC failed for item com.udry.app
+2025-10-26 23:53:58.882 11944-11982 Finsky                  com.android.vending                  E  [82] ItemStore: getItems RPC failed for item com.udry.app
+2025-10-26 23:53:58.974 20901-20901 com.udry.app            com.udry.app                         I  Late-enabling -Xcheck:jni
+2025-10-26 23:53:59.048 20901-20901 com.udry.app            com.udry.app                         I  Using CollectorTypeCMC GC.
+2025-10-26 23:53:59.189 20901-20901 nativeloader            com.udry.app                         D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2025-10-26 23:53:59.840 20901-20901 nativeloader            com.udry.app                         D  Configuring clns-9 for other apk /data/app/~~8KAVjHRT4pP2KsJkkiCG9g==/com.udry.app-mpy86SYdRggHwzgU3DZh9w==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~8KAVjHRT4pP2KsJkkiCG9g==/com.udry.app-mpy86SYdRggHwzgU3DZh9w==/lib/arm64:/data/app/~~8KAVjHRT4pP2KsJkkiCG9g==/com.udry.app-mpy86SYdRggHwzgU3DZh9w==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.udry.app
+2025-10-26 23:53:59.845 20901-20901 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 202956589; UID 10220; state: ENABLED
+2025-10-26 23:53:59.851 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a3cb38) locale list changing from [] to [en-US]
+2025-10-26 23:53:59.864 20901-20901 GraphicsEnvironment     com.udry.app                         V  Currently set values for:
+2025-10-26 23:53:59.864 20901-20901 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_pkgs=[]
+2025-10-26 23:53:59.864 20901-20901 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_values=[]
+2025-10-26 23:53:59.864 20901-20901 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in per-application setting
+2025-10-26 23:53:59.864 20901-20901 GraphicsEnvironment     com.udry.app                         V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+2025-10-26 23:53:59.865 20901-20901 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in ANGLE allowlist or settings, returning default
+2025-10-26 23:53:59.865 20901-20901 GraphicsEnvironment     com.udry.app                         V  Neither updatable production driver nor prerelease driver is supported.
+2025-10-26 23:53:59.919 20901-20901 FirebaseApp             com.udry.app                         I  Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+2025-10-26 23:53:59.923 20901-20901 FirebaseInitProvider    com.udry.app                         I  FirebaseApp initialization successful
+2025-10-26 23:53:59.927 20901-20901 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 279646685; UID 10220; state: ENABLED
+2025-10-26 23:53:59.945 20901-20943 DisplayManager          com.udry.app                         I  Choreographer implicitly registered for the refresh rate.
+2025-10-26 23:53:59.946 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a39c58) locale list changing from [] to [en-US]
+2025-10-26 23:53:59.960 20901-20901 AppCompatDelegate       com.udry.app                         D  Checking for metadata for AppLocalesMetadataHolderService : Service not found
+2025-10-26 23:53:59.961 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a40698) locale list changing from [] to [en-US]
+2025-10-26 23:53:59.967 20901-20901 ashmem                  com.udry.app                         E  Pinning is deprecated since Android Q. Please use trim or other methods.
+2025-10-26 23:53:59.984 20901-20901 UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onCreate() START ---
+2025-10-26 23:54:00.024 20901-20901 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 309578419; UID 10220; state: ENABLED
+2025-10-26 23:54:00.024 20901-20943 EGL_emulation           com.udry.app                         I  Opening libGLESv1_CM_emulation.so
+2025-10-26 23:54:00.025 20901-20901 DesktopModeFlags        com.udry.app                         D  Toggle override initialized to: OVERRIDE_UNSET
+2025-10-26 23:54:00.026 20901-20943 EGL_emulation           com.udry.app                         I  Opening libGLESv2_emulation.so
+2025-10-26 23:54:00.066 20901-20901 HWUI                    com.udry.app                         W  Image decoding logging dropped!
+2025-10-26 23:54:00.067 20901-20943 HWUI                    com.udry.app                         W  Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+2025-10-26 23:54:00.067 20901-20943 HWUI                    com.udry.app                         W  Failed to initialize 101010-2 format, error = EGL_SUCCESS
+2025-10-26 23:54:00.079 20901-20901 com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
+2025-10-26 23:54:00.080 20901-20901 com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
+2025-10-26 23:54:00.091 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a46138) locale list changing from [] to [en-US]
+2025-10-26 23:54:00.091 20901-20901 WebViewFactory          com.udry.app                         I  Loading com.google.android.webview version 141.0.7390.43 (code 739004333)
+2025-10-26 23:54:00.092 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a41f98) locale list changing from [] to [en-US]
+2025-10-26 23:54:00.093 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a43bb8) locale list changing from [] to [en-US]
+2025-10-26 23:54:00.099 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a45198) locale list changing from [] to [en-US]
+2025-10-26 23:54:00.101 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a47718) locale list changing from [] to [en-US]
+2025-10-26 23:54:00.101 20901-20901 ResourcesManager        com.udry.app                         V  The following library key has been added: ResourcesKey{ mHash=cbf767fa mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk,/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={420dpi always-compat} mLoaders=[]}
+2025-10-26 23:54:00.104 20901-20901 com.udry.app            com.udry.app                         W  Failed to find entry 'classes.dex': Entry not found
+2025-10-26 23:54:00.106 20901-20901 nativeloader            com.udry.app                         D  Configuring clns-10 for other apk /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+2025-10-26 23:54:00.107 20901-20901 ApplicationLoaders      com.udry.app                         D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+2025-10-26 23:54:00.110 20901-20901 com.udry.app            com.udry.app                         W  Loading /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/oat/arm64/base.odex non-executable as it requires an image which we failed to load
+2025-10-26 23:54:00.113 20901-20901 nativeloader            com.udry.app                         D  Configuring clns-11 for other apk /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+2025-10-26 23:54:00.228 20901-20901 cr_WVCFactoryProvider   com.udry.app                         I  version=141.0.7390.43 (739004333) minSdkVersion=29 multiprocess=true packageId=2 splits=<none>
+2025-10-26 23:54:00.230 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a409b8) locale list changing from [] to [en-US]
+2025-10-26 23:54:00.252 20901-20901 nativeloader            com.udry.app                         D  Load /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
+2025-10-26 23:54:00.257 20901-20901 nativeloader            com.udry.app                         D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
+2025-10-26 23:54:00.278 20901-20948 chromium                com.udry.app                         E  [1026/235400.273611:ERROR:android_webview/browser/variations/variations_seed_loader.cc:39] Seed missing signature.
+2025-10-26 23:54:00.290 20901-20948 chromium                com.udry.app                         I  [1026/235400.289549:INFO:android_webview/browser/variations/variations_seed_loader.cc:67] Failed to open file for reading.: No such file or directory (2)
+2025-10-26 23:54:00.317 20901-20901 HWUI                    com.udry.app                         W  Image decoding logging dropped!
+2025-10-26 23:54:00.328 20901-20901 cr_LibraryLoader        com.udry.app                         I  Successfully loaded native library
+2025-10-26 23:54:00.331 20901-20901 cr_CachingUmaRecorder   com.udry.app                         I  Flushed 16 samples from 16 histograms, 0 samples were dropped.
+2025-10-26 23:54:00.335 20901-20901 cr_CombinedPProvider    com.udry.app                         I  #registerProvider() provider:WV.ak@bac23f6 isPolicyCacheEnabled:false policyProvidersSize:0
+2025-10-26 23:54:00.335 20901-20901 cr_PolicyProvider       com.udry.app                         I  #setManagerAndSource() 0
+2025-10-26 23:54:00.341 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a441f8) locale list changing from [] to [en-US]
+2025-10-26 23:54:00.342 20901-20901 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a41318) locale list changing from [] to [en-US]
+2025-10-26 23:54:00.419 20901-20901 cr_CombinedPProvider    com.udry.app                         I  #linkNativeInternal() 1
+2025-10-26 23:54:00.432 20901-20901 cr_AppResProvider       com.udry.app                         I  #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
+2025-10-26 23:54:00.433 20901-20901 cr_PolicyProvider       com.udry.app                         I  #notifySettingsAvailable() 0
+2025-10-26 23:54:00.433 20901-20901 cr_CombinedPProvider    com.udry.app                         I  #onSettingsAvailable() 0
+2025-10-26 23:54:00.433 20901-20901 cr_CombinedPProvider    com.udry.app                         I  #flushPolicies()
+2025-10-26 23:54:00.605 20901-20901 chromium                com.udry.app                         W  [WARNING:android_webview/browser/network_service/net_helpers.cc:143] HTTP Cache size is: 20971520
+2025-10-26 23:54:00.673 20901-20901 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 352594277; UID 10220; state: ENABLED
+2025-10-26 23:54:00.704 20901-20901 Capacitor               com.udry.app                         D  Starting BridgeActivity
+2025-10-26 23:54:00.723 20901-20901 Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorCookies
+2025-10-26 23:54:00.725 20901-20901 Capacitor               com.udry.app                         D  Registering plugin instance: WebView
+2025-10-26 23:54:00.732 20901-20901 Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorHttp
+2025-10-26 23:54:00.733 20901-20901 Capacitor               com.udry.app                         D  Registering plugin instance: BluetoothLe
+2025-10-26 23:54:00.733 20901-20901 Capacitor               com.udry.app                         D  Registering plugin instance: App
+2025-10-26 23:54:00.734 20901-20901 Capacitor               com.udry.app                         D  Registering plugin instance: Camera
+2025-10-26 23:54:00.734 20901-20901 Capacitor               com.udry.app                         D  Registering plugin instance: StatusBar
+2025-10-26 23:54:00.754 20901-20901 Capacitor               com.udry.app                         W  Unable to read file at path public/plugins
+2025-10-26 23:54:00.761 20901-20901 Capacitor               com.udry.app                         D  Loading app at https://localhost
+2025-10-26 23:54:00.798 20901-20969 cr_media                com.udry.app                         W  BLUETOOTH_CONNECT permission is missing.
+2025-10-26 23:54:00.806 20901-20969 cr_media                com.udry.app                         W  getBluetoothAdapter() requires BLUETOOTH permission
+2025-10-26 23:54:00.806 20901-20969 cr_media                com.udry.app                         W  registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
+2025-10-26 23:54:00.813 20901-20985 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log"
+2025-10-26 23:54:00.813 20901-20985 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log.file"
+2025-10-26 23:54:00.813 20901-20985 MESA                    com.udry.app                         E  Failed to open rendernode: No such file or directory
+2025-10-26 23:54:00.831 20901-20964 Capacitor               com.udry.app                         D  Handling local request: https://localhost/
+2025-10-26 23:54:00.833 20901-20901 UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onCreate() (super.onCreate() finished) ---
+2025-10-26 23:54:00.834 20901-20985 vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~8KAVjHRT4pP2KsJkkiCG9g==/com.udry.app-mpy86SYdRggHwzgU3DZh9w==/lib/arm64'
+2025-10-26 23:54:00.840 20901-20985 vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~8KAVjHRT4pP2KsJkkiCG9g==/com.udry.app-mpy86SYdRggHwzgU3DZh9w==/base.apk!/lib/arm64-v8a'
+2025-10-26 23:54:00.843 20901-20985 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.per.submit"
+2025-10-26 23:54:00.848 20901-20901 Capacitor               com.udry.app                         D  App started
+2025-10-26 23:54:00.848 20901-20901 UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onStart() --- The activity is becoming visible to the user.
+2025-10-26 23:54:00.850 20901-20901 WindowOnBackDispatcher  com.udry.app                         W  OnBackInvokedCallback is not enabled for the application.
                                                                                                     Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
-2025-10-26 23:21:58.362 20395-20395 Capacitor/AppPlugin     com.udry.app                         D  Firing change: true
-2025-10-26 23:21:58.362 20395-20395 Capacitor/AppPlugin     com.udry.app                         V  Notifying listeners for event appStateChange
-2025-10-26 23:21:58.362 20395-20395 Capacitor/AppPlugin     com.udry.app                         D  No listeners found for event appStateChange
-2025-10-26 23:21:58.363 20395-20395 Capacitor               com.udry.app                         D  App resumed
-2025-10-26 23:21:58.363 20395-20395 UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onResume() --- The activity has come to the foreground.
-2025-10-26 23:21:58.370 20395-20395 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 349153669; UID 10220; state: ENABLED
-2025-10-26 23:21:58.372 20395-20395 HWUI                    com.udry.app                         W  Unknown dataspace 0
-2025-10-26 23:21:58.375 20395-20458 vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~u2Rp2T--_xXOEnu_P2k9NQ==/com.udry.app-4eGgX3YsIYTgx-qIgtBIwg==/lib/arm64'
-2025-10-26 23:21:58.377 20395-20458 vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~u2Rp2T--_xXOEnu_P2k9NQ==/com.udry.app-4eGgX3YsIYTgx-qIgtBIwg==/base.apk!/lib/arm64-v8a'
-2025-10-26 23:21:58.383 20395-20458 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.per.submit"
-2025-10-26 23:21:58.396 20395-20458 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.gallium.print.optio"
-2025-10-26 23:21:58.398 20395-20458 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.frame"
-2025-10-26 23:21:58.418 20395-20458 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
-2025-10-26 23:21:58.449 20395-20469 CameraManagerGlobal     com.udry.app                         I  Connecting to camera service
-2025-10-26 23:21:58.531 20395-20395 InsetsController        com.udry.app                         D  hide(ime(), fromIme=false)
-2025-10-26 23:21:58.531 20395-20395 ImeTracker              com.udry.app                         I  com.udry.app:c0e6d75b: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
-2025-10-26 23:21:58.681 20395-20435 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
-2025-10-26 23:21:58.696 20395-20436 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
-2025-10-26 23:21:58.734 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
-2025-10-26 23:21:58.734 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
-2025-10-26 23:21:58.735 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
-2025-10-26 23:21:58.735 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
-2025-10-26 23:21:58.737 20395-20435 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
-2025-10-26 23:21:58.738 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
-2025-10-26 23:21:58.739 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
-2025-10-26 23:21:58.739 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
-2025-10-26 23:21:58.741 20395-20435 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
-2025-10-26 23:21:58.744 20395-20435 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
-2025-10-26 23:21:58.745 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
-2025-10-26 23:21:58.746 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
-2025-10-26 23:21:58.746 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
-2025-10-26 23:21:58.747 20395-20442 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
-2025-10-26 23:21:58.748 20395-20436 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
-2025-10-26 23:21:58.748 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
-2025-10-26 23:21:58.751 20395-20442 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
-2025-10-26 23:21:58.752 20395-20443 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
-2025-10-26 23:21:58.753 20395-20443 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
-2025-10-26 23:21:58.756 20395-20443 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
-2025-10-26 23:21:58.756 20395-20443 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
-2025-10-26 23:21:58.756 20395-20443 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
-2025-10-26 23:21:58.756 20395-20443 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
-2025-10-26 23:21:58.756 20395-20443 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
-2025-10-26 23:21:58.757 20395-20446 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
-2025-10-26 23:21:58.760 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
-2025-10-26 23:21:58.763 20395-20446 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
-2025-10-26 23:21:58.770 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
-2025-10-26 23:21:58.770 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
-2025-10-26 23:21:58.773 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
-2025-10-26 23:21:58.781 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
-2025-10-26 23:21:58.785 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
-2025-10-26 23:21:58.785 20395-20437 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
-2025-10-26 23:21:58.786 20395-20437 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
-2025-10-26 23:21:58.786 20395-20437 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
-2025-10-26 23:21:58.786 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
-2025-10-26 23:21:58.787 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
-2025-10-26 23:21:58.787 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
-2025-10-26 23:21:58.788 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
-2025-10-26 23:21:58.790 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
-2025-10-26 23:21:58.798 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
-2025-10-26 23:21:58.800 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
-2025-10-26 23:21:58.801 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
-2025-10-26 23:21:58.801 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
-2025-10-26 23:21:58.802 20395-20443 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
-2025-10-26 23:21:58.802 20395-20443 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
-2025-10-26 23:21:58.804 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
-2025-10-26 23:21:58.805 20395-20435 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
-2025-10-26 23:21:58.806 20395-20435 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
-2025-10-26 23:21:58.806 20395-20437 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
-2025-10-26 23:21:58.806 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
-2025-10-26 23:21:58.806 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
-2025-10-26 23:21:58.807 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
-2025-10-26 23:21:58.807 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
-2025-10-26 23:21:58.807 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
-2025-10-26 23:21:58.811 20395-20442 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
-2025-10-26 23:21:58.813 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
-2025-10-26 23:21:58.814 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
-2025-10-26 23:21:58.814 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
-2025-10-26 23:21:58.814 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
-2025-10-26 23:21:58.815 20395-20435 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
-2025-10-26 23:21:58.817 20395-20437 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
-2025-10-26 23:21:58.817 20395-20443 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
-2025-10-26 23:21:58.817 20395-20446 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
-2025-10-26 23:21:58.818 20395-20435 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
-2025-10-26 23:21:58.818 20395-20435 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
-2025-10-26 23:21:58.818 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
-2025-10-26 23:21:58.819 20395-20436 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
-2025-10-26 23:21:58.838 20395-20435 Capacitor               com.udry.app                         D  Handling local request: https://localhost/favicon.ico
-2025-10-26 23:21:59.439 20395-20400 com.udry.app            com.udry.app                         I  Compiler allocated 5111KB to compile void android.view.ViewRootImpl.performTraversals()
-2025-10-26 23:22:04.040 20395-20482 ProfileInstaller        com.udry.app                         D  Installing profile for com.udry.app
+2025-10-26 23:54:00.850 20901-20901 Capacitor/AppPlugin     com.udry.app                         D  Firing change: true
+2025-10-26 23:54:00.850 20901-20901 Capacitor/AppPlugin     com.udry.app                         V  Notifying listeners for event appStateChange
+2025-10-26 23:54:00.851 20901-20901 Capacitor/AppPlugin     com.udry.app                         D  No listeners found for event appStateChange
+2025-10-26 23:54:00.851 20901-20901 Capacitor               com.udry.app                         D  App resumed
+2025-10-26 23:54:00.851 20901-20901 UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onResume() --- The activity has come to the foreground.
+2025-10-26 23:54:00.857 20901-20985 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.gallium.print.optio"
+2025-10-26 23:54:00.857 20901-20985 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.frame"
+2025-10-26 23:54:00.862 20901-20985 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
+2025-10-26 23:54:00.873 20901-20901 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 349153669; UID 10220; state: ENABLED
+2025-10-26 23:54:00.906 20901-20901 HWUI                    com.udry.app                         W  Unknown dataspace 0
+2025-10-26 23:54:00.994 20901-20996 CameraManagerGlobal     com.udry.app                         I  Connecting to camera service
+2025-10-26 23:54:01.230 20901-20901 InsetsController        com.udry.app                         D  hide(ime(), fromIme=false)
+2025-10-26 23:54:01.230 20901-20901 ImeTracker              com.udry.app                         I  com.udry.app:c6aed94: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-10-26 23:54:01.373 20901-20966 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 23:54:01.373 20901-20973 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 23:54:01.471 20901-20964 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 23:54:01.472 20901-20965 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 23:54:01.472 20901-20971 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 23:54:01.477 20901-20972 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 23:54:01.601 20901-20973 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 23:54:01.601 20901-20966 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 23:54:01.601 20901-20966 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 23:54:01.602 20901-20966 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 23:54:01.603 20901-20966 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 23:54:01.603 20901-20966 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 23:54:01.603 20901-20973 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 23:54:01.603 20901-20973 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 23:54:01.603 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 23:54:01.603 20901-20972 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 23:54:01.604 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 23:54:01.604 20901-20964 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 23:54:01.604 20901-20964 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 23:54:01.604 20901-20964 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 23:54:01.604 20901-20964 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 23:54:01.604 20901-20964 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 23:54:01.605 20901-20964 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 23:54:01.605 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 23:54:01.605 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 23:54:01.606 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 23:54:01.606 20901-20964 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 23:54:01.609 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 23:54:01.609 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 23:54:01.610 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 23:54:01.610 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 23:54:01.610 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 23:54:01.610 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 23:54:01.610 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 23:54:01.611 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 23:54:01.611 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 23:54:01.616 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 23:54:01.616 20901-20966 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 23:54:01.618 20901-20964 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 23:54:01.618 20901-20973 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 23:54:01.618 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 23:54:01.618 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 23:54:01.619 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 23:54:01.619 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 23:54:01.619 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 23:54:01.619 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 23:54:01.619 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 23:54:01.619 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 23:54:01.620 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 23:54:01.621 20901-20973 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 23:54:01.621 20901-20973 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 23:54:01.621 20901-20973 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 23:54:01.623 20901-20973 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 23:54:01.623 20901-20973 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 23:54:01.623 20901-20973 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 23:54:01.624 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 23:54:01.624 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 23:54:01.624 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 23:54:01.624 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 23:54:01.625 20901-20966 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 23:54:01.625 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 23:54:01.625 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 23:54:01.626 20901-20965 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 23:54:01.626 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 23:54:01.626 20901-20971 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 23:54:01.626 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 23:54:01.626 20901-20964 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 23:54:01.626 20901-20964 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 23:54:01.626 20901-20964 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 23:54:01.627 20901-20972 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 23:54:01.628 20901-20964 Capacitor               com.udry.app                         D  Handling local request: https://localhost/favicon.ico
+2025-10-26 23:54:02.061 20901-20910 com.udry.app            com.udry.app                         I  Compiler allocated 5111KB to compile void android.view.ViewRootImpl.performTraversals()
+2025-10-26 23:54:05.357 20901-21016 ProfileInstaller        com.udry.app                         D  Installing profile for com.udry.app
