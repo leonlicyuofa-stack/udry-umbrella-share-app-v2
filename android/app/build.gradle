@@ -1,4 +1,11 @@
-// The apply from: line is now at the top of the file, after the plugins block.
+
+plugins {
+    id 'com.android.application'
+    id 'kotlin-android'
+    id 'kotlin-kapt'
+    id 'com.google.gms.google-services'
+}
+
 apply from: 'capacitor.build.gradle'
 
 android {
@@ -14,43 +21,78 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
-    buildFeatures {
-        buildConfig = true
+    signingConfigs {
+        debug {
+            storeFile file('debug.keystore')
+            storePassword 'android'
+            keyAlias 'androiddebugkey'
+            keyPassword 'android'
+        }
+        release {
+            if (System.getenv("UDRY_KEYSTORE_PATH") != null) {
+                storeFile rootProject.file(System.getenv("UDRY_KEYSTORE_PATH"))
+                storePassword System.getenv("UDRY_STORE_PASSWORD")
+                keyAlias System.getenv("UDRY_KEY_ALIAS")
+                keyPassword System.getenv("UDRY_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
-    
-    lint {
-        abortOnError false
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    kotlinOptions {
+        jvmTarget = '1.8'
     }
 
     compileOptions {
-        sourceCompatibility JavaVersion.VERSION_17
-        targetCompatibility JavaVersion.VERSION_17
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 }
 
-
 dependencies {
+    implementation libs.androidx.appcompat
+    implementation libs.androidx.coordinatorlayout
+    implementation libs.androidx.test.ext.junit
+    implementation libs.espresso.core
+    implementation libs.junit
+    
+    // Firebase
+    implementation platform(libs.firebase.bom)
+    implementation 'com.google.firebase:firebase-auth'
+    implementation 'com.google.firebase:firebase-firestore'
+
+    // Capacitor
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-community-bluetooth-le')
     implementation project(':capacitor-community-sqlite')
     implementation project(':capacitor-status-bar')
-    implementation libs.androidx.appcompat
-    implementation libs.androidx.coordinatorlayout
-    implementation libs.firebase.auth
-    implementation libs.firebase.firestore
 
-    // Add this line to make the SQLite plugin classes available to Kapt
+    // Room Database
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // To use Kotlin annotation processing tool (kapt)
+    kapt "androidx.room:room-compiler:$room_version"
+    
+    // Explicitly add capacitor-community-sqlite for KAPT
     kapt project(':capacitor-community-sqlite')
 }
 
-apply plugin: 'com.google.gms.google-services'
-apply plugin: 'kotlin-kapt'
+kapt {
+    arguments {
+        arg("room.schemaLocation", "$projectDir/schemas".toString())
+    }
+}
