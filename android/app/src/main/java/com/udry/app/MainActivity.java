@@ -14,9 +14,8 @@ public class MainActivity extends BridgeActivity {
   public void onCreate(Bundle savedInstanceState) {
     Log.d(TAG, "--- MainActivity.onCreate() START ---");
     
-    // This forces the app to use the bundled `out` directory instead of a localhost server.
-    // It must be called BEFORE super.onCreate() to take effect.
-    setServerBaseUrl("file:///android_asset/public");
+    // The server URL is now controlled by capacitor.config.ts.
+    // This native override has been removed to fix the build error.
     
     super.onCreate(savedInstanceState);
     
