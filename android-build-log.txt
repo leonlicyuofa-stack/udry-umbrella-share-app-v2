@@ -25,114 +25,114 @@ Build was configured to prefer settings repositories over project repositories b
 Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
 Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
 
-> Task :app:preBuild UP-TO-DATE
 > Task :capacitor-android:preBuild UP-TO-DATE
 > Task :capacitor-status-bar:preBuild UP-TO-DATE
-> Task :capacitor-community-sqlite:preBuild UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:preBuild UP-TO-DATE
-> Task :capacitor-camera:preBuild UP-TO-DATE
-> Task :app:preDebugBuild UP-TO-DATE
-> Task :capacitor-community-sqlite:preDebugBuild UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
 > Task :capacitor-app:preBuild UP-TO-DATE
-> Task :capacitor-app:preDebugBuild UP-TO-DATE
-> Task :capacitor-camera:preDebugBuild UP-TO-DATE
-> Task :capacitor-camera:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:preDebugBuild UP-TO-DATE
-> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
 > Task :capacitor-status-bar:preDebugBuild UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-app:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-community-sqlite:preBuild UP-TO-DATE
+> Task :capacitor-camera:preBuild UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:preBuild UP-TO-DATE
 > Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-community-sqlite:preDebugBuild UP-TO-DATE
+> Task :capacitor-camera:preDebugBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :capacitor-app:preDebugBuild UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:preDebugBuild UP-TO-DATE
 > Task :capacitor-community-sqlite:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-camera:writeDebugAarMetadata UP-TO-DATE
 > Task :capacitor-status-bar:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-community-sqlite:generateDebugResValues UP-TO-DATE
-> Task :capacitor-community-sqlite:generateDebugResources UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugResValues UP-TO-DATE
-> Task :capacitor-camera:generateDebugResValues UP-TO-DATE
-> Task :capacitor-app:generateDebugResValues UP-TO-DATE
-> Task :capacitor-app:generateDebugResources UP-TO-DATE
-> Task :capacitor-camera:generateDebugResources UP-TO-DATE
-> Task :capacitor-status-bar:generateDebugResValues UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:writeDebugAarMetadata UP-TO-DATE
 > Task :capacitor-android:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-status-bar:generateDebugResources UP-TO-DATE
-> Task :capacitor-community-sqlite:packageDebugResources UP-TO-DATE
-> Task :capacitor-camera:packageDebugResources UP-TO-DATE
-> Task :capacitor-app:packageDebugResources UP-TO-DATE
-> Task :app:checkKotlinGradlePluginConfigurationErrors
-> Task :capacitor-camera:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugResources UP-TO-DATE
-> Task :app:generateDebugBuildConfig UP-TO-DATE
-> Task :capacitor-app:extractDeepLinksDebug UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :capacitor-app:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-camera:generateDebugResValues UP-TO-DATE
 > Task :capacitor-android:generateDebugResValues UP-TO-DATE
-> Task :capacitor-status-bar:packageDebugResources UP-TO-DATE
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :capacitor-camera:generateDebugResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugResValues UP-TO-DATE
+> Task :capacitor-community-sqlite:generateDebugResValues UP-TO-DATE
+> Task :capacitor-status-bar:generateDebugResValues UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugResources UP-TO-DATE
 > Task :capacitor-android:generateDebugResources UP-TO-DATE
-> Task :capacitor-camera:processDebugManifest UP-TO-DATE
-> Task :capacitor-community-sqlite:processDebugManifest UP-TO-DATE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :capacitor-status-bar:generateDebugResources UP-TO-DATE
+> Task :capacitor-app:generateDebugResValues UP-TO-DATE
+> Task :capacitor-community-sqlite:generateDebugResources UP-TO-DATE
+> Task :capacitor-app:generateDebugResources UP-TO-DATE
+> Task :capacitor-camera:packageDebugResources UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:packageDebugResources UP-TO-DATE
-> Task :capacitor-app:processDebugManifest UP-TO-DATE
-> Task :capacitor-status-bar:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-camera:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-app:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-community-sqlite:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-camera:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-status-bar:packageDebugResources UP-TO-DATE
 > Task :capacitor-android:packageDebugResources UP-TO-DATE
-> Task :capacitor-status-bar:processDebugManifest UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-app:packageDebugResources UP-TO-DATE
+> Task :capacitor-status-bar:extractDeepLinksDebug UP-TO-DATE
 > Task :capacitor-android:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-app:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-status-bar:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-community-sqlite:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-community-sqlite:packageDebugResources UP-TO-DATE
+> Task :capacitor-community-sqlite:extractDeepLinksDebug UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:processDebugManifest UP-TO-DATE
-> Task :capacitor-camera:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-android:processDebugManifest UP-TO-DATE
-> Task :capacitor-app:generateDebugRFile UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-community-sqlite:generateDebugRFile UP-TO-DATE
-> Task :capacitor-status-bar:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-camera:processDebugManifest UP-TO-DATE
+> Task :capacitor-app:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-status-bar:processDebugManifest UP-TO-DATE
+> Task :capacitor-community-sqlite:processDebugManifest UP-TO-DATE
+> Task :capacitor-camera:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-android:processDebugManifest UP-TO-DATE
+> Task :capacitor-status-bar:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-community-sqlite:compileDebugLibraryResources UP-TO-DATE
 > Task :capacitor-android:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-camera:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-community-sqlite:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-app:processDebugManifest UP-TO-DATE
+> Task :capacitor-status-bar:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-app:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugRFile UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:checkKotlinGradlePluginConfigurationErrors
 > Task :capacitor-camera:generateDebugRFile UP-TO-DATE
-> Task :capacitor-app:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-community-sqlite:generateDebugRFile UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:javaPreCompileDebug UP-TO-DATE
 > Task :capacitor-status-bar:generateDebugRFile UP-TO-DATE
 > Task :capacitor-camera:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-app:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-camera:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-camera:compileDebugShaders NO-SOURCE
-> Task :capacitor-camera:generateDebugAssets UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-camera:packageDebugAssets UP-TO-DATE
-> Task :capacitor-app:compileDebugShaders NO-SOURCE
 > Task :capacitor-android:generateDebugRFile UP-TO-DATE
-> Task :capacitor-status-bar:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-app:generateDebugAssets UP-TO-DATE
-> Task :capacitor-camera:processDebugJavaRes NO-SOURCE
-> Task :capacitor-community-bluetooth-le:generateDebugRFile UP-TO-DATE
-> Task :capacitor-app:packageDebugAssets UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:checkKotlinGradlePluginConfigurationErrors
-> Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-camera:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-status-bar:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
-> Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
-> Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-app:processDebugJavaRes NO-SOURCE
-> Task :capacitor-camera:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-status-bar:packageDebugAssets UP-TO-DATE
+> Task :capacitor-app:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-app:generateDebugRFile UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-app:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
-> Task :capacitor-status-bar:mergeDebugJniLibFolders UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:compileDebugShaders NO-SOURCE
 > Task :capacitor-community-bluetooth-le:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-app:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-status-bar:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-camera:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-camera:compileDebugShaders NO-SOURCE
+> Task :capacitor-status-bar:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-app:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-camera:generateDebugAssets UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:packageDebugAssets UP-TO-DATE
-> Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-status-bar:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-app:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-camera:packageDebugAssets UP-TO-DATE
+> Task :capacitor-app:compileDebugShaders NO-SOURCE
+> Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
 > Task :capacitor-community-bluetooth-le:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
+> Task :capacitor-app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-camera:processDebugJavaRes NO-SOURCE
+> Task :capacitor-camera:mergeDebugJniLibFolders UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-camera:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-app:packageDebugAssets UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-app:processDebugJavaRes NO-SOURCE
+> Task :capacitor-app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-status-bar:packageDebugAssets UP-TO-DATE
+> Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-app:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
+> Task :capacitor-status-bar:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-status-bar:copyDebugJniLibsProjectOnly UP-TO-DATE
 > Task :capacitor-community-sqlite:javaPreCompileDebug UP-TO-DATE
 > Task :capacitor-community-sqlite:mergeDebugShaders UP-TO-DATE
 > Task :capacitor-community-sqlite:compileDebugShaders NO-SOURCE
@@ -141,9 +141,6 @@ Build was configured to prefer settings repositories over project repositories b
 > Task :capacitor-community-sqlite:mergeDebugJniLibFolders UP-TO-DATE
 > Task :capacitor-community-sqlite:mergeDebugNativeLibs NO-SOURCE
 > Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :app:checkDebugAarMetadata UP-TO-DATE
-> Task :app:generateDebugResValues UP-TO-DATE
-> Task :app:processDebugGoogleServices UP-TO-DATE
 > Task :capacitor-android:compileDebugJavaWithJavac UP-TO-DATE
 > Task :capacitor-android:bundleLibCompileToJarDebug UP-TO-DATE
 > Task :capacitor-android:mergeDebugShaders UP-TO-DATE
@@ -151,38 +148,41 @@ Build was configured to prefer settings repositories over project repositories b
 > Task :capacitor-android:generateDebugAssets UP-TO-DATE
 > Task :capacitor-android:packageDebugAssets UP-TO-DATE
 > Task :capacitor-android:processDebugJavaRes NO-SOURCE
-> Task :app:mapDebugSourceSetPaths UP-TO-DATE
-> Task :app:generateDebugResources UP-TO-DATE
 > Task :capacitor-android:bundleLibRuntimeToDirDebug UP-TO-DATE
 > Task :capacitor-android:mergeDebugJniLibFolders UP-TO-DATE
 > Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-app:compileDebugJavaWithJavac UP-TO-DATE
-> Task :app:mergeDebugResources UP-TO-DATE
 > Task :capacitor-android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-status-bar:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-status-bar:bundleLibCompileToJarDebug UP-TO-DATE
 > Task :capacitor-app:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :app:packageDebugResources UP-TO-DATE
+> Task :capacitor-status-bar:bundleLibRuntimeToDirDebug UP-TO-DATE
 > Task :capacitor-app:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :app:processDebugGoogleServices UP-TO-DATE
+> Task :capacitor-community-sqlite:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-community-sqlite:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:compileDebugKotlin UP-TO-DATE
+> Task :capacitor-community-sqlite:processDebugJavaRes UP-TO-DATE
+> Task :capacitor-camera:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:compileDebugJavaWithJavac NO-SOURCE
+> Task :capacitor-community-sqlite:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-camera:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :capacitor-camera:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:processDebugJavaRes UP-TO-DATE
+> Task :app:mergeDebugResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :app:packageDebugResources UP-TO-DATE
 > Task :app:parseDebugLocalResources UP-TO-DATE
 > Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
 > Task :app:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-status-bar:compileDebugJavaWithJavac UP-TO-DATE
-> Task :capacitor-camera:compileDebugJavaWithJavac UP-TO-DATE
-> Task :capacitor-community-sqlite:compileDebugJavaWithJavac UP-TO-DATE
-> Task :capacitor-camera:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :capacitor-camera:bundleLibRuntimeToDirDebug UP-TO-DATE
-> Task :capacitor-status-bar:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:processDebugJavaRes UP-TO-DATE
-> Task :capacitor-status-bar:bundleLibRuntimeToDirDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:bundleLibRuntimeToDirDebug UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:compileDebugKotlin UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:compileDebugJavaWithJavac NO-SOURCE
-> Task :capacitor-community-bluetooth-le:bundleLibCompileToJarDebug UP-TO-DATE
 > Task :app:processDebugMainManifest UP-TO-DATE
 > Task :app:processDebugManifest UP-TO-DATE
 > Task :app:processDebugManifestForPackage UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:processDebugJavaRes UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:bundleLibRuntimeToDirDebug UP-TO-DATE
 > Task :app:processDebugResources UP-TO-DATE
 > Task :app:compileDebugKotlin NO-SOURCE
 > Task :app:javaPreCompileDebug UP-TO-DATE
@@ -198,10 +198,10 @@ To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecatio
 warning: [options] source value 8 is obsolete and will be removed in a future release
 warning: [options] target value 8 is obsolete and will be removed in a future release
 warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
-/Users/leonli/Desktop/udry-umbrella-share-app-v2/android/app/src/main/java/com/udry/app/MainActivity.java:33: error: cannot find symbol
-                config.setServerUrl("file:///android_asset/public");
+/Users/leonli/Desktop/udry-umbrella-share-app-v2/android/app/src/main/java/com/udry/app/MainActivity.java:32: error: cannot find symbol
+                config.putString("server.url", "file:///android_asset/public");
                       ^
-  symbol:   method setServerUrl(String)
+  symbol:   method putString(String,String)
   location: variable config of type CapConfig
 1 error
 3 warnings
@@ -209,9 +209,9 @@ warning: [options] To suppress warnings about obsolete options, use -Xlint:-opti
 > Task :app:mergeDebugShaders UP-TO-DATE
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
-> Task :app:mergeDebugAssets UP-TO-DATE
-> Task :app:compressDebugAssets UP-TO-DATE
+> Task :app:mergeDebugAssets
 > Task :app:processDebugJavaRes NO-SOURCE
+> Task :app:compressDebugAssets
 > Task :app:mergeDebugJavaResource UP-TO-DATE
 > Task :app:checkDebugDuplicateClasses UP-TO-DATE
 > Task :app:desugarDebugFileDependencies UP-TO-DATE
@@ -425,5 +425,5 @@ Caused by: org.gradle.api.internal.tasks.compile.CompilationFailedException: Com
 	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 
 
-BUILD FAILED in 519ms
-138 actionable tasks: 3 executed, 135 up-to-date
+BUILD FAILED in 722ms
+138 actionable tasks: 5 executed, 133 up-to-date
