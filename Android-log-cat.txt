@@ -1,316 +1,174 @@
-Log cat 
-
-2025-10-17 13:06:19.633 29807-29807 nativeloader            com.udry.app                         D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
-2025-10-17 13:06:19.699 29807-29807 nativeloader            com.udry.app                         D  Load /data/user/0/com.udry.app/code_cache/startup_agents/3fc68f17-agent.so using system ns (caller=<unknown>): ok
-2025-10-17 13:06:19.709 29807-29807 com.udry.app            com.udry.app                         W  hiddenapi: DexFile /data/data/com.udry.app/code_cache/.studio/instruments-c9b0d10a.jar is in boot class path but is not in a known location
-2025-10-17 13:06:19.787 29807-29807 com.udry.app            com.udry.app                         W  Redefining intrinsic method java.lang.Thread java.lang.Thread.currentThread(). This may cause the unexpected use of the original definition of java.lang.Thread java.lang.Thread.currentThread()in methods that have already been compiled.
-2025-10-17 13:06:19.787 29807-29807 com.udry.app            com.udry.app                         W  Redefining intrinsic method boolean java.lang.Thread.interrupted(). This may cause the unexpected use of the original definition of boolean java.lang.Thread.interrupted()in methods that have already been compiled.
----------------------------- PROCESS STARTED (29807) for package com.udry.app ----------------------------
-2025-10-17 13:06:20.042 29807-29807 nativeloader            com.udry.app                         D  Configuring clns-9 for other apk /data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/lib/arm64:/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.udry.app
-2025-10-17 13:06:20.043 29807-29807 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 202956589; UID 10217; state: ENABLED
-2025-10-17 13:06:20.045 29807-29807 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a3cb38) locale list changing from [] to [en-US]
-2025-10-17 13:06:20.046 29807-29807 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a40058) locale list changing from [] to [en-US]
-2025-10-17 13:06:20.050 29807-29807 GraphicsEnvironment     com.udry.app                         V  Currently set values for:
-2025-10-17 13:06:20.050 29807-29807 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_pkgs=[]
-2025-10-17 13:06:20.050 29807-29807 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_values=[]
-2025-10-17 13:06:20.050 29807-29807 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in per-application setting
-2025-10-17 13:06:20.054 29807-29807 GraphicsEnvironment     com.udry.app                         V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
-2025-10-17 13:06:20.054 29807-29807 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in ANGLE allowlist or settings, returning default
-2025-10-17 13:06:20.054 29807-29807 GraphicsEnvironment     com.udry.app                         V  Neither updatable production driver nor prerelease driver is supported.
-2025-10-17 13:06:20.070 29807-29807 FirebaseApp             com.udry.app                         W  Default FirebaseApp failed to initialize because no default options were found. This usually means that com.google.gms:google-services was not applied to your gradle project.
-2025-10-17 13:06:20.071 29807-29807 FirebaseInitProvider    com.udry.app                         I  FirebaseApp initialization unsuccessful
-2025-10-17 13:06:20.075 29807-29807 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 279646685; UID 10217; state: ENABLED
-2025-10-17 13:06:20.093 29807-29807 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a40698) locale list changing from [] to [en-US]
-2025-10-17 13:06:20.094 29807-29822 DisplayManager          com.udry.app                         I  Choreographer implicitly registered for the refresh rate.
-2025-10-17 13:06:20.096 29807-29807 TransactionExecutor     com.udry.app                         E  Failed to execute the transaction: tId:1637354174 ClientTransaction{
-                                                                                                    tId:1637354174   transactionItems=[
-                                                                                                    tId:1637354174     LaunchActivityItem{activityToken=android.os.BinderProxy@af137cb,intent=Intent { act=android.intent.action.MAIN cat=[android.intent.category.LAUNCHER] flg=0x10000000 xflg=0x4 cmp=com.udry.app/.MainActivity },ident=8734781,info=ActivityInfo{4285dfd com.udry.app.MainActivity},curConfig={1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=undefined mAlwaysOnTop=undefined mRotation=ROTATION_0} s.30 fontWeightAdjustment=0},overrideConfig={1.0 310mcc260mnc [en_US] ldltr sw411dp w411dp h914dp 420dpi nrml long port finger qwerty/v/v dpad/v winConfig={ mBounds=Rect(0, 0 - 1080, 2400) mAppBounds=Rect(0, 0 - 1080, 2400) mMaxBounds=Rect(0, 0 - 1080, 2400) mDisplayRotation=ROTATION_0 mWindowingMode=fullscreen mActivityType=standard mAlwaysOnTop=undefined mRotation=ROTATION_0} s.2 fontWeightAdjustment=0},deviceId=0,referrer=com.android.shell,procState=2,state=null,persistentState=null,pendingResults=null,pendingNewIntents=null,sceneTransitionInfo=null,profilerInfo=null,assistToken=android.os.BinderProxy@6a8ae66,shareableActivityToken=android.os.BinderProxy@3d985a7,activityWindowInfo=ActivityWindowInfo{isEmbedded=false, taskBounds=Rect(0, 0 - 1080, 2400), taskFragmentBounds=Rect(0, 0 - 1080, 2400)}}
-                                                                                                    tId:1637354174     ResumeActivityItem{mActivityToken=android.os.BinderProxy@af137cb,procState=-1,isForward=true,shouldSendCompatFakeFocus=false}
-                                                                                                    tId:1637354174     Target activity: Not found for token: android.os.BinderProxy@af137cb
-                                                                                                    tId:1637354174   ]
-                                                                                                    tId:1637354174 }
-2025-10-17 13:06:20.096 29807-29807 AndroidRuntime          com.udry.app                         D  Shutting down VM
-2025-10-17 13:06:20.098 29807-29807 AndroidRuntime          com.udry.app                         E  FATAL EXCEPTION: main
-                                                                                                    Process: com.udry.app, PID: 29807
-                                                                                                    java.lang.RuntimeException: Unable to instantiate activity ComponentInfo{com.udry.app/com.udry.app.MainActivity}: java.lang.ClassNotFoundException: Didn't find class "com.udry.app.MainActivity" on path: DexPathList[[zip file "/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk"],nativeLibraryDirectories=[/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/lib/arm64, /data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk!/lib/arm64-v8a, /system/lib64, /system_ext/lib64]]
-                                                                                                    	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4186)
-                                                                                                    	at android.app.ActivityThread.handleLaunchActivity(ActivityThread.java:4467)
-                                                                                                    	at android.app.servertransaction.LaunchActivityItem.execute(LaunchActivityItem.java:222)
-                                                                                                    	at android.app.servertransaction.TransactionExecutor.executeNonLifecycleItem(TransactionExecutor.java:133)
-                                                                                                    	at android.app.servertransaction.TransactionExecutor.executeTransactionItems(TransactionExecutor.java:103)
-                                                                                                    	at android.app.servertransaction.TransactionExecutor.execute(TransactionExecutor.java:80)
-                                                                                                    	at android.app.ActivityThread$H.handleMessage(ActivityThread.java:2823)
-                                                                                                    	at android.os.Handler.dispatchMessage(Handler.java:110)
-                                                                                                    	at android.os.Looper.loopOnce(Looper.java:248)
-                                                                                                    	at android.os.Looper.loop(Looper.java:338)
-                                                                                                    	at android.app.ActivityThread.main(ActivityThread.java:9067)
-                                                                                                    	at java.lang.reflect.Method.invoke(Native Method)
-                                                                                                    	at com.android.internal.os.RuntimeInit$MethodAndArgsCaller.run(RuntimeInit.java:593)
-                                                                                                    	at com.android.internal.os.ZygoteInit.main(ZygoteInit.java:932)
-                                                                                                    Caused by: java.lang.ClassNotFoundException: Didn't find class "com.udry.app.MainActivity" on path: DexPathList[[zip file "/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk"],nativeLibraryDirectories=[/data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/lib/arm64, /data/app/~~XJp_tNZO951kT89IzyNM_g==/com.udry.app-27BYEww7FH4y0Ci_vCNlHA==/base.apk!/lib/arm64-v8a, /system/lib64, /system_ext/lib64]]
-                                                                                                    	at dalvik.system.BaseDexClassLoader.findClass(BaseDexClassLoader.java:259)
-                                                                                                    	at java.lang.ClassLoader.loadClass(ClassLoader.java:637)
-                                                                                                    	at java.lang.ClassLoader.loadClass(ClassLoader.java:573)
-                                                                                                    	at android.app.AppComponentFactory.instantiateActivity(AppComponentFactory.java:95)
-                                                                                                    	at androidx.core.app.CoreComponentFactory.instantiateActivity(CoreComponentFactory.java:44)
-                                                                                                    	at android.app.Instrumentation.newActivity(Instrumentation.java:1443)
-                                                                                                    	at android.app.ActivityThread.performLaunchActivity(ActivityThread.java:4173)
-                                                                                                    	... 13 more
-2025-10-17 13:06:20.108 29807-29807 Process                 com.udry.app                         I  Sending signal. PID: 29807 SIG: 9
----------------------------- PROCESS ENDED (29807) for package com.udry.app ----------------------------
-
-Build log 
-
-Executing tasks: [:app:assembleDebug] in project /Users/leonli/Desktop/udry-umbrella-share-app-v2/android
-
-Starting Gradle Daemon...
-Gradle Daemon started in 576 ms
-
-> Configure project :
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file 'build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by script '../node_modules/@capacitor/android/capacitor/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by script '../node_modules/@capacitor/android/capacitor/build.gradle'
-
-> Configure project :capacitor-android
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/android/capacitor/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/android/capacitor/build.gradle'
-
-> Configure project :capacitor-app
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/app/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/app/android/build.gradle'
-
-> Configure project :capacitor-camera
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/camera/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/camera/android/build.gradle'
-
-> Configure project :capacitor-community-bluetooth-le
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor-community/bluetooth-le/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor-community/bluetooth-le/android/build.gradle'
-
-> Configure project :capacitor-community-sqlite
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor-community/sqlite/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor-community/sqlite/android/build.gradle'
-
-> Configure project :capacitor-cordova-android-plugins
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file 'capacitor-cordova-android-plugins/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file 'capacitor-cordova-android-plugins/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'flatDir' was added by build file 'capacitor-cordova-android-plugins/build.gradle'
-AGPBI: {"kind":"warning","text":"Using flatDir should be avoided because it doesn't support any meta-data formats.","sources":[{}]}
-
-> Configure project :capacitor-status-bar
-Build was configured to prefer settings repositories over project repositories but repository 'Google2' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
-Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo2' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
-
-> Task :capacitor-status-bar:preBuild UP-TO-DATE
-> Task :capacitor-camera:preBuild UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:preBuild UP-TO-DATE
-> Task :capacitor-app:preBuild UP-TO-DATE
-> Task :app:preBuild UP-TO-DATE
-> Task :capacitor-community-sqlite:preBuild UP-TO-DATE
-> Task :capacitor-android:preBuild UP-TO-DATE
-> Task :app:preDebugBuild UP-TO-DATE
-> Task :capacitor-community-sqlite:preDebugBuild UP-TO-DATE
-> Task :capacitor-status-bar:preDebugBuild UP-TO-DATE
-> Task :capacitor-android:preDebugBuild UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:preDebugBuild UP-TO-DATE
-> Task :capacitor-app:preDebugBuild UP-TO-DATE
-> Task :capacitor-camera:preDebugBuild UP-TO-DATE
-> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
-> Task :app:checkKotlinGradlePluginConfigurationErrors
-> Task :capacitor-app:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-community-sqlite:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-status-bar:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-camera:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:writeDebugAarMetadata UP-TO-DATE
-> Task :app:generateDebugBuildConfig UP-TO-DATE
-> Task :capacitor-android:writeDebugAarMetadata UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugResValues UP-TO-DATE
-> Task :capacitor-android:generateDebugResValues UP-TO-DATE
-> Task :capacitor-camera:generateDebugResValues UP-TO-DATE
-> Task :capacitor-status-bar:generateDebugResValues UP-TO-DATE
-> Task :capacitor-app:generateDebugResValues UP-TO-DATE
-> Task :capacitor-community-sqlite:generateDebugResValues UP-TO-DATE
-> Task :capacitor-android:generateDebugResources UP-TO-DATE
-> Task :capacitor-status-bar:generateDebugResources UP-TO-DATE
-> Task :capacitor-community-sqlite:generateDebugResources UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugResources UP-TO-DATE
-> Task :capacitor-app:generateDebugResources UP-TO-DATE
-> Task :capacitor-camera:generateDebugResources UP-TO-DATE
-> Task :capacitor-android:packageDebugResources UP-TO-DATE
-> Task :capacitor-camera:packageDebugResources UP-TO-DATE
-> Task :capacitor-community-sqlite:packageDebugResources UP-TO-DATE
-> Task :capacitor-status-bar:packageDebugResources UP-TO-DATE
-> Task :capacitor-app:packageDebugResources UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:packageDebugResources UP-TO-DATE
-> Task :capacitor-camera:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-status-bar:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-app:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-android:extractDeepLinksDebug UP-TO-DATE
-> Task :capacitor-android:processDebugManifest UP-TO-DATE
-> Task :capacitor-camera:processDebugManifest UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:processDebugManifest UP-TO-DATE
-> Task :capacitor-status-bar:processDebugManifest UP-TO-DATE
-> Task :capacitor-community-sqlite:processDebugManifest UP-TO-DATE
-> Task :capacitor-app:processDebugManifest UP-TO-DATE
-> Task :capacitor-camera:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-community-sqlite:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-status-bar:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-app:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-android:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:compileDebugLibraryResources UP-TO-DATE
-> Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-community-sqlite:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-camera:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-status-bar:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-app:parseDebugLocalResources UP-TO-DATE
-> Task :capacitor-android:generateDebugRFile UP-TO-DATE
-> Task :capacitor-camera:generateDebugRFile UP-TO-DATE
-> Task :capacitor-status-bar:generateDebugRFile UP-TO-DATE
-> Task :capacitor-app:generateDebugRFile UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugRFile UP-TO-DATE
-> Task :capacitor-community-sqlite:generateDebugRFile UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:checkKotlinGradlePluginConfigurationErrors
-> Task :capacitor-status-bar:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-app:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-camera:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-app:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-status-bar:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-camera:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:compileDebugShaders NO-SOURCE
-> Task :capacitor-app:compileDebugShaders NO-SOURCE
-> Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
-> Task :capacitor-camera:compileDebugShaders NO-SOURCE
-> Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugAssets UP-TO-DATE
-> Task :capacitor-app:generateDebugAssets UP-TO-DATE
-> Task :capacitor-camera:generateDebugAssets UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:packageDebugAssets UP-TO-DATE
-> Task :capacitor-camera:packageDebugAssets UP-TO-DATE
-> Task :capacitor-status-bar:packageDebugAssets UP-TO-DATE
-> Task :capacitor-app:packageDebugAssets UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
-> Task :capacitor-app:processDebugJavaRes NO-SOURCE
-> Task :capacitor-camera:processDebugJavaRes NO-SOURCE
-> Task :capacitor-community-bluetooth-le:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-status-bar:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-app:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-camera:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-app:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-status-bar:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-camera:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-community-sqlite:javaPreCompileDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-community-sqlite:compileDebugShaders NO-SOURCE
-> Task :capacitor-community-sqlite:generateDebugAssets UP-TO-DATE
-> Task :capacitor-community-sqlite:packageDebugAssets UP-TO-DATE
-> Task :capacitor-community-sqlite:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-community-sqlite:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :capacitor-android:compileDebugJavaWithJavac UP-TO-DATE
-> Task :capacitor-android:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :capacitor-app:compileDebugJavaWithJavac UP-TO-DATE
-> Task :capacitor-app:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :capacitor-status-bar:compileDebugJavaWithJavac UP-TO-DATE
-> Task :capacitor-status-bar:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :capacitor-android:mergeDebugShaders UP-TO-DATE
-> Task :capacitor-android:compileDebugShaders NO-SOURCE
-> Task :capacitor-android:generateDebugAssets UP-TO-DATE
-> Task :capacitor-android:packageDebugAssets UP-TO-DATE
-> Task :capacitor-app:bundleLibRuntimeToJarDebug UP-TO-DATE
-> Task :capacitor-status-bar:bundleLibRuntimeToJarDebug UP-TO-DATE
-> Task :capacitor-android:bundleLibRuntimeToJarDebug UP-TO-DATE
-> Task :capacitor-app:bundleLibRuntimeToDirDebug UP-TO-DATE
-> Task :capacitor-android:processDebugJavaRes NO-SOURCE
-> Task :capacitor-status-bar:bundleLibRuntimeToDirDebug UP-TO-DATE
-> Task :capacitor-android:bundleLibRuntimeToDirDebug UP-TO-DATE
-> Task :capacitor-android:mergeDebugJniLibFolders UP-TO-DATE
-> Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-android:copyDebugJniLibsProjectOnly UP-TO-DATE
-> Task :app:checkDebugAarMetadata UP-TO-DATE
-> Task :app:generateDebugResValues UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:compileDebugKotlin UP-TO-DATE
-> Task :capacitor-camera:compileDebugJavaWithJavac UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:compileDebugJavaWithJavac NO-SOURCE
-> Task :capacitor-camera:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:compileDebugJavaWithJavac UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:bundleLibCompileToJarDebug UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:bundleLibRuntimeToJarDebug UP-TO-DATE
-> Task :capacitor-camera:bundleLibRuntimeToJarDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:bundleLibRuntimeToJarDebug UP-TO-DATE
-> Task :capacitor-camera:bundleLibRuntimeToDirDebug UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:processDebugJavaRes UP-TO-DATE
-> Task :capacitor-community-sqlite:processDebugJavaRes UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:bundleLibRuntimeToDirDebug UP-TO-DATE
-> Task :capacitor-community-sqlite:bundleLibRuntimeToDirDebug UP-TO-DATE
-> Task :app:mapDebugSourceSetPaths UP-TO-DATE
-> Task :app:generateDebugResources UP-TO-DATE
-> Task :app:mergeDebugResources UP-TO-DATE
-> Task :app:packageDebugResources UP-TO-DATE
-> Task :app:parseDebugLocalResources UP-TO-DATE
-> Task :app:createDebugCompatibleScreenManifests UP-TO-DATE
-> Task :app:extractDeepLinksDebug UP-TO-DATE
-> Task :app:processDebugMainManifest UP-TO-DATE
-> Task :app:processDebugManifest UP-TO-DATE
-> Task :app:processDebugManifestForPackage UP-TO-DATE
-> Task :app:processDebugResources UP-TO-DATE
-> Task :app:compileDebugKotlin NO-SOURCE
-> Task :app:javaPreCompileDebug UP-TO-DATE
-> Task :app:compileDebugJavaWithJavac UP-TO-DATE
-> Task :app:mergeDebugShaders UP-TO-DATE
-> Task :app:compileDebugShaders NO-SOURCE
-> Task :app:generateDebugAssets UP-TO-DATE
-> Task :app:mergeDebugAssets UP-TO-DATE
-> Task :app:compressDebugAssets UP-TO-DATE
-> Task :app:desugarDebugFileDependencies UP-TO-DATE
-> Task :app:dexBuilderDebug UP-TO-DATE
-> Task :app:mergeDebugGlobalSynthetics UP-TO-DATE
-> Task :app:processDebugJavaRes NO-SOURCE
-> Task :app:mergeDebugJavaResource UP-TO-DATE
-> Task :app:checkDebugDuplicateClasses UP-TO-DATE
-> Task :app:mergeDebugStartupProfile UP-TO-DATE
-> Task :app:mergeExtDexDebug UP-TO-DATE
-> Task :app:mergeLibDexDebug UP-TO-DATE
-> Task :app:mergeProjectDexDebug UP-TO-DATE
-> Task :app:mergeDebugJniLibFolders UP-TO-DATE
-> Task :app:mergeDebugNativeLibs UP-TO-DATE
-> Task :app:stripDebugDebugSymbols UP-TO-DATE
-> Task :app:validateSigningDebug UP-TO-DATE
-> Task :app:writeDebugAppMetadata UP-TO-DATE
-> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
-> Task :app:packageDebug UP-TO-DATE
-> Task :app:createDebugApkListingFileRedirect UP-TO-DATE
-> Task :app:assembleDebug UP-TO-DATE
-
-BUILD SUCCESSFUL in 5s
-148 actionable tasks: 2 executed, 146 up-to-date
-
-Build Analyzer results available
+2025-10-26 19:36:53.212 11944-11982 Finsky                  com.android.vending                  E  [82] ItemStore: getItems RPC failed for item com.udry.app
+2025-10-26 19:36:53.713 11944-11995 Finsky                  com.android.vending                  E  [92] ItemStore: getItems RPC failed for item com.udry.app
+2025-10-26 19:36:53.927 15963-15963 com.udry.app            com.udry.app                         I  Late-enabling -Xcheck:jni
+2025-10-26 19:36:53.987 15963-15963 com.udry.app            com.udry.app                         I  Using CollectorTypeCMC GC.
+2025-10-26 19:36:54.079 15963-15963 nativeloader            com.udry.app                         D  Load libframework-connectivity-tiramisu-jni.so using APEX ns com_android_tethering for caller /apex/com.android.tethering/javalib/framework-connectivity-t.jar: ok
+2025-10-26 19:36:54.305 11944-11989 Finsky                  com.android.vending                  E  [86] ItemStore: getItems RPC failed for item com.udry.app
+2025-10-26 19:36:54.675 15963-15963 nativeloader            com.udry.app                         D  Configuring clns-9 for other apk /data/app/~~g1p7bE0anEx_7CRuNK-T5Q==/com.udry.app-pTeQx7kvKgQyFk0cgRmiNg==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~g1p7bE0anEx_7CRuNK-T5Q==/com.udry.app-pTeQx7kvKgQyFk0cgRmiNg==/lib/arm64:/data/app/~~g1p7bE0anEx_7CRuNK-T5Q==/com.udry.app-pTeQx7kvKgQyFk0cgRmiNg==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.udry.app
+2025-10-26 19:36:54.679 15963-15963 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 202956589; UID 10220; state: ENABLED
+2025-10-26 19:36:54.680 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a3cb38) locale list changing from [] to [en-US]
+2025-10-26 19:36:54.700 15963-15963 GraphicsEnvironment     com.udry.app                         V  Currently set values for:
+2025-10-26 19:36:54.701 15963-15963 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_pkgs=[]
+2025-10-26 19:36:54.701 15963-15963 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_values=[]
+2025-10-26 19:36:54.701 15963-15963 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in per-application setting
+2025-10-26 19:36:54.701 15963-15963 GraphicsEnvironment     com.udry.app                         V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+2025-10-26 19:36:54.701 15963-15963 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in ANGLE allowlist or settings, returning default
+2025-10-26 19:36:54.701 15963-15963 GraphicsEnvironment     com.udry.app                         V  Neither updatable production driver nor prerelease driver is supported.
+2025-10-26 19:36:54.730 15963-15963 FirebaseApp             com.udry.app                         I  Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+2025-10-26 19:36:54.733 15963-15963 FirebaseInitProvider    com.udry.app                         I  FirebaseApp initialization successful
+2025-10-26 19:36:54.746 15963-15963 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 279646685; UID 10220; state: ENABLED
+2025-10-26 19:36:54.793 15963-16024 DisplayManager          com.udry.app                         I  Choreographer implicitly registered for the refresh rate.
+2025-10-26 19:36:54.794 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a39c58) locale list changing from [] to [en-US]
+2025-10-26 19:36:54.818 15963-15963 AppCompatDelegate       com.udry.app                         D  Checking for metadata for AppLocalesMetadataHolderService : Service not found
+2025-10-26 19:36:54.819 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a40698) locale list changing from [] to [en-US]
+2025-10-26 19:36:54.838 15963-15963 ashmem                  com.udry.app                         E  Pinning is deprecated since Android Q. Please use trim or other methods.
+2025-10-26 19:36:54.866 15963-16024 EGL_emulation           com.udry.app                         I  Opening libGLESv1_CM_emulation.so
+2025-10-26 19:36:54.866 15963-16024 EGL_emulation           com.udry.app                         I  Opening libGLESv2_emulation.so
+2025-10-26 19:36:54.891 15963-16024 HWUI                    com.udry.app                         W  Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+2025-10-26 19:36:54.891 15963-16024 HWUI                    com.udry.app                         W  Failed to initialize 101010-2 format, error = EGL_SUCCESS
+2025-10-26 19:36:54.955 15963-15963 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 309578419; UID 10220; state: ENABLED
+2025-10-26 19:36:54.957 15963-15963 DesktopModeFlags        com.udry.app                         D  Toggle override initialized to: OVERRIDE_UNSET
+2025-10-26 19:36:55.017 15963-15963 HWUI                    com.udry.app                         W  Image decoding logging dropped!
+2025-10-26 19:36:55.030 15963-15963 com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
+2025-10-26 19:36:55.030 15963-15963 com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
+2025-10-26 19:36:55.066 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a46138) locale list changing from [] to [en-US]
+2025-10-26 19:36:55.066 15963-15963 WebViewFactory          com.udry.app                         I  Loading com.google.android.webview version 141.0.7390.43 (code 739004333)
+2025-10-26 19:36:55.067 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a41f98) locale list changing from [] to [en-US]
+2025-10-26 19:36:55.069 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a43bb8) locale list changing from [] to [en-US]
+2025-10-26 19:36:55.069 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a45198) locale list changing from [] to [en-US]
+2025-10-26 19:36:55.069 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a47718) locale list changing from [] to [en-US]
+2025-10-26 19:36:55.069 15963-15963 ResourcesManager        com.udry.app                         V  The following library key has been added: ResourcesKey{ mHash=cbf767fa mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk,/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={420dpi always-compat} mLoaders=[]}
+2025-10-26 19:36:55.074 15963-15963 com.udry.app            com.udry.app                         W  Failed to find entry 'classes.dex': Entry not found
+2025-10-26 19:36:55.075 15963-15963 nativeloader            com.udry.app                         D  Configuring clns-10 for other apk /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+2025-10-26 19:36:55.075 15963-15963 ApplicationLoaders      com.udry.app                         D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+2025-10-26 19:36:55.077 15963-15963 com.udry.app            com.udry.app                         W  Loading /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/oat/arm64/base.odex non-executable as it requires an image which we failed to load
+2025-10-26 19:36:55.079 15963-15963 nativeloader            com.udry.app                         D  Configuring clns-11 for other apk /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+2025-10-26 19:36:55.123 15963-15963 cr_WVCFactoryProvider   com.udry.app                         I  version=141.0.7390.43 (739004333) minSdkVersion=29 multiprocess=true packageId=2 splits=<none>
+2025-10-26 19:36:55.125 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a409b8) locale list changing from [] to [en-US]
+2025-10-26 19:36:55.181 15963-15963 nativeloader            com.udry.app                         D  Load /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
+2025-10-26 19:36:55.186 15963-15963 nativeloader            com.udry.app                         D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
+2025-10-26 19:36:55.199 15963-16074 chromium                com.udry.app                         I  [1026/193655.194016:INFO:android_webview/browser/variations/variations_seed_loader.cc:67] Failed to open file for reading.: No such file or directory (2)
+2025-10-26 19:36:55.208 15963-16074 chromium                com.udry.app                         I  [1026/193655.208054:INFO:android_webview/browser/variations/variations_seed_loader.cc:67] Failed to open file for reading.: No such file or directory (2)
+2025-10-26 19:36:55.232 15963-15963 HWUI                    com.udry.app                         W  Image decoding logging dropped!
+2025-10-26 19:36:55.247 15963-15963 cr_LibraryLoader        com.udry.app                         I  Successfully loaded native library
+2025-10-26 19:36:55.252 15963-15963 cr_CachingUmaRecorder   com.udry.app                         I  Flushed 16 samples from 16 histograms, 0 samples were dropped.
+2025-10-26 19:36:55.257 15963-15963 cr_CombinedPProvider    com.udry.app                         I  #registerProvider() provider:WV.ak@bac23f6 isPolicyCacheEnabled:false policyProvidersSize:0
+2025-10-26 19:36:55.258 15963-15963 cr_PolicyProvider       com.udry.app                         I  #setManagerAndSource() 0
+2025-10-26 19:36:55.264 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a40058) locale list changing from [] to [en-US]
+2025-10-26 19:36:55.269 15963-15963 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007538a441f8) locale list changing from [] to [en-US]
+2025-10-26 19:36:55.415 15963-15963 cr_CombinedPProvider    com.udry.app                         I  #linkNativeInternal() 1
+2025-10-26 19:36:55.415 15963-15963 cr_AppResProvider       com.udry.app                         I  #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
+2025-10-26 19:36:55.416 15963-15963 cr_PolicyProvider       com.udry.app                         I  #notifySettingsAvailable() 0
+2025-10-26 19:36:55.416 15963-15963 cr_CombinedPProvider    com.udry.app                         I  #onSettingsAvailable() 0
+2025-10-26 19:36:55.416 15963-15963 cr_CombinedPProvider    com.udry.app                         I  #flushPolicies()
+2025-10-26 19:36:55.564 15963-15963 chromium                com.udry.app                         W  [WARNING:android_webview/browser/network_service/net_helpers.cc:143] HTTP Cache size is: 20971520
+2025-10-26 19:36:55.717 15963-15963 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 352594277; UID 10220; state: ENABLED
+2025-10-26 19:36:55.730 15963-15963 Capacitor               com.udry.app                         D  Starting BridgeActivity
+2025-10-26 19:36:55.744 15963-15963 Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorCookies
+2025-10-26 19:36:55.746 15963-15963 Capacitor               com.udry.app                         D  Registering plugin instance: WebView
+2025-10-26 19:36:55.746 15963-15963 Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorHttp
+2025-10-26 19:36:55.749 15963-15963 Capacitor               com.udry.app                         D  Registering plugin instance: BluetoothLe
+2025-10-26 19:36:55.750 15963-15963 Capacitor               com.udry.app                         D  Registering plugin instance: App
+2025-10-26 19:36:55.750 15963-15963 Capacitor               com.udry.app                         D  Registering plugin instance: Camera
+2025-10-26 19:36:55.751 15963-15963 Capacitor               com.udry.app                         D  Registering plugin instance: StatusBar
+2025-10-26 19:36:55.770 15963-15963 Capacitor               com.udry.app                         W  Unable to read file at path public/plugins
+2025-10-26 19:36:55.789 15963-15963 Capacitor               com.udry.app                         D  Loading app at https://localhost
+2025-10-26 19:36:55.860 15963-16177 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log"
+2025-10-26 19:36:55.861 15963-16177 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log.file"
+2025-10-26 19:36:55.861 15963-16177 MESA                    com.udry.app                         E  Failed to open rendernode: No such file or directory
+2025-10-26 19:36:55.864 15963-16126 cr_media                com.udry.app                         W  BLUETOOTH_CONNECT permission is missing.
+2025-10-26 19:36:55.869 15963-16126 cr_media                com.udry.app                         W  getBluetoothAdapter() requires BLUETOOTH permission
+2025-10-26 19:36:55.869 15963-16126 cr_media                com.udry.app                         W  registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
+2025-10-26 19:36:55.872 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/
+2025-10-26 19:36:55.872 15963-16177 vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~g1p7bE0anEx_7CRuNK-T5Q==/com.udry.app-pTeQx7kvKgQyFk0cgRmiNg==/lib/arm64'
+2025-10-26 19:36:55.873 15963-16177 vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~g1p7bE0anEx_7CRuNK-T5Q==/com.udry.app-pTeQx7kvKgQyFk0cgRmiNg==/base.apk!/lib/arm64-v8a'
+2025-10-26 19:36:55.880 15963-16177 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.per.submit"
+2025-10-26 19:36:55.880 15963-16177 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.gallium.print.optio"
+2025-10-26 19:36:55.880 15963-16177 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.frame"
+2025-10-26 19:36:55.881 15963-15963 Capacitor               com.udry.app                         D  App started
+2025-10-26 19:36:55.882 15963-15963 WindowOnBackDispatcher  com.udry.app                         W  OnBackInvokedCallback is not enabled for the application.
+                                                                                                    Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
+2025-10-26 19:36:55.883 15963-16177 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
+2025-10-26 19:36:55.885 15963-15963 Capacitor/AppPlugin     com.udry.app                         D  Firing change: true
+2025-10-26 19:36:55.885 15963-15963 Capacitor/AppPlugin     com.udry.app                         V  Notifying listeners for event appStateChange
+2025-10-26 19:36:55.885 15963-15963 Capacitor/AppPlugin     com.udry.app                         D  No listeners found for event appStateChange
+2025-10-26 19:36:55.886 15963-15963 Capacitor               com.udry.app                         D  App resumed
+2025-10-26 19:36:55.899 15963-15963 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 349153669; UID 10220; state: ENABLED
+2025-10-26 19:36:55.900 15963-15963 HWUI                    com.udry.app                         W  Unknown dataspace 0
+2025-10-26 19:36:55.978 15963-16198 CameraManagerGlobal     com.udry.app                         I  Connecting to camera service
+2025-10-26 19:36:56.368 15963-15963 InsetsController        com.udry.app                         D  hide(ime(), fromIme=false)
+2025-10-26 19:36:56.368 15963-15963 ImeTracker              com.udry.app                         I  com.udry.app:d4ea82a9: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-10-26 19:36:56.763 15963-16122 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 19:36:56.768 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 19:36:57.044 15963-16144 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 19:36:57.046 15963-16129 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 19:36:57.050 15963-16128 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 19:36:57.089 15963-16121 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 19:36:57.157 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 19:36:57.158 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 19:36:57.158 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 19:36:57.158 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 19:36:57.158 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 19:36:57.158 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 19:36:57.159 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 19:36:57.159 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 19:36:57.159 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 19:36:57.159 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 19:36:57.159 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 19:36:57.159 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 19:36:57.159 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 19:36:57.159 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 19:36:57.159 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 19:36:57.160 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 19:36:57.160 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 19:36:57.161 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 19:36:57.162 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 19:36:57.162 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/webpack-e8f126799c7e9fb8.js
+2025-10-26 19:36:57.162 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 19:36:57.162 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/69806262-daed651f951d17cc.js
+2025-10-26 19:36:57.162 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 19:36:57.162 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/1705-1c32c0634cc7ffdc.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/4979-afe3387dd6fb89ca.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/850-02c4e7d470172411.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/5533-63060eeb5b6dc4c1.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/page-991b56b6dc6e04ca.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/layout-e3b8772958404150.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 19:36:57.163 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/app/error-27e24612c1fa58b2.js
+2025-10-26 19:36:57.164 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 19:36:57.166 15963-16144 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/fd9d1056-f9ccee645770c8bb.js
+2025-10-26 19:36:57.167 15963-16129 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 19:36:57.167 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 19:36:57.167 15963-16128 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 19:36:57.167 15963-16128 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 19:36:57.167 15963-16128 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/7023-61fef9f531840400.js
+2025-10-26 19:36:57.168 15963-16122 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 19:36:57.168 15963-16121 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 19:36:57.168 15963-16121 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 19:36:57.168 15963-16121 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 19:36:57.169 15963-16121 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 19:36:57.169 15963-16121 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/css/d87c3e6c026bdfa3.css
+2025-10-26 19:36:57.169 15963-16121 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 19:36:57.169 15963-16121 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/bc9e92e6-a2e880bfa3b83445.js
+2025-10-26 19:36:57.170 15963-16128 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 19:36:57.170 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 19:36:57.170 15963-16120 Capacitor               com.udry.app                         E  Unable to open asset URL: https://localhost/_next/static/chunks/main-app-514f517efe54105a.js
+2025-10-26 19:36:57.197 15963-16120 Capacitor               com.udry.app                         D  Handling local request: https://localhost/favicon.ico
+2025-10-26 19:36:58.101 15963-15970 com.udry.app            com.udry.app                         I  Compiler allocated 5111KB to compile void android.view.ViewRootImpl.performTraversals()
+2025-10-26 19:37:00.165 15963-16291 ProfileInstaller        com.udry.app                         D  Installing profile for com.udry.app
+2025-10-26 19:37:19.598 15963-15971 com.udry.app            com.udry.app                         I  Background concurrent mark compact GC freed 5803KB AllocSpace bytes, 37(1484KB) LOS objects, 49% free, 4011KB/8023KB, paused 11.505ms,2.718ms total 226.849ms
