@@ -5,9 +5,7 @@ const config: CapacitorConfig = {
   appId: 'com.udry.app',
   appName: 'udry 共享雨傘 ',
   webDir: 'out',
-  android: {
-    webDir: 'out'
-  },
+  android: {},
   ios: {
     contentInset: 'always'
   },
