@@ -6,6 +6,7 @@ import android.util.Log;
 import com.getcapacitor.BridgeActivity;
 import com.getcapacitor.Logger;
 import com.getcapacitor.Bridge;
+import com.getcapacitor.CapConfig;
 import com.getcapacitor.JSObject;
 import org.json.JSONException;
 
@@ -25,21 +26,14 @@ public class MainActivity extends BridgeActivity {
     try {
         Bridge bridge = this.getBridge();
         if (bridge != null) {
-            JSObject config = bridge.getConfig();
-            if (config.has("server")) {
-                JSObject serverConfig = config.getJSObject("server");
-                if (serverConfig != null && serverConfig.has("url")) {
-                    String serverUrl = serverConfig.getString("url");
-                    Log.d(TAG, "DEEP_DIAGNOSIS: Detected 'server.url' override: " + serverUrl);
-                    // This is the critical fix: remove the incorrect URL override.
-                    serverConfig.remove("url");
-                    config.put("server", serverConfig);
-                    // We must apply this modified config back to the bridge.
-                    bridge.setConfig(config);
-                    Log.d(TAG, "DEEP_DIAGNOSIS: Successfully REMOVED server.url override at runtime.");
-                }
+            CapConfig config = bridge.getConfig();
+            if (config != null && config.getServerUrl() != null) {
+                Log.d(TAG, "DEEP_DIAGNOSIS: Detected 'server.url' override in config: " + config.getServerUrl());
+                // This is the critical fix: set the server URL back to the local file path.
+                config.setServerUrl("file:///android_asset/public");
+                Log.d(TAG, "DEEP_DIAGNOSIS: Successfully FORCED server URL back to local asset path.");
             } else {
-                 Log.d(TAG, "DEEP_DIAGNOSIS: No 'server.url' override was found in the configuration.");
+                 Log.d(TAG, "DEEP_DIAGNOSIS: No 'server.url' override was detected in the runtime configuration.");
             }
         } else {
             Log.e(TAG, "DEEP_DIAGNOSIS: CRITICAL - Bridge object was null. Cannot inspect config.");
@@ -48,7 +42,7 @@ public class MainActivity extends BridgeActivity {
         Log.e(TAG, "DEEP_DIAGNOSIS: CRITICAL - An error occurred while trying to modify the Capacitor config.", e);
     }
     
-    Log.d(TAG, "--- MainActivity.onCreate() END ---");
+    Log.d(TAG, "--- MainActivity.onCreate() END --- (super.onCreate() has been called)");
   }
 
   @Override
