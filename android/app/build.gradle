@@ -1,10 +1,10 @@
-// The plugins block must be the first statement in the file.
 plugins {
-    id 'com.android.application'
-    id 'kotlin-android'
-    id 'com.google.gms.google-services'
-    id 'kotlin-kapt' // Added for Room
+    alias(libs.plugins.androidApplication)
+    alias(libs.plugins.kotlinAndroid)
+    alias(libs.plugins.googleServices)
 }
+
+apply from: "capacitor.build.gradle"
 
 android {
     namespace "com.udry.app"
@@ -17,6 +17,7 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        // Keep any existing custom build config fields if necessary
     }
 
     signingConfigs {
@@ -40,43 +41,52 @@ android {
         release {
             minifyEnabled true
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
-            signingConfig signingConfigs.release
-            matchingFallbacks = ['debug', 'release']
+            signingConfig signingConfigs.getByName("release")
         }
     }
-    
-    buildFeatures {
-        buildConfig true
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
     }
 
     kotlinOptions {
         jvmTarget = '1.8'
     }
 
+    buildFeatures {
+        buildConfig true
+    }
+
     packagingOptions {
-        // Exclude duplicate files from different libraries
         resources {
             excludes += '/META-INF/{AL2.0,LGPL2.1}'
-            excludes += 'META-INF/INDEX.LIST'
-            excludes += 'META-INF/io.netty.versions.properties'
         }
-    }
-    lint {
-        abortOnError false
     }
 }
 
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
+    implementation libs.androidx.test.ext.junit
+    implementation libs.espresso.core
+    implementation libs.junit
+
+    // Room
+    implementation libs.androidx.room.runtime
+    implementation libs.androidx.room.ktx
+    annotationProcessor libs.androidx.room.compiler
+
+
+    // Firebase
+    implementation platform(libs.firebase.bom)
     implementation libs.firebase.auth
     implementation libs.firebase.firestore
-    testImplementation libs.junit
-    androidTestImplementation libs.androidx.test.ext.junit
-    androidTestImplementation libs.espresso.core
-    
-    // Room components
-    implementation libs.androidx.room.runtime
-    kapt libs.androidx.room.compiler
-    implementation libs.androidx.room.ktx
+
+    implementation project(':capacitor-android')
+    implementation project(':capacitor-app')
+    implementation project(':capacitor-camera')
+    implementation project(':capacitor-community-bluetooth-le')
+    implementation project(':capacitor-community-sqlite')
+    implementation project(':capacitor-status-bar')
 }
