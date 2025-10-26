@@ -1,6 +1,6 @@
 plugins {
-    alias(libs.plugins.androidApplication)
-    alias(libs.plugins.kotlinAndroid)
+    id 'com.android.application'
+    id 'kotlin-android'
     id 'kotlin-kapt'
 }
 
@@ -16,10 +16,12 @@ android {
         targetSdk 35
         versionCode 1
         versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        vectorDrawables {
+            useSupportLibrary true
+        }
     }
-    
+
     signingConfigs {
         debug {
             storeFile file('debug.keystore')
@@ -53,35 +55,40 @@ android {
     }
     buildFeatures {
         buildConfig true
+        compose true
     }
-    lint {
-        abortOnError false
+    composeOptions {
+        kotlinCompilerExtensionVersion '1.5.14'
+    }
+    packagingOptions {
+        resources {
+            excludes += '/META-INF/{AL2.0,LGPL2.1}'
+        }
     }
 }
 
 dependencies {
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
-    implementation libs.androidx.test.ext.junit
-    implementation libs.espresso.core
-    implementation libs.junit
-    
-    // Firebase
-    implementation platform(libs.firebase.bom)
+    implementation platform('com.google.firebase:firebase-bom:33.1.2')
     implementation 'com.google.firebase:firebase-auth'
     implementation 'com.google.firebase:firebase-firestore'
 
-    // Capacitor
+    // Room for local database
+    def room_version = "2.6.1"
+    implementation "androidx.room:room-runtime:$room_version"
+    annotationProcessor "androidx.room:room-compiler:$room_version"
+    // To use Kotlin annotation processing tool (kapt)
+    kapt "androidx.room:room-compiler:$room_version"
+
+    // Capacitor SQLite
+    implementation project(':capacitor-community-sqlite')
+    
     implementation project(':capacitor-android')
     implementation project(':capacitor-app')
     implementation project(':capacitor-camera')
     implementation project(':capacitor-status-bar')
-    implementation project(':capacitor-community-bluetooth-le')
-
-    // Room Database and Capacitor SQLite
-    implementation project(':capacitor-community-sqlite')
-    def room_version = "2.6.1"
-    implementation "androidx.room:room-runtime:$room_version"
-    kapt "androidx.room:room-compiler:$room_version"
-    implementation "androidx.room:room-ktx:$room_version"
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.5'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.1'
 }
