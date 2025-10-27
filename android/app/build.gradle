@@ -59,21 +59,18 @@ android {
 }
 
 dependencies {
-    // Keeping only the essentials for this test
     implementation libs.androidx.appcompat
     implementation libs.androidx.coordinatorlayout
     implementation platform(libs.firebase.bom)
-    
-    // --- DIAGNOSTIC TEST: Temporarily commenting out dependencies ---
-    // implementation libs.firebase.auth
-    // implementation libs.firebase.firestore
+    implementation libs.firebase.auth
+    implementation libs.firebase.firestore
 
-    // Capacitor - Keeping only the core dependency
+    // Capacitor
     implementation project(':capacitor-android')
-    // implementation project(':capacitor-app')
-    // implementation project(':capacitor-camera')
-    // implementation project(':capacitor-status-bar')
-    // implementation project(':capacitor-community-bluetooth-le')
-    // implementation project(':capacitor-community-sqlite')
-    // implementation 'androidx.webkit:webkit:1.9.0'
+    implementation project(':capacitor-app')
+    implementation project(':capacitor-camera')
+    implementation project(':capacitor-status-bar')
+    implementation project(':capacitor-community-bluetooth-le')
+    implementation project(':capacitor-community-sqlite')
+    implementation 'androidx.webkit:webkit:1.9.0' // Added for modern webview features
 }
