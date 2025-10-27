@@ -1,7 +1,7 @@
+
 "use client";
 
 import { useState, useEffect } from 'react';
-import { App } from '@capacitor/app';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, AlertTriangle, Loader2, PlayCircle, Radio } from 'lucide-react';
@@ -10,44 +10,32 @@ import { useToast } from '@/hooks/use-toast';
 
 export default function DiagnosticTestPage() {
   const { toast } = useToast();
-  const [capacitorStatus, setCapacitorStatus] = useState<'waiting' | 'ready'>('waiting');
+  const [jsStatus, setJsStatus] = useState<'waiting' | 'loaded'>('waiting');
+  const [capacitorStatus, setCapacitorStatus] = useState<'untested' | 'ready' | 'unavailable'>('untested');
   const [firebaseStatus, setFirebaseStatus] = useState<'idle' | 'initializing' | 'success' | 'error'>('idle');
   const [firebaseError, setFirebaseError] = useState<string | null>(null);
 
+  // Test 1: Does JavaScript run?
   useEffect(() => {
-    // This effect runs once when the component mounts.
-    // It sets up a listener for the Capacitor 'appStateChange' event.
-    const setupListener = async () => {
-      // The 'active' property tells us if the app is in the foreground.
-      // Getting this state successfully is a good sign the bridge is alive.
-      const initialState = await App.getState();
-      if (initialState.isActive) {
-        setCapacitorStatus('ready');
-      }
-
-      // Add a listener that will also set the status to ready when the app becomes active.
-      App.addListener('appStateChange', ({ isActive }) => {
-        if (isActive) {
-          setCapacitorStatus('ready');
-        }
-      });
-    };
-
-    // We check for App.getLaunchUrl because this code only works in a native environment.
-    if (typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform()) {
-        setupListener();
-    } else {
-        // If not in a native app, just set to ready for browser testing.
-        setCapacitorStatus('ready');
-    }
-
+    // If this runs, JavaScript is executing in the webview.
+    setJsStatus('loaded');
   }, []);
 
+  // Test 2: Can we detect the Capacitor environment?
+  useEffect(() => {
+    if (typeof window !== 'undefined' && (window as any).Capacitor?.isNativePlatform()) {
+        setCapacitorStatus('ready');
+    } else {
+        setCapacitorStatus('unavailable');
+    }
+  }, []);
+
+
+  // Test 3: Manual Firebase Initialization
   const handleInitializeFirebase = () => {
     setFirebaseStatus('initializing');
     setFirebaseError(null);
     try {
-      // This is the function we suspect might be causing the crash
       const services = initializeFirebaseServices();
       if (services) {
         setFirebaseStatus('success');
@@ -71,26 +59,48 @@ export default function DiagnosticTestPage() {
             U-Dry Startup Diagnostic Panel
           </CardTitle>
           <CardDescription>
-            This page tests the interaction between the web view and the native Capacitor layer.
+            This page runs a series of tests to diagnose app startup issues.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Test 1: Capacitor Bridge Status</CardTitle>
-            </CardHeader>
+            <CardHeader><CardTitle className="text-lg">Test 1: Web View & JavaScript</CardTitle></CardHeader>
             <CardContent>
-              {capacitorStatus === 'waiting' && (
+              {jsStatus === 'waiting' && (
                 <div className="flex items-center text-orange-600">
                   <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                  <span>Waiting for signal from native app...</span>
+                  <span>Waiting for JavaScript to execute...</span>
                 </div>
               )}
-              {capacitorStatus === 'ready' && (
+              {jsStatus === 'loaded' && (
                 <div className="flex items-center text-green-600 font-semibold">
                   <CheckCircle className="mr-2 h-4 w-4" />
-                  <span>Capacitor Bridge is Ready!</span>
+                  <span>Success! The web view is running JavaScript.</span>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+          
+          <Card>
+            <CardHeader><CardTitle className="text-lg">Test 2: Capacitor Bridge</CardTitle></CardHeader>
+            <CardContent>
+              {capacitorStatus === 'untested' && (
+                <div className="flex items-center text-muted-foreground">
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  <span>Checking for native environment...</span>
+                </div>
+              )}
+               {capacitorStatus === 'ready' && (
+                <div className="flex items-center text-green-600 font-semibold">
+                  <CheckCircle className="mr-2 h-4 w-4" />
+                  <span>Success! App is running in a native Capacitor container.</span>
+                </div>
+              )}
+               {capacitorStatus === 'unavailable' && (
+                <div className="flex items-center text-orange-600">
+                  <AlertTriangle className="mr-2 h-4 w-4" />
+                  <span>Note: Not running in a native Capacitor container (this is expected in a browser).</span>
                 </div>
               )}
             </CardContent>
@@ -98,13 +108,13 @@ export default function DiagnosticTestPage() {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg">Test 2: Manual Firebase Initialization</CardTitle>
+              <CardTitle className="text-lg">Test 3: Manual Firebase Initialization</CardTitle>
               <CardDescription>
-                Click this button to manually attempt initializing Firebase. This simulates what the app tries to do on startup.
+                Click this button to manually attempt initializing Firebase services.
               </CardDescription>
             </CardHeader>
             <CardContent>
-                <Button onClick={handleInitializeFirebase} disabled={capacitorStatus !== 'ready' || firebaseStatus === 'initializing'}>
+                <Button onClick={handleInitializeFirebase} disabled={jsStatus !== 'loaded' || firebaseStatus === 'initializing'}>
                     <PlayCircle className="mr-2 h-4 w-4" />
                     Attempt to Initialize Firebase
                 </Button>
@@ -118,7 +128,7 @@ export default function DiagnosticTestPage() {
                      {firebaseStatus === 'success' && (
                          <div className="flex items-center text-green-600 font-semibold">
                             <CheckCircle className="mr-2 h-4 w-4" />
-                            <span>Firebase Initialized Successfully. The crash is not caused by this function alone.</span>
+                            <span>Firebase Initialized Successfully on demand.</span>
                         </div>
                     )}
                      {firebaseStatus === 'error' && (
