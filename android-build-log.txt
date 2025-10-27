@@ -25,237 +25,370 @@ Build was configured to prefer settings repositories over project repositories b
 Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
 Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
 
-> Task :app:preBuild UP-TO-DATE
 > Task :capacitor-android:preBuild UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:preBuild UP-TO-DATE
+> Task :app:preBuild UP-TO-DATE
 > Task :capacitor-camera:preBuild UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:preBuild UP-TO-DATE
 > Task :capacitor-community-sqlite:preBuild UP-TO-DATE
-> Task :app:preDebugBuild UP-TO-DATE
-> Task :capacitor-status-bar:preBuild UP-TO-DATE
 > Task :capacitor-app:preBuild UP-TO-DATE
-> Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-status-bar:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :capacitor-app:preDebugBuild UP-TO-DATE
+> Task :capacitor-camera:preDebugBuild UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:preDebugBuild UP-TO-DATE
 > Task :capacitor-community-sqlite:preDebugBuild UP-TO-DATE
-> Task :capacitor-app:preDebugBuild UP-TO-DATE
+> Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-app:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-app:generateDebugResValues UP-TO-DATE
+> Task :capacitor-camera:writeDebugAarMetadata UP-TO-DATE
 > Task :capacitor-status-bar:preDebugBuild UP-TO-DATE
-> Task :capacitor-camera:preDebugBuild UP-TO-DATE
 > Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
-> Task :capacitor-status-bar:generateDebugResValues
+> Task :capacitor-app:generateDebugResources UP-TO-DATE
 > Task :app:checkKotlinGradlePluginConfigurationErrors
-> Task :capacitor-app:generateDebugResValues
-> Task :capacitor-app:writeDebugAarMetadata
-> Task :capacitor-android:generateDebugResValues
-> Task :capacitor-community-bluetooth-le:generateDebugResValues
-> Task :capacitor-community-bluetooth-le:writeDebugAarMetadata
-> Task :capacitor-status-bar:writeDebugAarMetadata
-> Task :capacitor-android:writeDebugAarMetadata
-> Task :capacitor-app:generateDebugResources
-> Task :app:generateDebugBuildConfig
-> Task :capacitor-camera:generateDebugResValues
-> Task :app:generateDebugResValues
-> Task :capacitor-community-sqlite:generateDebugResValues
-> Task :capacitor-camera:writeDebugAarMetadata
-> Task :capacitor-community-bluetooth-le:generateDebugResources
-> Task :capacitor-camera:generateDebugResources
-> Task :capacitor-android:generateDebugResources
-> Task :capacitor-community-sqlite:writeDebugAarMetadata
-> Task :app:processDebugGoogleServices
-> Task :capacitor-community-sqlite:generateDebugResources
-> Task :capacitor-status-bar:generateDebugResources
-> Task :capacitor-app:packageDebugResources
-> Task :capacitor-community-bluetooth-le:packageDebugResources
-> Task :capacitor-camera:packageDebugResources
-> Task :capacitor-app:extractDeepLinksDebug
-> Task :capacitor-community-bluetooth-le:extractDeepLinksDebug
-> Task :capacitor-status-bar:packageDebugResources
-> Task :capacitor-camera:extractDeepLinksDebug
-> Task :capacitor-status-bar:extractDeepLinksDebug
-> Task :capacitor-community-sqlite:packageDebugResources
-> Task :capacitor-community-sqlite:extractDeepLinksDebug
-> Task :capacitor-android:packageDebugResources
-> Task :capacitor-app:processDebugManifest
-> Task :capacitor-community-bluetooth-le:processDebugManifest
-> Task :capacitor-android:extractDeepLinksDebug
-> Task :capacitor-camera:processDebugManifest
-> Task :capacitor-status-bar:processDebugManifest
-> Task :capacitor-community-sqlite:processDebugManifest
-> Task :capacitor-app:compileDebugLibraryResources
-> Task :capacitor-status-bar:compileDebugLibraryResources
-> Task :capacitor-community-sqlite:compileDebugLibraryResources
-> Task :capacitor-community-bluetooth-le:compileDebugLibraryResources
-> Task :capacitor-camera:compileDebugLibraryResources
-> Task :capacitor-community-sqlite:parseDebugLocalResources
-> Task :capacitor-android:processDebugManifest
-> Task :capacitor-camera:parseDebugLocalResources
-> Task :capacitor-app:parseDebugLocalResources
-> Task :capacitor-app:javaPreCompileDebug
-> Task :capacitor-status-bar:parseDebugLocalResources
-> Task :capacitor-community-bluetooth-le:checkKotlinGradlePluginConfigurationErrors
-> Task :capacitor-android:parseDebugLocalResources
-> Task :capacitor-camera:javaPreCompileDebug
-> Task :capacitor-community-bluetooth-le:parseDebugLocalResources
-> Task :capacitor-community-bluetooth-le:javaPreCompileDebug
-> Task :capacitor-android:compileDebugLibraryResources
-> Task :capacitor-camera:generateDebugRFile
-> Task :capacitor-app:generateDebugRFile
-> Task :capacitor-status-bar:generateDebugRFile
-> Task :capacitor-status-bar:javaPreCompileDebug
-> Task :capacitor-community-sqlite:generateDebugRFile
-> Task :capacitor-app:mergeDebugShaders
+> Task :capacitor-status-bar:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-community-sqlite:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-camera:generateDebugResValues UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugResValues UP-TO-DATE
+> Task :capacitor-android:writeDebugAarMetadata UP-TO-DATE
+> Task :capacitor-status-bar:generateDebugResValues UP-TO-DATE
+> Task :capacitor-camera:generateDebugResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugResources UP-TO-DATE
+> Task :app:generateDebugBuildConfig UP-TO-DATE
+> Task :capacitor-android:generateDebugResValues UP-TO-DATE
+> Task :capacitor-community-sqlite:generateDebugResValues UP-TO-DATE
+> Task :capacitor-app:packageDebugResources UP-TO-DATE
+> Task :capacitor-status-bar:generateDebugResources UP-TO-DATE
+> Task :capacitor-app:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-android:generateDebugResources UP-TO-DATE
+> Task :capacitor-community-sqlite:generateDebugResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:packageDebugResources UP-TO-DATE
+> Task :capacitor-status-bar:packageDebugResources UP-TO-DATE
+> Task :capacitor-camera:packageDebugResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-status-bar:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-camera:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:packageDebugResources UP-TO-DATE
+> Task :capacitor-app:processDebugManifest UP-TO-DATE
+> Task :capacitor-android:packageDebugResources UP-TO-DATE
+> Task :capacitor-community-sqlite:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-android:extractDeepLinksDebug UP-TO-DATE
+> Task :capacitor-app:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:processDebugManifest UP-TO-DATE
+> Task :capacitor-camera:processDebugManifest UP-TO-DATE
+> Task :capacitor-status-bar:processDebugManifest UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-camera:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-android:processDebugManifest UP-TO-DATE
+> Task :capacitor-community-sqlite:processDebugManifest UP-TO-DATE
+> Task :capacitor-status-bar:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-app:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-app:generateDebugRFile UP-TO-DATE
+> Task :capacitor-app:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-android:compileDebugLibraryResources UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-camera:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-status-bar:parseDebugLocalResources UP-TO-DATE
+> Task :capacitor-app:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-community-sqlite:parseDebugLocalResources UP-TO-DATE
 > Task :capacitor-app:compileDebugShaders NO-SOURCE
+> Task :capacitor-android:parseDebugLocalResources UP-TO-DATE
 > Task :capacitor-app:generateDebugAssets UP-TO-DATE
-> Task :capacitor-android:javaPreCompileDebug
-> Task :capacitor-status-bar:mergeDebugShaders
-> Task :capacitor-camera:mergeDebugShaders
-> Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
-> Task :capacitor-community-bluetooth-le:mergeDebugShaders
-> Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
-> Task :capacitor-android:mergeDebugShaders
+> Task :capacitor-community-bluetooth-le:generateDebugRFile UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:checkKotlinGradlePluginConfigurationErrors
+> Task :capacitor-camera:generateDebugRFile UP-TO-DATE
+> Task :capacitor-status-bar:generateDebugRFile UP-TO-DATE
+> Task :capacitor-camera:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:generateDebugRFile UP-TO-DATE
+> Task :capacitor-android:generateDebugRFile UP-TO-DATE
+> Task :capacitor-app:packageDebugAssets UP-TO-DATE
+> Task :capacitor-status-bar:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-app:processDebugJavaRes NO-SOURCE
+> Task :capacitor-community-bluetooth-le:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-camera:mergeDebugShaders UP-TO-DATE
 > Task :capacitor-community-bluetooth-le:compileDebugShaders NO-SOURCE
 > Task :capacitor-community-bluetooth-le:generateDebugAssets UP-TO-DATE
-> Task :capacitor-camera:compileDebugShaders NO-SOURCE
-> Task :capacitor-android:compileDebugShaders NO-SOURCE
-> Task :capacitor-camera:generateDebugAssets UP-TO-DATE
-> Task :capacitor-android:generateDebugAssets UP-TO-DATE
-> Task :capacitor-community-bluetooth-le:generateDebugRFile
-> Task :capacitor-android:generateDebugRFile
-> Task :capacitor-community-bluetooth-le:packageDebugAssets
-> Task :capacitor-app:packageDebugAssets
-> Task :capacitor-status-bar:packageDebugAssets
-> Task :capacitor-camera:packageDebugAssets
-> Task :capacitor-camera:processDebugJavaRes NO-SOURCE
-> Task :capacitor-app:processDebugJavaRes NO-SOURCE
-> Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
-> Task :capacitor-android:packageDebugAssets
-> Task :capacitor-status-bar:mergeDebugJniLibFolders
-> Task :capacitor-community-bluetooth-le:mergeDebugJniLibFolders
-> Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-community-bluetooth-le:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-app:mergeDebugJniLibFolders
-> Task :capacitor-camera:mergeDebugJniLibFolders
-> Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-status-bar:copyDebugJniLibsProjectOnly
+> Task :capacitor-android:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-status-bar:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-app:mergeDebugJniLibFolders UP-TO-DATE
 > Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-community-bluetooth-le:copyDebugJniLibsProjectOnly
-> Task :capacitor-camera:copyDebugJniLibsProjectOnly
-> Task :capacitor-app:copyDebugJniLibsProjectOnly
-> Task :capacitor-community-sqlite:mergeDebugShaders
+> Task :capacitor-community-bluetooth-le:packageDebugAssets UP-TO-DATE
+> Task :capacitor-camera:compileDebugShaders NO-SOURCE
+> Task :capacitor-camera:generateDebugAssets UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
+> Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
+> Task :capacitor-app:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-camera:packageDebugAssets UP-TO-DATE
+> Task :capacitor-camera:processDebugJavaRes NO-SOURCE
+> Task :capacitor-community-bluetooth-le:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-camera:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-status-bar:packageDebugAssets UP-TO-DATE
+> Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
+> Task :capacitor-camera:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-status-bar:mergeDebugJniLibFolders UP-TO-DATE
+> Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-status-bar:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-community-sqlite:javaPreCompileDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:mergeDebugShaders UP-TO-DATE
 > Task :capacitor-community-sqlite:compileDebugShaders NO-SOURCE
 > Task :capacitor-community-sqlite:generateDebugAssets UP-TO-DATE
-> Task :capacitor-community-sqlite:packageDebugAssets
-> Task :capacitor-community-sqlite:javaPreCompileDebug
-> Task :capacitor-community-sqlite:mergeDebugJniLibFolders
+> Task :capacitor-community-sqlite:packageDebugAssets UP-TO-DATE
+> Task :capacitor-community-sqlite:mergeDebugJniLibFolders UP-TO-DATE
 > Task :capacitor-community-sqlite:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly
-> Task :app:mapDebugSourceSetPaths
-> Task :app:generateDebugResources
-> Task :app:checkDebugAarMetadata
-
-> Task :capacitor-android:compileDebugJavaWithJavac
-Note: Some input files use unchecked or unsafe operations.
-Note: Recompile with -Xlint:unchecked for details.
-
+> Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-android:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-android:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-android:mergeDebugShaders UP-TO-DATE
+> Task :capacitor-android:compileDebugShaders NO-SOURCE
+> Task :capacitor-android:generateDebugAssets UP-TO-DATE
+> Task :app:checkDebugAarMetadata UP-TO-DATE
+> Task :app:generateDebugResValues UP-TO-DATE
+> Task :capacitor-android:packageDebugAssets UP-TO-DATE
+> Task :app:processDebugGoogleServices UP-TO-DATE
 > Task :capacitor-android:processDebugJavaRes NO-SOURCE
-> Task :capacitor-android:mergeDebugJniLibFolders
+> Task :capacitor-android:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-android:mergeDebugJniLibFolders UP-TO-DATE
 > Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
-> Task :capacitor-android:bundleLibCompileToJarDebug
-> Task :capacitor-android:copyDebugJniLibsProjectOnly
-> Task :capacitor-android:bundleLibRuntimeToDirDebug
+> Task :capacitor-android:copyDebugJniLibsProjectOnly UP-TO-DATE
+> Task :capacitor-app:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-status-bar:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-app:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :app:mapDebugSourceSetPaths UP-TO-DATE
+> Task :capacitor-camera:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-community-sqlite:compileDebugJavaWithJavac UP-TO-DATE
+> Task :capacitor-status-bar:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-app:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :app:generateDebugResources UP-TO-DATE
+> Task :capacitor-camera:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-status-bar:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-camera:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-community-sqlite:processDebugJavaRes UP-TO-DATE
+> Task :capacitor-community-sqlite:bundleLibRuntimeToDirDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:compileDebugKotlin UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:compileDebugJavaWithJavac NO-SOURCE
+> Task :capacitor-community-bluetooth-le:bundleLibCompileToJarDebug UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:processDebugJavaRes UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:bundleLibRuntimeToDirDebug UP-TO-DATE
 > Task :app:packageDebugResources
-> Task :app:parseDebugLocalResources
+> Task :app:parseDebugLocalResources UP-TO-DATE
 > Task :app:createDebugCompatibleScreenManifests
-> Task :app:extractDeepLinksDebug
-> Task :capacitor-status-bar:compileDebugJavaWithJavac
-> Task :capacitor-app:compileDebugJavaWithJavac
-> Task :capacitor-status-bar:bundleLibCompileToJarDebug
-> Task :capacitor-app:bundleLibCompileToJarDebug
-> Task :capacitor-app:bundleLibRuntimeToDirDebug
-> Task :capacitor-status-bar:bundleLibRuntimeToDirDebug
-> Task :app:processDebugMainManifest
-> Task :app:processDebugManifest
-> Task :app:processDebugManifestForPackage
-> Task :app:javaPreCompileDebug
-> Task :app:mergeDebugShaders
+> Task :app:extractDeepLinksDebug UP-TO-DATE
+
+> Task :app:processDebugMainManifest FAILED
+/Users/leonli/Desktop/udry-umbrella-share-app-v2/android/app/src/main/AndroidManifest.xml Error:
+	uses-sdk:minSdkVersion 22 cannot be smaller than version 23 declared in library [com.google.firebase:firebase-auth:23.0.0] /Users/leonli/.gradle/caches/transforms-4/234851f01d20277f6244f5224665d599/transformed/jetified-firebase-auth-23.0.0/AndroidManifest.xml as the library might be using APIs not available in 22
+	Suggestion: use a compatible library with a minSdk of at most 22,
+		or increase this project's minSdk version to at least 23,
+		or use tools:overrideLibrary="com.google.firebase.auth" to force usage (may lead to runtime failures)
+
+See https://developer.android.com/r/studio-ui/build/manifest-merger for more information about the manifest merger.
+
+
+> Task :app:javaPreCompileDebug UP-TO-DATE
+> Task :app:mergeDebugShaders UP-TO-DATE
 > Task :app:compileDebugShaders NO-SOURCE
 > Task :app:generateDebugAssets UP-TO-DATE
-> Task :capacitor-camera:compileDebugJavaWithJavac
-> Task :capacitor-camera:bundleLibCompileToJarDebug
-> Task :app:mergeDebugAssets
 > Task :app:mergeDebugResources
-> Task :capacitor-camera:bundleLibRuntimeToDirDebug
+> Task :app:mergeDebugAssets
 > Task :app:compressDebugAssets
-> Task :app:desugarDebugFileDependencies
+> Task :app:checkDebugDuplicateClasses UP-TO-DATE
+> Task :app:desugarDebugFileDependencies UP-TO-DATE
 > Task :app:mergeDebugStartupProfile UP-TO-DATE
-> Task :app:mergeDebugJniLibFolders
-> Task :app:validateSigningDebug
-> Task :app:writeDebugAppMetadata
-> Task :app:writeDebugSigningConfigVersions
-> Task :app:checkDebugDuplicateClasses
-> Task :app:mergeDebugNativeLibs
+> Task :app:mergeExtDexDebug UP-TO-DATE
+> Task :app:mergeLibDexDebug UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders UP-TO-DATE
+> Task :app:mergeDebugNativeLibs UP-TO-DATE
+> Task :app:stripDebugDebugSymbols UP-TO-DATE
+> Task :app:validateSigningDebug UP-TO-DATE
+> Task :app:writeDebugAppMetadata UP-TO-DATE
+> Task :app:writeDebugSigningConfigVersions UP-TO-DATE
 
-> Task :app:stripDebugDebugSymbols
-Unable to strip the following libraries, packaging them as they are: libsqlcipher.so.
+FAILURE: Build failed with an exception.
 
-> Task :app:processDebugResources
+* What went wrong:
+Execution failed for task ':app:processDebugMainManifest'.
+> Manifest merger failed : uses-sdk:minSdkVersion 22 cannot be smaller than version 23 declared in library [com.google.firebase:firebase-auth:23.0.0] /Users/leonli/.gradle/caches/transforms-4/234851f01d20277f6244f5224665d599/transformed/jetified-firebase-auth-23.0.0/AndroidManifest.xml as the library might be using APIs not available in 22
+  	Suggestion: use a compatible library with a minSdk of at most 22,
+  		or increase this project's minSdk version to at least 23,
+  		or use tools:overrideLibrary="com.google.firebase.auth" to force usage (may lead to runtime failures)
 
-> Task :capacitor-community-sqlite:compileDebugJavaWithJavac
-Note: Some input files use unchecked or unsafe operations.
-Note: Recompile with -Xlint:unchecked for details.
+* Try:
+> Run with --info or --debug option to get more log output.
+> Run with --scan to get full insights.
+> Get more help at https://help.gradle.org.
 
-> Task :capacitor-community-sqlite:bundleLibCompileToJarDebug
-> Task :capacitor-community-sqlite:processDebugJavaRes
-> Task :capacitor-community-sqlite:bundleLibRuntimeToDirDebug
+* Exception is:
+org.gradle.api.tasks.TaskExecutionException: Execution failed for task ':app:processDebugMainManifest'.
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.lambda$executeIfValid$1(ExecuteActionsTaskExecuter.java:130)
+	at org.gradle.internal.Try$Failure.ifSuccessfulOrElse(Try.java:282)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:128)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:200)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:195)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:80)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:463)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
+Caused by: java.lang.RuntimeException: Manifest merger failed : uses-sdk:minSdkVersion 22 cannot be smaller than version 23 declared in library [com.google.firebase:firebase-auth:23.0.0] /Users/leonli/.gradle/caches/transforms-4/234851f01d20277f6244f5224665d599/transformed/jetified-firebase-auth-23.0.0/AndroidManifest.xml as the library might be using APIs not available in 22
+	Suggestion: use a compatible library with a minSdk of at most 22,
+		or increase this project's minSdk version to at least 23,
+		or use tools:overrideLibrary="com.google.firebase.auth" to force usage (may lead to runtime failures)
+	at com.android.build.gradle.internal.tasks.manifest.ManifestHelperKt.mergeManifests(ManifestHelper.kt:125)
+	at com.android.build.gradle.internal.tasks.manifest.ManifestHelperKt.mergeManifests$default(ManifestHelper.kt:46)
+	at com.android.build.gradle.tasks.ProcessApplicationManifest.doTaskAction(ProcessApplicationManifest.kt:163)
+	at com.android.build.gradle.internal.tasks.NonIncrementalTask$taskAction$$inlined$recordTaskAction$1.invoke(BaseTask.kt:66)
+	at com.android.build.gradle.internal.tasks.Blocks.recordSpan(Blocks.java:51)
+	at com.android.build.gradle.internal.tasks.NonIncrementalTask.taskAction(NonIncrementalTask.kt:97)
+	at java.base/jdk.internal.reflect.DirectMethodHandleAccessor.invoke(Unknown Source)
+	at org.gradle.internal.reflect.JavaMethod.invoke(JavaMethod.java:125)
+	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.doExecute(StandardTaskAction.java:58)
+	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:51)
+	at org.gradle.api.internal.project.taskfactory.StandardTaskAction.execute(StandardTaskAction.java:29)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$3.run(TaskExecution.java:244)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:29)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$1.execute(DefaultBuildOperationRunner.java:26)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.run(DefaultBuildOperationRunner.java:47)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.run(DefaultBuildOperationExecutor.java:68)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeAction(TaskExecution.java:229)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeActions(TaskExecution.java:212)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.executeWithPreviousOutputFiles(TaskExecution.java:195)
+	at org.gradle.api.internal.tasks.execution.TaskExecution.execute(TaskExecution.java:162)
+	at org.gradle.internal.execution.steps.ExecuteStep.executeInternal(ExecuteStep.java:105)
+	at org.gradle.internal.execution.steps.ExecuteStep.access$000(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:59)
+	at org.gradle.internal.execution.steps.ExecuteStep$1.call(ExecuteStep.java:56)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:200)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:195)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:56)
+	at org.gradle.internal.execution.steps.ExecuteStep.execute(ExecuteStep.java:44)
+	at org.gradle.internal.execution.steps.CancelExecutionStep.execute(CancelExecutionStep.java:41)
+	at org.gradle.internal.execution.steps.TimeoutStep.executeWithoutTimeout(TimeoutStep.java:74)
+	at org.gradle.internal.execution.steps.TimeoutStep.execute(TimeoutStep.java:55)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:50)
+	at org.gradle.internal.execution.steps.PreCreateOutputParentsStep.execute(PreCreateOutputParentsStep.java:28)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:67)
+	at org.gradle.internal.execution.steps.RemovePreviousOutputsStep.execute(RemovePreviousOutputsStep.java:37)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:61)
+	at org.gradle.internal.execution.steps.BroadcastChangingOutputsStep.execute(BroadcastChangingOutputsStep.java:26)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:67)
+	at org.gradle.internal.execution.steps.CaptureOutputsAfterExecutionStep.execute(CaptureOutputsAfterExecutionStep.java:45)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:40)
+	at org.gradle.internal.execution.steps.ResolveInputChangesStep.execute(ResolveInputChangesStep.java:29)
+	at org.gradle.internal.execution.steps.BuildCacheStep.executeWithoutCache(BuildCacheStep.java:189)
+	at org.gradle.internal.execution.steps.BuildCacheStep.lambda$execute$1(BuildCacheStep.java:75)
+	at org.gradle.internal.Either$Right.fold(Either.java:175)
+	at org.gradle.internal.execution.caching.CachingState.fold(CachingState.java:62)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:73)
+	at org.gradle.internal.execution.steps.BuildCacheStep.execute(BuildCacheStep.java:48)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:46)
+	at org.gradle.internal.execution.steps.StoreExecutionStateStep.execute(StoreExecutionStateStep.java:35)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.executeBecause(SkipUpToDateStep.java:76)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.lambda$execute$2(SkipUpToDateStep.java:54)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:54)
+	at org.gradle.internal.execution.steps.SkipUpToDateStep.execute(SkipUpToDateStep.java:36)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:37)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsFinishedStep.execute(MarkSnapshottingInputsFinishedStep.java:27)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:49)
+	at org.gradle.internal.execution.steps.ResolveIncrementalCachingStateStep.executeDelegate(ResolveIncrementalCachingStateStep.java:27)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:71)
+	at org.gradle.internal.execution.steps.AbstractResolveCachingStateStep.execute(AbstractResolveCachingStateStep.java:39)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:65)
+	at org.gradle.internal.execution.steps.ResolveChangesStep.execute(ResolveChangesStep.java:36)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:106)
+	at org.gradle.internal.execution.steps.ValidateStep.execute(ValidateStep.java:55)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:64)
+	at org.gradle.internal.execution.steps.AbstractCaptureStateBeforeExecutionStep.execute(AbstractCaptureStateBeforeExecutionStep.java:43)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.executeWithNonEmptySources(AbstractSkipEmptyWorkStep.java:125)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:56)
+	at org.gradle.internal.execution.steps.AbstractSkipEmptyWorkStep.execute(AbstractSkipEmptyWorkStep.java:36)
+	at org.gradle.internal.execution.steps.legacy.MarkSnapshottingInputsStartedStep.execute(MarkSnapshottingInputsStartedStep.java:38)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:36)
+	at org.gradle.internal.execution.steps.LoadPreviousExecutionStateStep.execute(LoadPreviousExecutionStateStep.java:23)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:75)
+	at org.gradle.internal.execution.steps.HandleStaleOutputsStep.execute(HandleStaleOutputsStep.java:41)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.lambda$execute$0(AssignMutableWorkspaceStep.java:35)
+	at org.gradle.api.internal.tasks.execution.TaskExecution$4.withWorkspace(TaskExecution.java:289)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:31)
+	at org.gradle.internal.execution.steps.AssignMutableWorkspaceStep.execute(AssignMutableWorkspaceStep.java:22)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:40)
+	at org.gradle.internal.execution.steps.ChoosePipelineStep.execute(ChoosePipelineStep.java:23)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.lambda$execute$2(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:67)
+	at org.gradle.internal.execution.steps.ExecuteWorkBuildOperationFiringStep.execute(ExecuteWorkBuildOperationFiringStep.java:39)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:46)
+	at org.gradle.internal.execution.steps.IdentityCacheStep.execute(IdentityCacheStep.java:34)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:48)
+	at org.gradle.internal.execution.steps.IdentifyStep.execute(IdentifyStep.java:35)
+	at org.gradle.internal.execution.impl.DefaultExecutionEngine$1.execute(DefaultExecutionEngine.java:61)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.executeIfValid(ExecuteActionsTaskExecuter.java:127)
+	at org.gradle.api.internal.tasks.execution.ExecuteActionsTaskExecuter.execute(ExecuteActionsTaskExecuter.java:116)
+	at org.gradle.api.internal.tasks.execution.FinalizePropertiesTaskExecuter.execute(FinalizePropertiesTaskExecuter.java:46)
+	at org.gradle.api.internal.tasks.execution.ResolveTaskExecutionModeExecuter.execute(ResolveTaskExecutionModeExecuter.java:51)
+	at org.gradle.api.internal.tasks.execution.SkipTaskWithNoActionsExecuter.execute(SkipTaskWithNoActionsExecuter.java:57)
+	at org.gradle.api.internal.tasks.execution.SkipOnlyIfTaskExecuter.execute(SkipOnlyIfTaskExecuter.java:74)
+	at org.gradle.api.internal.tasks.execution.CatchExceptionTaskExecuter.execute(CatchExceptionTaskExecuter.java:36)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.executeTask(EventFiringTaskExecuter.java:77)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:55)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter$1.call(EventFiringTaskExecuter.java:52)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:200)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$CallableBuildOperationWorker.execute(DefaultBuildOperationRunner.java:195)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:66)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner$2.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:157)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.execute(DefaultBuildOperationRunner.java:59)
+	at org.gradle.internal.operations.DefaultBuildOperationRunner.call(DefaultBuildOperationRunner.java:53)
+	at org.gradle.internal.operations.DefaultBuildOperationExecutor.call(DefaultBuildOperationExecutor.java:73)
+	at org.gradle.api.internal.tasks.execution.EventFiringTaskExecuter.execute(EventFiringTaskExecuter.java:52)
+	at org.gradle.execution.plan.LocalTaskNodeExecutor.execute(LocalTaskNodeExecutor.java:42)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:331)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$InvokeNodeExecutorsAction.execute(DefaultTaskExecutionGraph.java:318)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.lambda$execute$0(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.internal.operations.CurrentBuildOperationRef.with(CurrentBuildOperationRef.java:80)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:314)
+	at org.gradle.execution.taskgraph.DefaultTaskExecutionGraph$BuildOperationAwareExecutionAction.execute(DefaultTaskExecutionGraph.java:303)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.execute(DefaultPlanExecutor.java:463)
+	at org.gradle.execution.plan.DefaultPlanExecutor$ExecutorWorker.run(DefaultPlanExecutor.java:380)
+	at org.gradle.internal.concurrent.ExecutorPolicy$CatchAndRecordFailures.onExecute(ExecutorPolicy.java:64)
+	at org.gradle.internal.concurrent.AbstractManagedExecutor$1.run(AbstractManagedExecutor.java:47)
 
-> Task :capacitor-community-bluetooth-le:compileDebugKotlin
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/BluetoothLe.kt:187:40 'enable(): Boolean' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/BluetoothLe.kt:198:40 'disable(): Boolean' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:153:22 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:161:19 'onCharacteristicRead(BluetoothGatt!, BluetoothGattCharacteristic!, Int): Unit' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:164:43 'getter for value: ByteArray!' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:208:22 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:216:19 'onCharacteristicChanged(BluetoothGatt!, BluetoothGattCharacteristic!): Unit' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:218:39 'getter for value: ByteArray!' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:237:22 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:245:19 'onDescriptorRead(BluetoothGatt!, BluetoothGattDescriptor!, Int): Unit' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:249:39 'getter for value: ByteArray!' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:396:40 'getParcelableExtra(String!): T?' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:533:28 'setter for value: ByteArray!' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:535:41 'writeCharacteristic(BluetoothGattCharacteristic!): Boolean' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:595:24 'setter for value: ByteArray!' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:596:45 'writeDescriptor(BluetoothGattDescriptor!): Boolean' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:664:24 'setter for value: ByteArray!' is deprecated. Deprecated in Java
-w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:665:41 'writeDescriptor(BluetoothGattDescriptor!): Boolean' is deprecated. Deprecated in Java
 
-> Task :capacitor-community-bluetooth-le:compileDebugJavaWithJavac NO-SOURCE
-> Task :capacitor-community-bluetooth-le:bundleLibCompileToJarDebug
-> Task :app:mergeExtDexDebug
-> Task :capacitor-community-bluetooth-le:processDebugJavaRes
-> Task :app:compileDebugKotlin NO-SOURCE
-> Task :capacitor-community-bluetooth-le:bundleLibRuntimeToDirDebug
-
-> Task :app:compileDebugJavaWithJavac
-Java compiler version 21 has deprecated support for compiling with source/target version 8.
-Try one of the following options:
-    1. [Recommended] Use Java toolchain with a lower language version
-    2. Set a higher source/target version
-    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
-For more details on how to configure these settings, see https://developer.android.com/build/jdks.
-To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
-warning: [options] source value 8 is obsolete and will be removed in a future release
-warning: [options] target value 8 is obsolete and will be removed in a future release
-warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
-3 warnings
-
-> Task :app:processDebugJavaRes NO-SOURCE
-> Task :app:dexBuilderDebug
-> Task :app:mergeLibDexDebug
-> Task :app:mergeProjectDexDebug
-> Task :app:mergeDebugJavaResource
-> Task :app:packageDebug
-> Task :app:createDebugApkListingFileRedirect
-> Task :app:assembleDebug
-
-BUILD SUCCESSFUL in 4s
-142 actionable tasks: 141 executed, 1 up-to-date
-
-Build Analyzer results available
+BUILD FAILED in 1s
+133 actionable tasks: 8 executed, 125 up-to-date
