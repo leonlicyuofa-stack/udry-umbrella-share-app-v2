@@ -1,101 +1,101 @@
-2025-10-27 21:47:59.444  5819-5819  nativeloader            com.udry.app                         D  Configuring clns-9 for other apk /data/app/~~z7BMD_PLXQih3xyQJXJy9w==/com.udry.app-A_PGZgNLvRHcLlOeSRWsqg==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~z7BMD_PLXQih3xyQJXJy9w==/com.udry.app-A_PGZgNLvRHcLlOeSRWsqg==/lib/arm64:/data/app/~~z7BMD_PLXQih3xyQJXJy9w==/com.udry.app-A_PGZgNLvRHcLlOeSRWsqg==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.udry.app
-2025-10-27 21:47:59.446  5819-5819  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 202956589; UID 10220; state: ENABLED
-2025-10-27 21:47:59.451  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781931feb8) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.453  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781931e298) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.457  5819-5819  GraphicsEnvironment     com.udry.app                         V  Currently set values for:
-2025-10-27 21:47:59.458  5819-5819  GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_pkgs=[]
-2025-10-27 21:47:59.458  5819-5819  GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_values=[]
-2025-10-27 21:47:59.458  5819-5819  GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in per-application setting
-2025-10-27 21:47:59.458  5819-5819  GraphicsEnvironment     com.udry.app                         V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
-2025-10-27 21:47:59.459  5819-5819  GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in ANGLE allowlist or settings, returning default
-2025-10-27 21:47:59.460  5819-5819  GraphicsEnvironment     com.udry.app                         V  Neither updatable production driver nor prerelease driver is supported.
-2025-10-27 21:47:59.474  5819-5819  FirebaseApp             com.udry.app                         I  Device unlocked: initializing all Firebase APIs for app [DEFAULT]
-2025-10-27 21:47:59.476  5819-5819  FirebaseInitProvider    com.udry.app                         I  FirebaseApp initialization successful
-2025-10-27 21:47:59.479  5819-5819  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 279646685; UID 10220; state: ENABLED
-2025-10-27 21:47:59.487  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb4000078193294b8) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.490  5819-5836  DisplayManager          com.udry.app                         I  Choreographer implicitly registered for the refresh rate.
-2025-10-27 21:47:59.501  5819-5819  AppCompatDelegate       com.udry.app                         D  Checking for metadata for AppLocalesMetadataHolderService : Service not found
-2025-10-27 21:47:59.502  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819325318) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.504  5819-5819  ashmem                  com.udry.app                         E  Pinning is deprecated since Android Q. Please use trim or other methods.
-2025-10-27 21:47:59.508  5819-5819  UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onCreate() START ---
-2025-10-27 21:47:59.521  5819-5819  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 309578419; UID 10220; state: ENABLED
-2025-10-27 21:47:59.523  5819-5819  DesktopModeFlags        com.udry.app                         D  Toggle override initialized to: OVERRIDE_UNSET
-2025-10-27 21:47:59.563  5819-5819  HWUI                    com.udry.app                         W  Image decoding logging dropped!
-2025-10-27 21:47:59.568  5819-5819  com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
-2025-10-27 21:47:59.570  5819-5819  com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
-2025-10-27 21:47:59.575  5819-5836  EGL_emulation           com.udry.app                         I  Opening libGLESv1_CM_emulation.so
-2025-10-27 21:47:59.577  5819-5836  EGL_emulation           com.udry.app                         I  Opening libGLESv2_emulation.so
-2025-10-27 21:47:59.579  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819329198) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.580  5819-5819  WebViewFactory          com.udry.app                         I  Loading com.google.android.webview version 141.0.7390.43 (code 739004333)
-2025-10-27 21:47:59.581  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781932aa98) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.582  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781932b0d8) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.583  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781932b3f8) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.584  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819327898) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.584  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781932adb8) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.585  5819-5819  ResourcesManager        com.udry.app                         V  The following library key has been added: ResourcesKey{ mHash=cbf767fa mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk,/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={420dpi always-compat} mLoaders=[]}
-2025-10-27 21:47:59.587  5819-5819  com.udry.app            com.udry.app                         W  Failed to find entry 'classes.dex': Entry not found
-2025-10-27 21:47:59.587  5819-5819  nativeloader            com.udry.app                         D  Configuring clns-10 for other apk /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
-2025-10-27 21:47:59.588  5819-5819  ApplicationLoaders      com.udry.app                         D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
-2025-10-27 21:47:59.591  5819-5819  com.udry.app            com.udry.app                         W  Loading /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/oat/arm64/base.odex non-executable as it requires an image which we failed to load
-2025-10-27 21:47:59.591  5819-5819  nativeloader            com.udry.app                         D  Configuring clns-11 for other apk /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
-2025-10-27 21:47:59.593  5819-5836  HWUI                    com.udry.app                         W  Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
-2025-10-27 21:47:59.594  5819-5836  HWUI                    com.udry.app                         W  Failed to initialize 101010-2 format, error = EGL_SUCCESS
-2025-10-27 21:47:59.613  5819-5819  cr_WVCFactoryProvider   com.udry.app                         I  version=141.0.7390.43 (739004333) minSdkVersion=29 multiprocess=true packageId=2 splits=<none>
-2025-10-27 21:47:59.614  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781932a458) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.623  5819-5819  nativeloader            com.udry.app                         D  Load /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
-2025-10-27 21:47:59.625  5819-5819  nativeloader            com.udry.app                         D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
-2025-10-27 21:47:59.628  5819-5841  chromium                com.udry.app                         E  [1027/214759.627723:ERROR:android_webview/browser/variations/variations_seed_loader.cc:39] Seed missing signature.
-2025-10-27 21:47:59.628  5819-5841  chromium                com.udry.app                         I  [1027/214759.628463:INFO:android_webview/browser/variations/variations_seed_loader.cc:67] Failed to open file for reading.: No such file or directory (2)
-2025-10-27 21:47:59.651  5819-5819  HWUI                    com.udry.app                         W  Image decoding logging dropped!
-2025-10-27 21:47:59.655  5819-5819  cr_LibraryLoader        com.udry.app                         I  Successfully loaded native library
-2025-10-27 21:47:59.657  5819-5819  cr_CachingUmaRecorder   com.udry.app                         I  Flushed 16 samples from 16 histograms, 0 samples were dropped.
-2025-10-27 21:47:59.661  5819-5819  cr_CombinedPProvider    com.udry.app                         I  #registerProvider() provider:WV.ak@372474 isPolicyCacheEnabled:false policyProvidersSize:0
-2025-10-27 21:47:59.664  5819-5819  cr_PolicyProvider       com.udry.app                         I  #setManagerAndSource() 0
-2025-10-27 21:47:59.668  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819325f98) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.671  5819-5819  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819329af8) locale list changing from [] to [en-US]
-2025-10-27 21:47:59.687  5819-5819  cr_CombinedPProvider    com.udry.app                         I  #linkNativeInternal() 1
-2025-10-27 21:47:59.693  5819-5819  cr_AppResProvider       com.udry.app                         I  #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
-2025-10-27 21:47:59.693  5819-5819  cr_PolicyProvider       com.udry.app                         I  #notifySettingsAvailable() 0
-2025-10-27 21:47:59.693  5819-5819  cr_CombinedPProvider    com.udry.app                         I  #onSettingsAvailable() 0
-2025-10-27 21:47:59.693  5819-5819  cr_CombinedPProvider    com.udry.app                         I  #flushPolicies()
-2025-10-27 21:47:59.750  5819-5819  chromium                com.udry.app                         W  [WARNING:android_webview/browser/network_service/net_helpers.cc:143] HTTP Cache size is: 20971520
-2025-10-27 21:47:59.796  5819-5819  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 352594277; UID 10220; state: ENABLED
-2025-10-27 21:47:59.801  5819-5819  Capacitor               com.udry.app                         D  Starting BridgeActivity
-2025-10-27 21:47:59.808  5819-5819  Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorCookies
-2025-10-27 21:47:59.810  5819-5819  Capacitor               com.udry.app                         D  Registering plugin instance: WebView
-2025-10-27 21:47:59.811  5819-5819  Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorHttp
-2025-10-27 21:47:59.812  5819-5819  Capacitor               com.udry.app                         D  Registering plugin instance: BluetoothLe
-2025-10-27 21:47:59.814  5819-5819  Capacitor               com.udry.app                         D  Registering plugin instance: App
-2025-10-27 21:47:59.815  5819-5819  Capacitor               com.udry.app                         D  Registering plugin instance: Camera
-2025-10-27 21:47:59.816  5819-5819  Capacitor               com.udry.app                         D  Registering plugin instance: StatusBar
-2025-10-27 21:47:59.828  5819-5819  Capacitor               com.udry.app                         W  Unable to read file at path public/plugins
-2025-10-27 21:47:59.831  5819-5819  Capacitor               com.udry.app                         D  Loading app at file:///android_asset/public/diag/index.html
-2025-10-27 21:47:59.839  5819-5879  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log"
-2025-10-27 21:47:59.848  5819-5879  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log.file"
-2025-10-27 21:47:59.850  5819-5879  MESA                    com.udry.app                         E  Failed to open rendernode: No such file or directory
-2025-10-27 21:47:59.858  5819-5861  cr_media                com.udry.app                         W  BLUETOOTH_CONNECT permission is missing.
-2025-10-27 21:47:59.883  5819-5861  cr_media                com.udry.app                         W  getBluetoothAdapter() requires BLUETOOTH permission
-2025-10-27 21:47:59.894  5819-5861  cr_media                com.udry.app                         W  registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
-2025-10-27 21:47:59.927  5819-5879  vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~z7BMD_PLXQih3xyQJXJy9w==/com.udry.app-A_PGZgNLvRHcLlOeSRWsqg==/lib/arm64'
-2025-10-27 21:47:59.994  5819-5879  vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~z7BMD_PLXQih3xyQJXJy9w==/com.udry.app-A_PGZgNLvRHcLlOeSRWsqg==/base.apk!/lib/arm64-v8a'
-2025-10-27 21:47:59.999  5819-5819  UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onCreate() (super.onCreate() finished) ---
-2025-10-27 21:48:00.051  5819-5819  Capacitor               com.udry.app                         D  App started
-2025-10-27 21:48:00.056  5819-5879  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.per.submit"
-2025-10-27 21:48:00.058  5819-5819  UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onStart() --- The activity is becoming visible to the user.
-2025-10-27 21:48:00.064  5819-5879  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.gallium.print.optio"
-2025-10-27 21:48:00.064  5819-5879  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.frame"
-2025-10-27 21:48:00.064  5819-5819  WindowOnBackDispatcher  com.udry.app                         W  OnBackInvokedCallback is not enabled for the application.
+2025-10-27 21:56:39.815  6695-6695  nativeloader            com.udry.app                         D  Configuring clns-9 for other apk /data/app/~~gWRHMhbZ3bOUCmq99u-hqQ==/com.udry.app-2b8O1dO_rAe1xhkO3XzAiA==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~gWRHMhbZ3bOUCmq99u-hqQ==/com.udry.app-2b8O1dO_rAe1xhkO3XzAiA==/lib/arm64:/data/app/~~gWRHMhbZ3bOUCmq99u-hqQ==/com.udry.app-2b8O1dO_rAe1xhkO3XzAiA==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.udry.app
+2025-10-27 21:56:39.817  6695-6695  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 202956589; UID 10220; state: ENABLED
+2025-10-27 21:56:39.829  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781931feb8) locale list changing from [] to [en-US]
+2025-10-27 21:56:39.830  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781931e298) locale list changing from [] to [en-US]
+2025-10-27 21:56:39.843  6695-6695  GraphicsEnvironment     com.udry.app                         V  Currently set values for:
+2025-10-27 21:56:39.843  6695-6695  GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_pkgs=[]
+2025-10-27 21:56:39.843  6695-6695  GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_values=[]
+2025-10-27 21:56:39.843  6695-6695  GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in per-application setting
+2025-10-27 21:56:39.843  6695-6695  GraphicsEnvironment     com.udry.app                         V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
+2025-10-27 21:56:39.843  6695-6695  GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in ANGLE allowlist or settings, returning default
+2025-10-27 21:56:39.843  6695-6695  GraphicsEnvironment     com.udry.app                         V  Neither updatable production driver nor prerelease driver is supported.
+2025-10-27 21:56:39.872  6695-6695  FirebaseApp             com.udry.app                         I  Device unlocked: initializing all Firebase APIs for app [DEFAULT]
+2025-10-27 21:56:39.875  6695-6695  FirebaseInitProvider    com.udry.app                         I  FirebaseApp initialization successful
+2025-10-27 21:56:39.879  6695-6695  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 279646685; UID 10220; state: ENABLED
+2025-10-27 21:56:39.921  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb4000078193294b8) locale list changing from [] to [en-US]
+2025-10-27 21:56:39.924  6695-6713  DisplayManager          com.udry.app                         I  Choreographer implicitly registered for the refresh rate.
+2025-10-27 21:56:39.972  6695-6695  AppCompatDelegate       com.udry.app                         D  Checking for metadata for AppLocalesMetadataHolderService : Service not found
+2025-10-27 21:56:39.979  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819325318) locale list changing from [] to [en-US]
+2025-10-27 21:56:39.986  6695-6695  ashmem                  com.udry.app                         E  Pinning is deprecated since Android Q. Please use trim or other methods.
+2025-10-27 21:56:39.997  6695-6695  UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onCreate() START ---
+2025-10-27 21:56:40.021  6695-6695  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 309578419; UID 10220; state: ENABLED
+2025-10-27 21:56:40.026  6695-6695  DesktopModeFlags        com.udry.app                         D  Toggle override initialized to: OVERRIDE_UNSET
+2025-10-27 21:56:40.087  6695-6713  EGL_emulation           com.udry.app                         I  Opening libGLESv1_CM_emulation.so
+2025-10-27 21:56:40.087  6695-6713  EGL_emulation           com.udry.app                         I  Opening libGLESv2_emulation.so
+2025-10-27 21:56:40.088  6695-6695  HWUI                    com.udry.app                         W  Image decoding logging dropped!
+2025-10-27 21:56:40.101  6695-6713  HWUI                    com.udry.app                         W  Failed to choose config with EGL_SWAP_BEHAVIOR_PRESERVED, retrying without...
+2025-10-27 21:56:40.103  6695-6713  HWUI                    com.udry.app                         W  Failed to initialize 101010-2 format, error = EGL_SUCCESS
+2025-10-27 21:56:40.107  6695-6695  com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
+2025-10-27 21:56:40.108  6695-6695  com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
+2025-10-27 21:56:40.121  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781932aa98) locale list changing from [] to [en-US]
+2025-10-27 21:56:40.121  6695-6695  WebViewFactory          com.udry.app                         I  Loading com.google.android.webview version 141.0.7390.43 (code 739004333)
+2025-10-27 21:56:40.123  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781932b3f8) locale list changing from [] to [en-US]
+2025-10-27 21:56:40.125  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819327898) locale list changing from [] to [en-US]
+2025-10-27 21:56:40.127  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781932adb8) locale list changing from [] to [en-US]
+2025-10-27 21:56:40.128  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819327ed8) locale list changing from [] to [en-US]
+2025-10-27 21:56:40.129  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819326f38) locale list changing from [] to [en-US]
+2025-10-27 21:56:40.129  6695-6695  ResourcesManager        com.udry.app                         V  The following library key has been added: ResourcesKey{ mHash=cbf767fa mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk,/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={420dpi always-compat} mLoaders=[]}
+2025-10-27 21:56:40.132  6695-6695  com.udry.app            com.udry.app                         W  Failed to find entry 'classes.dex': Entry not found
+2025-10-27 21:56:40.133  6695-6695  nativeloader            com.udry.app                         D  Configuring clns-10 for other apk /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk. target_sdk_version=36, uses_libraries=ALL, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+2025-10-27 21:56:40.142  6695-6695  ApplicationLoaders      com.udry.app                         D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
+2025-10-27 21:56:40.147  6695-6695  com.udry.app            com.udry.app                         W  Loading /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/oat/arm64/base.odex non-executable as it requires an image which we failed to load
+2025-10-27 21:56:40.148  6695-6695  nativeloader            com.udry.app                         D  Configuring clns-11 for other apk /data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk. target_sdk_version=36, uses_libraries=, library_path=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/lib/arm64:/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk!/lib/arm64-v8a:/data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
+2025-10-27 21:56:40.173  6695-6695  cr_WVCFactoryProvider   com.udry.app                         I  version=141.0.7390.43 (739004333) minSdkVersion=29 multiprocess=true packageId=2 splits=<none>
+2025-10-27 21:56:40.174  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb40000781932b0d8) locale list changing from [] to [en-US]
+2025-10-27 21:56:40.183  6695-6695  nativeloader            com.udry.app                         D  Load /data/app/~~XiY0isx8maBABkDxNp9NnA==/com.google.android.trichromelibrary_739004333-TaVC_upxYXFq2pcSiEULJQ==/base.apk!/lib/arm64-v8a/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
+2025-10-27 21:56:40.186  6695-6695  nativeloader            com.udry.app                         D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~dpI6mlk8dfcC1HOzOQVReQ==/com.google.android.webview-z3OcDqmtx2vCwfNZ8NlukQ==/base.apk): ok
+2025-10-27 21:56:40.198  6695-6718  chromium                com.udry.app                         E  [1027/215640.193767:ERROR:android_webview/browser/variations/variations_seed_loader.cc:39] Seed missing signature.
+2025-10-27 21:56:40.211  6695-6718  chromium                com.udry.app                         I  [1027/215640.210893:INFO:android_webview/browser/variations/variations_seed_loader.cc:67] Failed to open file for reading.: No such file or directory (2)
+2025-10-27 21:56:40.225  6695-6695  HWUI                    com.udry.app                         W  Image decoding logging dropped!
+2025-10-27 21:56:40.253  6695-6695  cr_LibraryLoader        com.udry.app                         I  Successfully loaded native library
+2025-10-27 21:56:40.259  6695-6695  cr_CachingUmaRecorder   com.udry.app                         I  Flushed 16 samples from 16 histograms, 0 samples were dropped.
+2025-10-27 21:56:40.270  6695-6695  cr_CombinedPProvider    com.udry.app                         I  #registerProvider() provider:WV.ak@4170386 isPolicyCacheEnabled:false policyProvidersSize:0
+2025-10-27 21:56:40.271  6695-6695  cr_PolicyProvider       com.udry.app                         I  #setManagerAndSource() 0
+2025-10-27 21:56:40.274  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819325f98) locale list changing from [] to [en-US]
+2025-10-27 21:56:40.276  6695-6695  com.udry.app            com.udry.app                         I  AssetManager2(0xb400007819329af8) locale list changing from [] to [en-US]
+2025-10-27 21:56:40.340  6695-6695  cr_CombinedPProvider    com.udry.app                         I  #linkNativeInternal() 1
+2025-10-27 21:56:40.346  6695-6695  cr_AppResProvider       com.udry.app                         I  #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
+2025-10-27 21:56:40.346  6695-6695  cr_PolicyProvider       com.udry.app                         I  #notifySettingsAvailable() 0
+2025-10-27 21:56:40.346  6695-6695  cr_CombinedPProvider    com.udry.app                         I  #onSettingsAvailable() 0
+2025-10-27 21:56:40.346  6695-6695  cr_CombinedPProvider    com.udry.app                         I  #flushPolicies()
+2025-10-27 21:56:40.463  6695-6695  chromium                com.udry.app                         W  [WARNING:android_webview/browser/network_service/net_helpers.cc:143] HTTP Cache size is: 20971520
+2025-10-27 21:56:40.526  6695-6695  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 352594277; UID 10220; state: ENABLED
+2025-10-27 21:56:40.542  6695-6695  Capacitor               com.udry.app                         D  Starting BridgeActivity
+2025-10-27 21:56:40.565  6695-6695  Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorCookies
+2025-10-27 21:56:40.566  6695-6695  Capacitor               com.udry.app                         D  Registering plugin instance: WebView
+2025-10-27 21:56:40.571  6695-6695  Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorHttp
+2025-10-27 21:56:40.572  6695-6695  Capacitor               com.udry.app                         D  Registering plugin instance: BluetoothLe
+2025-10-27 21:56:40.573  6695-6695  Capacitor               com.udry.app                         D  Registering plugin instance: App
+2025-10-27 21:56:40.573  6695-6695  Capacitor               com.udry.app                         D  Registering plugin instance: Camera
+2025-10-27 21:56:40.574  6695-6695  Capacitor               com.udry.app                         D  Registering plugin instance: StatusBar
+2025-10-27 21:56:40.597  6695-6695  Capacitor               com.udry.app                         W  Unable to read file at path public/plugins
+2025-10-27 21:56:40.601  6695-6695  Capacitor               com.udry.app                         D  Loading app at file:///android_asset/public/diag/index.html
+2025-10-27 21:56:40.616  6695-6738  cr_media                com.udry.app                         W  BLUETOOTH_CONNECT permission is missing.
+2025-10-27 21:56:40.618  6695-6738  cr_media                com.udry.app                         W  getBluetoothAdapter() requires BLUETOOTH permission
+2025-10-27 21:56:40.619  6695-6738  cr_media                com.udry.app                         W  registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
+2025-10-27 21:56:40.634  6695-6755  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log"
+2025-10-27 21:56:40.635  6695-6755  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log.file"
+2025-10-27 21:56:40.635  6695-6755  MESA                    com.udry.app                         E  Failed to open rendernode: No such file or directory
+2025-10-27 21:56:40.648  6695-6695  UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onCreate() (super.onCreate() finished) ---
+2025-10-27 21:56:40.661  6695-6695  Capacitor               com.udry.app                         D  App started
+2025-10-27 21:56:40.662  6695-6695  UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onStart() --- The activity is becoming visible to the user.
+2025-10-27 21:56:40.663  6695-6695  WindowOnBackDispatcher  com.udry.app                         W  OnBackInvokedCallback is not enabled for the application.
                                                                                                     Set 'android:enableOnBackInvokedCallback="true"' in the application manifest.
-2025-10-27 21:48:00.074  5819-5819  Capacitor/AppPlugin     com.udry.app                         D  Firing change: true
-2025-10-27 21:48:00.082  5819-5819  Capacitor/AppPlugin     com.udry.app                         V  Notifying listeners for event appStateChange
-2025-10-27 21:48:00.082  5819-5819  Capacitor/AppPlugin     com.udry.app                         D  No listeners found for event appStateChange
-2025-10-27 21:48:00.084  5819-5819  Capacitor               com.udry.app                         D  App resumed
-2025-10-27 21:48:00.084  5819-5819  UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onResume() --- The activity has come to the foreground.
-2025-10-27 21:48:00.117  5819-5879  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
-2025-10-27 21:48:00.121  5819-5819  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 349153669; UID 10220; state: ENABLED
-2025-10-27 21:48:00.125  5819-5819  HWUI                    com.udry.app                         W  Unknown dataspace 0
-2025-10-27 21:48:00.230  5819-5893  CameraManagerGlobal     com.udry.app                         I  Connecting to camera service
-2025-10-27 21:48:00.640  5819-5819  InsetsController        com.udry.app                         D  hide(ime(), fromIme=false)
-2025-10-27 21:48:00.642  5819-5819  ImeTracker              com.udry.app                         I  com.udry.app:c1d0eedd: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
-2025-10-27 21:48:01.615  5819-5824  com.udry.app            com.udry.app                         I  Compiler allocated 5111KB to compile void android.view.ViewRootImpl.performTraversals()
-2025-10-27 21:48:04.701  5819-5903  ProfileInstaller        com.udry.app                         D  Installing profile for com.udry.app
+2025-10-27 21:56:40.665  6695-6695  Capacitor/AppPlugin     com.udry.app                         D  Firing change: true
+2025-10-27 21:56:40.665  6695-6695  Capacitor/AppPlugin     com.udry.app                         V  Notifying listeners for event appStateChange
+2025-10-27 21:56:40.666  6695-6695  Capacitor/AppPlugin     com.udry.app                         D  No listeners found for event appStateChange
+2025-10-27 21:56:40.668  6695-6695  Capacitor               com.udry.app                         D  App resumed
+2025-10-27 21:56:40.668  6695-6695  UDRY_DIAGNOSTIC         com.udry.app                         D  --- MainActivity.onResume() --- The activity has come to the foreground.
+2025-10-27 21:56:40.681  6695-6755  vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~gWRHMhbZ3bOUCmq99u-hqQ==/com.udry.app-2b8O1dO_rAe1xhkO3XzAiA==/lib/arm64'
+2025-10-27 21:56:40.684  6695-6695  CompatChangeReporter    com.udry.app                         D  Compat change id reported: 349153669; UID 10220; state: ENABLED
+2025-10-27 21:56:40.686  6695-6755  vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~gWRHMhbZ3bOUCmq99u-hqQ==/com.udry.app-2b8O1dO_rAe1xhkO3XzAiA==/base.apk!/lib/arm64-v8a'
+2025-10-27 21:56:40.689  6695-6695  HWUI                    com.udry.app                         W  Unknown dataspace 0
+2025-10-27 21:56:40.694  6695-6755  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.per.submit"
+2025-10-27 21:56:40.694  6695-6755  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.gallium.print.optio"
+2025-10-27 21:56:40.694  6695-6755  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.frame"
+2025-10-27 21:56:40.714  6695-6755  libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
+2025-10-27 21:56:40.818  6695-6766  CameraManagerGlobal     com.udry.app                         I  Connecting to camera service
+2025-10-27 21:56:40.992  6695-6695  InsetsController        com.udry.app                         D  hide(ime(), fromIme=false)
+2025-10-27 21:56:40.993  6695-6695  ImeTracker              com.udry.app                         I  com.udry.app:3b0a5586: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
+2025-10-27 21:56:41.840  6695-6700  com.udry.app            com.udry.app                         I  Compiler allocated 5111KB to compile void android.view.ViewRootImpl.performTraversals()
+2025-10-27 21:56:45.817  6695-6782  ProfileInstaller        com.udry.app                         D  Installing profile for com.udry.app
