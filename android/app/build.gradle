@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.udry.app"
-        minSdk 23
+        minSdk 22
         targetSdk 35
         versionCode 4
         versionName "1.0.4"

@@ -1,0 +1,261 @@
+Executing tasks: [:app:assembleDebug] in project /Users/leonli/Desktop/udry-umbrella-share-app-v2/android
+
+
+> Configure project :capacitor-android
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file '../node_modules/@capacitor/android/capacitor/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file '../node_modules/@capacitor/android/capacitor/build.gradle'
+
+> Configure project :capacitor-app
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file '../node_modules/@capacitor/app/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file '../node_modules/@capacitor/app/android/build.gradle'
+
+> Configure project :capacitor-camera
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file '../node_modules/@capacitor/camera/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file '../node_modules/@capacitor/camera/android/build.gradle'
+
+> Configure project :capacitor-community-bluetooth-le
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file '../node_modules/@capacitor-community/bluetooth-le/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file '../node_modules/@capacitor-community/bluetooth-le/android/build.gradle'
+
+> Configure project :capacitor-community-sqlite
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file '../node_modules/@capacitor-community/sqlite/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file '../node_modules/@capacitor-community/sqlite/android/build.gradle'
+
+> Configure project :capacitor-status-bar
+Build was configured to prefer settings repositories over project repositories but repository 'Google' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
+Build was configured to prefer settings repositories over project repositories but repository 'MavenRepo' was added by build file '../node_modules/@capacitor/status-bar/android/build.gradle'
+
+> Task :app:preBuild UP-TO-DATE
+> Task :capacitor-android:preBuild UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:preBuild UP-TO-DATE
+> Task :capacitor-camera:preBuild UP-TO-DATE
+> Task :capacitor-community-sqlite:preBuild UP-TO-DATE
+> Task :app:preDebugBuild UP-TO-DATE
+> Task :capacitor-status-bar:preBuild UP-TO-DATE
+> Task :capacitor-app:preBuild UP-TO-DATE
+> Task :capacitor-android:preDebugBuild UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:preDebugBuild UP-TO-DATE
+> Task :capacitor-community-sqlite:preDebugBuild UP-TO-DATE
+> Task :capacitor-app:preDebugBuild UP-TO-DATE
+> Task :capacitor-status-bar:preDebugBuild UP-TO-DATE
+> Task :capacitor-camera:preDebugBuild UP-TO-DATE
+> Task :app:mergeDebugNativeDebugMetadata NO-SOURCE
+> Task :capacitor-status-bar:generateDebugResValues
+> Task :app:checkKotlinGradlePluginConfigurationErrors
+> Task :capacitor-app:generateDebugResValues
+> Task :capacitor-app:writeDebugAarMetadata
+> Task :capacitor-android:generateDebugResValues
+> Task :capacitor-community-bluetooth-le:generateDebugResValues
+> Task :capacitor-community-bluetooth-le:writeDebugAarMetadata
+> Task :capacitor-status-bar:writeDebugAarMetadata
+> Task :capacitor-android:writeDebugAarMetadata
+> Task :capacitor-app:generateDebugResources
+> Task :app:generateDebugBuildConfig
+> Task :capacitor-camera:generateDebugResValues
+> Task :app:generateDebugResValues
+> Task :capacitor-community-sqlite:generateDebugResValues
+> Task :capacitor-camera:writeDebugAarMetadata
+> Task :capacitor-community-bluetooth-le:generateDebugResources
+> Task :capacitor-camera:generateDebugResources
+> Task :capacitor-android:generateDebugResources
+> Task :capacitor-community-sqlite:writeDebugAarMetadata
+> Task :app:processDebugGoogleServices
+> Task :capacitor-community-sqlite:generateDebugResources
+> Task :capacitor-status-bar:generateDebugResources
+> Task :capacitor-app:packageDebugResources
+> Task :capacitor-community-bluetooth-le:packageDebugResources
+> Task :capacitor-camera:packageDebugResources
+> Task :capacitor-app:extractDeepLinksDebug
+> Task :capacitor-community-bluetooth-le:extractDeepLinksDebug
+> Task :capacitor-status-bar:packageDebugResources
+> Task :capacitor-camera:extractDeepLinksDebug
+> Task :capacitor-status-bar:extractDeepLinksDebug
+> Task :capacitor-community-sqlite:packageDebugResources
+> Task :capacitor-community-sqlite:extractDeepLinksDebug
+> Task :capacitor-android:packageDebugResources
+> Task :capacitor-app:processDebugManifest
+> Task :capacitor-community-bluetooth-le:processDebugManifest
+> Task :capacitor-android:extractDeepLinksDebug
+> Task :capacitor-camera:processDebugManifest
+> Task :capacitor-status-bar:processDebugManifest
+> Task :capacitor-community-sqlite:processDebugManifest
+> Task :capacitor-app:compileDebugLibraryResources
+> Task :capacitor-status-bar:compileDebugLibraryResources
+> Task :capacitor-community-sqlite:compileDebugLibraryResources
+> Task :capacitor-community-bluetooth-le:compileDebugLibraryResources
+> Task :capacitor-camera:compileDebugLibraryResources
+> Task :capacitor-community-sqlite:parseDebugLocalResources
+> Task :capacitor-android:processDebugManifest
+> Task :capacitor-camera:parseDebugLocalResources
+> Task :capacitor-app:parseDebugLocalResources
+> Task :capacitor-app:javaPreCompileDebug
+> Task :capacitor-status-bar:parseDebugLocalResources
+> Task :capacitor-community-bluetooth-le:checkKotlinGradlePluginConfigurationErrors
+> Task :capacitor-android:parseDebugLocalResources
+> Task :capacitor-camera:javaPreCompileDebug
+> Task :capacitor-community-bluetooth-le:parseDebugLocalResources
+> Task :capacitor-community-bluetooth-le:javaPreCompileDebug
+> Task :capacitor-android:compileDebugLibraryResources
+> Task :capacitor-camera:generateDebugRFile
+> Task :capacitor-app:generateDebugRFile
+> Task :capacitor-status-bar:generateDebugRFile
+> Task :capacitor-status-bar:javaPreCompileDebug
+> Task :capacitor-community-sqlite:generateDebugRFile
+> Task :capacitor-app:mergeDebugShaders
+> Task :capacitor-app:compileDebugShaders NO-SOURCE
+> Task :capacitor-app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:javaPreCompileDebug
+> Task :capacitor-status-bar:mergeDebugShaders
+> Task :capacitor-camera:mergeDebugShaders
+> Task :capacitor-status-bar:compileDebugShaders NO-SOURCE
+> Task :capacitor-community-bluetooth-le:mergeDebugShaders
+> Task :capacitor-status-bar:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:mergeDebugShaders
+> Task :capacitor-community-bluetooth-le:compileDebugShaders NO-SOURCE
+> Task :capacitor-community-bluetooth-le:generateDebugAssets UP-TO-DATE
+> Task :capacitor-camera:compileDebugShaders NO-SOURCE
+> Task :capacitor-android:compileDebugShaders NO-SOURCE
+> Task :capacitor-camera:generateDebugAssets UP-TO-DATE
+> Task :capacitor-android:generateDebugAssets UP-TO-DATE
+> Task :capacitor-community-bluetooth-le:generateDebugRFile
+> Task :capacitor-android:generateDebugRFile
+> Task :capacitor-community-bluetooth-le:packageDebugAssets
+> Task :capacitor-app:packageDebugAssets
+> Task :capacitor-status-bar:packageDebugAssets
+> Task :capacitor-camera:packageDebugAssets
+> Task :capacitor-camera:processDebugJavaRes NO-SOURCE
+> Task :capacitor-app:processDebugJavaRes NO-SOURCE
+> Task :capacitor-status-bar:processDebugJavaRes NO-SOURCE
+> Task :capacitor-android:packageDebugAssets
+> Task :capacitor-status-bar:mergeDebugJniLibFolders
+> Task :capacitor-community-bluetooth-le:mergeDebugJniLibFolders
+> Task :capacitor-status-bar:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-community-bluetooth-le:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-app:mergeDebugJniLibFolders
+> Task :capacitor-camera:mergeDebugJniLibFolders
+> Task :capacitor-camera:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-status-bar:copyDebugJniLibsProjectOnly
+> Task :capacitor-app:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-community-bluetooth-le:copyDebugJniLibsProjectOnly
+> Task :capacitor-camera:copyDebugJniLibsProjectOnly
+> Task :capacitor-app:copyDebugJniLibsProjectOnly
+> Task :capacitor-community-sqlite:mergeDebugShaders
+> Task :capacitor-community-sqlite:compileDebugShaders NO-SOURCE
+> Task :capacitor-community-sqlite:generateDebugAssets UP-TO-DATE
+> Task :capacitor-community-sqlite:packageDebugAssets
+> Task :capacitor-community-sqlite:javaPreCompileDebug
+> Task :capacitor-community-sqlite:mergeDebugJniLibFolders
+> Task :capacitor-community-sqlite:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-community-sqlite:copyDebugJniLibsProjectOnly
+> Task :app:mapDebugSourceSetPaths
+> Task :app:generateDebugResources
+> Task :app:checkDebugAarMetadata
+
+> Task :capacitor-android:compileDebugJavaWithJavac
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :capacitor-android:processDebugJavaRes NO-SOURCE
+> Task :capacitor-android:mergeDebugJniLibFolders
+> Task :capacitor-android:mergeDebugNativeLibs NO-SOURCE
+> Task :capacitor-android:bundleLibCompileToJarDebug
+> Task :capacitor-android:copyDebugJniLibsProjectOnly
+> Task :capacitor-android:bundleLibRuntimeToDirDebug
+> Task :app:packageDebugResources
+> Task :app:parseDebugLocalResources
+> Task :app:createDebugCompatibleScreenManifests
+> Task :app:extractDeepLinksDebug
+> Task :capacitor-status-bar:compileDebugJavaWithJavac
+> Task :capacitor-app:compileDebugJavaWithJavac
+> Task :capacitor-status-bar:bundleLibCompileToJarDebug
+> Task :capacitor-app:bundleLibCompileToJarDebug
+> Task :capacitor-app:bundleLibRuntimeToDirDebug
+> Task :capacitor-status-bar:bundleLibRuntimeToDirDebug
+> Task :app:processDebugMainManifest
+> Task :app:processDebugManifest
+> Task :app:processDebugManifestForPackage
+> Task :app:javaPreCompileDebug
+> Task :app:mergeDebugShaders
+> Task :app:compileDebugShaders NO-SOURCE
+> Task :app:generateDebugAssets UP-TO-DATE
+> Task :capacitor-camera:compileDebugJavaWithJavac
+> Task :capacitor-camera:bundleLibCompileToJarDebug
+> Task :app:mergeDebugAssets
+> Task :app:mergeDebugResources
+> Task :capacitor-camera:bundleLibRuntimeToDirDebug
+> Task :app:compressDebugAssets
+> Task :app:desugarDebugFileDependencies
+> Task :app:mergeDebugStartupProfile UP-TO-DATE
+> Task :app:mergeDebugJniLibFolders
+> Task :app:validateSigningDebug
+> Task :app:writeDebugAppMetadata
+> Task :app:writeDebugSigningConfigVersions
+> Task :app:checkDebugDuplicateClasses
+> Task :app:mergeDebugNativeLibs
+
+> Task :app:stripDebugDebugSymbols
+Unable to strip the following libraries, packaging them as they are: libsqlcipher.so.
+
+> Task :app:processDebugResources
+
+> Task :capacitor-community-sqlite:compileDebugJavaWithJavac
+Note: Some input files use unchecked or unsafe operations.
+Note: Recompile with -Xlint:unchecked for details.
+
+> Task :capacitor-community-sqlite:bundleLibCompileToJarDebug
+> Task :capacitor-community-sqlite:processDebugJavaRes
+> Task :capacitor-community-sqlite:bundleLibRuntimeToDirDebug
+
+> Task :capacitor-community-bluetooth-le:compileDebugKotlin
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/BluetoothLe.kt:187:40 'enable(): Boolean' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/BluetoothLe.kt:198:40 'disable(): Boolean' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:153:22 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:161:19 'onCharacteristicRead(BluetoothGatt!, BluetoothGattCharacteristic!, Int): Unit' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:164:43 'getter for value: ByteArray!' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:208:22 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:216:19 'onCharacteristicChanged(BluetoothGatt!, BluetoothGattCharacteristic!): Unit' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:218:39 'getter for value: ByteArray!' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:237:22 This declaration overrides deprecated member but not marked as deprecated itself. Please add @Deprecated annotation or suppress. See https://youtrack.jetbrains.com/issue/KT-47902 for details
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:245:19 'onDescriptorRead(BluetoothGatt!, BluetoothGattDescriptor!, Int): Unit' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:249:39 'getter for value: ByteArray!' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:396:40 'getParcelableExtra(String!): T?' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:533:28 'setter for value: ByteArray!' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:535:41 'writeCharacteristic(BluetoothGattCharacteristic!): Boolean' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:595:24 'setter for value: ByteArray!' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:596:45 'writeDescriptor(BluetoothGattDescriptor!): Boolean' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:664:24 'setter for value: ByteArray!' is deprecated. Deprecated in Java
+w: file:///Users/leonli/Desktop/udry-umbrella-share-app-v2/node_modules/@capacitor-community/bluetooth-le/android/src/main/java/com/capacitorjs/community/plugins/bluetoothle/Device.kt:665:41 'writeDescriptor(BluetoothGattDescriptor!): Boolean' is deprecated. Deprecated in Java
+
+> Task :capacitor-community-bluetooth-le:compileDebugJavaWithJavac NO-SOURCE
+> Task :capacitor-community-bluetooth-le:bundleLibCompileToJarDebug
+> Task :app:mergeExtDexDebug
+> Task :capacitor-community-bluetooth-le:processDebugJavaRes
+> Task :app:compileDebugKotlin NO-SOURCE
+> Task :capacitor-community-bluetooth-le:bundleLibRuntimeToDirDebug
+
+> Task :app:compileDebugJavaWithJavac
+Java compiler version 21 has deprecated support for compiling with source/target version 8.
+Try one of the following options:
+    1. [Recommended] Use Java toolchain with a lower language version
+    2. Set a higher source/target version
+    3. Use a lower version of the JDK running the build (if you're not using Java toolchain)
+For more details on how to configure these settings, see https://developer.android.com/build/jdks.
+To suppress this warning, set android.javaCompile.suppressSourceTargetDeprecationWarning=true in gradle.properties.
+warning: [options] source value 8 is obsolete and will be removed in a future release
+warning: [options] target value 8 is obsolete and will be removed in a future release
+warning: [options] To suppress warnings about obsolete options, use -Xlint:-options.
+3 warnings
+
+> Task :app:processDebugJavaRes NO-SOURCE
+> Task :app:dexBuilderDebug
+> Task :app:mergeLibDexDebug
+> Task :app:mergeProjectDexDebug
+> Task :app:mergeDebugJavaResource
+> Task :app:packageDebug
+> Task :app:createDebugApkListingFileRedirect
+> Task :app:assembleDebug
+
+BUILD SUCCESSFUL in 4s
+142 actionable tasks: 141 executed, 1 up-to-date
+
+Build Analyzer results available
