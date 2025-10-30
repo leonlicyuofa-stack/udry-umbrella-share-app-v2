@@ -6,25 +6,17 @@ const config: CapacitorConfig = {
   appName: 'udry 共享雨傘 ',
   webDir: 'out',
   server: {
-    // By setting a hostname, Capacitor knows to treat the url as the main entry point,
-    // but it will still load assets relative to the local file system.
-    hostname: 'udry.app',
-    // TEMPORARY DIAGNOSTIC OVERRIDE:
-    // This forces the app to load the diagnostic page.
-    url: 'file:///android_asset/public/diag/index.html',
+    cleartext: true,
+    androidScheme: 'https',
   },
   android: {
-    // Android-specific settings can go here if needed.
+    allowMixedContent: true
   },
   ios: {
     contentInset: 'always'
   },
   plugins: {
-    App: {
-      ios: {
-        urlScheme: 'udry'
-      }
-    },
+    App: {},
     StatusBar: {
       overlaysWebView: true,
       style: 'light'
