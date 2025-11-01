@@ -290,7 +290,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
             <p className="text-xs font-semibold mb-2">For Android, select your device from a list that looks like this:</p>
             <Image 
-              src="https://picsum.photos/seed/android-ble/400/250" 
+              src="/android-ble-instructions.png" 
               alt="Example of Android Bluetooth device selection screen"
               width={250}
               height={156}
