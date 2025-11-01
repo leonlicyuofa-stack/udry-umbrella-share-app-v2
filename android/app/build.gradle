@@ -1,5 +1,13 @@
 apply plugin: 'com.android.application'
 
+// --- Load Keystore Properties ---
+def keystorePropertiesFile = rootProject.file("android/app/keystore.properties")
+def keystoreProperties = new Properties()
+if (keystorePropertiesFile.exists()) {
+    keystoreProperties.load(new FileInputStream(keystorePropertiesFile))
+}
+// --------------------------------
+
 android {
     namespace "com.udry.app"
     compileSdk rootProject.ext.compileSdkVersion
@@ -16,10 +24,26 @@ android {
             ignoreAssetsPattern '!.svn:!.git:!.ds_store:!*.scc:.*:!CVS:!thumbs.db:!picasa.ini:!*~'
         }
     }
+    
+    signingConfigs {
+        debug {
+            // This is the default debug configuration
+        }
+        release {
+            if (keystorePropertiesFile.exists()) {
+                storeFile file(keystoreProperties['storeFile'])
+                storePassword keystoreProperties['storePassword']
+                keyAlias keystoreProperties['keyAlias']
+                keyPassword keystoreProperties['keyPassword']
+            }
+        }
+    }
+
     buildTypes {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.release
         }
     }
 }
