@@ -6,16 +6,17 @@ import type { Stall } from '@/lib/types';
 import { useAuth } from '@/contexts/auth-context';
 import { useToast } from '@/hooks/use-toast';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter } from '@/components/ui/dialog';
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from '@/components/ui/alert-dialog';
+import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
-import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Info, ArrowRight, Link as LinkIcon, ServerCrash } from 'lucide-react';
+import { Loader2, AlertTriangle, Umbrella, MapPin, Bluetooth, XCircle, Info, ArrowRight, ServerCrash } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import { BleClient, numbersToDataView, dataViewToText, type ScanResult } from '@capacitor-community/bluetooth-le';
 import { httpsCallable } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
+import { useLanguage } from '@/contexts/language-context';
 
 
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
@@ -25,7 +26,7 @@ const GET_UMBRELLA_BASE_PARM = 2000000;
 type BluetoothState = 'idle' | 'initializing' | 'scanning' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'awaiting_final_confirmation' | 'success' | 'error';
 type ConnectionStep = 'pre_confirmation' | 'connecting' | 'error';
 
-const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, string> => ({
+const getBluetoothStateMessages = (stall: Stall | null, translate: (key: string) => string): Record<BluetoothState, string> => ({
   idle: "Ready to connect.",
   initializing: "Initializing Bluetooth...",
   scanning: "Scanning for the rental machine...",
@@ -48,6 +49,7 @@ interface RentalInitiationDialogProps {
 export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalInitiationDialogProps) {
   const { user, startRental, useFirstFreeRental, logMachineEvent, firebaseServices } = useAuth();
   const { toast } = useToast();
+  const { translate } = useLanguage();
   
   const [bluetoothState, setBluetoothState] = useState<BluetoothState>('idle');
   const [bluetoothError, setBluetoothError] = useState<string | null>(null);
@@ -62,16 +64,14 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const cmdOkCounter = useRef(0);
 
   const isProcessing = bluetoothState !== 'idle' && bluetoothState !== 'success' && bluetoothState !== 'error';
-  const bluetoothStateMessages = getBluetoothStateMessages(stall);
+  const bluetoothStateMessages = getBluetoothStateMessages(stall, translate);
 
   const disconnectFromDevice = useCallback(async () => {
-    // Stop scanning first if it's active
     try {
         await BleClient.stopLEScan();
     } catch(e) {
         // Ignore errors if already stopped
     }
-    // Then disconnect from device
     if (connectedDeviceIdRef.current) {
       try {
         await BleClient.disconnect(connectedDeviceIdRef.current);
@@ -242,9 +242,9 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         );
         setTimeout(async () => {
             await BleClient.stopLEScan();
-        }, 5000); // Scan for 5 seconds
+        }, 5000);
 
-      } else { // iOS flow
+      } else {
         setBluetoothState('requesting_device');
         const device = await BleClient.requestDevice({ services: [UTEK_SERVICE_UUID] });
         await connectToDevice(device.deviceId);
@@ -281,9 +281,38 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
             <Info className="h-4 w-4" />
             <AlertTitle>Connection Instructions</AlertTitle>
             <AlertDescription>
-                After clicking continue, your phone will show a list of nearby Bluetooth devices. Please select the device with the name <strong className="text-primary">{stall.btName}</strong>.
+                After clicking continue, your phone will show a list of nearby Bluetooth devices.
             </AlertDescription>
         </Alert>
+
+        {Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android' && (
+          <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
+            <p className="text-xs font-semibold mb-2">For Android, select your device from a list that looks like this:</p>
+            <Image 
+              src="https://picsum.photos/seed/android-ble/400/250" 
+              alt="Example of Android Bluetooth device selection screen"
+              width={250}
+              height={156}
+              className="rounded-md border"
+              data-ai-hint="bluetooth android"
+            />
+          </div>
+        )}
+
+        {Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios' && (
+          <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
+            <p className="text-xs font-semibold mb-2">For iOS, select your device from a pop-up like this:</p>
+            <Image 
+              src="https://picsum.photos/seed/ios-ble/400/100" 
+              alt="Example of iOS Bluetooth device selection screen"
+              width={250}
+              height={62}
+              className="rounded-md border"
+              data-ai-hint="bluetooth ios"
+            />
+          </div>
+        )}
+
          <p className="text-xs text-center text-muted-foreground pt-2">
             By proceeding, you agree to our{' '}
             <Link href="/account/terms" className="underline hover:text-primary">
@@ -357,7 +386,10 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                       <AlertTriangle className="h-4 w-4" />
                       <AlertTitle>Rental Terms</AlertTitle>
                       <AlertDescription className="text-xs">
-                          HK$5/hr, capped at HK$25 per 24-hour period. Return within 72 hours to avoid forfeiting your deposit.
+                          {user?.hasHadFirstFreeRental === false 
+                            ? "Your first rental is free!" 
+                            : "HK$5/hr, capped at HK$25 per 24-hour period."
+                          } Return within 72 hours to avoid forfeiting your deposit.
                       </AlertDescription>
                   </Alert>
                   </CardContent>
