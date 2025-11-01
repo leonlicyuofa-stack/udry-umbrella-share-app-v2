@@ -15,7 +15,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { BleClient, numbersToDataView, dataViewToText, type ScanResult } from '@capacitor-community/bluetooth-le';
 import { httpsCallable } from 'firebase/functions';
-import { isPlatform } from '@capacitor/core';
+import { Capacitor } from '@capacitor/core';
 
 
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
@@ -225,7 +225,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       await BleClient.initialize();
       setBluetoothState('scanning');
 
-      if (isPlatform('android')) {
+      if (Capacitor.getPlatform() === 'android') {
         setShowDeviceListDialog(true);
         await BleClient.requestLEScan(
           { services: [UTEK_SERVICE_UUID] },
