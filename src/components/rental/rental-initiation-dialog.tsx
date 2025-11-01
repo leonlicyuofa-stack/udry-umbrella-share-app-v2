@@ -400,7 +400,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       <AlertDialog open={showDeviceListDialog} onOpenChange={setShowDeviceListDialog}>
           <AlertDialogContent>
               <AlertDialogHeader>
-                  <AlertDialogTitle>Select a Device</AlertDialogTitle>
+                  <AlertDialogTitle>Choose machine's ID (CDJK) below to connect to machines</AlertDialogTitle>
                   <AlertDialogDescription>Choose the machine from the list below to connect.</AlertDialogDescription>
               </AlertDialogHeader>
               <div className="max-h-60 overflow-y-auto space-y-2">

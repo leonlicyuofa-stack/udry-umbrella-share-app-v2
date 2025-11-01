@@ -9,14 +9,15 @@ import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
-import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle } from "@/components/ui/alert-dialog";
+import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogCancel, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { Loader2, AlertTriangle, ArrowLeft, Umbrella, TimerIcon, CheckCircle, Bluetooth, QrCode, CameraOff, Info, ArrowRight } from "lucide-react";
 import Link from "next/link";
 import type { Stall } from '@/lib/types';
 import { Html5Qrcode } from "html5-qrcode";
 import { cn } from "@/lib/utils";
-import { BleClient, numbersToDataView, dataViewToText } from '@capacitor-community/bluetooth-le/dist/esm';
+import { BleClient, numbersToDataView, dataViewToText, type ScanResult } from '@capacitor-community/bluetooth-le';
 import { httpsCallable } from 'firebase/functions';
+import { Capacitor } from '@capacitor/core';
 
 const QR_READER_REGION_ID = "qr-reader-region-return";
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
@@ -25,11 +26,12 @@ const RETURN_UMBRELLA_BASE_PARM = 3000000;
 const RETURN_CONFIRMATION_TIMEOUT = 30000; // 30 seconds
 
 type ReturnStep = 'idle' | 'initializing_scanner' | 'scanning' | 'scan_complete_pre_confirmation' | 'connecting';
-type BluetoothState = 'idle' | 'initializing' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'awaiting_confirmation' | 'success' | 'error';
+type BluetoothState = 'idle' | 'initializing' | 'scanning' | 'requesting_device' | 'connecting' | 'getting_token' | 'getting_command' | 'sending_command' | 'awaiting_confirmation' | 'success' | 'error';
 
 const getBluetoothStateMessages = (stall: Stall | null): Record<BluetoothState, string> => ({
   idle: "Ready to start.",
   initializing: "Initializing Bluetooth...",
+  scanning: "Scanning for the rental machine...",
   requesting_device: "Searching for the machine. In the system pop-up, please select the device with the name:",
   connecting: "Connecting to the machine...",
   getting_token: "Connected. Authenticating...",
@@ -55,6 +57,8 @@ export default function ReturnUmbrellaPage() {
   const [elapsedTime, setElapsedTime] = useState<string>('');
   const [qrError, setQrError] = useState<string|null>(null);
   const [hasCameraPermission, setHasCameraPermission] = useState<boolean | null>(null);
+  const [showDeviceListDialog, setShowDeviceListDialog] = useState(false);
+  const [foundDevices, setFoundDevices] = useState<ScanResult[]>([]);
   
   const connectedDeviceIdRef = useRef<string | null>(null);
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
@@ -170,6 +174,7 @@ export default function ReturnUmbrellaPage() {
   }, [onScanSuccess, returnStep]);
 
   const disconnectFromDevice = useCallback(async () => {
+    try { await BleClient.stopLEScan(); } catch(e) {}
     if (confirmationTimeoutRef.current) {
         clearTimeout(confirmationTimeoutRef.current);
         confirmationTimeoutRef.current = null;
@@ -177,9 +182,7 @@ export default function ReturnUmbrellaPage() {
     if (connectedDeviceIdRef.current) {
       try {
         await BleClient.disconnect(connectedDeviceIdRef.current);
-      } catch(e) {
-        // Ignore
-      }
+      } catch(e) { }
       connectedDeviceIdRef.current = null;
     }
   }, []);
@@ -265,7 +268,7 @@ export default function ReturnUmbrellaPage() {
       setBluetoothState('error');
       toast({ variant: "destructive", title: "Duplicate Action Error", description: errorMsg, duration: 8000 });
     }
-  }, [scannedStall, toast, logMachineEvent, firebaseServices, endRental]);
+  }, [scannedStall, toast, logMachineEvent, firebaseServices]);
 
   useEffect(() => {
     if (showSuccessDialog && activeRental && scannedStall) {
@@ -284,6 +287,36 @@ export default function ReturnUmbrellaPage() {
     }
   }, [showSuccessDialog, activeRental, scannedStall, endRental, router, toast]);
 
+  const connectToDevice = async (deviceId: string) => {
+    isIntentionalDisconnect.current = false;
+    connectedDeviceIdRef.current = deviceId;
+    setBluetoothState('connecting');
+
+    await BleClient.connect(deviceId, (dId) => {
+      if (isIntentionalDisconnect.current) return;
+      disconnectFromDevice();
+      toast({ variant: 'destructive', title: 'Bluetooth Disconnected' });
+      setBluetoothState('idle');
+      setReturnStep('scan_complete_pre_confirmation');
+    });
+
+    await new Promise(resolve => setTimeout(resolve, 300));
+    logMachineEvent({ stallId: scannedStall!.id, type: 'info', message: `Connected to device: ${deviceId}` });
+    setBluetoothState('getting_token');
+
+    await BleClient.startNotifications(
+      deviceId,
+      UTEK_SERVICE_UUID,
+      UTEK_CHARACTERISTIC_UUID,
+      handleTokNotification
+    );
+
+    const commandToSend = "TOK\r\n";
+    const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
+    await BleClient.writeWithoutResponse(deviceId, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
+    logMachineEvent({ stallId: scannedStall!.id, type: 'sent', message: 'Sent Signal: "TOK\\r\\n"' });
+  };
+
   const handleReturnViaBluetooth = async () => {
     if (isProcessingBluetooth || !scannedStall) return;
     isIntentionalDisconnect.current = false;
@@ -294,37 +327,36 @@ export default function ReturnUmbrellaPage() {
 
     try {
       await BleClient.initialize();
-      setBluetoothState('requesting_device');
+      setBluetoothState('scanning');
       
-      const device = await BleClient.requestDevice({
-        services: [UTEK_SERVICE_UUID],
-      });
-      connectedDeviceIdRef.current = device.deviceId;
-      
-      setBluetoothState('connecting');
-      await BleClient.connect(device.deviceId, (deviceId) => {
-        if (isIntentionalDisconnect.current) return;
-        disconnectFromDevice();
-        toast({ variant: "destructive", title: "Bluetooth Disconnected", description: "The device connection was lost." });
-        setBluetoothState('idle');
-        setReturnStep('scan_complete_pre_confirmation');
-      });
+      if (Capacitor.getPlatform() === 'android') {
+        setShowDeviceListDialog(true);
+        await BleClient.requestLEScan(
+          { services: [UTEK_SERVICE_UUID] },
+          (result) => {
+            if (result.device.name) {
+              setFoundDevices((prev) => {
+                if (!prev.some((d) => d.device.deviceId === result.device.deviceId)) {
+                  return [...prev, result];
+                }
+                return prev;
+              });
+            }
+          }
+        );
+        setTimeout(async () => {
+            await BleClient.stopLEScan();
+        }, 5000); 
 
-      await new Promise(resolve => setTimeout(resolve, 300));
-
-      logMachineEvent({ stallId: scannedStall.id, type: 'info', message: `Connected to device: ${device.name || 'Unknown'}` });
-
-      setBluetoothState('getting_token');
-      await BleClient.startNotifications(device.deviceId, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, handleTokNotification);
-      
-      const commandToSend = "TOK\r\n";
-      const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
-      await BleClient.writeWithoutResponse(device.deviceId, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
-
-      logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: 'Sent Signal: "TOK\\r\\n"' });
+      } else { // iOS flow
+        setBluetoothState('requesting_device');
+        const device = await BleClient.requestDevice({ services: [UTEK_SERVICE_UUID] });
+        await connectToDevice(device.deviceId);
+      }
     } catch (error: any) {
       let errorMsg = error.message || "An unknown Bluetooth error occurred.";
-      if (error.message && error.message.includes('cancelled')) errorMsg = "No compatible Bluetooth device found or selection was cancelled.";
+      if (error.message && error.message.includes('cancelled')) errorMsg = "Device selection was cancelled.";
+      else if (error.message && error.message.includes('disabled')) errorMsg = "Bluetooth is disabled. Please enable it and try again.";
       setBluetoothError(errorMsg);
       setBluetoothState('error');
       logMachineEvent({ stallId: scannedStall.id, type: 'error', message: `Bluetooth Connection Error: ${errorMsg}` });
@@ -338,6 +370,18 @@ export default function ReturnUmbrellaPage() {
       disconnectFromDevice();
     };
   }, [stopScanner, disconnectFromDevice]);
+
+  const resetAllLocalState = useCallback(() => {
+    setReturnStep('idle');
+    setScannedStall(null);
+    setBluetoothState('idle');
+    setBluetoothError(null);
+    setShowDeviceListDialog(false);
+    setShowSuccessDialog(false);
+    setShowWaitingDialog(false);
+    isProcessingScan.current = false;
+    isIntentionalDisconnect.current = false;
+  }, []);
 
   if (isLoadingRental || isLoadingStalls || !activeRental) {
     return (
@@ -375,6 +419,42 @@ export default function ReturnUmbrellaPage() {
           </AlertDialogHeader>
         </AlertDialogContent>
       </AlertDialog>
+
+       <AlertDialog open={showDeviceListDialog} onOpenChange={setShowDeviceListDialog}>
+        <AlertDialogContent>
+            <AlertDialogHeader>
+                <AlertDialogTitle>Choose machine's ID (CDJK) below to connect to machines</AlertDialogTitle>
+                <AlertDialogDescription>Choose the machine from the list below to connect.</AlertDialogDescription>
+            </AlertDialogHeader>
+            <div className="max-h-60 overflow-y-auto space-y-2">
+                {foundDevices.length > 0 ? (
+                    foundDevices.map((deviceResult) => (
+                        <Button 
+                            key={deviceResult.device.deviceId} 
+                            variant="outline" 
+                            className="w-full justify-start"
+                            onClick={async () => {
+                                setShowDeviceListDialog(false);
+                                await BleClient.stopLEScan();
+                                await connectToDevice(deviceResult.device.deviceId);
+                            }}
+                        >
+                          <Bluetooth className="mr-2 h-4 w-4" />
+                          {deviceResult.device.name || deviceResult.device.deviceId}
+                        </Button>
+                    ))
+                ) : (
+                    <div className="text-center text-muted-foreground p-4">
+                      <Loader2 className="mx-auto h-6 w-6 animate-spin" />
+                      <p>Scanning...</p>
+                    </div>
+                )}
+            </div>
+            <AlertDialogFooter>
+                <AlertDialogCancel onClick={resetAllLocalState}>Cancel</AlertDialogCancel>
+            </AlertDialogFooter>
+        </AlertDialogContent>
+    </AlertDialog>
 
       <Card className="w-full max-w-md shadow-xl">
         <CardHeader>
