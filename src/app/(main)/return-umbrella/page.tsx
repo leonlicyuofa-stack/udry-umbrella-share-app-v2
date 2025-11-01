@@ -424,7 +424,7 @@ export default function ReturnUmbrellaPage() {
         <AlertDialogContent>
             <AlertDialogHeader>
                 <AlertDialogTitle>Choose machine's ID (CDJK) below to connect to machines</AlertDialogTitle>
-                <AlertDialogDescription>Choose the machine from the list below to connect.</AlertDialogDescription>
+                <AlertDialogDescription>Please ensure your bluetooth is on</AlertDialogDescription>
             </AlertDialogHeader>
             <div className="max-h-60 overflow-y-auto space-y-2">
                 {foundDevices.length > 0 ? (
