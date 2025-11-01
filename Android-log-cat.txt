@@ -1,93 +1,297 @@
---------------------------- PROCESS STARTED (10268) for package com.udry.app ----------------------------
-2025-10-28 00:46:25.713 10268-10268 nativeloader            com.udry.app                         D  Configuring clns-9 for other apk /data/app/~~Yu646O-VPe1T3ycKLpN3hA==/com.udry.app-wS-9PqDPLqSEbxPk9sjIng==/base.apk. target_sdk_version=35, uses_libraries=, library_path=/data/app/~~Yu646O-VPe1T3ycKLpN3hA==/com.udry.app-wS-9PqDPLqSEbxPk9sjIng==/lib/arm64:/data/app/~~Yu646O-VPe1T3ycKLpN3hA==/com.udry.app-wS-9PqDPLqSEbxPk9sjIng==/base.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand:/data/user/0/com.udry.app
-2025-10-28 00:46:25.714 10268-10268 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 202956589; UID 10214; state: ENABLED
-2025-10-28 00:46:25.719 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760f4298) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.720 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760f2678) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.727 10268-10268 GraphicsEnvironment     com.udry.app                         V  Currently set values for:
-2025-10-28 00:46:25.727 10268-10268 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_pkgs=[]
-2025-10-28 00:46:25.727 10268-10268 GraphicsEnvironment     com.udry.app                         V    angle_gl_driver_selection_values=[]
-2025-10-28 00:46:25.727 10268-10268 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in per-application setting
-2025-10-28 00:46:25.727 10268-10268 GraphicsEnvironment     com.udry.app                         V  ANGLE allowlist from config: com.dreamgames.royalmatch com.dts.freefiremax com.dxx.firenow com.gramgames.mergedragons com.ludo.king com.mojang.minecraftpe com.my.defense com.nintendo.zaka com.os.airforce com.playrix.fishdomdd.gplay io.teslatech.callbreak jp.konami.prospia net.peakgames.toonblast
-2025-10-28 00:46:25.727 10268-10268 GraphicsEnvironment     com.udry.app                         V  com.udry.app is not listed in ANGLE allowlist or settings, returning default
-2025-10-28 00:46:25.727 10268-10268 GraphicsEnvironment     com.udry.app                         V  Neither updatable production driver nor prerelease driver is supported.
-2025-10-28 00:46:25.749 10268-10268 FirebaseApp             com.udry.app                         I  Device unlocked: initializing all Firebase APIs for app [DEFAULT]
-2025-10-28 00:46:25.752 10268-10268 FirebaseInitProvider    com.udry.app                         I  FirebaseApp initialization successful
-2025-10-28 00:46:25.757 10268-10268 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 279646685; UID 10214; state: ENABLED
-2025-10-28 00:46:25.774 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760ff4b8) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.791 10268-10268 AppCompatDelegate       com.udry.app                         D  Checking for metadata for AppLocalesMetadataHolderService : Service not found
-2025-10-28 00:46:25.791 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760fbf98) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.795 10268-10268 ashmem                  com.udry.app                         E  Pinning is deprecated since Android Q. Please use trim or other methods.
-2025-10-28 00:46:25.828 10268-10268 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 309578419; UID 10214; state: ENABLED
-2025-10-28 00:46:25.830 10268-10268 DesktopModeFlags        com.udry.app                         D  Toggle override initialized to: OVERRIDE_UNSET
-2025-10-28 00:46:25.870 10268-10268 HWUI                    com.udry.app                         W  Image decoding logging dropped!
-2025-10-28 00:46:25.878 10268-10268 com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/View;->computeFitSystemWindows(Landroid/graphics/Rect;Landroid/graphics/Rect;)Z (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
-2025-10-28 00:46:25.878 10268-10268 com.udry.app            com.udry.app                         I  hiddenapi: Accessing hidden method Landroid/view/ViewGroup;->makeOptionalFitsSystemWindows()V (runtime_flags=0, domain=platform, api=unsupported) from Landroidx/appcompat/widget/ViewUtils; (domain=app) using reflection: allowed
-2025-10-28 00:46:25.887 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760fcf38) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.887 10268-10268 WebViewFactory          com.udry.app                         I  Loading com.google.android.webview version 133.0.6943.137 (code 694313732)
-2025-10-28 00:46:25.888 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760fbc78) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.889 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760faff8) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.891 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760f6b38) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.891 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760f8438) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.894 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760fa058) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.894 10268-10268 ResourcesManager        com.udry.app                         V  The following library key has been added: ResourcesKey{ mHash=c4b3cb8a mResDir=null mSplitDirs=[] mOverlayDirs=[] mLibDirs=[/data/app/~~dmjelDoG2bqaGEXHBzN-6g==/com.google.android.webview-5a-bVxjJSoY3eUACPpVfdw==/WebViewGoogle.apk,/data/app/~~414d0Trw5EUW_vNO5shTOw==/com.google.android.trichromelibrary_694313732-_QmJExnEIBo163LhTY0OCw==/TrichromeLibrary.apk,/system_ext/framework/androidx.window.extensions.jar] mDisplayId=0 mOverrideConfig=v36 mCompatInfo={420dpi always-compat} mLoaders=[]}
-2025-10-28 00:46:25.896 10268-10268 com.udry.app            com.udry.app                         W  Failed to find entry 'classes.dex': Entry not found
-2025-10-28 00:46:25.897 10268-10268 nativeloader            com.udry.app                         D  Configuring clns-10 for other apk /data/app/~~414d0Trw5EUW_vNO5shTOw==/com.google.android.trichromelibrary_694313732-_QmJExnEIBo163LhTY0OCw==/TrichromeLibrary.apk. target_sdk_version=34, uses_libraries=ALL, library_path=/data/app/~~dmjelDoG2bqaGEXHBzN-6g==/com.google.android.webview-5a-bVxjJSoY3eUACPpVfdw==/lib/arm64:/data/app/~~dmjelDoG2bqaGEXHBzN-6g==/com.google.android.webview-5a-bVxjJSoY3eUACPpVfdw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~414d0Trw5EUW_vNO5shTOw==/com.google.android.trichromelibrary_694313732-_QmJExnEIBo163LhTY0OCw==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
-2025-10-28 00:46:25.897 10268-10268 ApplicationLoaders      com.udry.app                         D  Returning zygote-cached class loader: /system_ext/framework/androidx.window.extensions.jar
-2025-10-28 00:46:25.900 10268-10268 nativeloader            com.udry.app                         D  Configuring clns-11 for other apk /data/app/~~dmjelDoG2bqaGEXHBzN-6g==/com.google.android.webview-5a-bVxjJSoY3eUACPpVfdw==/WebViewGoogle.apk. target_sdk_version=34, uses_libraries=, library_path=/data/app/~~dmjelDoG2bqaGEXHBzN-6g==/com.google.android.webview-5a-bVxjJSoY3eUACPpVfdw==/lib/arm64:/data/app/~~dmjelDoG2bqaGEXHBzN-6g==/com.google.android.webview-5a-bVxjJSoY3eUACPpVfdw==/WebViewGoogle.apk!/lib/arm64-v8a:/data/app/~~414d0Trw5EUW_vNO5shTOw==/com.google.android.trichromelibrary_694313732-_QmJExnEIBo163LhTY0OCw==/TrichromeLibrary.apk!/lib/arm64-v8a, permitted_path=/data:/mnt/expand
-2025-10-28 00:46:25.913 10268-10268 cr_WVCFactoryProvider   com.udry.app                         I  version=133.0.6943.137 (694313732) minSdkVersion=29 isBundle=false multiprocess=true packageId=2
-2025-10-28 00:46:25.915 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760fa9b8) locale list changing from [] to [en-US]
-2025-10-28 00:46:25.926 10268-10268 nativeloader            com.udry.app                         D  Load /data/app/~~414d0Trw5EUW_vNO5shTOw==/com.google.android.trichromelibrary_694313732-_QmJExnEIBo163LhTY0OCw==/TrichromeLibrary.apk!/lib/arm64-v8a/libmonochrome_64.so using class loader ns clns-11 (caller=/data/app/~~dmjelDoG2bqaGEXHBzN-6g==/com.google.android.webview-5a-bVxjJSoY3eUACPpVfdw==/WebViewGoogle.apk): ok
-2025-10-28 00:46:25.928 10268-10268 nativeloader            com.udry.app                         D  Load /system/lib64/libwebviewchromium_plat_support.so using class loader ns clns-11 (caller=/data/app/~~dmjelDoG2bqaGEXHBzN-6g==/com.google.android.webview-5a-bVxjJSoY3eUACPpVfdw==/WebViewGoogle.apk): ok
-2025-10-28 00:46:25.932 10268-10288 chromium                com.udry.app                         E  [1028/004625.929845:ERROR:variations_seed_loader.cc(39)] Seed missing signature.
-2025-10-28 00:46:25.932 10268-10288 chromium                com.udry.app                         I  [1028/004625.932470:INFO:variations_seed_loader.cc(67)] Failed to open file for reading.: No such file or directory (2)
-2025-10-28 00:46:25.962 10268-10268 HWUI                    com.udry.app                         W  Image decoding logging dropped!
-2025-10-28 00:46:25.968 10268-10268 cr_LibraryLoader        com.udry.app                         I  Successfully loaded native library
-2025-10-28 00:46:25.969 10268-10268 cr_CachingUmaRecorder   com.udry.app                         I  Flushed 6 samples from 6 histograms, 0 samples were dropped.
-2025-10-28 00:46:25.972 10268-10268 cr_CombinedPProvider    com.udry.app                         I  #registerProvider() provider:WV.C8@b8a2db8 isPolicyCacheEnabled:false policyProvidersSize:0
-2025-10-28 00:46:25.973 10268-10268 cr_PolicyProvider       com.udry.app                         I  #setManagerAndSource() 0
-2025-10-28 00:46:25.985 10268-10268 cr_CombinedPProvider    com.udry.app                         I  #linkNativeInternal() 1
-2025-10-28 00:46:25.985 10268-10268 cr_AppResProvider       com.udry.app                         I  #getApplicationRestrictionsFromUserManager() Bundle[EMPTY_PARCEL]
-2025-10-28 00:46:25.985 10268-10268 cr_PolicyProvider       com.udry.app                         I  #notifySettingsAvailable() 0
-2025-10-28 00:46:25.985 10268-10268 cr_CombinedPProvider    com.udry.app                         I  #onSettingsAvailable() 0
-2025-10-28 00:46:25.985 10268-10268 cr_CombinedPProvider    com.udry.app                         I  #flushPolicies()
-2025-10-28 00:46:26.002 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760fa698) locale list changing from [] to [en-US]
-2025-10-28 00:46:26.005 10268-10268 com.udry.app            com.udry.app                         I  AssetManager2(0xb400007c760ffaf8) locale list changing from [] to [en-US]
-2025-10-28 00:46:26.007 10268-10268 DisplayManager          com.udry.app                         I  Implicitly registering for refresh rate
-2025-10-28 00:46:26.049 10268-10268 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 352594277; UID 10214; state: ENABLED
-2025-10-28 00:46:26.079 10268-10268 Capacitor               com.udry.app                         D  Starting BridgeActivity
-2025-10-28 00:46:26.090 10268-10268 Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorCookies
-2025-10-28 00:46:26.093 10268-10268 Capacitor               com.udry.app                         D  Registering plugin instance: WebView
-2025-10-28 00:46:26.094 10268-10268 Capacitor               com.udry.app                         D  Registering plugin instance: CapacitorHttp
-2025-10-28 00:46:26.095 10268-10268 Capacitor               com.udry.app                         D  Registering plugin instance: BluetoothLe
-2025-10-28 00:46:26.098 10268-10268 Capacitor               com.udry.app                         D  Registering plugin instance: App
-2025-10-28 00:46:26.099 10268-10268 Capacitor               com.udry.app                         D  Registering plugin instance: Camera
-2025-10-28 00:46:26.102 10268-10268 Capacitor               com.udry.app                         D  Registering plugin instance: StatusBar
-2025-10-28 00:46:26.108 10268-10268 Capacitor               com.udry.app                         W  Unable to read file at path public/plugins
-2025-10-28 00:46:26.113 10268-10268 Capacitor               com.udry.app                         D  Loading app at file:///android_asset/public/diag/index.html
-2025-10-28 00:46:26.127 10268-10307 cr_media                com.udry.app                         W  BLUETOOTH_CONNECT permission is missing.
-2025-10-28 00:46:26.128 10268-10307 cr_media                com.udry.app                         W  getBluetoothAdapter() requires BLUETOOTH permission
-2025-10-28 00:46:26.128 10268-10307 cr_media                com.udry.app                         W  registerBluetoothIntentsIfNeeded: Requires BLUETOOTH permission
-2025-10-28 00:46:26.144 10268-10268 Capacitor               com.udry.app                         D  App started
-2025-10-28 00:46:26.149 10268-10268 Capacitor/AppPlugin     com.udry.app                         D  Firing change: true
-2025-10-28 00:46:26.149 10268-10268 Capacitor/AppPlugin     com.udry.app                         V  Notifying listeners for event appStateChange
-2025-10-28 00:46:26.149 10268-10268 Capacitor/AppPlugin     com.udry.app                         D  No listeners found for event appStateChange
-2025-10-28 00:46:26.149 10268-10268 Capacitor               com.udry.app                         D  App resumed
-2025-10-28 00:46:26.155 10268-10268 CompatChangeReporter    com.udry.app                         D  Compat change id reported: 349153669; UID 10214; state: ENABLED
-2025-10-28 00:46:26.159 10268-10325 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log"
-2025-10-28 00:46:26.160 10268-10325 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.log.file"
-2025-10-28 00:46:26.160 10268-10325 MESA                    com.udry.app                         E  Failed to open rendernode: No such file or directory
-2025-10-28 00:46:26.176 10268-10339 CameraManagerGlobal     com.udry.app                         I  Connecting to camera service
-2025-10-28 00:46:26.186 10268-10268 View                    com.udry.app                         W  View not hardware-accelerated. Unable to observe frame stats
-2025-10-28 00:46:26.186 10268-10325 vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~Yu646O-VPe1T3ycKLpN3hA==/com.udry.app-wS-9PqDPLqSEbxPk9sjIng==/lib/arm64'
-2025-10-28 00:46:26.187 10268-10325 vulkan                  com.udry.app                         D  searching for layers in '/data/app/~~Yu646O-VPe1T3ycKLpN3hA==/com.udry.app-wS-9PqDPLqSEbxPk9sjIng==/base.apk!/lib/arm64-v8a'
-2025-10-28 00:46:26.190 10268-10325 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.per.submit"
-2025-10-28 00:46:26.190 10268-10325 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.gallium.print.optio"
-2025-10-28 00:46:26.191 10268-10325 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.trace.frame"
-2025-10-28 00:46:26.193 10268-10325 libc                    com.udry.app                         W  Access denied finding property "vendor.mesa.vk.wsi.headless.swa"
-2025-10-28 00:46:26.195 10268-10325 EGL_emulation           com.udry.app                         I  Opening libGLESv1_CM_emulation.so
-2025-10-28 00:46:26.196 10268-10325 EGL_emulation           com.udry.app                         I  Opening libGLESv2_emulation.so
-2025-10-28 00:46:26.250 10268-10325 chromium                com.udry.app                         W  [WARNING:viz_main_impl.cc(85)] VizNullHypothesis is disabled (not a warning)
-2025-10-28 00:46:26.325 10268-10273 com.udry.app            com.udry.app                         I  Compiler allocated 5111KB to compile void android.view.ViewRootImpl.performTraversals()
-2025-10-28 00:46:26.624 10268-10268 InsetsController        com.udry.app                         D  hide(ime(), fromIme=false)
-2025-10-28 00:46:26.624 10268-10268 ImeTracker              com.udry.app                         I  com.udry.app:c2aff4e5: onCancelled at PHASE_CLIENT_ALREADY_HIDDEN
-2025-10-28 00:46:32.188 10268-10349 ProfileInstaller        com.udry.app                         D  Installing profile for com.udry.app
+2025-11-01 13:36:44.395 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:44.430 19049-19049 Choreographer           com.udry.app                         I  Skipped 30 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:44.752 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:44.786 19049-19049 Choreographer           com.udry.app                         I  Skipped 30 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:45.211 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  call setFrameRateCategory for touch hint category=no preference, reason=boost timeout, vri=VRI[MainActivity]@445394d
+2025-11-01 13:36:47.569 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  ViewPostIme pointer 0
+2025-11-01 13:36:47.571 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  call setFrameRateCategory for touch hint category=high hint, reason=touch, vri=VRI[MainActivity]@445394d
+2025-11-01 13:36:47.901 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:47.936 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  ViewPostIme pointer 1
+2025-11-01 13:36:47.936 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:48.258 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:48.293 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:48.613 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:48.646 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:48.967 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:49.008 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.008 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.008 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.008 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.008 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.008 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.008 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.008 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.009 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.009 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:36:49.009 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:49.010 19049-19083 cr_media                com.udry.app                         W  Requires MODIFY_AUDIO_SETTINGS and RECORD_AUDIO. No audio device will be available for recording
+2025-11-01 13:36:49.328 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:49.370 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:49.690 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:49.731 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:50.050 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:50.092 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:50.412 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:50.454 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:50.774 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:50.816 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:51.136 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:51.177 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:51.497 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:51.539 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  call setFrameRateCategory for touch hint category=no preference, reason=boost timeout, vri=VRI[MainActivity]@445394d
+2025-11-01 13:36:51.539 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:51.859 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:51.900 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:52.220 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:52.263 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:52.583 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:52.625 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:52.947 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:52.987 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:53.308 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:53.349 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:53.669 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:53.710 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:54.030 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:54.071 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:54.093 19049-19059 CameraManagerGlobal     com.udry.app                         I  Camera 1 facing CAMERA_FACING_FRONT state now CAMERA_STATE_OPENING for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:36:54.097 19049-19059 CameraManagerGlobal     com.udry.app                         I  postSingleUpdate device: camera id 1 status STATUS_NOT_AVAILABLE
+2025-11-01 13:36:54.142 19049-20652 cr_VideoCapture         com.udry.app                         E  CameraDevice.StateCallback onOpened
+2025-11-01 13:36:54.145 19049-19059 CameraManagerGlobal     com.udry.app                         I  Camera 1 facing CAMERA_FACING_FRONT state now CAMERA_STATE_OPEN for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:36:54.243 19049-19493 CameraManagerGlobal     com.udry.app                         I  Camera 1 facing CAMERA_FACING_FRONT state now CAMERA_STATE_ACTIVE for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:36:54.402 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:54.448 19049-19049 Choreographer           com.udry.app                         I  Skipped 33 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:54.771 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:54.818 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  onDisplayChanged oldDisplayState=2 newDisplayState=2
+2025-11-01 13:36:55.140 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:55.442 19049-19060 CameraManagerGlobal     com.udry.app                         I  Camera 1 facing CAMERA_FACING_FRONT state now CAMERA_STATE_IDLE for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:36:55.458 19049-19493 CameraManagerGlobal     com.udry.app                         I  postSingleUpdate device: camera id 1 status STATUS_PRESENT
+2025-11-01 13:36:55.458 19049-19493 CameraManagerGlobal     com.udry.app                         I  Camera 1 facing CAMERA_FACING_FRONT state now CAMERA_STATE_CLOSED for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:36:55.510 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:55.874 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:55.917 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  onDisplayChanged oldDisplayState=2 newDisplayState=2
+2025-11-01 13:36:55.918 19049-19049 Choreographer           com.udry.app                         I  Skipped 32 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:56.236 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:56.278 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:36:56.330 19049-19060 CameraManagerGlobal     com.udry.app                         I  Camera 2 facing CAMERA_FACING_BACK state now CAMERA_STATE_OPENING for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:36:56.333 19049-19060 CameraManagerGlobal     com.udry.app                         I  postSingleUpdate device: camera id 2 status STATUS_NOT_AVAILABLE
+2025-11-01 13:36:56.383 19049-19060 CameraManagerGlobal     com.udry.app                         I  Camera 2 facing CAMERA_FACING_BACK state now CAMERA_STATE_OPEN for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:36:56.385 19049-20750 cr_VideoCapture         com.udry.app                         E  CameraDevice.StateCallback onOpened
+2025-11-01 13:36:56.435 19049-19493 CameraManagerGlobal     com.udry.app                         I  Camera 2 facing CAMERA_FACING_BACK state now CAMERA_STATE_ACTIVE for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:36:56.483 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  onDisplayChanged oldDisplayState=2 newDisplayState=2
+2025-11-01 13:36:57.232 19049-19078 SensorManager           com.udry.app                         D  registerListener :: 1936159343, Samsung Game Rotation Vector Sensor, 16666, 0, 
+2025-11-01 13:36:57.627 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:57.995 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:58.088 19049-19049 InsetsSourceConsumer    com.udry.app                         I  applyRequestedVisibilityToControl: visible=true, type=statusBars, host=com.udry.app/com.udry.app.MainActivity
+2025-11-01 13:36:58.091 19049-19078 SensorManager           com.udry.app                         D  unregisterListener
+2025-11-01 13:36:58.410 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:36:59.672 19049-19049 BLASTBufferQueue_Java   com.udry.app                         I  update, w= 1080 h= 2340 mName = VRI[MainActivity]@445394d mNativeObject= 0xb400007b4c0e1000 sc.mNativeObject= 0xb400007bd8a8e900 format= -1 caller= android.view.ViewRootImpl.updateBlastSurfaceIfNeeded:3386 android.view.ViewRootImpl.relayoutWindow:11361 android.view.ViewRootImpl.performTraversals:4544 android.view.ViewRootImpl.doTraversal:3708 android.view.ViewRootImpl$TraversalRunnable.run:12542 android.view.Choreographer$CallbackRecord.run:1751 
+2025-11-01 13:36:59.672 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  Relayout returned: old=(0,0,1080,2340) new=(0,0,1080,2340) relayoutAsync=false req=(1080,2340)0 dur=17 res=0x0 s={true 0xb400007b4bddd800} ch=false seqId=0
+2025-11-01 13:37:01.035 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  ViewPostIme key 0
+2025-11-01 13:37:01.052 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  ViewPostIme key 1
+2025-11-01 13:37:01.228 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  ViewPostIme key 1
+2025-11-01 13:37:03.438 19049-19049 SmartClipD...ropperImpl com.udry.app                         D  doExtractSmartClipData : Extraction start! reqId = 18  Cropped area = Rect(540, 1170 - 541, 1171)  Package = com.udry.app
+2025-11-01 13:37:03.438 19049-19049 SmartClipD...ropperImpl com.udry.app                         D  addAppMetaTag : package name is com.udry.app
+2025-11-01 13:37:03.438 19049-19049 SmartClipD...ropperImpl com.udry.app                         D  sendExtractionResultToSmartClipService : -- Extracted SmartClip data information --
+2025-11-01 13:37:03.439 19049-19049 SmartClipD...ropperImpl com.udry.app                         D  sendExtractionResultToSmartClipService : Request Id : 18
+2025-11-01 13:37:03.439 19049-19049 SmartClipD...ropperImpl com.udry.app                         D  sendExtractionResultToSmartClipService : Extraction mode : 1
+2025-11-01 13:37:03.439 19049-19049 SemSmartCl...Repository com.udry.app                         D  ----- Start of SmartClip repository informations -----
+2025-11-01 13:37:03.439 19049-19049 SemSmartCl...Repository com.udry.app                         D  ** Content type : image
+2025-11-01 13:37:03.439 19049-19049 SemSmartCl...Repository com.udry.app                         D  ** Meta area rect : Rect(0, 0 - 0, 0)
+2025-11-01 13:37:03.439 19049-19049 SemSmartCl...Repository com.udry.app                         D  ** Captured image file path : null
+2025-11-01 13:37:03.439 19049-19049 SemSmartCl...Repository com.udry.app                         D  ----- End of SmartClip repository informations -----
+2025-11-01 13:37:03.440 19049-19049 SmartClipD...ropperImpl com.udry.app                         D  sendExtractionResultToSmartClipService : Elapsed = 2
+2025-11-01 13:37:03.649 19049-19049 ImeFocusController      com.udry.app                         I  onPreWindowFocus: skipped hasWindowFocus=false mHasImeFocus=true
+2025-11-01 13:37:03.649 19049-19049 ImeFocusController      com.udry.app                         I  onPostWindowFocus: skipped hasWindowFocus=false mHasImeFocus=true
+2025-11-01 13:37:03.686 19049-19049 SmartClipR...Dispatcher com.udry.app                         D  dispatchScrollableAreaInfo : windowRect = Rect(0, 0 - 1080, 2340)
+2025-11-01 13:37:03.687 19049-19049 SmartClipR...Dispatcher com.udry.app                         D  dispatchScrollableAreaInfo : Scrollable view count = 2
+2025-11-01 13:37:03.687 19049-19049 SmartClipR...Dispatcher com.udry.app                         D  dispatchScrollableAreaInfo : Unscrollable view count = 0
+2025-11-01 13:37:03.687 19049-19049 SmartClipR...Dispatcher com.udry.app                         D  dispatchScrollableAreaInfo : Pkg=com.udry.app Activity=null
+2025-11-01 13:37:08.327 19049-19056 InputTransport          com.udry.app                         D  Input channel destroyed: 'ClientS', fd=348
+2025-11-01 13:37:08.332 19049-19057 MessageQueue            com.udry.app                         W  Handler (android.os.Handler) {5593503} sending message to a Handler on a dead thread (Ask Gemini)
+                                                                                                    java.lang.IllegalStateException: Handler (android.os.Handler) {5593503} sending message to a Handler on a dead thread
+                                                                                                    	at android.os.MessageQueue.enqueueMessage(MessageQueue.java:600)
+                                                                                                    	at android.os.Handler.enqueueMessage(Handler.java:787)
+                                                                                                    	at android.os.Handler.sendMessageAtTime(Handler.java:736)
+                                                                                                    	at android.os.Handler.sendMessageDelayed(Handler.java:706)
+                                                                                                    	at android.os.Handler.post(Handler.java:436)
+                                                                                                    	at android.hardware.camera2.impl.CameraDeviceImpl$CameraHandlerExecutor.execute(CameraDeviceImpl.java:2536)
+                                                                                                    	at android.hardware.camera2.impl.CallbackProxies$SessionStateCallbackProxy.onClosed(CallbackProxies.java:104)
+                                                                                                    	at android.hardware.camera2.impl.CameraCaptureSessionImpl.close(CameraCaptureSessionImpl.java:588)
+                                                                                                    	at android.hardware.camera2.impl.CameraCaptureSessionImpl.finalize(CameraCaptureSessionImpl.java:894)
+                                                                                                    	at java.lang.Daemons$FinalizerDaemon.doFinalize(Daemons.java:387)
+                                                                                                    	at java.lang.Daemons$FinalizerDaemon.processReference(Daemons.java:367)
+                                                                                                    	at java.lang.Daemons$FinalizerDaemon.runInternal(Daemons.java:339)
+                                                                                                    	at java.lang.Daemons$Daemon.run(Daemons.java:132)
+                                                                                                    	at java.lang.Thread.run(Thread.java:1119)
+2025-11-01 13:37:08.333 19049-19057 MessageQueue            com.udry.app                         W  Handler (android.os.Handler) {13ca2b9} sending message to a Handler on a dead thread (Ask Gemini)
+                                                                                                    java.lang.IllegalStateException: Handler (android.os.Handler) {13ca2b9} sending message to a Handler on a dead thread
+                                                                                                    	at android.os.MessageQueue.enqueueMessage(MessageQueue.java:600)
+                                                                                                    	at android.os.Handler.enqueueMessage(Handler.java:787)
+                                                                                                    	at android.os.Handler.sendMessageAtTime(Handler.java:736)
+                                                                                                    	at android.os.Handler.sendMessageDelayed(Handler.java:706)
+                                                                                                    	at android.os.Handler.post(Handler.java:436)
+                                                                                                    	at android.hardware.camera2.impl.CameraDeviceImpl$CameraHandlerExecutor.execute(CameraDeviceImpl.java:2536)
+                                                                                                    	at android.hardware.camera2.impl.CallbackProxies$SessionStateCallbackProxy.onClosed(CallbackProxies.java:104)
+                                                                                                    	at android.hardware.camera2.impl.CameraCaptureSessionImpl.close(CameraCaptureSessionImpl.java:588)
+                                                                                                    	at android.hardware.camera2.impl.CameraCaptureSessionImpl.finalize(CameraCaptureSessionImpl.java:894)
+                                                                                                    	at java.lang.Daemons$FinalizerDaemon.doFinalize(Daemons.java:387)
+                                                                                                    	at java.lang.Daemons$FinalizerDaemon.processReference(Daemons.java:367)
+                                                                                                    	at java.lang.Daemons$FinalizerDaemon.runInternal(Daemons.java:339)
+                                                                                                    	at java.lang.Daemons$Daemon.run(Daemons.java:132)
+                                                                                                    	at java.lang.Thread.run(Thread.java:1119)
+2025-11-01 13:37:08.333 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.333 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.333 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.333 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.333 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.334 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.334 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.334 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.334 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.334 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.334 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.334 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.335 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.335 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.335 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.336 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.336 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.336 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.336 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.336 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.336 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.336 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.337 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.337 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.337 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.337 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.338 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.338 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.338 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.338 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.338 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.338 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.339 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.339 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.339 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.339 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.339 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.339 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.340 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.340 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.341 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.341 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.341 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.341 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.342 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.342 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.342 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.342 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.342 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.343 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.343 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.344 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.344 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.344 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.344 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.345 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.345 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.345 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.345 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.345 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.345 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.346 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.346 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.346 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.346 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.346 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.347 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.347 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.347 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.347 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.347 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.348 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.348 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.348 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.348 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.349 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.349 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.349 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.349 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.349 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.349 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.349 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.350 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.350 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.350 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.350 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.350 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.350 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.351 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.351 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.351 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.351 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.352 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.352 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.352 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.352 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.352 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.352 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.353 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.353 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.353 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.353 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.353 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.353 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.353 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.354 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.354 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.354 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.354 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.354 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.354 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.355 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.355 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.355 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.355 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.355 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.355 19049-19057 cr_HandleImpl           com.udry.app                         W  Handle was not closed.
+2025-11-01 13:37:08.393 19049-19049 InsetsSourceConsumer    com.udry.app                         I  applyRequestedVisibilityToControl: visible=true, type=navigationBars, host=com.udry.app/com.udry.app.MainActivity
+2025-11-01 13:37:08.394 19049-19049 InsetsSourceConsumer    com.udry.app                         I  applyRequestedVisibilityToControl: visible=true, type=statusBars, host=com.udry.app/com.udry.app.MainActivity
+2025-11-01 13:37:08.421 19049-19049 InputMethodManagerUtils com.udry.app                         D  startInputInner - Id : 0
+2025-11-01 13:37:08.422 19049-19049 InputMethodManager      com.udry.app                         I  startInputInner - IInputMethodManagerGlobalInvoker.startInputOrWindowGainedFocus
+2025-11-01 13:37:08.429 19049-19493 InputTransport          com.udry.app                         D  Input channel constructed: 'ClientS', fd=255
+2025-11-01 13:37:10.323 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  ViewPostIme pointer 0
+2025-11-01 13:37:10.325 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  call setFrameRateCategory for touch hint category=high hint, reason=touch, vri=VRI[MainActivity]@445394d
+2025-11-01 13:37:10.683 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:37:10.769 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  ViewPostIme pointer 1
+2025-11-01 13:37:11.092 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:37:11.405 19049-19060 CameraManagerGlobal     com.udry.app                         I  Camera 2 facing CAMERA_FACING_BACK state now CAMERA_STATE_IDLE for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:37:11.433 19049-19060 CameraManagerGlobal     com.udry.app                         I  postSingleUpdate device: camera id 2 status STATUS_PRESENT
+2025-11-01 13:37:11.434 19049-19060 CameraManagerGlobal     com.udry.app                         I  Camera 2 facing CAMERA_FACING_BACK state now CAMERA_STATE_CLOSED for client com.udry.app API Level 2 User Id 0Device Id 0
+2025-11-01 13:37:11.499 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:37:11.549 19049-19049 BLASTBufferQueue_Java   com.udry.app                         I  update, w= 1080 h= 2340 mName = VRI[MainActivity]@445394d mNativeObject= 0xb400007b4c0e1000 sc.mNativeObject= 0xb400007b4bd83340 format= -1 caller= android.view.ViewRootImpl.updateBlastSurfaceIfNeeded:3386 android.view.ViewRootImpl.relayoutWindow:11361 android.view.ViewRootImpl.performTraversals:4544 android.view.ViewRootImpl.doTraversal:3708 android.view.ViewRootImpl$TraversalRunnable.run:12542 android.view.Choreographer$CallbackRecord.run:1751 
+2025-11-01 13:37:11.549 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  Relayout returned: old=(0,0,1080,2340) new=(0,0,1080,2340) relayoutAsync=false req=(1080,2340)0 dur=4 res=0x0 s={true 0xb400007b4bddd800} ch=false seqId=0
+2025-11-01 13:37:11.863 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:37:11.898 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  onDisplayChanged oldDisplayState=2 newDisplayState=2
+2025-11-01 13:37:11.898 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:37:12.215 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:37:12.251 19049-19049 Choreographer           com.udry.app                         I  Skipped 30 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:37:12.574 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:37:12.609 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.609 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.609 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.609 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.609 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.609 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.609 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.609 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.610 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.610 19049-19049 Capacitor/Console       com.udry.app                         D  File: https://maps.googleapis.com/maps-api-v3/api/js/62/12c/intl/zh_hk/marker.js - Line 3 - Msg: Rendering was performed in a subtree hidden by content-visibility.
+2025-11-01 13:37:12.610 19049-19049 Choreographer           com.udry.app                         I  Skipped 30 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:37:12.944 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:37:12.979 19049-19049 Choreographer           com.udry.app                         I  Skipped 31 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:37:13.299 19049-19049 View                    com.udry.app                         I  setRequestedFrameRate frameRate=-4.0, this=com.getcapacitor.CapacitorWebView{8022c81 VFEDHVC.. .F....I. 0,0-1080,2109 #7f0901c2 app:id/webview aid=1073741824}, caller=WV.ef.b:1 WV.fg.h:118 WV.fg.onDraw:7 com.android.webview.chromium.WebViewChromium.onDraw:35 android.webkit.WebView.onDraw:2959 
+2025-11-01 13:37:13.334 19049-19049 Choreographer           com.udry.app                         I  Skipped 30 frames!  The application may be doing too much work on its main thread.
+2025-11-01 13:37:13.771 19049-19049 VRI[MainAc...y]@445394d com.udry.app                         I  call setFrameRateCategory for touch hint category=no preference, reason=boost timeout, vri=VRI[MainActivity]@445394d
