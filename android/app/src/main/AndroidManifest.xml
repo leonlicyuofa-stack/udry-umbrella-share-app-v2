@@ -29,12 +29,20 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
-            <!-- Intent filter for deep links -->
+            <!-- Intent filter for custom deep links (e.g., udry://) -->
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
                 <data android:scheme="@string/custom_url_scheme" />
+            </intent-filter>
+
+            <!-- Intent filter for Android App Links (HTTPS links) -->
+            <intent-filter android:autoVerify="true">
+                <action android:name="android.intent.action.VIEW" />
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.BROWSABLE" />
+                <data android:scheme="https" android:host="udry-app-dev.web.app" />
             </intent-filter>
 
         </activity>
