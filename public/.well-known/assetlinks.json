@@ -1,8 +1,9 @@
-[{
+{
   "relation": ["delegate_permission/common.handle_all_urls"],
   "target": {
     "namespace": "android_app",
     "package_name": "com.udry.app",
-    "sha256_cert_fingerprints": ["PLACEHOLDER_YOUR_SHA256_FINGERPRINT_HERE"]
+    "sha256_cert_fingerprints":
+    ["6F:C1:F6:9E:22:98:D8:07:54:E5:45:98:5D:87:6D:4C:6A:B9:4E:6B:41:4D:7F:41:4A:37:A1:39:19:D4:A7:C8"]
   }
-}]
+}
