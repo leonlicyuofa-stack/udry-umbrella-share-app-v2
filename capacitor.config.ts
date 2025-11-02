@@ -10,8 +10,7 @@ const config: CapacitorConfig = {
     androidScheme: 'https',
   },
   android: {
-    allowMixedContent: true,
-    fitWindows: true
+    allowMixedContent: true
   },
   ios: {
     contentInset: 'always'
