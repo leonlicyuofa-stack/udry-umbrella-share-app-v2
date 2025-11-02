@@ -1,3 +1,4 @@
+
 // src/app/(main)/payment/success/page.tsx
 "use client";
 
@@ -56,7 +57,7 @@ function SuccessPageContent() {
         // --- PLATFORM-SPECIFIC REDIRECT ---
         if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
           // For Android, use the Capacitor App plugin for a reliable redirect.
-          await App.openUrl({ url: 'udry://account/balance' });
+          await App.open({ url: 'udry://account/balance' });
         } else {
           // For iOS and web browsers, use the existing method.
           window.location.href = 'udry://account/balance';
