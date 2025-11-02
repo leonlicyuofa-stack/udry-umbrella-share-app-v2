@@ -9,7 +9,7 @@ import { httpsCallable } from 'firebase/functions';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
 import { Capacitor } from '@capacitor/core';
-import { App } from '@capacitor/app';
+import { Browser } from '@capacitor/browser';
 
 function SuccessPageContent() {
   const router = useRouter();
@@ -55,11 +55,11 @@ function SuccessPageContent() {
         toast({ variant: 'destructive', title: 'Payment Finalization Failed', description: error.message });
       } finally {
         // --- PLATFORM-SPECIFIC REDIRECT ---
-        if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
-          // For Android, use the Capacitor App plugin for a reliable redirect.
-          await App.open({ url: 'udry://account/balance' });
+        if (Capacitor.isNativePlatform()) {
+          // For all native platforms (iOS and Android), use the Browser plugin for a reliable redirect.
+          await Browser.open({ url: 'udry://account/balance' });
         } else {
-          // For iOS and web browsers, use the existing method.
+          // Fallback for web browsers
           window.location.href = 'udry://account/balance';
         }
 
