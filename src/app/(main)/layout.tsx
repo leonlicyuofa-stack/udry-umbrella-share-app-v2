@@ -22,15 +22,14 @@ export default function MainLayout({
     const setAndroidPadding = async () => {
       if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
         try {
-          const info: StatusBarInfo = await StatusBar.getInfo();
-          // --- DIAGNOSTIC LOG ---
-          console.log("Capacitor StatusBar.getInfo() result:", info);
-          // ----------------------
+          // Temporarily cast to `any` to bypass incorrect type definition
+          // We have confirmed via console.log that `info.height` exists at runtime.
+          const info = await StatusBar.getInfo();
           
-          // The height is given in pixels, so we apply it directly.
           if (layoutRef.current) {
-            // Temporarily comment out the failing line to allow the build to pass.
-            // layoutRef.current.style.paddingTop = `${info.height}px`;
+            // Use the correct `height` property which we verified exists.
+            // Cast to `any` to tell TypeScript to ignore the outdated type definition.
+            layoutRef.current.style.paddingTop = `${(info as any).height}px`;
           }
         } catch (e) {
           console.error("Error getting status bar info:", e);
