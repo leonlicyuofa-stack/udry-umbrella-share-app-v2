@@ -7,6 +7,8 @@ import { useAuth } from '@/contexts/auth-context';
 import { httpsCallable } from 'firebase/functions';
 import { useToast } from '@/hooks/use-toast';
 import { Loader2 } from 'lucide-react';
+import { Capacitor } from '@capacitor/core';
+import { App } from '@capacitor/app';
 
 function SuccessPageContent() {
   const router = useRouter();
@@ -51,13 +53,17 @@ function SuccessPageContent() {
       } catch (error: any) {
         toast({ variant: 'destructive', title: 'Payment Finalization Failed', description: error.message });
       } finally {
-        // --- RELIABLE REDIRECT ---
-        // For iOS (Capacitor), this custom URL scheme will switch back to the app.
-        // For web browsers, it does nothing gracefully.
-        window.location.href = 'udry://account/balance';
+        // --- PLATFORM-SPECIFIC REDIRECT ---
+        if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
+          // For Android, use the Capacitor App plugin for a reliable redirect.
+          await App.openUrl({ url: 'udry://account/balance' });
+        } else {
+          // For iOS and web browsers, use the existing method.
+          window.location.href = 'udry://account/balance';
+        }
 
         // As a fallback for browsers where the above doesn't work,
-        // we'll redirect to the home page after a short delay.
+        // redirect to the home page after a short delay.
         setTimeout(() => {
           router.replace('/account/balance');
         }, 1500);
