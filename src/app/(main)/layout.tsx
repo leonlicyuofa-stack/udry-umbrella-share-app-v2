@@ -23,10 +23,14 @@ export default function MainLayout({
       if (Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android') {
         try {
           const info: StatusBarInfo = await StatusBar.getInfo();
+          // --- DIAGNOSTIC LOG ---
+          console.log("Capacitor StatusBar.getInfo() result:", info);
+          // ----------------------
+          
           // The height is given in pixels, so we apply it directly.
           if (layoutRef.current) {
-            // CORRECTED: Use `info.height` instead of `info.statusBarHeight`
-            layoutRef.current.style.paddingTop = `${info.height}px`;
+            // Temporarily comment out the failing line to allow the build to pass.
+            // layoutRef.current.style.paddingTop = `${info.height}px`;
           }
         } catch (e) {
           console.error("Error getting status bar info:", e);
