@@ -13,6 +13,7 @@ import {
   reauthenticateWithCredential,
   EmailAuthProvider,
   updatePassword,
+  sendPasswordResetEmail,
   type User as FirebaseUser,
   type UserCredential,
 } from 'firebase/auth';
@@ -37,6 +38,7 @@ interface AuthContextType {
   signInWithEmail: (data: SignInFormData) => Promise<UserCredential>;
   changeUserPassword: (data: ChangePasswordFormData) => Promise<void>;
   signOut: () => Promise<void>;
+  sendPasswordReset: (email: string) => Promise<void>;
   addBalance: (amount: number) => Promise<void>;
   setDeposit: () => Promise<void>;
   requestDepositRefund: () => Promise<void>;
@@ -214,6 +216,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const sendPasswordReset = async (email: string) => {
+    if (!firebaseServices?.auth) {
+        toast({ variant: 'destructive', title: 'Error', description: 'Authentication service not available.'});
+        throw new Error('Auth service not available.');
+    }
+    try {
+        await sendPasswordResetEmail(firebaseServices.auth, email);
+        toast({ title: 'Password Reset Email Sent', description: `If an account exists for ${email}, a password reset link has been sent.`});
+    } catch (error: any) {
+        toast({ variant: 'destructive', title: 'Error Sending Reset Email', description: error.message });
+        throw error;
+    }
+  };
+
   const changeUserPassword = async (data: ChangePasswordFormData) => {
     if (!firebaseUser || !firebaseServices?.auth.currentUser) return;
     if (data.newPassword !== data.confirmNewPassword) {
@@ -364,7 +380,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     activeRental, 
     isLoadingRental: isLoadingRental || (!!firebaseUser && !firestoreUser),
     startRental, endRental, signUpWithEmail,
-    signInWithEmail, signOut, changeUserPassword, addBalance, setDeposit,
+    signInWithEmail, signOut, changeUserPassword, sendPasswordReset, addBalance, setDeposit,
     requestDepositRefund,
     useFirstFreeRental, showSignUpSuccess, dismissSignUpSuccess,
     logMachineEvent,
@@ -395,3 +411,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
