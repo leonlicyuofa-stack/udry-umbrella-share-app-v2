@@ -88,9 +88,9 @@ export function SignInForm() {
                 <div className="flex items-center justify-between">
                   <FormLabel>Password</FormLabel>
                   <Button variant="link" asChild className="px-0.5 h-auto text-xs">
-                     <a href="https://wa.me/85297373875" target="_blank" rel="noopener noreferrer">
-                        Forgot password?
-                     </a>
+                    <Link href="/auth/forgot-password">
+                      Forgot password?
+                    </Link>
                   </Button>
                 </div>
                 <FormControl>
