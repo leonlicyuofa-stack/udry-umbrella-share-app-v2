@@ -13,10 +13,10 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
+import { useAuth } from "@/contexts/auth-context"; // Import useAuth
 import { Loader2, Mail } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
-import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 
 const forgotPasswordSchema = z.object({
@@ -26,7 +26,7 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export function ForgotPasswordForm() {
-  const { toast } = useToast();
+  const { sendPasswordReset } = useAuth(); // Get the function from context
   const [formLoading, setFormLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -39,16 +39,16 @@ export function ForgotPasswordForm() {
 
   async function onSubmit(values: ForgotPasswordFormData) {
     setFormLoading(true);
-    // NOTE: The actual Firebase logic will be added in Step 2.
-    // This is a placeholder to simulate the UI behavior.
-    console.log("Password reset requested for:", values.email);
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    toast({
-      title: "Check Your Email",
-      description: `If an account exists for ${values.email}, a password reset link has been sent.`,
-    });
-    setIsSubmitted(true);
-    setFormLoading(false);
+    try {
+      await sendPasswordReset(values.email);
+      // The toast is now handled within the sendPasswordReset function
+      setIsSubmitted(true);
+    } catch (error) {
+      // Errors are now handled by a toast within the sendPasswordReset function
+      console.error("Forgot password submission error:", error);
+    } finally {
+      setFormLoading(false);
+    }
   }
 
   if (isSubmitted) {
