@@ -24,13 +24,22 @@ import type { SignUpFormData, SignInFormData, ChangePasswordFormData, User, Stal
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/language-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle, Loader2 } from 'lucide-react';
+import { AlertTriangle, Loader2, MailCheck, ShieldAlert, LogOut } from 'lucide-react';
 import { httpsCallable } from 'firebase/functions';
+import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+
+// --- IMPORTANT: GRANDFATHER CLAUSE ---
+// This date ensures that only users who sign up *after* this feature is deployed
+// will be subject to the email verification check. Your existing users will not be affected.
+const GRANDFATHER_CLAUSE_TIMESTAMP = 1732492800000; // Corresponds to Nov 25, 2025
+
 
 interface AuthContextType {
   user: User | null;
   isReady: boolean;
   loading: boolean;
+  isVerified: boolean; 
   activeRental: ActiveRental | null;
   isLoadingRental: boolean;
   startRental: (rental: Omit<ActiveRental, 'logs'>) => Promise<void>;
@@ -53,7 +62,6 @@ interface AuthContextType {
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
-// --- New Component to show when Firebase fails to initialize ---
 function FirebaseConfigurationError() {
   const { translate } = useLanguage();
   return (
@@ -74,6 +82,47 @@ function FirebaseConfigurationError() {
   );
 }
 
+function EmailVerificationPrompt({ onResend, onSignOut, isSending }: { onResend: () => void, onSignOut: () => void, isSending: boolean }) {
+  const { user } = useAuth(); // We can use useAuth here as it's a child of the provider
+  
+  return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-secondary/30 p-4">
+          <Card className="w-full max-w-lg shadow-xl">
+              <CardHeader className="text-center">
+                  <MailCheck className="mx-auto h-12 w-12 text-primary" />
+                  <CardTitle className="mt-4 text-2xl">Please Verify Your Email</CardTitle>
+                  <CardDescription>
+                      We've sent a verification link to <strong>{user?.email}</strong>. Please check your inbox and spam folder.
+                  </CardDescription>
+              </CardHeader>
+              <CardContent className="space-y-4">
+                   <Alert>
+                      <ShieldAlert className="h-4 w-4" />
+                      <AlertTitle>Why am I seeing this?</AlertTitle>
+                      <AlertDescription>
+                         To protect your account, email verification is required for all new users before accessing the app.
+                      </AlertDescription>
+                  </Alert>
+                  <p className="text-sm text-center text-muted-foreground">
+                      Once your email is verified, you will be able to access all features. You may need to sign out and sign back in after verifying.
+                  </p>
+              </CardContent>
+              <CardFooter className="flex flex-col sm:flex-row gap-2">
+                   <Button onClick={onResend} disabled={isSending} className="w-full sm:w-auto">
+                      {isSending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                      Resend Verification Email
+                  </Button>
+                  <Button variant="outline" onClick={onSignOut} className="w-full sm:w-auto">
+                      <LogOut className="mr-2 h-4 w-4" />
+                      Sign Out
+                  </Button>
+              </CardFooter>
+          </Card>
+      </div>
+  );
+}
+
+
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [firestoreUser, setFirestoreUser] = useState<User | null>(null);
@@ -87,10 +136,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const pathname = usePathname();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
   const [isFirebaseError, setIsFirebaseError] = useState(false);
+  const [isVerified, setIsVerified] = useState(false);
+  const [isSendingVerification, setIsSendingVerification] = useState(false);
 
   useEffect(() => {
-    // The 1-second delay for testing the race condition has been removed.
-    // The correct initialization method in firebase.ts should solve this permanently.
     const services = initializeFirebaseServices();
 
     if (!services) {
@@ -108,6 +157,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!user) {
         setFirestoreUser(null);
         setActiveRental(null);
+        setIsVerified(false);
       }
       setIsReady(true);
     });
@@ -115,88 +165,76 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return () => unsubscribeAuth();
   }, []);
   
-  // --- REFACTORED REDIRECTION LOGIC ---
   useEffect(() => {
-    if (!isReady) {
-      return; // Wait until Firebase auth state is confirmed
-    }
-
+    if (!isReady) return;
     const isAuthPage = pathname.startsWith('/auth');
-    // Protected pages are anything NOT under /auth, /payment, or /diag
     const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
 
     if (firebaseUser) {
-      // User is LOGGED IN
       if (isAuthPage) {
-        // If a logged-in user somehow lands on an auth page (e.g., signin, signup),
-        // redirect them to the main app homepage.
         router.replace('/home');
       }
     } else {
-      // User is LOGGED OUT
       if (isProtectedRoute) {
-        // If a logged-out user tries to access a protected page,
-        // redirect them to the sign-in page.
         router.replace('/auth/signin');
       }
     }
   }, [isReady, firebaseUser, pathname, router]);
-
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
       if (!firebaseUser) setIsLoadingRental(false);
       return;
     }
+    
+    const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
+    const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
+    const isUserVerified = firebaseUser.emailVerified || isExistingUser;
+    setIsVerified(isUserVerified);
 
-    setIsLoadingRental(true);
-    const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
-    const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
-      if (docSnap.exists()) {
-        const userData = docSnap.data() as User;
-        setFirestoreUser(userData);
-        setActiveRental(userData.activeRental || null);
-      } else {
-        const newUserDoc: Omit<User, 'uid'> = {
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-          photoURL: firebaseUser.photoURL,
-          deposit: 0,
-          balance: 0,
-          hasHadFirstFreeRental: false,
-          createdAt: serverTimestamp(),
-          activeRental: null,
-          depositPaymentIntentId: null,
-        };
-        await setDoc(userDocRef, newUserDoc);
-        setFirestoreUser({ uid: firebaseUser.uid, ...newUserDoc });
-        setActiveRental(null);
-        if (!firebaseUser.isAnonymous) {
-          setShowSignUpSuccess(true);
-        }
-      }
-      setIsLoadingRental(false);
-    });
+    if (isUserVerified) {
+        setIsLoadingRental(true);
+        const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
+        const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
+          if (docSnap.exists()) {
+            const userData = docSnap.data() as User;
+            setFirestoreUser(userData);
+            setActiveRental(userData.activeRental || null);
+          } else {
+            const newUserDoc: Omit<User, 'uid'> = {
+              email: firebaseUser.email,
+              displayName: firebaseUser.displayName,
+              photoURL: firebaseUser.photoURL,
+              deposit: 0,
+              balance: 0,
+              hasHadFirstFreeRental: false,
+              createdAt: serverTimestamp(),
+              activeRental: null,
+              depositPaymentIntentId: null,
+            };
+            await setDoc(userDocRef, newUserDoc);
+            setFirestoreUser({ uid: firebaseUser.uid, ...newUserDoc });
+            setActiveRental(null);
+            if (!firebaseUser.isAnonymous) {
+              setShowSignUpSuccess(true);
+            }
+          }
+          setIsLoadingRental(false);
+        });
 
-    return () => {
-      unsubscribeUserDoc();
-    };
-
-  }, [firebaseUser, firebaseServices]);
+        return () => unsubscribeUserDoc();
+    } else {
+        // If user is not verified, we don't need to load their Firestore data yet.
+        setIsLoadingRental(false);
+    }
+  }, [firebaseUser, firebaseServices, isVerified]); // Re-run when isVerified changes
   
-  if (isFirebaseError) {
-    return <FirebaseConfigurationError />;
-  }
-
   const signUpWithEmail = async ({ name, email, password }: SignUpFormData) => {
     if (!firebaseServices?.auth || !firebaseServices.db) return;
     try {
       const userCredential = await createUserWithEmailAndPassword(firebaseServices.auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
-      
-      // Automatically send the verification email upon successful sign-up
       await sendEmailVerification(userCredential.user);
-
       toast({ title: translate('auth_success_signup_email') });
     } catch (error: any) {
       toast({ variant: 'destructive', title: translate('auth_error_signup_email_failed'), description: error.message });
@@ -215,7 +253,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!firebaseServices?.auth) return;
     try {
       await firebaseSignOut(firebaseServices.auth);
-      // No need to manage redirect flags, the useEffect will handle it
       toast({ title: translate('auth_success_signout') });
     } catch (error: any) {
       toast({ variant: 'destructive', title: translate('auth_error_signout_failed'), description: error.message });
@@ -241,6 +278,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         toast({ variant: "destructive", title: "Error", description: "You must be logged in to send a verification email." });
         throw new Error("User not logged in.");
     }
+    setIsSendingVerification(true);
     try {
         await sendEmailVerification(firebaseServices.auth.currentUser);
         toast({ title: "Email Sent!", description: "A new verification link has been sent to your email address." });
@@ -251,6 +289,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
         toast({ variant: "destructive", title: "Could Not Send Email", description: message });
         throw error;
+    } finally {
+        setIsSendingVerification(false);
     }
   };
 
@@ -369,7 +409,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   
   const logMachineEvent = async ({ stallId, type, message }: { stallId?: string; type: MachineLog['type']; message: string; }) => {
-    // DIAGNOSTIC LOG
     console.log(`[DIAG_LOG ${new Date().toISOString()}] [AUTH_CONTEXT] logMachineEvent: Type: ${type}, Message: "${message}"`);
     if (!firebaseUser?.uid || !activeRental || !firebaseServices?.db) {
       if (!firebaseUser?.uid || !firebaseServices?.db) {
@@ -401,6 +440,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     user, 
     isReady, 
     loading: !isReady || (!!firebaseUser && !firestoreUser),
+    isVerified,
     activeRental, 
     isLoadingRental: isLoadingRental || (!!firebaseUser && !firestoreUser),
     startRental, endRental, signUpWithEmail,
@@ -414,15 +454,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   if (!isReady) {
-    // Return a global loading state for the initial app load.
-    // This can be a simple spinner or a splash screen component.
     return (
         <div className="flex h-screen w-screen items-center justify-center bg-background">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
         </div>
     );
   }
+  
+  // New centralized rendering logic
+  if (isReady && user && !isVerified) {
+    // If auth is ready, we have a user, but they are not verified, show the prompt.
+    // The AuthContext is still provided so the prompt can use its `user` and `signOut` functions.
+    return (
+      <AuthContext.Provider value={value}>
+        <EmailVerificationPrompt 
+          onResend={sendVerificationEmail}
+          onSignOut={signOut}
+          isSending={isSendingVerification}
+        />
+      </AuthContext.Provider>
+    );
+  }
 
+  // Otherwise (not ready, no user, or user is verified), render the main app.
   return (
     <AuthContext.Provider value={value}>
       {children}
