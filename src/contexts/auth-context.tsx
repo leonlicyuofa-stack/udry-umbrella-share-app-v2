@@ -14,6 +14,7 @@ import {
   EmailAuthProvider,
   updatePassword,
   sendPasswordResetEmail,
+  sendEmailVerification,
   type User as FirebaseUser,
   type UserCredential,
 } from 'firebase/auth';
@@ -191,6 +192,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       const userCredential = await createUserWithEmailAndPassword(firebaseServices.auth, email, password);
       await updateProfile(userCredential.user, { displayName: name });
+      
+      // Automatically send the verification email upon successful sign-up
+      await sendEmailVerification(userCredential.user);
+
       toast({ title: translate('auth_success_signup_email') });
     } catch (error: any) {
       toast({ variant: 'destructive', title: translate('auth_error_signup_email_failed'), description: error.message });
@@ -411,5 +416,3 @@ export function useAuth() {
   }
   return context;
 }
-
-    
