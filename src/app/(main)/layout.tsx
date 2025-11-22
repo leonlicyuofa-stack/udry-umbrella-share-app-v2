@@ -10,6 +10,7 @@ import { SignUpSuccessDialog } from '@/components/auth/sign-up-success-dialog';
 import { useEffect, useState, useRef } from 'react';
 import { Capacitor } from '@capacitor/core';
 import { StatusBar, type StatusBarInfo } from '@capacitor/status-bar';
+import { EmailVerificationHandler } from '@/components/auth/email-verification-handler';
 
 export default function MainLayout({
   children,
@@ -42,21 +43,23 @@ export default function MainLayout({
 
   return (
     <StallsProvider>
-      <div 
-        ref={layoutRef}
-        className={cn(
-          "min-h-screen flex flex-col",
-          // The side padding is still valuable for landscape mode on all devices
-          "pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
-        )}
-      >
-        <DeepLinkHandler />
-        <MainAppChrome>
-          {children}
-        </MainAppChrome>
-        <Toaster />
-        <SignUpSuccessDialog />
-      </div>
+      <EmailVerificationHandler>
+        <div 
+          ref={layoutRef}
+          className={cn(
+            "min-h-screen flex flex-col",
+            // The side padding is still valuable for landscape mode on all devices
+            "pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
+          )}
+        >
+          <DeepLinkHandler />
+          <MainAppChrome>
+            {children}
+          </MainAppChrome>
+          <Toaster />
+          <SignUpSuccessDialog />
+        </div>
+      </EmailVerificationHandler>
     </StallsProvider>
   );
 }
