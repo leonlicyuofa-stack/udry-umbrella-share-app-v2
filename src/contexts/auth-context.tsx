@@ -40,6 +40,7 @@ interface AuthContextType {
   changeUserPassword: (data: ChangePasswordFormData) => Promise<void>;
   signOut: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
+  sendVerificationEmail: () => Promise<void>;
   addBalance: (amount: number) => Promise<void>;
   setDeposit: () => Promise<void>;
   requestDepositRefund: () => Promise<void>;
@@ -235,6 +236,24 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const sendVerificationEmail = async () => {
+    if (!firebaseServices?.auth.currentUser) {
+        toast({ variant: "destructive", title: "Error", description: "You must be logged in to send a verification email." });
+        throw new Error("User not logged in.");
+    }
+    try {
+        await sendEmailVerification(firebaseServices.auth.currentUser);
+        toast({ title: "Email Sent!", description: "A new verification link has been sent to your email address." });
+    } catch (error: any) {
+        let message = "An unknown error occurred.";
+        if (error.code === 'auth/too-many-requests') {
+            message = "You have requested a verification email too many times recently. Please wait a few minutes before trying again."
+        }
+        toast({ variant: "destructive", title: "Could Not Send Email", description: message });
+        throw error;
+    }
+  };
+
   const changeUserPassword = async (data: ChangePasswordFormData) => {
     if (!firebaseUser || !firebaseServices?.auth.currentUser) return;
     if (data.newPassword !== data.confirmNewPassword) {
@@ -385,7 +404,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     activeRental, 
     isLoadingRental: isLoadingRental || (!!firebaseUser && !firestoreUser),
     startRental, endRental, signUpWithEmail,
-    signInWithEmail, signOut, changeUserPassword, sendPasswordReset, addBalance, setDeposit,
+    signInWithEmail, signOut, changeUserPassword, sendPasswordReset,
+    sendVerificationEmail,
+    addBalance, setDeposit,
     requestDepositRefund,
     useFirstFreeRental, showSignUpSuccess, dismissSignUpSuccess,
     logMachineEvent,

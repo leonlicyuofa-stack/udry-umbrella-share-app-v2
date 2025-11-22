@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Loader2, MailCheck, ShieldAlert, LogOut } from 'lucide-react';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 
 // --- IMPORTANT: GRANDFATHER CLAUSE ---
@@ -18,6 +18,22 @@ export function EmailVerificationHandler({ children }: { children: React.ReactNo
   const { user, isReady, signOut, sendVerificationEmail } = useAuth();
   const { toast } = useToast();
   const [isSending, setIsSending] = useState(false);
+
+  // Send email automatically once when the component mounts for a new, unverified user
+  useEffect(() => {
+    if (user && !user.emailVerified) {
+      // Check if this is a new user to avoid sending emails to old, unverified accounts.
+      // This is a safety check; the main grandfather clause is the primary gate.
+      const creationTime = user.metadata?.creationTime ? new Date(user.metadata.creationTime).getTime() : 0;
+      const isNewUser = creationTime >= GRANDFATHER_CLAUSE_TIMESTAMP;
+      if (isNewUser) {
+        sendVerificationEmail().catch(err => {
+          // Errors are already handled by a toast in the context, but we can log here if needed.
+          console.error("Initial verification email failed to send:", err);
+        });
+      }
+    }
+  }, [user, sendVerificationEmail]); // Dependency array ensures this runs only when the user object changes
 
   const handleResendEmail = async () => {
     setIsSending(true);
