@@ -204,7 +204,8 @@ export default function ReturnUmbrellaPage() {
           const slotNum = scannedStall.nextActionSlot || 1;
           const parmValue = (RETURN_UMBRELLA_BASE_PARM + slotNum).toString();
           const cmdType = '1';
-
+          
+          logMachineEvent({ stallId: scannedStall.id, type: 'info', message: `Calling cloud function 'unlockPhysicalMachine' with dvid: ${scannedStall.dvid}, tok: ${tokenValue}, parm: ${parmValue}` });
           const unlockPhysicalMachine = httpsCallable(firebaseServices.functions, 'unlockPhysicalMachine');
           const result = await unlockPhysicalMachine({ dvid: scannedStall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType });
           const data = result.data as { success: boolean; unlockDataString?: string; message?: string; };
@@ -215,12 +216,15 @@ export default function ReturnUmbrellaPage() {
             throw new Error(errorMsg);
           }
           
+          logMachineEvent({ stallId: scannedStall.id, type: 'info', message: `Cloud function returned SUCCESS. Command string: "${data.unlockDataString}"` });
+          
           setBluetoothState('sending_command');
           const commandToSend = `CMD:${data.unlockDataString}\r\n`;
           const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
+          
+          logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: `Sending Command: "${commandToSend.trim()}" (Return Umbrella)` });
           await BleClient.writeWithoutResponse(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
 
-          logMachineEvent({ stallId: scannedStall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Return Umbrella)` });
           
           setBluetoothState('awaiting_confirmation');
           setShowWaitingDialog(true); // Show the waiting pop-up

@@ -147,21 +147,24 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           const parmValue = (GET_UMBRELLA_BASE_PARM + slotNum).toString();
           const cmdType = '1';
 
+          logMachineEvent({ stallId: stall.id, type: 'info', message: `Calling cloud function 'unlockPhysicalMachine' with dvid: ${stall.dvid}, tok: ${tokenValue}, parm: ${parmValue}` });
           const unlockPhysicalMachine = httpsCallable(firebaseServices.functions, 'unlockPhysicalMachine');
           const result = await unlockPhysicalMachine({ dvid: stall.dvid, tok: tokenValue, parm: parmValue, cmd_type: cmdType });
           
           const data = result.data as { success: boolean; unlockDataString?: string; message?: string; };
 
           if (!data.success || !data.unlockDataString) {
-            throw new Error(data.message || `Failed to get unlock command.`);
+            throw new Error(data.message || `Cloud function failed to return unlock command.`);
           }
+          
+          logMachineEvent({ stallId: stall.id, type: 'info', message: `Cloud function returned SUCCESS. Command string: "${data.unlockDataString}"` });
           
           setBluetoothState('sending_command');
           const commandToSend = `CMD:${data.unlockDataString}\r\n`;
           const commandDataView = numbersToDataView(commandToSend.split('').map(c => c.charCodeAt(0)));
 
+          logMachineEvent({ stallId: stall.id, type: 'sent', message: `Sending Command: "${commandToSend.trim()}" (Get Umbrella)` });
           await BleClient.writeWithoutResponse(connectedDeviceIdRef.current!, UTEK_SERVICE_UUID, UTEK_CHARACTERISTIC_UUID, commandDataView);
-          logMachineEvent({ stallId: stall.id, type: 'sent', message: `Sent Command: "${commandToSend.trim()}" (Get Umbrella)` });
           
           setBluetoothState('awaiting_final_confirmation');
           setShowWaitingDialog(true);
