@@ -189,7 +189,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
     const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
-    const isUserVerified = firebaseUser.emailVerified || isExistingUser;
+    const isSuperAdmin = firebaseUser.email === 'admin@u-dry.com';
+    const isUserVerified = firebaseUser.emailVerified || isExistingUser || isSuperAdmin;
     setIsVerified(isUserVerified);
 
     if (isUserVerified) {
@@ -452,6 +453,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     logMachineEvent,
     firebaseServices,
   };
+
+  if (isFirebaseError) {
+    return <FirebaseConfigurationError />;
+  }
 
   if (!isReady) {
     return (
