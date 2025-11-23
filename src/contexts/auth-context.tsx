@@ -83,7 +83,7 @@ function FirebaseConfigurationError() {
 }
 
 function EmailVerificationPrompt({ onResend, onSignOut, isSending }: { onResend: () => void, onSignOut: () => void, isSending: boolean }) {
-  const { user } = useAuth(); // We can use useAuth here as it's a child of the provider
+  const { user } = useAuth();
   
   return (
       <div className="flex min-h-screen flex-col items-center justify-center bg-secondary/30 p-4">
@@ -186,49 +186,49 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       if (!firebaseUser) setIsLoadingRental(false);
       return;
     }
-    
-    const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
-    const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
-    const isSuperAdmin = firebaseUser.email === 'admin@u-dry.com';
-    const isUserVerified = firebaseUser.emailVerified || isExistingUser || isSuperAdmin;
-    setIsVerified(isUserVerified);
 
-    if (isUserVerified) {
-        setIsLoadingRental(true);
-        const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
-        const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
-          if (docSnap.exists()) {
-            const userData = docSnap.data() as User;
-            setFirestoreUser(userData);
-            setActiveRental(userData.activeRental || null);
-          } else {
-            const newUserDoc: Omit<User, 'uid'> = {
-              email: firebaseUser.email,
-              displayName: firebaseUser.displayName,
-              photoURL: firebaseUser.photoURL,
-              deposit: 0,
-              balance: 0,
-              hasHadFirstFreeRental: false,
-              createdAt: serverTimestamp(),
-              activeRental: null,
-              depositPaymentIntentId: null,
-            };
-            await setDoc(userDocRef, newUserDoc);
-            setFirestoreUser({ uid: firebaseUser.uid, ...newUserDoc });
-            setActiveRental(null);
-            if (!firebaseUser.isAnonymous) {
-              setShowSignUpSuccess(true);
-            }
-          }
-          setIsLoadingRental(false);
-        });
+    setIsLoadingRental(true);
+    const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
+    const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
+      let userData: User | null = null;
+      if (docSnap.exists()) {
+        userData = docSnap.data() as User;
+        setFirestoreUser(userData);
+        setActiveRental(userData.activeRental || null);
+      } else {
+        const newUserDoc: Omit<User, 'uid'> = {
+          email: firebaseUser.email,
+          displayName: firebaseUser.displayName,
+          photoURL: firebaseUser.photoURL,
+          deposit: 0,
+          balance: 0,
+          hasHadFirstFreeRental: false,
+          createdAt: serverTimestamp(),
+          activeRental: null,
+          depositPaymentIntentId: null,
+          isManuallyVerified: false, // Default new users to not manually verified
+        };
+        await setDoc(userDocRef, newUserDoc);
+        userData = { uid: firebaseUser.uid, ...newUserDoc };
+        setFirestoreUser(userData);
+        setActiveRental(null);
+        if (!firebaseUser.isAnonymous) {
+          setShowSignUpSuccess(true);
+        }
+      }
 
-        return () => unsubscribeUserDoc();
-    } else {
-        // If user is not verified, we don't need to load their Firestore data yet.
-        setIsLoadingRental(false);
-    }
-  }, [firebaseUser, firebaseServices, isVerified]); // Re-run when isVerified changes
+      const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
+      const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
+      const isSuperAdmin = firebaseUser.email === 'admin@u-dry.com';
+      // New verification logic incorporating the manual flag
+      const isUserVerified = firebaseUser.emailVerified || isExistingUser || isSuperAdmin || userData?.isManuallyVerified === true;
+      setIsVerified(isUserVerified);
+
+      setIsLoadingRental(false);
+    });
+
+    return () => unsubscribeUserDoc();
+  }, [firebaseUser, firebaseServices]);
   
   const signUpWithEmail = async ({ name, email, password }: SignUpFormData) => {
     if (!firebaseServices?.auth || !firebaseServices.db) return;

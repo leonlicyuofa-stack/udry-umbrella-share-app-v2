@@ -13,6 +13,7 @@ export interface User extends Partial<FirebaseUser> {
   hasHadFirstFreeRental?: boolean;
   activeRental?: ActiveRental | null;
   createdAt?: any; // Firestore timestamp
+  isManuallyVerified?: boolean; // New flag for manual verification override
 }
 
 export interface Stall {
