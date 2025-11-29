@@ -28,6 +28,7 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle, Loader2, MailCheck, ShieldAlert, LogOut, ArrowRightCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
+import { httpsCallable } from 'firebase/functions';
 
 // --- IMPORTANT: GRANDFATHER CLAUSE ---
 // This date ensures that only users who sign up *after* this feature is deployed
@@ -494,3 +495,4 @@ export function useAuth() {
   }
   return context;
 }
+
