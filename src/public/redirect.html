@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Redirecting to U-Dry...</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; text-align: center; padding-top: 50px; background-color: #f0f2fa; color: #333; }
+        p { font-size: 1.1em; }
+    </style>
+    <script>
+        (function() {
+            // Simple and robust OS detection
+            var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
+            var isAndroid = /Android/.test(navigator.userAgent);
+
+            // App Store URLs
+            var iosAppStoreUrl = "https://apps.apple.com/us/app/udry/id6751819661";
+            var androidPlayStoreUrl = "https://play.google.com/store/apps/details?id=com.udry.app";
+
+            // Immediately redirect based on the detected OS
+            if (isIOS) {
+                window.location.replace(iosAppStoreUrl);
+            } else if (isAndroid) {
+                window.location.replace(androidPlayStoreUrl);
+            } else {
+                // Fallback for desktop or other OS
+                // You can either redirect to your main website or just leave the message.
+                // For now, we will just leave the message on the page.
+                console.log("OS not detected as iOS or Android. No redirect initiated.");
+            }
+        })();
+    </script>
+</head>
+<body>
+    <p>Redirecting to the app store...</p>
+</body>
+</html>
