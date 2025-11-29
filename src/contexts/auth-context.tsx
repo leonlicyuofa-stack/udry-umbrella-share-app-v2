@@ -163,10 +163,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
   
   useEffect(() => {
+    console.log(`[DIAG] 5. Redirect logic running. isLoading: ${isLoading}, firebaseUser: ${!!firebaseUser}, isVerified: ${isVerified}, pathname: ${pathname}`);
     if (!isLoading) {
       const isAuthPage = pathname.startsWith('/auth');
       const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
-      console.log(`[DIAG] 5. Redirect logic running. isLoading: false, firebaseUser: ${!!firebaseUser}, isVerified: ${isVerified}, isAuthPage: ${isAuthPage}`);
+      
       if (firebaseUser) {
         if (isAuthPage) {
           console.log(`[DIAG] 5a. Logged-in user is on an auth page. Redirecting to /home.`);
@@ -468,6 +469,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return <FirebaseConfigurationError />;
   }
 
+  // --- DIAGNOSTIC DEBUGGER ---
+  console.log(`[DIAG] Rendering decision. isLoading: ${isLoading}, user: ${!!user}, isVerified: ${isVerified}`);
+  debugger; 
+  // --- END DIAGNOSTIC ---
+
   if (isLoading) {
     return (
         <div className="flex h-screen w-screen items-center justify-center bg-background">
@@ -476,9 +482,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   }
   
-  // New centralized rendering logic
-  if (!isLoading && user && !isVerified) {
-    // The AuthContext is still provided so the prompt can use its `user` and `signOut` functions.
+  if (user && !isVerified) {
     return (
       <AuthContext.Provider value={value}>
         <EmailVerificationPrompt 
@@ -490,7 +494,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  // Otherwise (not loading, no user, or user is verified), render the main app.
   return (
     <AuthContext.Provider value={value}>
       {children}
@@ -505,5 +508,3 @@ export function useAuth() {
   }
   return context;
 }
-
-    
