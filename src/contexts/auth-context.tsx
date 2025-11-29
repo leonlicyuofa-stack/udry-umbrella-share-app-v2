@@ -25,7 +25,6 @@ import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/language-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { AlertTriangle, Loader2, MailCheck, ShieldAlert, LogOut } from 'lucide-react';
-import { httpsCallable } from 'firebase/functions';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -131,7 +130,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { translate } = useLanguage();
   const [showSignUpSuccess, setShowSignUpSuccess] = useState(false);
   const [activeRental, setActiveRental] = useState<ActiveRental | null>(null);
-  const [isLoading, setIsLoading] = useState(true); // Refined loading state
+  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
@@ -140,29 +139,27 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isSendingVerification, setIsSendingVerification] = useState(false);
 
   useEffect(() => {
+    console.log(`[DIAG] 1. AuthProvider mounted. Initializing Firebase.`);
     const services = initializeFirebaseServices();
-
     if (!services) {
+      console.error(`[DIAG] 1a. Firebase initialization FAILED.`);
       setIsFirebaseError(true);
       setIsLoading(false);
       return;
     }
-
     setFirebaseServices(services);
-    setIsFirebaseError(false);
-    
+    console.log(`[DIAG] 1b. Firebase services object set.`);
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
+      console.log(`[DIAG] 2. onAuthStateChanged triggered. User is: ${user ? user.uid : 'null'}`);
       setFirebaseUser(user);
       if (!user) {
-        // If user is logged out, we know their state immediately.
+        console.log(`[DIAG] 2a. No user found. Finalizing state as 'logged out'.`);
         setFirestoreUser(null);
         setActiveRental(null);
         setIsVerified(false);
-        setIsLoading(false); 
+        setIsLoading(false);
       }
-      // If user is logged in, we now wait for the firestore user to load.
     });
-
     return () => unsubscribeAuth();
   }, []);
   
@@ -170,32 +167,42 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!isLoading) {
       const isAuthPage = pathname.startsWith('/auth');
       const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
-
+      console.log(`[DIAG] 5. Redirect logic running. isLoading: false, firebaseUser: ${!!firebaseUser}, isVerified: ${isVerified}, isAuthPage: ${isAuthPage}`);
       if (firebaseUser) {
         if (isAuthPage) {
+          console.log(`[DIAG] 5a. Logged-in user is on an auth page. Redirecting to /home.`);
           router.replace('/home');
         }
       } else {
         if (isProtectedRoute) {
+          console.log(`[DIAG] 5b. Logged-out user is on a protected page. Redirecting to /auth/signin.`);
           router.replace('/auth/signin');
         }
       }
+    } else {
+      console.log(`[DIAG] Skipping redirect logic because isLoading is true.`);
     }
-  }, [isLoading, firebaseUser, pathname, router]);
+  }, [isLoading, firebaseUser, isVerified, pathname, router]);
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
+      if (!firebaseUser) console.log(`[DIAG] 3. Skipping Firestore listener setup: no firebaseUser.`);
+      if (!firebaseServices) console.log(`[DIAG] 3. Skipping Firestore listener setup: no firebaseServices.`);
       return;
     }
 
+    console.log(`[DIAG] 3. firebaseUser exists (${firebaseUser.uid}). Setting up Firestore listener.`);
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
     const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
+      console.log(`[DIAG] 4. Firestore onSnapshot triggered.`);
       let userData: User | null = null;
       if (docSnap.exists()) {
+        console.log(`[DIAG] 4a. User document exists.`);
         userData = docSnap.data() as User;
         setFirestoreUser(userData);
         setActiveRental(userData.activeRental || null);
       } else {
+        console.log(`[DIAG] 4a. User document does NOT exist. Creating new document.`);
         const newUserDoc: Omit<User, 'uid'> = {
           email: firebaseUser.email,
           displayName: firebaseUser.displayName,
@@ -217,13 +224,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
 
+      console.log(`[DIAG] 4b. Calculating verification status...`);
       const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
       const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
       const isSuperAdmin = firebaseUser.email === 'admin@u-dry.com';
       const isUserVerified = firebaseUser.emailVerified || isExistingUser || isSuperAdmin || userData?.isManuallyVerified === true;
+      
+      console.log(`[DIAG] 4c. Verification Details: emailVerified=${firebaseUser.emailVerified}, isGrandfathered=${isExistingUser}, isAdmin=${isSuperAdmin}, isManuallyVerified=${userData?.isManuallyVerified}`);
+      console.log(`[DIAG] 4d. Final calculated 'isVerified' status: ${isUserVerified}`);
       setIsVerified(isUserVerified);
       
-      // We have all data now, so loading is complete.
+      console.log(`[DIAG] 4e. All data loaded. Setting isLoading to false.`);
       setIsLoading(false);
     });
 
@@ -439,11 +450,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value: AuthContextType = {
     user, 
-    isReady: !isLoading, // isReady is true when loading is false
+    isReady: !isLoading,
     loading: isLoading,
     isVerified,
     activeRental, 
-    isLoadingRental: isLoading, // isLoadingRental is synonymous with the main loading state
+    isLoadingRental: isLoading,
     startRental, endRental, signUpWithEmail,
     signInWithEmail, signOut, changeUserPassword, sendPasswordReset,
     sendVerificationEmail,
@@ -468,7 +479,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   // New centralized rendering logic
   if (!isLoading && user && !isVerified) {
-    // If auth is ready, we have a user, but they are not verified, show the prompt.
     // The AuthContext is still provided so the prompt can use its `user` and `signOut` functions.
     return (
       <AuthContext.Provider value={value}>
@@ -481,7 +491,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  // Otherwise (not ready, no user, or user is verified), render the main app.
+  // Otherwise (not loading, no user, or user is verified), render the main app.
   return (
     <AuthContext.Provider value={value}>
       {children}
@@ -496,3 +506,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
