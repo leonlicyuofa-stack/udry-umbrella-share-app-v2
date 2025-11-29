@@ -3,13 +3,17 @@
 runConfig:
   cpu: 1
   memoryMiB: 512
-redirects:
-  - type: 302
-    # This glob matches rental deep link URLs.
-    glob: /rent/**
-    # The location of your app on the App Store.
-    # This is a placeholder URL and should be updated with your actual App Store link.
-    location: https://apps.apple.com/app/idYOUR_APP_ID
+# This block handles redirects based on the user's operating system for deep links.
+# If a user without the app scans a QR code (/rent/**), it directs them to the correct app store.
+i18n:
+  # This glob matches rental deep link URLs.
+  glob: /rent/**
+  # If the user is on iOS, redirect them to the Apple App Store.
+  # IMPORTANT: Replace YOUR_IOS_APP_ID with your actual App Store ID.
+  ios: https://apps.apple.com/app/idYOUR_APP_ID
+  # If the user is on Android, redirect them to the Google Play Store.
+  # IMPORTANT: Replace YOUR_ANDROID_PACKAGE_NAME with your app's package name (e.g., com.udry.app).
+  android: https://play.google.com/store/apps/details?id=com.udry.app
 headers:
   - path: /payment/success**
     headers:
