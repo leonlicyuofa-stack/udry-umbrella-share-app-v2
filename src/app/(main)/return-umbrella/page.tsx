@@ -11,7 +11,7 @@ import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogHeader, AlertDialogTitle, AlertDialogCancel, AlertDialogFooter } from "@/components/ui/alert-dialog";
 import { Loader2, AlertTriangle, ArrowLeft, Umbrella, TimerIcon, CheckCircle, Bluetooth, QrCode, CameraOff, Info, ArrowRight } from "lucide-react";
-import Link from "next/link";
+import Link from 'next/link';
 import type { Stall } from '@/lib/types';
 import { Html5Qrcode } from "html5-qrcode";
 import { cn } from "@/lib/utils";
@@ -529,12 +529,7 @@ export default function ReturnUmbrellaPage() {
              <Alert>
                 <Info className="h-4 w-4" />
                 <AlertTitle>Connection Instructions</AlertTitle>
-                <AlertDescription>
-                  After clicking continue, your phone will show a list of nearby Bluetooth devices. Please select the device with this name:
-                  <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-xl text-center text-primary font-bold">
-                    {scannedStall.btName || "Device Name Not Found"}
-                  </div>
-                </AlertDescription>
+                <AlertDescription></AlertDescription>
             </Alert>
           )}
         </CardContent>
@@ -571,4 +566,3 @@ export default function ReturnUmbrellaPage() {
     </div>
   );
 }
-

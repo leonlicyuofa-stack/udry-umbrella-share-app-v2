@@ -284,9 +284,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         <Alert>
             <Info className="h-4 w-4" />
             <AlertTitle>Connection Instructions</AlertTitle>
-            <AlertDescription>
-                After clicking continue, your phone will show a list of nearby Bluetooth devices.
-            </AlertDescription>
+            <AlertDescription></AlertDescription>
         </Alert>
 
         {Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android' && (
