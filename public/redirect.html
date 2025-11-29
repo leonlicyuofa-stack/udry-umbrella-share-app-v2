@@ -5,45 +5,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; text-align: center; padding-top: 50px; }
-        a { color: #007aff; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; text-align: center; padding-top: 50px; background-color: #f0f2fa; color: #333; }
+        p { font-size: 1.1em; }
+        a { color: #3F51B5; text-decoration: none; font-weight: bold; }
     </style>
     <script>
-        function attemptOpenApp() {
-            var appURL = "udry://";
-            var appStoreURL = "https://apps.apple.com/us/app/udry/id6751819661"; // Your actual App Store URL
+        (function() {
+            var userAgent = navigator.userAgent || navigator.vendor || window.opera;
 
-            var fallbackTimeout = setTimeout(redirectToStore, 1000);
+            // URLs for the respective app stores
+            var iosAppStoreUrl = "https://apps.apple.com/us/app/udry/id6751819661";
+            var androidPlayStoreUrl = "https://play.google.com/store/apps/details?id=com.udry.app";
 
-            var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
-            var isAndroid = /Android/.test(navigator.userAgent);
-            
-            // For iOS 9+, try to open the app directly.
-            // For older versions or other OS, this might not work as smoothly.
-            window.location.href = appURL;
-
-            // This part helps detect if the app was successfully opened.
-            // If the browser is blurred (app takes focus), we clear the timeout.
-            window.addEventListener('blur', function() {
-                clearTimeout(fallbackTimeout);
-            });
-            // visibilitychange is a more reliable modern approach
-            document.addEventListener("visibilitychange", function() {
-                if (document.hidden) {
-                    clearTimeout(fallbackTimeout);
-                }
-            });
-
-            function redirectToStore() {
-                // This will only run if the app did not open and clear the timeout.
-                window.location.href = appStoreURL;
+            // Simple OS Detection
+            if (/android/i.test(userAgent)) {
+                window.location.href = androidPlayStoreUrl;
+            } else if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                window.location.href = iosAppStoreUrl;
             }
-        }
-
-        window.onload = attemptOpenApp;
+            // If it's neither, the user will just see the message below.
+        })();
     </script>
 </head>
 <body>
-    <p>If you are not redirected automatically, <a href="udry://">click here to open the app</a> or visit the <a href="https://apps.apple.com/us/app/udry/id6751819661">App Store</a>.</p>
+    <p>Redirecting you to the app store...</p>
+    <p>If you are not redirected automatically, please select your store:</p>
+    <p>
+        <a href="https://apps.apple.com/us/app/udry/id6751819661">Apple App Store</a>
+        or
+        <a href="https://play.google.com/store/apps/details?id=com.udry.app">Google Play Store</a>
+    </p>
 </body>
 </html>
