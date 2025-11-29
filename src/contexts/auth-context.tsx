@@ -125,12 +125,11 @@ function EmailVerificationPrompt({ onResend, onSignOut, isSending }: { onResend:
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
   const [firestoreUser, setFirestoreUser] = useState<User | null>(null);
-  const [isReady, setIsReady] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
   const { toast } = useToast();
   const { translate } = useLanguage();
   const [showSignUpSuccess, setShowSignUpSuccess] = useState(false);
   const [activeRental, setActiveRental] = useState<ActiveRental | null>(null);
-  const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
   const pathname = usePathname();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
