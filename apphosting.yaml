@@ -10,7 +10,7 @@ i18n:
   glob: /rent/**
   # If the user is on iOS, redirect them to the Apple App Store.
   # IMPORTANT: Replace YOUR_IOS_APP_ID with your actual App Store ID.
-  ios: https://apps.apple.com/app/idYOUR_APP_ID
+  ios: https://apps.apple.com/app/id6751819661
   # If the user is on Android, redirect them to the Google Play Store.
   # IMPORTANT: Replace YOUR_ANDROID_PACKAGE_NAME with your app's package name (e.g., com.udry.app).
   android: https://play.google.com/store/apps/details?id=com.udry.app
