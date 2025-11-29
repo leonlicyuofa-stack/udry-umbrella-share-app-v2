@@ -165,7 +165,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
   
   useEffect(() => {
-    // We only redirect when loading is fully complete.
+    // This is the key change: only run redirection logic AFTER loading is fully complete.
     if (isLoading) {
       return;
     }
@@ -175,15 +175,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     
     if (firebaseUser) {
       // A user is logged in.
-      // If they are verified, and on an auth page, send them home.
       if (isVerified && isAuthPage) {
         router.replace('/home');
       }
-      // If they are NOT verified, they should be seeing the verification prompt,
-      // so we don't need to redirect them from there.
     } else {
       // No user is logged in.
-      // If they are on a protected route, send them to the sign-in page.
       if (isProtectedRoute) {
         router.replace('/auth/signin');
       }
@@ -196,7 +192,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     
-    // We are logged in, but we still need the user document. Stay in loading state.
     setIsLoading(true); 
 
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
@@ -228,8 +223,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      // Check for email verification status *after* getting the user document.
-      // This ensures we have all the data needed for the check.
       const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
       const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
       const isSuperAdmin = firebaseUser.email === 'admin@u-dry.com';
@@ -237,7 +230,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       setIsVerified(isUserVerified);
       
-      // THIS IS THE KEY FIX: Only set isLoading to false AFTER we have the final verification status.
       setIsLoading(false);
     });
 
