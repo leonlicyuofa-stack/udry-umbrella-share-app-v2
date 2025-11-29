@@ -25,7 +25,7 @@ import type { SignUpFormData, SignInFormData, ChangePasswordFormData, User, Stal
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/language-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { AlertTriangle, Loader2, MailCheck, ShieldAlert, LogOut } from 'lucide-react';
+import { AlertTriangle, Loader2, MailCheck, ShieldAlert, LogOut, ArrowRightCircle } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 
@@ -104,13 +104,17 @@ function EmailVerificationPrompt({ onResend, onSignOut, isSending }: { onResend:
                       </AlertDescription>
                   </Alert>
                   <p className="text-sm text-center text-muted-foreground">
-                      Once your email is verified, you will be able to access all features. You may need to sign out and sign back in after verifying.
+                      Once your email is verified, click the 'Continue' button below to sign in again with your verified account.
                   </p>
               </CardContent>
               <CardFooter className="flex flex-col sm:flex-row gap-2">
                    <Button onClick={onResend} disabled={isSending} className="w-full sm:w-auto">
                       {isSending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                       Resend Verification Email
+                  </Button>
+                  <Button onClick={onSignOut} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
+                      <ArrowRightCircle className="mr-2 h-4 w-4" />
+                      I've Verified, Continue to Sign-In
                   </Button>
                   <Button variant="outline" onClick={onSignOut} className="w-full sm:w-auto">
                       <LogOut className="mr-2 h-4 w-4" />
@@ -161,21 +165,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
   
   useEffect(() => {
-    if (!isLoading) {
-      const isAuthPage = pathname.startsWith('/auth');
-      const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
-      
-      if (firebaseUser) {
-        if (isAuthPage) {
-          router.replace('/home');
-        }
-      } else {
-        if (isProtectedRoute) {
-          router.replace('/auth/signin');
-        }
+    // We only redirect when loading is fully complete.
+    if (isLoading) {
+      return;
+    }
+
+    const isAuthPage = pathname.startsWith('/auth');
+    const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
+    
+    if (firebaseUser) {
+      // A user is logged in.
+      // If they are verified, and on an auth page, send them home.
+      if (isVerified && isAuthPage) {
+        router.replace('/home');
+      }
+      // If they are NOT verified, they should be seeing the verification prompt,
+      // so we don't need to redirect them from there.
+    } else {
+      // No user is logged in.
+      // If they are on a protected route, send them to the sign-in page.
+      if (isProtectedRoute) {
+        router.replace('/auth/signin');
       }
     }
   }, [isLoading, firebaseUser, isVerified, pathname, router]);
+
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
@@ -214,6 +228,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
 
+      // Check for email verification status *after* getting the user document.
+      // This ensures we have all the data needed for the check.
       const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
       const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
       const isSuperAdmin = firebaseUser.email === 'admin@u-dry.com';
@@ -486,5 +502,3 @@ export function useAuth() {
   }
   return context;
 }
-
-    
