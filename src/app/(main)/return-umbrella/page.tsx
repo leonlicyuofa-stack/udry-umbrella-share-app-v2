@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { BleClient, numbersToDataView, dataViewToText, type ScanResult } from '@capacitor-community/bluetooth-le';
 import { httpsCallable } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
+import Image from 'next/image';
 
 const QR_READER_REGION_ID = "qr-reader-region-return";
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
@@ -167,7 +168,7 @@ export default function ReturnUmbrellaPage() {
           onScanSuccess,
           (errorMessage) => { /* Ignore errors */ }
         ).catch(err => {
-          setQrError("Failed to start QR scanner. Please ensure camera permissions are enabled.");
+          setQrError("Failed to start QR scanner. Please ensure camera permissions are enabled for this site.");
           setReturnStep('idle');
         });
     }, 100);
@@ -402,10 +403,10 @@ export default function ReturnUmbrellaPage() {
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
             <AlertDialogTitle className="flex items-center text-xl text-primary">
-              <Loader2 className="mr-2 h-6 w-6 animate-spin" /> Waiting for Confirmation
+              <Umbrella className="mr-2 h-8 w-8" /> Action Required: Place Umbrella in Slot
             </AlertDialogTitle>
             <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
-              Please place your umbrella in the slot and wait for the machine to confirm the return.
+              Please insert your umbrella into the slot and wait for confirmation.
             </AlertDialogDescription>
           </AlertDialogHeader>
         </AlertDialogContent>
@@ -527,13 +528,12 @@ export default function ReturnUmbrellaPage() {
           {returnStep === 'scan_complete_pre_confirmation' && scannedStall && (
              <Alert>
                 <Info className="h-4 w-4" />
-                <AlertTitle>Connection Step</AlertTitle>
+                <AlertTitle>Connection Instructions</AlertTitle>
                 <AlertDescription>
-                  Your phone will ask for permission to connect. Please select the device with this exact name:
-                  <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-3xl text-center text-green-600 font-bold">
+                  After clicking continue, your phone will show a list of nearby Bluetooth devices. Please select the device with this name:
+                  <div className="my-2 p-2 bg-secondary/50 rounded-md font-mono text-xl text-center text-primary font-bold">
                     {scannedStall.btName || "Device Name Not Found"}
                   </div>
-                   If you do not see this name, please cancel and try again.
                 </AlertDescription>
             </Alert>
           )}
@@ -571,3 +571,4 @@ export default function ReturnUmbrellaPage() {
     </div>
   );
 }
+
