@@ -131,7 +131,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const { translate } = useLanguage();
   const [showSignUpSuccess, setShowSignUpSuccess] = useState(false);
   const [activeRental, setActiveRental] = useState<ActiveRental | null>(null);
-  const [isLoadingRental, setIsLoadingRental] = useState(true);
+  const [isLoading, setIsLoading] = useState(true); // Refined loading state
   const router = useRouter();
   const pathname = usePathname();
   const [firebaseServices, setFirebaseServices] = useState<FirebaseServices | null>(null);
@@ -144,8 +144,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     if (!services) {
       setIsFirebaseError(true);
-      setIsReady(true);
-      setIsLoadingRental(false);
+      setIsLoading(false);
       return;
     }
 
@@ -155,39 +154,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
       setFirebaseUser(user);
       if (!user) {
+        // If user is logged out, we know their state immediately.
         setFirestoreUser(null);
         setActiveRental(null);
         setIsVerified(false);
+        setIsLoading(false); 
       }
-      setIsReady(true);
+      // If user is logged in, we now wait for the firestore user to load.
     });
 
     return () => unsubscribeAuth();
   }, []);
   
   useEffect(() => {
-    if (!isReady) return;
-    const isAuthPage = pathname.startsWith('/auth');
-    const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
+    if (!isLoading) {
+      const isAuthPage = pathname.startsWith('/auth');
+      const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
 
-    if (firebaseUser) {
-      if (isAuthPage) {
-        router.replace('/home');
-      }
-    } else {
-      if (isProtectedRoute) {
-        router.replace('/auth/signin');
+      if (firebaseUser) {
+        if (isAuthPage) {
+          router.replace('/home');
+        }
+      } else {
+        if (isProtectedRoute) {
+          router.replace('/auth/signin');
+        }
       }
     }
-  }, [isReady, firebaseUser, pathname, router]);
+  }, [isLoading, firebaseUser, pathname, router]);
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
-      if (!firebaseUser) setIsLoadingRental(false);
       return;
     }
 
-    setIsLoadingRental(true);
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
     const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
       let userData: User | null = null;
@@ -206,7 +206,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           createdAt: serverTimestamp(),
           activeRental: null,
           depositPaymentIntentId: null,
-          isManuallyVerified: false, // Default new users to not manually verified
+          isManuallyVerified: false,
         };
         await setDoc(userDocRef, newUserDoc);
         userData = { uid: firebaseUser.uid, ...newUserDoc };
@@ -220,11 +220,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
       const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
       const isSuperAdmin = firebaseUser.email === 'admin@u-dry.com';
-      // New verification logic incorporating the manual flag
       const isUserVerified = firebaseUser.emailVerified || isExistingUser || isSuperAdmin || userData?.isManuallyVerified === true;
       setIsVerified(isUserVerified);
-
-      setIsLoadingRental(false);
+      
+      // We have all data now, so loading is complete.
+      setIsLoading(false);
     });
 
     return () => unsubscribeUserDoc();
@@ -439,11 +439,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const value: AuthContextType = {
     user, 
-    isReady, 
-    loading: !isReady || (!!firebaseUser && !firestoreUser),
+    isReady: !isLoading, // isReady is true when loading is false
+    loading: isLoading,
     isVerified,
     activeRental, 
-    isLoadingRental: isLoadingRental || (!!firebaseUser && !firestoreUser),
+    isLoadingRental: isLoading, // isLoadingRental is synonymous with the main loading state
     startRental, endRental, signUpWithEmail,
     signInWithEmail, signOut, changeUserPassword, sendPasswordReset,
     sendVerificationEmail,
@@ -458,7 +458,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return <FirebaseConfigurationError />;
   }
 
-  if (!isReady) {
+  if (isLoading) {
     return (
         <div className="flex h-screen w-screen items-center justify-center bg-background">
             <Loader2 className="h-12 w-12 animate-spin text-primary" />
@@ -467,7 +467,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }
   
   // New centralized rendering logic
-  if (isReady && user && !isVerified) {
+  if (!isLoading && user && !isVerified) {
     // If auth is ready, we have a user, but they are not verified, show the prompt.
     // The AuthContext is still provided so the prompt can use its `user` and `signOut` functions.
     return (
