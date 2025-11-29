@@ -282,7 +282,6 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const renderPreConfirmation = () => (
     <>
         <Alert>
-            <Info className="h-4 w-4" />
             <AlertTitle>Connection Instructions</AlertTitle>
             <AlertDescription></AlertDescription>
         </Alert>
@@ -305,7 +304,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
             <p className="text-xs font-semibold mb-2">For iOS, select your device from a pop-up like this:</p>
             <Image 
-              src="https://picsum.photos/seed/ios-ble/400/100" 
+              src="/bluetooth-selection-guide.png" 
               alt="Example of iOS Bluetooth device selection screen"
               width={250}
               height={62}
