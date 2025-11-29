@@ -471,7 +471,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // --- DIAGNOSTIC DEBUGGER ---
   console.log(`[DIAG] Rendering decision. isLoading: ${isLoading}, user: ${!!user}, isVerified: ${isVerified}`);
-  debugger; 
+  //debugger; 
   // --- END DIAGNOSTIC ---
 
   if (isLoading) {
@@ -508,3 +508,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
