@@ -1,4 +1,5 @@
 
+// src/contexts/auth-context.tsx
 "use client";
 
 import type React from 'react';
@@ -138,71 +139,60 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isSendingVerification, setIsSendingVerification] = useState(false);
 
   useEffect(() => {
-    console.log(`[DIAG] 1. AuthProvider mounted. Initializing Firebase.`);
     const services = initializeFirebaseServices();
     if (!services) {
-      console.error(`[DIAG] 1a. Firebase initialization FAILED.`);
       setIsFirebaseError(true);
       setIsLoading(false);
       return;
     }
     setFirebaseServices(services);
-    console.log(`[DIAG] 1b. Firebase services object set.`);
+    
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
-      console.log(`[DIAG] 2. onAuthStateChanged triggered. User is: ${user ? user.uid : 'null'}`);
       setFirebaseUser(user);
       if (!user) {
-        console.log(`[DIAG] 2a. No user found. Finalizing state as 'logged out'.`);
         setFirestoreUser(null);
         setActiveRental(null);
         setIsVerified(false);
-        setIsLoading(false);
+        setIsLoading(false); // If no user, we are done loading.
       }
     });
+
     return () => unsubscribeAuth();
   }, []);
   
   useEffect(() => {
-    console.log(`[DIAG] 5. Redirect logic running. isLoading: ${isLoading}, firebaseUser: ${!!firebaseUser}, isVerified: ${isVerified}, pathname: ${pathname}`);
     if (!isLoading) {
       const isAuthPage = pathname.startsWith('/auth');
       const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
       
       if (firebaseUser) {
         if (isAuthPage) {
-          console.log(`[DIAG] 5a. Logged-in user is on an auth page. Redirecting to /home.`);
           router.replace('/home');
         }
       } else {
         if (isProtectedRoute) {
-          console.log(`[DIAG] 5b. Logged-out user is on a protected page. Redirecting to /auth/signin.`);
           router.replace('/auth/signin');
         }
       }
-    } else {
-      console.log(`[DIAG] Skipping redirect logic because isLoading is true.`);
     }
   }, [isLoading, firebaseUser, isVerified, pathname, router]);
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
-      if (!firebaseUser) console.log(`[DIAG] 3. Skipping Firestore listener setup: no firebaseUser.`);
-      if (!firebaseServices) console.log(`[DIAG] 3. Skipping Firestore listener setup: no firebaseServices.`);
       return;
     }
+    
+    // We are logged in, but we still need the user document. Stay in loading state.
+    setIsLoading(true); 
 
-    console.log(`[DIAG] 3. firebaseUser exists (${firebaseUser.uid}). Setting up Firestore listener.`);
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
     const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
-      console.log(`[DIAG] 4. Firestore onSnapshot triggered.`);
       let userData: User | null = null;
       if (docSnap.exists()) {
-        console.log(`[DIAG] 4a. User document exists.`);
         userData = docSnap.data() as User;
         setFirestoreUser(userData);
         setActiveRental(userData.activeRental || null);
       } else {
-        console.log(`[DIAG] 4a. User document does NOT exist. Creating new document.`);
         const newUserDoc: Omit<User, 'uid'> = {
           email: firebaseUser.email,
           displayName: firebaseUser.displayName,
@@ -224,17 +214,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      console.log(`[DIAG] 4b. Calculating verification status...`);
       const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
       const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
       const isSuperAdmin = firebaseUser.email === 'admin@u-dry.com';
       const isUserVerified = firebaseUser.emailVerified || isExistingUser || isSuperAdmin || userData?.isManuallyVerified === true;
       
-      console.log(`[DIAG] 4c. Verification Details: emailVerified=${firebaseUser.emailVerified}, isGrandfathered=${isExistingUser}, isAdmin=${isSuperAdmin}, isManuallyVerified=${userData?.isManuallyVerified}`);
-      console.log(`[DIAG] 4d. Final calculated 'isVerified' status: ${isUserVerified}`);
       setIsVerified(isUserVerified);
       
-      console.log(`[DIAG] 4e. All data loaded. Setting isLoading to false.`);
+      // THIS IS THE KEY FIX: Only set isLoading to false AFTER we have the final verification status.
       setIsLoading(false);
     });
 
@@ -365,7 +352,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   
   const startRental = async (rental: Omit<ActiveRental, 'logs'>) => {
       if (!firebaseUser || !firebaseServices?.db) return;
-      console.log(`[DIAG_LOG ${new Date().toISOString()}] [AUTH_CONTEXT] startRental: Function called.`);
       
       const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
       const stallDocRef = doc(firebaseServices.db, 'stalls', rental.stallId);
@@ -385,9 +371,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         nextActionSlot: increment(1)
       });
 
-      console.log(`[DIAG_LOG ${new Date().toISOString()}] [AUTH_CONTEXT] startRental: Committing database batch update...`);
       await batch.commit();
-      console.log(`[DIAG_LOG ${new Date().toISOString()}] [AUTH_CONTEXT] startRental: Database batch update COMPLETE.`);
       
       toast({ title: "Rental Started!", description: `You have rented an umbrella from ${rental.stallName}.` });
   };
@@ -421,7 +405,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
   
   const logMachineEvent = async ({ stallId, type, message }: { stallId?: string; type: MachineLog['type']; message: string; }) => {
-    console.log(`[DIAG_LOG ${new Date().toISOString()}] [AUTH_CONTEXT] logMachineEvent: Type: ${type}, Message: "${message}"`);
     if (!firebaseUser?.uid || !activeRental || !firebaseServices?.db) {
       if (!firebaseUser?.uid || !firebaseServices?.db) {
         console.warn("Cannot log machine event: no user or no DB service.");
@@ -468,11 +451,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   if (isFirebaseError) {
     return <FirebaseConfigurationError />;
   }
-
-  // --- DIAGNOSTIC DEBUGGER ---
-  console.log(`[DIAG] Rendering decision. isLoading: ${isLoading}, user: ${!!user}, isVerified: ${isVerified}`);
-  //debugger; 
-  // --- END DIAGNOSTIC ---
 
   if (isLoading) {
     return (
