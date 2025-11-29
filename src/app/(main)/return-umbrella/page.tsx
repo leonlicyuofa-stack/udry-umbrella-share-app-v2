@@ -403,7 +403,7 @@ export default function ReturnUmbrellaPage() {
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
             <AlertDialogTitle className="flex items-center text-xl text-primary">
-              <Umbrella className="mr-2 h-8 w-8" /> Action Required: Place Umbrella in Slot
+              Action Required
             </AlertDialogTitle>
             <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
               Please insert your umbrella into the slot and wait for confirmation.
@@ -526,11 +526,41 @@ export default function ReturnUmbrellaPage() {
           )}
           
           {returnStep === 'scan_complete_pre_confirmation' && scannedStall && (
-             <Alert>
-                <Info className="h-4 w-4" />
-                <AlertTitle>Connection Instructions</AlertTitle>
-                <AlertDescription></AlertDescription>
-            </Alert>
+            <div className="space-y-4">
+              <Alert>
+                  <Info className="h-4 w-4" />
+                  <AlertTitle>Connection Instructions</AlertTitle>
+                  <AlertDescription></AlertDescription>
+              </Alert>
+
+              {Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android' && (
+                <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
+                  <p className="text-xs font-semibold mb-2">For Android, select your device from a list that looks like this:</p>
+                  <Image 
+                    src="/android-ble-instructions.png" 
+                    alt="Example of Android Bluetooth device selection screen"
+                    width={250}
+                    height={156}
+                    className="rounded-md border"
+                    data-ai-hint="bluetooth android"
+                  />
+                </div>
+              )}
+
+              {Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios' && (
+                <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
+                  <p className="text-xs font-semibold mb-2">For iOS, select your device from a pop-up like this:</p>
+                  <Image 
+                    src="https://picsum.photos/seed/ios-ble/400/100" 
+                    alt="Example of iOS Bluetooth device selection screen"
+                    width={250}
+                    height={62}
+                    className="rounded-md border"
+                    data-ai-hint="bluetooth ios"
+                  />
+                </div>
+              )}
+            </div>
           )}
         </CardContent>
          <CardFooter className="flex-col space-y-2">
@@ -566,3 +596,4 @@ export default function ReturnUmbrellaPage() {
     </div>
   );
 }
+
