@@ -88,6 +88,8 @@ export default function AdminPage() {
   const [editedStallLat, setEditedStallLat] = useState<number>(0);
   const [editedStallLng, setEditedStallLng] = useState<number>(0);
   const [editedNextActionSlot, setEditedNextActionSlot] = useState<number>(1);
+  const [editedAvailableUmbrellas, setEditedAvailableUmbrellas] = useState<number>(0);
+  const [editedTotalUmbrellas, setEditedTotalUmbrellas] = useState<number>(0);
   const [togglingDeployId, setTogglingDeployId] = useState<string | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   
@@ -337,11 +339,12 @@ export default function AdminPage() {
       const stallDocRef = doc(firebaseServices.db, 'stalls', editingStallId);
       await firestoreUpdateDoc(stallDocRef, {
         name: editedStallName,
-        // DVID (document ID) cannot be changed here.
         btName: editedBtName,
         address: editedStallAddress,
         location: new GeoPoint(editedStallLat, editedStallLng),
         nextActionSlot: editedNextActionSlot,
+        availableUmbrellas: editedAvailableUmbrellas,
+        totalUmbrellas: editedTotalUmbrellas,
       });
       toast({ title: "Machine Updated", description: `Details for ${editedStallName} have been saved.` });
       setEditingStallId(null);
@@ -757,57 +760,6 @@ export default function AdminPage() {
        <section>
         <Card className="shadow-lg">
           <CardHeader>
-              <CardTitle className="text-2xl flex items-center"><Clock className="mr-2 h-6 w-6 text-primary" /> Recent Activities</CardTitle>
-              <CardDescription>A log of the last 10 rentals and returns.</CardDescription>
-          </CardHeader>
-          <CardContent>
-            {isLoadingAdminData ? (
-               <div className="flex justify-center items-center h-24">
-                 <Loader2 className="h-8 w-8 animate-spin text-primary" />
-               </div>
-            ) : sortedActivityLog.length === 0 ? (
-               <p className="text-muted-foreground text-center">No activities yet.</p>
-            ) : (
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>User</TableHead>
-                      <TableHead>Action</TableHead>
-                      <TableHead>Stall</TableHead>
-                      <TableHead>Time</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    {sortedActivityLog.slice(0, 10).map((activity, index) => {
-                       const time = activity.timestamp ? new Date(activity.timestamp).toLocaleString() : 'N/A';
-                       return (
-                           <TableRow key={index}>
-                                <TableCell>
-                                    <div className="font-medium">{activity.user.email || 'Unknown User'}</div>
-                                    <div className="text-xs text-muted-foreground font-mono">{activity.user.uid}</div>
-                                </TableCell>
-                                <TableCell>
-                                    {activity.type === 'rent' ? (
-                                        <Badge variant="default" className="bg-blue-500 hover:bg-blue-600">Rent</Badge>
-                                    ) : (
-                                        <Badge variant="secondary">Return</Badge>
-                                    )}
-                                </TableCell>
-                                <TableCell>{activity.stallName}</TableCell>
-                                <TableCell>{time}</TableCell>
-                           </TableRow>
-                       );
-                    })}
-                  </TableBody>
-                </Table>
-            )}
-          </CardContent>
-        </Card>
-      </section>
-
-      <section>
-        <Card className="shadow-lg">
-          <CardHeader>
               <CardTitle className="text-2xl flex items-center"><Wrench className="mr-2 h-6 w-6 text-primary" /> Admin Actions</CardTitle>
               <CardDescription>Use these tools for administrative tasks like fixing user state.</CardDescription>
           </CardHeader>
@@ -893,6 +845,8 @@ export default function AdminPage() {
                           <div className="grid grid-cols-2 gap-4">
                             <div className="space-y-1"><Label htmlFor={`edit-lat-${stall.dvid}`}>Latitude</Label><Input id={`edit-lat-${stall.dvid}`} type="number" value={editedStallLat} onChange={e => setEditedStallLat(parseFloat(e.target.value) || 0)} step="any" /></div>
                             <div className="space-y-1"><Label htmlFor={`edit-lng-${stall.dvid}`}>Longitude</Label><Input id={`edit-lng-${stall.dvid}`} type="number" value={editedStallLng} onChange={e => setEditedStallLng(parseFloat(e.target.value) || 0)} step="any" /></div>
+                            <div className="space-y-1"><Label htmlFor={`edit-available-${stall.dvid}`}>Available Umbrellas</Label><Input id={`edit-available-${stall.dvid}`} type="number" value={editedAvailableUmbrellas} onChange={e => setEditedAvailableUmbrellas(parseInt(e.target.value, 10) || 0)} /></div>
+                            <div className="space-y-1"><Label htmlFor={`edit-total-${stall.dvid}`}>Total Umbrella Capacity</Label><Input id={`edit-total-${stall.dvid}`} type="number" value={editedTotalUmbrellas} onChange={e => setEditedTotalUmbrellas(parseInt(e.target.value, 10) || 0)} /></div>
                           </div>
                            <div className="grid grid-cols-1 gap-4">
                             <div className="space-y-1"><Label htmlFor={`edit-action-slot-${stall.dvid}`}>Next Action Slot</Label><Input id={`edit-action-slot-${stall.dvid}`} type="number" value={editedNextActionSlot} onChange={e => setEditedNextActionSlot(parseInt(e.target.value, 10) || 1)} min="1" /></div>
@@ -909,7 +863,7 @@ export default function AdminPage() {
                       </CardContent>
                       <CardFooter className="gap-2 flex-wrap">
                         <Button variant={stall.isDeployed ? 'destructive' : 'default'} size="sm" onClick={() => handleToggleDeploy(stall)} disabled={togglingDeployId === stall.dvid}>{togglingDeployId === stall.dvid ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : stall.isDeployed ? <CloudOff className="mr-2 h-4 w-4" /> : <CloudUpload className="mr-2 h-4 w-4" />} {stall.isDeployed ? 'Un-deploy' : 'Deploy'}</Button>
-                        <Button variant="outline" size="sm" onClick={() => { setEditingStallId(stall.dvid); setEditedStallName(stall.name); setEditedStallDvid(stall.dvid); setEditedBtName(stall.btName); setEditedStallAddress(stall.address); setEditedStallLat(stall.location?.latitude || 0); setEditedStallLng(stall.location?.longitude || 0); setEditedNextActionSlot(stall.nextActionSlot); }}>
+                        <Button variant="outline" size="sm" onClick={() => { setEditingStallId(stall.dvid); setEditedStallName(stall.name); setEditedStallDvid(stall.dvid); setEditedBtName(stall.btName); setEditedStallAddress(stall.address); setEditedStallLat(stall.location?.latitude || 0); setEditedStallLng(stall.location?.longitude || 0); setEditedNextActionSlot(stall.nextActionSlot); setEditedAvailableUmbrellas(stall.availableUmbrellas); setEditedTotalUmbrellas(stall.totalUmbrellas); }}>
                           <Edit className="mr-2 h-4 w-4" />{translate('admin_stall_edit_button')}
                         </Button>
                         <AlertDialog>
@@ -951,5 +905,3 @@ export default function AdminPage() {
     </>
   );
 }
-
-    
