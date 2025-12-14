@@ -65,7 +65,7 @@
     "next": "15.1.11",
     "react": "^19.0.0-rc.0",
     "react-dom": "^19.0.0-rc.0",
-    "react-day-picker": "^8.10.3",
+    "react-day-picker": "^8.10.1",
     "react-hook-form": "^7.51.0",
     "recharts": "^2.12.2",
     "tailwind-merge": "^2.2.1",
