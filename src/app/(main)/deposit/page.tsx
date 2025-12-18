@@ -108,11 +108,23 @@ export default function DepositPage() {
               const { error } = await stripe.redirectToCheckout({ sessionId });
               
               if (error) {
-                 // This error only triggers if there's an immediate problem before redirection,
-                 // like an invalid session ID. The user-facing toast here has been removed.
                  console.error("Stripe redirectToCheckout error:", error);
                  throw new Error(error.message);
               }
+          } else if (selectedMethod === 'payme') {
+              const createPaymePayment = httpsCallable(firebaseServices.functions, 'createPaymePayment');
+              const result = await createPaymePayment({
+                  amount: paymentAmount,
+                  paymentType
+              });
+              const data = result.data as { success: boolean, paymeLink?: string, message?: string };
+
+              if (!data.success || !data.paymeLink) {
+                  throw new Error(data.message || 'Failed to create PayMe payment link.');
+              }
+              
+              // Redirect the user to the PayMe app via the link
+              window.location.href = data.paymeLink;
           } else {
              toast({ title: "Payment Method Not Implemented", description: `The selected method '${selectedMethod}' is not yet fully integrated.` });
              setIsProcessingPayment(false);
@@ -168,7 +180,7 @@ export default function DepositPage() {
               <h3 className="text-lg font-semibold">{translate('deposit_payment_method_label')}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {paymentMethods.map((method) => {
-                  const isComingSoon = method.nameKey === 'payment_method_payme' || method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn';
+                  const isComingSoon = method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn';
                   return (
                     <Button
                       key={method.nameKey}
@@ -236,7 +248,7 @@ export default function DepositPage() {
             <h3 className="text-lg font-semibold">{translate('deposit_payment_method_label')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {paymentMethods.map((method) => {
-                  const isComingSoon = method.nameKey === 'payment_method_payme' || method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn';
+                  const isComingSoon = method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn';
                   return (
                     <Button
                       key={method.nameKey}
