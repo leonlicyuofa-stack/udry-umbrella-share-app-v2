@@ -206,9 +206,7 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
     const PAYME_SANDBOX_ENDPOINT = 'https://api.sandbox.payme.hsbc.com.hk/v2/payments/pay-and-collect';
     const PAYME_APP_ID = process.env.PAYME_APP_ID;
     const PAYME_APP_SECRET = process.env.PAYME_APP_SECRET;
-    // This will be the publicly accessible URL of the webhook function we create later.
-    // The exact URL depends on your project region, but this is a standard format.
-    // TODO: Replace with your actual deployed webhook URL. For now, it's a placeholder.
+    // This is the correct public URL for the deployed webhook function.
     const NOTIFICATION_URI = 'https://us-central1-udry-app-dev.cloudfunctions.net/paymeWebhook';
 
     // Step 1: Validate Secrets
@@ -605,6 +603,7 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
     
 
     
+
 
 
 
