@@ -199,6 +199,85 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
 });
 
+
+exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRET"] }, async (request) => {
+    logger.info("--- createPaymePayment function triggered ---");
+
+    const PAYME_SANDBOX_ENDPOINT = 'https://api.sandbox.payme.hsbc.com.hk/v2/payments/pay-and-collect';
+    const PAYME_APP_ID = process.env.PAYME_APP_ID;
+    const PAYME_APP_SECRET = process.env.PAYME_APP_SECRET;
+    // This will be the publicly accessible URL of the webhook function we create later.
+    // The exact URL depends on your project region, but this is a standard format.
+    // TODO: Replace with your actual deployed webhook URL. For now, it's a placeholder.
+    const NOTIFICATION_URI = 'https://us-central1-udry-app-dev.cloudfunctions.net/paymeWebhook';
+
+    // Step 1: Validate Secrets
+    if (!PAYME_APP_ID || !PAYME_APP_SECRET) {
+        logger.error("Server is missing critical PayMe API configuration (PAYME_APP_ID or PAYME_APP_SECRET).");
+        throw new HttpsError('internal', 'Server is missing PayMe API configuration.');
+    }
+
+    // Step 2: Validate Request Data
+    if (!request.auth) {
+        throw new HttpsError('unauthenticated', 'The function must be called while authenticated.');
+    }
+    const { amount, paymentType } = request.data;
+    if (!amount || typeof amount !== 'number' || amount <= 0) {
+        throw new HttpsError('invalid-argument', 'A valid amount must be provided.');
+    }
+     if (!paymentType || !['deposit', 'balance'].includes(paymentType)) {
+        throw new HttpsError('invalid-argument', 'A valid paymentType must be provided.');
+    }
+    logger.info("PayMe Step 1: Received and validated data.", { amount, paymentType, userId: request.auth.uid });
+
+    try {
+        // Step 3: Construct Request Body
+        const merchantReference = `UDRY-${paymentType}-${request.auth.uid}-${Date.now()}`;
+        const requestBody = {
+            totalAmount: amount.toFixed(2),
+            currencyCode: 'HKD',
+            merchantReference: merchantReference,
+            notificationUri: NOTIFICATION_URI,
+        };
+
+        const base64Credentials = Buffer.from(`${PAYME_APP_ID}:${PAYME_APP_SECRET}`).toString('base64');
+        logger.info(`PayMe Step 2: Sending request to ${PAYME_SANDBOX_ENDPOINT}.`, { merchantReference });
+
+        // Step 4: Make API Call to PayMe
+        const response = await fetch(PAYME_SANDBOX_ENDPOINT, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Basic ${base64Credentials}`,
+            },
+            body: JSON.stringify(requestBody),
+        });
+        
+        const responseData = await response.json();
+
+        // Step 5: Handle PayMe Response
+        if (!response.ok || !responseData.paymeLink) {
+            const errorMessage = `PayMe API Error: ${responseData.message || 'Unknown error'} (Code: ${responseData.code})`;
+            logger.error(errorMessage, { responseData });
+            throw new HttpsError('internal', errorMessage);
+        }
+
+        logger.info(`PayMe Step 3 SUCCESS: Received paymeLink for ${merchantReference}.`);
+        
+        // TODO: Store the merchantReference and payment details in Firestore to verify against webhook later.
+
+        return { success: true, paymeLink: responseData.paymeLink };
+
+    } catch (error) {
+        logger.error(`--- CRITICAL ERROR in createPaymePayment --- : ${error.message}`);
+        if (error instanceof HttpsError) {
+            throw error;
+        }
+        throw new HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
+    }
+});
+
+
 exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public", cors: true }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
     const admin = require("firebase-admin");
@@ -512,13 +591,21 @@ exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker:
 
 
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
-     logger.info('[WEBHOOK] Received a request.');
+     logger.info('[WEBHOOK] Received a Stripe request.');
      res.status(200).send({ received: true });
+});
+
+// Placeholder for PayMe webhook notifications. We will implement the logic in a future step.
+exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
+     logger.info('[WEBHOOK] Received a PayMe request.', { body: req.body });
+     // Respond to PayMe immediately to acknowledge receipt.
+     res.status(200).send({ success: true });
 });
     
     
 
     
+
 
 
 
