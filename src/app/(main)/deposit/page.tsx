@@ -43,7 +43,7 @@ export default function DepositPage() {
 
   const paymentMethodsRaw = [
     { id: 'stripe', nameKey: 'payment_method_credit_card' },
-    { id: 'stripe', nameKey: 'payment_method_apple_pay' },
+    { id: 'apple_pay', nameKey: 'payment_method_apple_pay' },
     { id: 'alipay', nameKey: 'payment_method_alipay' },
     { id: 'payme', nameKey: 'payment_method_payme' },
     { id: 'alipay_cn', nameKey: 'payment_method_alipay_cn' },
@@ -89,7 +89,7 @@ export default function DepositPage() {
       setIsProcessingPayment(true);
       
       try {
-          if (selectedMethod === 'stripe') {
+          if (selectedMethod === 'stripe' || selectedMethod === 'apple_pay') {
               const createStripeCheckoutSession = httpsCallable(firebaseServices.functions, 'createStripeCheckoutSession');
               const result = await createStripeCheckoutSession({ 
                 amount: paymentAmount, 
@@ -172,7 +172,7 @@ export default function DepositPage() {
                   return (
                     <Button
                       key={method.nameKey}
-                      variant={selectedMethod === method.id && method.nameKey !== 'payment_method_payme' && method.nameKey !== 'payment_method_alipay' && method.nameKey !== 'payment_method_alipay_cn' ? "default" : "outline"}
+                      variant={selectedMethod === method.id ? "default" : "outline"}
                       className="h-auto py-4 flex items-center justify-center gap-2"
                       onClick={() => setSelectedMethod(method.id)}
                       disabled={isProcessingPayment || isComingSoon}
@@ -240,7 +240,7 @@ export default function DepositPage() {
                   return (
                     <Button
                       key={method.nameKey}
-                      variant={selectedMethod === method.id && method.nameKey !== 'payment_method_payme' && method.nameKey !== 'payment_method_alipay' && method.nameKey !== 'payment_method_alipay_cn' ? "default" : "outline"}
+                      variant={selectedMethod === method.id ? "default" : "outline"}
                       className="h-auto py-4 flex items-center justify-center gap-2"
                       onClick={() => setSelectedMethod(method.id)}
                       disabled={isProcessingPayment || isComingSoon}
