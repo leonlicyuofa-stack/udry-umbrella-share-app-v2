@@ -206,7 +206,6 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
     const PAYME_SANDBOX_ENDPOINT = 'https://api.sandbox.payme.hsbc.com.hk/v2/payments/pay-and-collect';
     const PAYME_APP_ID = process.env.PAYME_APP_ID;
     const PAYME_APP_SECRET = process.env.PAYME_APP_SECRET;
-    // This is the correct public URL for the deployed webhook function.
     const NOTIFICATION_URI = 'https://us-central1-udry-app-dev.cloudfunctions.net/paymeWebhook';
 
     // Step 1: Validate Secrets
@@ -262,8 +261,6 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
 
         logger.info(`PayMe Step 3 SUCCESS: Received paymeLink for ${merchantReference}.`);
         
-        // TODO: Store the merchantReference and payment details in Firestore to verify against webhook later.
-
         return { success: true, paymeLink: responseData.paymeLink };
 
     } catch (error) {
@@ -593,16 +590,93 @@ exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      res.status(200).send({ received: true });
 });
 
-// Placeholder for PayMe webhook notifications. We will implement the logic in a future step.
 exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
-     logger.info('[WEBHOOK] Received a PayMe request.', { body: req.body });
-     // Respond to PayMe immediately to acknowledge receipt.
-     res.status(200).send({ success: true });
+    logger.info('[WEBHOOK] Received a PayMe request.', { body: req.body });
+    const admin = require("firebase-admin");
+    const db = getAdminApp().firestore();
+
+    // Respond to PayMe immediately to acknowledge receipt.
+    res.status(200).send({ success: true });
+
+    try {
+        const { merchantReference, totalAmount, paymentStatus } = req.body;
+        logger.info(`[PayMe Webhook] Processing notification for ${merchantReference}`);
+
+        if (paymentStatus !== 'PAYMENT_SUCCESS') {
+            logger.warn(`[PayMe Webhook] Non-success status received: ${paymentStatus} for ${merchantReference}. No action taken.`);
+            return;
+        }
+
+        // Use merchantReference for idempotency check
+        const paymentRef = db.collection('processed_payme_payments').doc(merchantReference);
+        const paymentDoc = await paymentRef.get();
+        if (paymentDoc.exists) {
+            logger.info(`[PayMe Webhook] Idempotency check passed. Payment for ${merchantReference} has already been processed.`);
+            return;
+        }
+        logger.info(`[PayMe Webhook] New payment notification for ${merchantReference}.`);
+
+        // Parse merchantReference to get user UID and payment type
+        const parts = merchantReference.split('-');
+        if (parts.length < 4 || parts[0] !== 'UDRY') {
+            logger.error(`[PayMe Webhook] Invalid merchantReference format: ${merchantReference}`);
+            return;
+        }
+        const paymentType = parts[1]; // 'deposit' or 'balance'
+        const userId = parts[2];
+        const amountNum = parseFloat(totalAmount);
+
+        if (!['deposit', 'balance'].includes(paymentType) || !userId || isNaN(amountNum)) {
+             logger.error(`[PayMe Webhook] Could not parse valid data from merchantReference: ${merchantReference}`);
+             return;
+        }
+
+        const userDocRef = db.collection('users').doc(userId);
+        
+        await db.runTransaction(async (transaction) => {
+            const freshPaymentDoc = await transaction.get(paymentRef);
+            if (freshPaymentDoc.exists) {
+                logger.warn("[PayMe Webhook] Transaction check: Payment already processed inside transaction.");
+                return;
+            }
+
+            const userDoc = await transaction.get(userDocRef);
+            if (!userDoc.exists) {
+                 logger.error(`[PayMe Webhook] User document not found for UID: ${userId}`);
+                 return; // Do not throw error, just log and exit
+            }
+
+            if (paymentType === 'deposit') {
+                transaction.update(userDocRef, { 
+                    deposit: admin.firestore.FieldValue.increment(amountNum)
+                });
+            } else if (paymentType === 'balance') {
+                transaction.update(userDocRef, { 
+                    balance: admin.firestore.FieldValue.increment(amountNum) 
+                });
+            }
+
+            // Mark this transaction as processed
+            transaction.set(paymentRef, {
+                userId: userId,
+                processedAt: admin.firestore.FieldValue.serverTimestamp(),
+                amount: amountNum,
+                paymentType: paymentType,
+                status: paymentStatus,
+            });
+        });
+        
+        logger.info(`[PayMe Webhook] Successfully processed payment for user ${userId}. Amount: ${amountNum}, Type: ${paymentType}`);
+
+    } catch (error) {
+        logger.error('[PayMe Webhook] CRITICAL ERROR while processing notification:', error);
+    }
 });
     
     
 
     
+
 
 
 
