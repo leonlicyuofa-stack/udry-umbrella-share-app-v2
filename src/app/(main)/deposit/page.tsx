@@ -43,6 +43,7 @@ export default function DepositPage() {
 
   const paymentMethodsRaw = [
     { id: 'stripe', nameKey: 'payment_method_credit_card' },
+    { id: 'stripe', nameKey: 'payment_method_apple_pay' },
     { id: 'alipay', nameKey: 'payment_method_alipay' },
     { id: 'payme', nameKey: 'payment_method_payme' },
     { id: 'alipay_cn', nameKey: 'payment_method_alipay_cn' },
@@ -167,11 +168,11 @@ export default function DepositPage() {
               <h3 className="text-lg font-semibold">{translate('deposit_payment_method_label')}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {paymentMethods.map((method) => {
-                  const isComingSoon = method.id === 'payme' || method.id === 'alipay' || method.id === 'alipay_cn';
+                  const isComingSoon = method.nameKey === 'payment_method_payme' || method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn';
                   return (
                     <Button
-                      key={method.id}
-                      variant={selectedMethod === method.id ? "default" : "outline"}
+                      key={method.nameKey}
+                      variant={selectedMethod === method.id && method.nameKey !== 'payment_method_payme' && method.nameKey !== 'payment_method_alipay' && method.nameKey !== 'payment_method_alipay_cn' ? "default" : "outline"}
                       className="h-auto py-4 flex items-center justify-center gap-2"
                       onClick={() => setSelectedMethod(method.id)}
                       disabled={isProcessingPayment || isComingSoon}
@@ -235,11 +236,11 @@ export default function DepositPage() {
             <h3 className="text-lg font-semibold">{translate('deposit_payment_method_label')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {paymentMethods.map((method) => {
-                  const isComingSoon = method.id === 'payme' || method.id === 'alipay' || method.id === 'alipay_cn';
+                  const isComingSoon = method.nameKey === 'payment_method_payme' || method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn';
                   return (
                     <Button
-                      key={method.id}
-                      variant={selectedMethod === method.id ? "default" : "outline"}
+                      key={method.nameKey}
+                      variant={selectedMethod === method.id && method.nameKey !== 'payment_method_payme' && method.nameKey !== 'payment_method_alipay' && method.nameKey !== 'payment_method_alipay_cn' ? "default" : "outline"}
                       className="h-auto py-4 flex items-center justify-center gap-2"
                       onClick={() => setSelectedMethod(method.id)}
                       disabled={isProcessingPayment || isComingSoon}

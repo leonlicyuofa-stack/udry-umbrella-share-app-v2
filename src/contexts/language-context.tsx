@@ -242,8 +242,8 @@ const translations: Record<Language, Record<string, string>> = {
     'add_balance_proceed_button': 'Add to Balance',
 
     'payment_method_credit_card': 'Credit/Debit Card',
-    'payment_method_payme': 'PayMe',
     'payment_method_apple_pay': 'Apple Pay',
+    'payment_method_payme': 'PayMe',
     'payment_method_google_pay': 'Google Pay',
     'payment_method_fps': 'FPS (轉數快)',
     'payment_method_alipay': 'AlipayHK',
@@ -628,8 +628,8 @@ const translations: Record<Language, Record<string, string>> = {
     'add_balance_proceed_button': '增值到餘額',
 
     'payment_method_credit_card': '信用卡/扣帳卡',
-    'payment_method_payme': 'PayMe',
     'payment_method_apple_pay': 'Apple Pay',
+    'payment_method_payme': 'PayMe',
     'payment_method_google_pay': 'Google Pay',
     'payment_method_fps': '轉數快 (FPS)',
     'payment_method_alipay': '支付寶香港 (AlipayHK)',
