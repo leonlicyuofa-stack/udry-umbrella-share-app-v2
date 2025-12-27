@@ -18,6 +18,7 @@ import { BleClient, numbersToDataView, dataViewToText, type ScanResult } from '@
 import { httpsCallable } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
 import { useLanguage } from '@/contexts/language-context';
+import imageData from '@/app/lib/placeholder-images.json';
 
 
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
@@ -290,10 +291,10 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
             <p className="text-xs font-semibold mb-2">For Android, select your device from a list that looks like this:</p>
             <Image 
-              src="/android-ble-instructions.png" 
-              alt="Example of Android Bluetooth device selection screen"
-              width={250}
-              height={156}
+              src={imageData.android_ble_instructions.src} 
+              alt={imageData.android_ble_instructions.alt}
+              width={imageData.android_ble_instructions.width}
+              height={imageData.android_ble_instructions.height}
               className="rounded-md border"
               data-ai-hint="bluetooth android"
             />
@@ -304,10 +305,10 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
             <p className="text-xs font-semibold mb-2">For iOS, select your device from a pop-up like this:</p>
             <Image 
-              src="/bluetooth-selection-guide.png" 
-              alt="Example of iOS Bluetooth device selection screen"
-              width={250}
-              height={62}
+              src={imageData.ios_ble_instructions.src}
+              alt={imageData.ios_ble_instructions.alt}
+              width={imageData.ios_ble_instructions.width}
+              height={imageData.ios_ble_instructions.height}
               className="rounded-md border"
               data-ai-hint="bluetooth ios"
             />
@@ -410,7 +411,25 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
             <AlertDialogTitle className="flex items-center text-xl text-primary">
               <Umbrella className="mr-2 h-6 w-6" /> Action Required
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
+             <div className="flex flex-col items-center gap-4 py-4">
+                <Image
+                    src={imageData.rent_step_1.src}
+                    alt={imageData.rent_step_1.alt}
+                    width={imageData.rent_step_1.width}
+                    height={imageData.rent_step_1.height}
+                    className="rounded-md border"
+                    data-ai-hint="pull remove"
+                />
+                <Image
+                    src={imageData.rent_step_2.src}
+                    alt={imageData.rent_step_2.alt}
+                    width={imageData.rent_step_2.width}
+                    height={imageData.rent_step_2.height}
+                    className="rounded-md border"
+                    data-ai-hint="pull remove"
+                />
+            </div>
+            <AlertDialogDescription className="text-lg text-center pb-4 text-foreground">
               Your umbrella is unlocked. Please remove it from the stall to begin your rental.
             </AlertDialogDescription>
           </AlertDialogHeader>
