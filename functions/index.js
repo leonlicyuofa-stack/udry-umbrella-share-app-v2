@@ -200,7 +200,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
 });
 
 
-exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRET"] }, async (request) => {
+exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRET"], invoker: "public", cors: true }, async (request) => {
     logger.info("--- createPaymePayment function triggered ---");
 
     const PAYME_SANDBOX_ENDPOINT = 'https://api.sandbox.payme.hsbc.com.hk/v2/payments/pay-and-collect';
@@ -676,6 +676,7 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
     
 
     
+
 
 
 
