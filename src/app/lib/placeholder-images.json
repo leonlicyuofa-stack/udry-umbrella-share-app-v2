@@ -1,25 +1,25 @@
 
 {
   "rent_step_1": {
-    "src": "/rent_1.png",
+    "src": "/Rent_1.png",
     "alt": "Instruction on how to take out the umbrella from the machine.",
     "width": 250,
     "height": 150
   },
   "rent_step_2": {
-    "src": "/rent_2.png",
+    "src": "/Rent_2.png",
     "alt": "Second instruction on how to take out the umbrella from the machine.",
     "width": 250,
     "height": 150
   },
   "return_step_1": {
-    "src": "/return_1.png",
+    "src": "/Return_1.png",
     "alt": "Instruction on how to return the umbrella to the machine.",
     "width": 250,
     "height": 150
   },
   "return_step_2": {
-    "src": "/return_2.png",
+    "src": "/Return_2.png",
     "alt": "Second instruction on how to return the umbrella to the machine.",
     "width": 250,
     "height": 150
