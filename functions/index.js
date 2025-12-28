@@ -3,6 +3,7 @@ const functions = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions");
 const fetch = require("node-fetch");
+const { URLSearchParams } = require("url");
 
 // --- Safe, Global Initialization ---
 let adminApp; // Will be initialized lazily
@@ -203,7 +204,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
 exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRET"], invoker: "public", cors: true }, async (request) => {
     logger.info("--- createPaymePayment function triggered ---");
 
-    const PAYME_SANDBOX_ENDPOINT = 'https://api.sandbox.payme.hsbc.com/v2/payments/pay-and-collect';
+    const PAYME_SANDBOX_BASE_URL = 'https://api.test.payme.hsbc.com.hk';
     const PAYME_APP_ID = process.env.PAYME_APP_ID;
     const PAYME_APP_SECRET = process.env.PAYME_APP_SECRET;
     const NOTIFICATION_URI = 'https://us-central1-udry-app-dev.cloudfunctions.net/paymeWebhook';
@@ -228,40 +229,60 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
     logger.info("PayMe Step 1: Received and validated data.", { amount, paymentType, userId: request.auth.uid });
 
     try {
-        // Step 3: Construct Request Body
+        // --- STEP 1: GET ACCESS TOKEN ---
+        logger.info("PayMe Step 2: Requesting access token...");
+        const tokenParams = new URLSearchParams();
+        tokenParams.append('client_id', PAYME_APP_ID);
+        tokenParams.append('client_secret', PAYME_APP_SECRET);
+
+        const tokenResponse = await fetch(`${PAYME_SANDBOX_BASE_URL}/v2/oauth2/token`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: tokenParams,
+        });
+
+        const tokenData = await tokenResponse.json();
+        if (!tokenResponse.ok || !tokenData.access_token) {
+            logger.error('Failed to get PayMe access token.', { status: tokenResponse.status, body: tokenData });
+            throw new HttpsError('internal', `Could not authenticate with PayMe. Error: ${tokenData.error_description || 'Unknown error'}`);
+        }
+        const accessToken = tokenData.access_token;
+        logger.info("PayMe Step 3: Successfully obtained access token.");
+
+        // --- STEP 2: CREATE PAYMENT REQUEST ---
         const merchantReference = `UDRY-${paymentType}-${request.auth.uid}-${Date.now()}`;
-        const requestBody = {
+        const paymentRequestBody = {
             totalAmount: amount.toFixed(2),
             currencyCode: 'HKD',
             merchantReference: merchantReference,
             notificationUri: NOTIFICATION_URI,
         };
-
-        const base64Credentials = Buffer.from(`${PAYME_APP_ID}:${PAYME_APP_SECRET}`).toString('base64');
-        logger.info(`PayMe Step 2: Sending request to ${PAYME_SANDBOX_ENDPOINT}.`, { merchantReference });
-
-        // Step 4: Make API Call to PayMe
-        const response = await fetch(PAYME_SANDBOX_ENDPOINT, {
+        logger.info(`PayMe Step 4: Sending payment creation request for ${merchantReference}.`);
+        
+        const paymentResponse = await fetch(`${PAYME_SANDBOX_BASE_URL}/v2/payments`, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
-                'Authorization': `Basic ${base64Credentials}`,
+                'Authorization': `Bearer ${accessToken}`,
+                'Api-Version': '1.0', // As per documentation, it's good practice to include version
             },
-            body: JSON.stringify(requestBody),
+            body: JSON.stringify(paymentRequestBody),
         });
         
-        const responseData = await response.json();
+        const paymentResponseData = await paymentResponse.json();
 
         // Step 5: Handle PayMe Response
-        if (!response.ok || !responseData.paymeLink) {
-            const errorMessage = `PayMe API Error: ${responseData.message || 'Unknown error'} (Code: ${responseData.code})`;
-            logger.error(errorMessage, { responseData });
+        if (!paymentResponse.ok || !paymentResponseData.paymeLink) {
+            const errorMessage = `PayMe API Error: ${paymentResponseData.message || 'Unknown error'} (Code: ${paymentResponseData.code})`;
+            logger.error(errorMessage, { responseData: paymentResponseData });
             throw new HttpsError('internal', errorMessage);
         }
 
-        logger.info(`PayMe Step 3 SUCCESS: Received paymeLink for ${merchantReference}.`);
+        logger.info(`PayMe Step 5 SUCCESS: Received paymeLink for ${merchantReference}.`);
         
-        return { success: true, paymeLink: responseData.paymeLink };
+        return { success: true, paymeLink: paymentResponseData.paymeLink };
 
     } catch (error) {
         logger.error(`--- CRITICAL ERROR in createPaymePayment --- : ${error.message}`);
@@ -676,6 +697,7 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
     
 
     
+
 
 
 
