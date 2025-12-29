@@ -237,9 +237,6 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
 
         const tokenResponse = await fetch(`${PAYME_SANDBOX_BASE_URL}/v2/oauth2/token`, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-            },
             body: tokenParams,
         });
 
@@ -708,3 +705,6 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
 
 
 
+
+
+    
