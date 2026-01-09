@@ -24,19 +24,19 @@ export function SocialLoginButtons() {
         variant="outline"
         className="w-full"
         onClick={handleGoogleSignIn}
-        disabled={isLoading}
+        disabled={true}
       >
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {translate('continue_with_google')}
+        Continue with Google
       </Button>
       <Button
         variant="outline"
         className="w-full"
         onClick={handleAppleSignIn}
-        disabled={isLoading}
+        disabled={true}
       >
         {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-        {translate('continue_with_apple')}
+        Continue with Apple
       </Button>
     </div>
   );

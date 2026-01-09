@@ -74,7 +74,7 @@ export function SignInForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            {translate('or_continue_with')}
+            Or continue with
           </span>
         </div>
       </div>
