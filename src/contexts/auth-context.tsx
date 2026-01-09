@@ -18,6 +18,9 @@ import {
   sendEmailVerification,
   type User as FirebaseUser,
   type UserCredential,
+  GoogleAuthProvider,
+  signInWithPopup,
+  OAuthProvider,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, onSnapshot, updateDoc as firestoreUpdateDoc, query, writeBatch, type Firestore, addDoc, GeoPoint, arrayUnion, orderBy, limit, getDocs, increment } from 'firebase/firestore';
 import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase';
@@ -47,6 +50,8 @@ interface AuthContextType {
   endRental: (returnedToStallId: string) => Promise<void>;
   signUpWithEmail: (data: SignUpFormData) => Promise<void>;
   signInWithEmail: (data: SignInFormData) => Promise<UserCredential>;
+  signInWithGoogle: () => Promise<void>;
+  signInWithApple: () => Promise<void>;
   changeUserPassword: (data: ChangePasswordFormData) => Promise<void>;
   signOut: () => Promise<void>;
   sendPasswordReset: (email: string) => Promise<void>;
@@ -249,6 +254,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw error;
     }
   };
+
+  const socialSignIn = async (provider: GoogleAuthProvider | OAuthProvider) => {
+    if (!firebaseServices?.auth) {
+      throw new Error("Auth service not available.");
+    }
+    try {
+      await signInWithPopup(firebaseServices.auth, provider);
+      toast({ title: "Sign In Successful", description: `Welcome!` });
+    } catch (error: any) {
+      let title = "Sign-in Failed";
+      let description = "An unknown error occurred.";
+      
+      if (error.code === 'auth/popup-closed-by-user') {
+        title = "Sign-in Cancelled";
+        description = "The sign-in window was closed before completion.";
+      } else if (error.code === 'auth/account-exists-with-different-credential') {
+        title = "Account Exists";
+        description = "An account with this email already exists. Please sign in with your original method to link your account.";
+      }
+      
+      toast({ variant: 'destructive', title, description });
+      throw error;
+    }
+  };
+
+  const signInWithGoogle = async () => {
+    const provider = new GoogleAuthProvider();
+    return socialSignIn(provider);
+  };
+  
+  const signInWithApple = async () => {
+    const provider = new OAuthProvider('apple.com');
+    return socialSignIn(provider);
+  };
   
   const dismissSignUpSuccess = () => setShowSignUpSuccess(false);
 
@@ -449,6 +488,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     isLoadingRental: isLoading,
     startRental, endRental, signUpWithEmail,
     signInWithEmail, signOut, changeUserPassword, sendPasswordReset,
+    signInWithGoogle,
+    signInWithApple,
     sendVerificationEmail,
     addBalance, setDeposit,
     requestDepositRefund,
@@ -495,4 +536,3 @@ export function useAuth() {
   }
   return context;
 }
-

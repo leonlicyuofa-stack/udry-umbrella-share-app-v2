@@ -3,20 +3,39 @@
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
-import { useLanguage } from "@/contexts/language-context";
 import { Loader2 } from "lucide-react";
-
-// The icon components have been removed as requested.
+import { useState } from "react";
 
 export function SocialLoginButtons() {
-  const { loading: authLoading } = useAuth();
-  const { translate } = useLanguage();
+  const { signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isAppleLoading, setIsAppleLoading] = useState(false);
 
-  // For now, these buttons are non-functional as per our plan.
-  const handleGoogleSignIn = () => console.log("Google Sign In clicked - logic to be implemented in Step 2.");
-  const handleAppleSignIn = () => console.log("Apple Sign In clicked - logic to be implemented in Step 2.");
+  const isLoading = authLoading || isGoogleLoading || isAppleLoading;
 
-  const isLoading = authLoading;
+  const handleGoogleSignIn = async () => {
+    setIsGoogleLoading(true);
+    try {
+      await signInWithGoogle();
+      // On success, the AuthProvider's onAuthStateChanged handles the redirect.
+    } catch (error) {
+      // Error is handled by a toast in the socialSignIn function.
+      console.error("Google Sign In failed on page:", error);
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  };
+  
+  const handleAppleSignIn = async () => {
+    setIsAppleLoading(true);
+    try {
+      await signInWithApple();
+    } catch (error) {
+      console.error("Apple Sign In failed on page:", error);
+    } finally {
+      setIsAppleLoading(false);
+    }
+  };
 
   return (
     <div className="space-y-3">
@@ -24,18 +43,22 @@ export function SocialLoginButtons() {
         variant="outline"
         className="w-full"
         onClick={handleGoogleSignIn}
-        disabled={true}
+        disabled={isLoading}
       >
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {isGoogleLoading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : null}
         Continue with Google
       </Button>
       <Button
         variant="outline"
         className="w-full"
         onClick={handleAppleSignIn}
-        disabled={true}
+        disabled={isLoading}
       >
-        {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
+        {isAppleLoading ? (
+          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+        ) : null}
         Continue with Apple
       </Button>
     </div>
