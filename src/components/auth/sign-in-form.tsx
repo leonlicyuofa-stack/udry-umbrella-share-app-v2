@@ -21,6 +21,7 @@ import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/language-context";
+import { SocialLoginButtons } from "./social-login-buttons";
 
 export function SignInForm() {
   const { signInWithEmail, loading: authLoading } = useAuth();
@@ -65,6 +66,19 @@ export function SignInForm() {
 
   return (
     <div className="space-y-6">
+      <SocialLoginButtons />
+
+      <div className="relative">
+        <div className="absolute inset-0 flex items-center">
+          <span className="w-full border-t" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-background px-2 text-muted-foreground">
+            {translate('or_continue_with')}
+          </span>
+        </div>
+      </div>
+      
       <Form {...form}>
         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
           <FormField
