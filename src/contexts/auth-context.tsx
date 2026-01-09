@@ -1,4 +1,3 @@
-
 // src/contexts/auth-context.tsx
 "use client";
 
@@ -536,3 +535,5 @@ export function useAuth() {
   }
   return context;
 }
+
+    
