@@ -37,6 +37,10 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     return services;
   }
 
+  // --- TEMPORARY DEBUGGING LOG ---
+  console.log("Connecting to Firebase Project ID:", firebaseConfig.projectId);
+  // --------------------------------
+
   try {
     // Get the existing app instance or initialize a new one.
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
