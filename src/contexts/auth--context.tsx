@@ -1,4 +1,8 @@
 
+// This entire file has been intentionally commented out for debugging purposes.
+// If the app still works, this file is likely unused and can be deleted.
+// If the app crashes, it means this file is still being referenced by the build system.
+/*
 "use client";
 
 import type React from 'react';
@@ -448,3 +452,4 @@ export function useAuth() {
   }
   return context;
 }
+*/
