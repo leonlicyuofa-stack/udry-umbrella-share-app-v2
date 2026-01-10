@@ -10,7 +10,7 @@ export const firebaseConfig = {
   apiKey: "AIzaSyDk8gmZb-azt0fndBG80zrYXEma7NsUdL0",
   authDomain: "udry-app-dev.firebaseapp.com",
   projectId: "udry-app-dev",
-  storageBucket: "udry-app-dev.firebasestorage.app",
+  storageBucket: "udry-app-dev.appspot.com",
   messagingSenderId: "458603936715",
   appId: "1:458603936715:web:8c50687fc1cdcf9c90944e",
   measurementId: "G-X1VP807J0N"
