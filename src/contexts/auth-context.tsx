@@ -19,8 +19,9 @@ import {
   type User as FirebaseUser,
   type UserCredential,
   GoogleAuthProvider,
-  signInWithRedirect, // <-- UPDATED IMPORT
+  signInWithRedirect,
   OAuthProvider,
+  getRedirectResult, // ADDED: Import getRedirectResult
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, onSnapshot, updateDoc as firestoreUpdateDoc, query, writeBatch, type Firestore, addDoc, GeoPoint, arrayUnion, orderBy, limit, getDocs, increment } from 'firebase/firestore';
 import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase';
@@ -34,8 +35,6 @@ import { Button } from '@/components/ui/button';
 import { httpsCallable } from 'firebase/functions';
 
 // --- IMPORTANT: GRANDFATHER CLAUSE ---
-// This date ensures that only users who sign up *after* this feature is deployed
-// will be subject to the email verification check. Your existing users will not be affected.
 const GRANDFATHER_CLAUSE_TIMESTAMP = 1732492800000; // Corresponds to Nov 25, 2025
 
 
@@ -147,6 +146,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isFirebaseError, setIsFirebaseError] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [isSendingVerification, setIsSendingVerification] = useState(false);
+  
+  // --- ADDED: State flags for the race condition fix ---
+  const isAuthReady = useRef(false);
+  const isRedirectReady = useRef(false);
 
   useEffect(() => {
     const services = initializeFirebaseServices();
@@ -157,14 +160,35 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setFirebaseServices(services);
     
+    // --- REFACTORED: Split auth logic ---
+    const checkInitialState = () => {
+      if (isAuthReady.current && isRedirectReady.current) {
+        setIsLoading(false);
+      }
+    };
+    
+    // Check #1: Handle the redirect result
+    getRedirectResult(services.auth)
+      .catch((error) => {
+        // Handle redirect-specific errors if necessary
+        console.error("Error from getRedirectResult:", error);
+        toast({ variant: 'destructive', title: 'Sign-in Error', description: 'Could not process sign-in from provider.' });
+      })
+      .finally(() => {
+        isRedirectReady.current = true;
+        checkInitialState();
+      });
+
+    // Check #2: Listen for auth state changes
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
       setFirebaseUser(user);
       if (!user) {
         setFirestoreUser(null);
         setActiveRental(null);
         setIsVerified(false);
-        setIsLoading(false); // If no user, we are done loading.
       }
+      isAuthReady.current = true;
+      checkInitialState();
     });
 
     return () => unsubscribeAuth();
@@ -195,11 +219,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
+      // If we are logged out, there is no user data to load.
+      if (!firebaseUser) setIsLoading(false);
       return;
     }
     
-    setIsLoading(true); 
-
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
     const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
       let userData: User | null = null;
@@ -236,7 +260,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       
       setIsVerified(isUserVerified);
       
-      setIsLoading(false);
     });
 
     return () => unsubscribeUserDoc();
@@ -260,10 +283,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error("Auth service not available.");
     }
     try {
-      // THIS IS THE CORE LOGIC CHANGE
       await signInWithRedirect(firebaseServices.auth, provider);
-      // For redirect, the toast is better handled when the user returns to the app.
-      // We can add logic to detect a redirect result if needed.
     } catch (error: any) {
       let title = "Sign-in Failed";
       let description = "An unknown error occurred.";
