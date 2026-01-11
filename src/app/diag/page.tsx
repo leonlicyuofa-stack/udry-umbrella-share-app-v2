@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 
 // Direct imports from Firebase SDK
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider, type Auth } from 'firebase/auth';
+import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider, type Auth } from 'firebase/auth';
 
 // Direct import of the configuration we want to test
 import { firebaseConfig } from '@/lib/firebase';
@@ -24,6 +24,7 @@ export default function DiagnosticPage() {
   const [initStatus, setInitStatus] = useState<TestStatus>('idle');
   const [authStatus, setAuthStatus] = useState<TestStatus>('idle');
   const [signInStatus, setSignInStatus] = useState<TestStatus>('idle');
+  const [msSignInStatus, setMsSignInStatus] = useState<TestStatus>('idle');
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   const handleTest1 = () => {
@@ -105,6 +106,34 @@ export default function DiagnosticPage() {
     }
   };
 
+  const handleTest3b = async () => {
+    setMsSignInStatus('running');
+    setErrorMessage(null);
+    // Ensure Test 2 has run successfully
+    if (authStatus !== 'success' || !auth) {
+       handleTest2();
+       if(!auth) {
+        const msg = "Test 2 must pass before running Test 3b.";
+        setMsSignInStatus('error');
+        setErrorMessage(msg);
+        toast({ variant: 'destructive', title: 'Prerequisite Failed', description: msg });
+        return;
+       }
+    }
+
+    try {
+      // Use the generic OAuth provider for Microsoft
+      const provider = new OAuthProvider('microsoft.com');
+      const result = await signInWithPopup(auth, provider);
+      setMsSignInStatus('success');
+      toast({ title: 'Test 3b Success!', description: `Successfully signed in as ${result.user.displayName}` });
+    } catch (error: any) {
+      setMsSignInStatus('error');
+      setErrorMessage(`Test 3b Failed: ${error.code} - ${error.message}`);
+      toast({ variant: 'destructive', title: 'Test 3b Failed', description: `${error.code}: ${error.message}` });
+    }
+  };
+
   const renderStatus = (status: TestStatus) => {
     if (status === 'running') return <Loader2 className="h-4 w-4 animate-spin text-orange-500" />;
     if (status === 'success') return <CheckCircle className="h-4 w-4 text-green-500" />;
@@ -167,12 +196,29 @@ export default function DiagnosticPage() {
                 {renderStatus(signInStatus)}
               </CardTitle>
                <CardDescription className="text-xs pt-1">
-                Attempts the `signInWithPopup` flow in isolation.
+                Attempts the `signInWithPopup` flow with Google.
               </CardDescription>
             </CardHeader>
             <CardFooter>
                <Button onClick={handleTest3} disabled={signInStatus === 'running'} size="sm">
                  <PlayCircle className="mr-2 h-4 w-4" /> Run Test 3
+              </Button>
+            </CardFooter>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg flex items-center justify-between">
+                <span>Test 3b: Attempt Microsoft Sign-In</span>
+                {renderStatus(msSignInStatus)}
+              </CardTitle>
+               <CardDescription className="text-xs pt-1">
+                Attempts the `signInWithPopup` flow with Microsoft to isolate the issue.
+              </CardDescription>
+            </CardHeader>
+            <CardFooter>
+               <Button onClick={handleTest3b} disabled={msSignInStatus === 'running'} size="sm">
+                 <PlayCircle className="mr-2 h-4 w-4" /> Run Test 3b
               </Button>
             </CardFooter>
           </Card>
