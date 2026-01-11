@@ -1,3 +1,4 @@
+
 // src/components/auth/social-login-buttons.tsx
 "use client";
 
@@ -11,18 +12,18 @@ export function SocialLoginButtons() {
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
 
+  // The main loading state now also includes the initial auth check from the context.
   const isLoading = authLoading || isGoogleLoading || isAppleLoading;
 
   const handleGoogleSignIn = async () => {
     setIsGoogleLoading(true);
     try {
+      // The redirect will navigate the user away. The page will reload upon their return.
       await signInWithGoogle();
-      // On success, the AuthProvider's onAuthStateChanged handles the redirect.
     } catch (error) {
-      // Error is handled by a toast in the socialSignIn function.
+      // The error toast is now handled within the socialSignIn function in the context.
       console.error("Google Sign In failed on page:", error);
-    } finally {
-      setIsGoogleLoading(false);
+      setIsGoogleLoading(false); // Only reset loading state on error, as success navigates away.
     }
   };
   
@@ -32,7 +33,6 @@ export function SocialLoginButtons() {
       await signInWithApple();
     } catch (error) {
       console.error("Apple Sign In failed on page:", error);
-    } finally {
       setIsAppleLoading(false);
     }
   };
@@ -64,5 +64,3 @@ export function SocialLoginButtons() {
     </div>
   );
 }
-
-    

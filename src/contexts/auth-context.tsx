@@ -1,3 +1,4 @@
+
 // src/contexts/auth-context.tsx
 "use client";
 
@@ -18,7 +19,7 @@ import {
   type User as FirebaseUser,
   type UserCredential,
   GoogleAuthProvider,
-  signInWithPopup,
+  signInWithRedirect, // <-- UPDATED IMPORT
   OAuthProvider,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, onSnapshot, updateDoc as firestoreUpdateDoc, query, writeBatch, type Firestore, addDoc, GeoPoint, arrayUnion, orderBy, limit, getDocs, increment } from 'firebase/firestore';
@@ -259,8 +260,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error("Auth service not available.");
     }
     try {
-      await signInWithPopup(firebaseServices.auth, provider);
-      toast({ title: "Sign In Successful", description: `Welcome!` });
+      // THIS IS THE CORE LOGIC CHANGE
+      await signInWithRedirect(firebaseServices.auth, provider);
+      // For redirect, the toast is better handled when the user returns to the app.
+      // We can add logic to detect a redirect result if needed.
     } catch (error: any) {
       let title = "Sign-in Failed";
       let description = "An unknown error occurred.";
@@ -535,5 +538,3 @@ export function useAuth() {
   }
   return context;
 }
-
-    

@@ -1,6 +1,6 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
+import { initializeAuth, indexedDBLocalPersistence, browserPopupRedirectResolver, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
 
@@ -49,7 +49,8 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     
     // Use initializeAuth with indexedDBLocalPersistence for Capacitor compatibility
     const auth = initializeAuth(app, {
-      persistence: indexedDBLocalPersistence
+      persistence: indexedDBLocalPersistence,
+      popupRedirectResolver: browserPopupRedirectResolver // ADDED: Fix for Capacitor redirects
     });
 
     const functions = getFunctions(app);
