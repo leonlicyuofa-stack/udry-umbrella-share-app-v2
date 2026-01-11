@@ -1,3 +1,4 @@
+// src/app/diag/page.tsx
 "use client";
 
 import { useState } from 'react';
@@ -8,7 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 
 // Direct imports from Firebase SDK
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, signInWithPopup, GoogleAuthProvider, OAuthProvider, type Auth } from 'firebase/auth';
+// UPDATED: Import signInWithRedirect
+import { getAuth, signInWithRedirect, GoogleAuthProvider, OAuthProvider, type Auth } from 'firebase/auth';
 
 // Direct import of the configuration we want to test
 import { firebaseConfig } from '@/lib/firebase';
@@ -52,7 +54,6 @@ export default function DiagnosticPage() {
   const handleTest2 = () => {
     setAuthStatus('running');
     setErrorMessage(null);
-    // Ensure Test 1 has run successfully
     if (initStatus !== 'success' || !app) {
        handleTest1();
        if(!app) {
@@ -82,7 +83,6 @@ export default function DiagnosticPage() {
   const handleTest3 = async () => {
     setSignInStatus('running');
     setErrorMessage(null);
-    // Ensure Test 2 has run successfully
     if (authStatus !== 'success' || !auth) {
        handleTest2();
        if(!auth) {
@@ -96,9 +96,10 @@ export default function DiagnosticPage() {
 
     try {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
-      setSignInStatus('success');
-      toast({ title: 'Test 3 Success!', description: `Successfully signed in as ${result.user.displayName}` });
+      // Use signInWithRedirect instead of signInWithPopup
+      await signInWithRedirect(auth, provider);
+      // Note: The browser will navigate away, so success/error state here might not be seen.
+      // The primary test is whether the navigation to Google's sign-in page occurs without a network error.
     } catch (error: any) {
       setSignInStatus('error');
       setErrorMessage(`Test 3 Failed: ${error.code} - ${error.message}`);
@@ -109,7 +110,6 @@ export default function DiagnosticPage() {
   const handleTest3b = async () => {
     setMsSignInStatus('running');
     setErrorMessage(null);
-    // Ensure Test 2 has run successfully
     if (authStatus !== 'success' || !auth) {
        handleTest2();
        if(!auth) {
@@ -122,11 +122,9 @@ export default function DiagnosticPage() {
     }
 
     try {
-      // Use the generic OAuth provider for Microsoft
       const provider = new OAuthProvider('microsoft.com');
-      const result = await signInWithPopup(auth, provider);
-      setMsSignInStatus('success');
-      toast({ title: 'Test 3b Success!', description: `Successfully signed in as ${result.user.displayName}` });
+      // Use signInWithRedirect instead of signInWithPopup
+      await signInWithRedirect(auth, provider);
     } catch (error: any) {
       setMsSignInStatus('error');
       setErrorMessage(`Test 3b Failed: ${error.code} - ${error.message}`);
@@ -150,7 +148,7 @@ export default function DiagnosticPage() {
             Authentication Diagnostic Page
           </CardTitle>
           <CardDescription>
-            Run these tests in order to isolate the Google Sign-In issue.
+            Run these tests in order to isolate the Google Sign-In issue. This page now uses the Redirect method.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -192,11 +190,11 @@ export default function DiagnosticPage() {
            <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center justify-between">
-                <span>Test 3: Attempt Google Sign-In</span>
+                <span>Test 3: Attempt Google Sign-In (Redirect)</span>
                 {renderStatus(signInStatus)}
               </CardTitle>
                <CardDescription className="text-xs pt-1">
-                Attempts the `signInWithPopup` flow with Google.
+                Attempts the `signInWithRedirect` flow with Google. The browser should navigate away to Google's sign-in page.
               </CardDescription>
             </CardHeader>
             <CardFooter>
@@ -209,11 +207,11 @@ export default function DiagnosticPage() {
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center justify-between">
-                <span>Test 3b: Attempt Microsoft Sign-In</span>
+                <span>Test 3b: Attempt Microsoft Sign-In (Redirect)</span>
                 {renderStatus(msSignInStatus)}
               </CardTitle>
                <CardDescription className="text-xs pt-1">
-                Attempts the `signInWithPopup` flow with Microsoft to isolate the issue.
+                Attempts the `signInWithRedirect` flow with Microsoft to isolate the issue.
               </CardDescription>
             </CardHeader>
             <CardFooter>
