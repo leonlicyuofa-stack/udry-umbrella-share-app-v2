@@ -1,3 +1,4 @@
+
 // src/app/diag/page.tsx
 "use client";
 
@@ -8,21 +9,19 @@ import { CheckCircle, AlertTriangle, Loader2, PlayCircle, Radio } from 'lucide-r
 import { useToast } from '@/hooks/use-toast';
 
 // Direct imports from Firebase SDK
-import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, signInWithPopup, signInWithRedirect, GoogleAuthProvider, OAuthProvider, type Auth, initializeAuth, indexedDBLocalPersistence } from 'firebase/auth';
+import { initializeApp, getApps, getApp, type FirebaseApp, deleteApp } from 'firebase/app';
+import { getAuth, signInWithRedirect, GoogleAuthProvider, OAuthProvider, type Auth, initializeAuth, indexedDBLocalPersistence } from 'firebase/auth';
 
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 
 // --- THIS IS THE NEW CONFIGURATION FOR THE TEST PROJECT ---
-// IMPORTANT: Please replace the placeholder values with the actual values from your 'udry-app-test-2' project.
 const testFirebaseConfig = {
-  apiKey: "REPLACE_WITH_YOUR_NEW_API_KEY",
+  apiKey: "AIzaSyDFvt0pWwqs78Sm-fzBgQ-tRm5cD8WAStA",
   authDomain: "udry-app-test-2.firebaseapp.com",
   projectId: "udry-app-test-2",
-  storageBucket: "udry-app-test-2.appspot.com",
-  messagingSenderId: "REPLACE_WITH_YOUR_NEW_MESSAGING_SENDER_ID",
-  appId: "REPLACE_WITH_YOUR_NEW_APP_ID",
-  measurementId: "REPLACE_WITH_YOUR_NEW_MEASUREMENT_ID"
+  storageBucket: "udry-app-test-2.firebasestorage.app",
+  messagingSenderId: "398109852404",
+  appId: "1:398109852404:web:b0ae7ca3be3859414d94a1",
 };
 
 
@@ -37,8 +36,6 @@ export default function DiagnosticPage() {
   const [test2Status, setTest2Status] = useState<TestStatus>('idle');
   const [test3Status, setTest3Status] = useState<TestStatus>('idle');
   const [test3bStatus, setTest3bStatus] = useState<TestStatus>('idle');
-  const [test4Status, setTest4Status] = useState<TestStatus>('idle');
-  const [test5Status, setTest5Status] = useState<TestStatus>('idle');
   
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
@@ -47,22 +44,23 @@ export default function DiagnosticPage() {
       setTest2Status('idle');
       setTest3Status('idle');
       setTest3bStatus('idle');
-      setTest4Status('idle');
-      setTest5Status('idle');
       setErrorMessage(null);
   }
 
   // --- Test Implementations ---
-  const runSignInTest = async (provider: GoogleAuthProvider | OAuthProvider, statusSetter: React.Dispatch<React.SetStateAction<TestStatus>>) => {
+  const runSignInTest = async (providerName: 'google' | 'microsoft', statusSetter: React.Dispatch<React.SetStateAction<TestStatus>>) => {
     statusSetter('running');
     setErrorMessage(null);
     try {
-      const app = initializeApp(testFirebaseConfig, `diag-test-app-${Date.now()}`);
+      const appName = `diag-test-app-${providerName}-${Date.now()}`;
+      const app = initializeApp(testFirebaseConfig, appName);
       const auth = initializeAuth(app, {
         persistence: indexedDBLocalPersistence
       });
+      const provider = providerName === 'google' ? new GoogleAuthProvider() : new OAuthProvider('microsoft.com');
+
       await signInWithRedirect(auth, provider);
-      // On success, the browser will navigate away.
+      // On success, the browser will navigate away. We won't see a 'success' status here.
     } catch (error: any) {
       statusSetter('error');
       setErrorMessage(`Sign-In Failed: ${error.code} - ${error.message}`);
@@ -83,34 +81,44 @@ export default function DiagnosticPage() {
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-primary flex items-center">
             <Radio className="mr-3 h-6 w-6" />
-            Comprehensive Auth Diagnostic
+            Auth Diagnostic (Now with `udry-app-test-2`)
           </CardTitle>
           <CardDescription>
-            This page now points to the new `udry-app-test-2` project.
+            This page now points to the new, clean Firebase project to confirm if the issue is project-specific.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
-           <Alert>
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Action Required</AlertTitle>
-              <AlertDescription>
-                Please ensure you have replaced the placeholder values in the `testFirebaseConfig` object in this file (`src/app/diag/page.tsx`) with the actual configuration from your `udry-app-test-2` project before running the tests.
-              </AlertDescription>
-            </Alert>
-          
+           
            <Card className="border-blue-500 border-2">
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center justify-between">
-                <span>Test: Attempt Google Sign-In with Redirect</span>
+                <span>Test 3: Attempt Google Sign-In with Redirect</span>
                 {renderStatus(test3Status)}
               </CardTitle>
                <CardDescription className="text-xs pt-1">
-                This is the main test. It attempts the `signInWithRedirect` flow using the new, clean Firebase project.
+                This test uses the recommended `signInWithRedirect` method with `indexedDB` persistence on the new, clean project.
               </CardDescription>
             </CardHeader>
             <CardFooter>
-               <Button onClick={() => runSignInTest(new GoogleAuthProvider(), setTest3Status)} disabled={test3Status === 'running'} size="sm">
-                 <PlayCircle className="mr-2 h-4 w-4" /> Run Test
+               <Button onClick={() => runSignInTest('google', setTest3Status)} disabled={test3Status === 'running'} size="sm">
+                 <PlayCircle className="mr-2 h-4 w-4" /> Run Google Test
+              </Button>
+            </CardFooter>
+          </Card>
+
+          <Card>
+            <CardHeader className="pb-4">
+              <CardTitle className="text-lg flex items-center justify-between">
+                <span>Test 3b: Attempt Microsoft Sign-In with Redirect</span>
+                {renderStatus(test3bStatus)}
+              </CardTitle>
+               <CardDescription className="text-xs pt-1">
+                This confirms if the issue is specific to the Google provider or a general auth problem.
+              </CardDescription>
+            </CardHeader>
+            <CardFooter>
+               <Button onClick={() => runSignInTest('microsoft', setTest3bStatus)} disabled={test3bStatus === 'running'} size="sm">
+                 <PlayCircle className="mr-2 h-4 w-4" /> Run Microsoft Test
               </Button>
             </CardFooter>
           </Card>
