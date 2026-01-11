@@ -9,8 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 
 // Direct imports from Firebase SDK
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-// UPDATED: Import signInWithRedirect
-import { getAuth, signInWithRedirect, GoogleAuthProvider, OAuthProvider, type Auth } from 'firebase/auth';
+// UPDATED: Import initializeAuth and indexedDBLocalPersistence
+import { getAuth, signInWithRedirect, GoogleAuthProvider, OAuthProvider, type Auth, initializeAuth, indexedDBLocalPersistence } from 'firebase/auth';
 
 // Direct import of the configuration we want to test
 import { firebaseConfig } from '@/lib/firebase';
@@ -66,12 +66,15 @@ export default function DiagnosticPage() {
     }
     
     try {
-      auth = getAuth(app);
+      // Use initializeAuth with indexedDBLocalPersistence for Capacitor compatibility
+      auth = initializeAuth(app, {
+        persistence: indexedDBLocalPersistence
+      });
       if (auth) {
         setAuthStatus('success');
-        toast({ title: 'Test 2 Success', description: 'Firebase Auth service retrieved successfully.' });
+        toast({ title: 'Test 2 Success', description: 'Firebase Auth service retrieved with IndexedDB persistence.' });
       } else {
-        throw new Error('getAuth returned a nullish value.');
+        throw new Error('initializeAuth returned a nullish value.');
       }
     } catch (error: any) {
       setAuthStatus('error');
@@ -148,7 +151,7 @@ export default function DiagnosticPage() {
             Authentication Diagnostic Page
           </CardTitle>
           <CardDescription>
-            Run these tests in order to isolate the Google Sign-In issue. This page now uses the Redirect method.
+            This version uses `signInWithRedirect` and `indexedDB` persistence to diagnose the issue. Run tests in order.
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
@@ -173,11 +176,11 @@ export default function DiagnosticPage() {
           <Card>
             <CardHeader className="pb-4">
               <CardTitle className="text-lg flex items-center justify-between">
-                <span>Test 2: Get Auth Service</span>
+                <span>Test 2: Get Auth Service (with IndexedDB)</span>
                  {renderStatus(authStatus)}
               </CardTitle>
                <CardDescription className="text-xs pt-1">
-                Checks if the Authentication service can be retrieved.
+                Checks if the Auth service can be retrieved using the recommended persistence for mobile/webviews.
               </CardDescription>
             </CardHeader>
             <CardFooter>
