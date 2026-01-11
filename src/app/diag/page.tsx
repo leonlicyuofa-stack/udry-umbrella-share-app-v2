@@ -1,141 +1,120 @@
-
 // src/app/diag/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
-import { CheckCircle, AlertTriangle, Loader2, PlayCircle, Radio } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
+import { Loader2, AlertTriangle, UserCheck, ServerCrash } from 'lucide-react';
+import Link from 'next/link';
 
-// Direct imports from Firebase SDK
-import { initializeApp, getApps, getApp, type FirebaseApp, deleteApp } from 'firebase/app';
-import { getAuth, signInWithRedirect, GoogleAuthProvider, OAuthProvider, type Auth, initializeAuth, indexedDBLocalPersistence } from 'firebase/auth';
+// Direct imports from Firebase SDK for isolated testing
+import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
+import { getAuth, getRedirectResult, type User, type Auth } from 'firebase/auth';
+import { firebaseConfig } from '@/lib/firebase'; // Using the exact same config
 
-import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+export default function AuthRedirectTestPage() {
+  const [status, setStatus] = useState<'loading' | 'success' | 'error' | 'no_redirect'>('loading');
+  const [result, setResult] = useState<User | null>(null);
+  const [error, setError] = useState<any>(null);
 
-// --- THIS IS THE NEW CONFIGURATION FOR THE TEST PROJECT ---
-const testFirebaseConfig = {
-  apiKey: "AIzaSyDFvt0pWwqs78Sm-fzBgQ-tRm5cD8WAStA",
-  authDomain: "udry-app-test-2.firebaseapp.com",
-  projectId: "udry-app-test-2",
-  storageBucket: "udry-app-test-2.firebasestorage.app",
-  messagingSenderId: "398109852404",
-  appId: "1:398109852404:web:b0ae7ca3be3859414d94a1",
-};
+  useEffect(() => {
+    // This effect runs only once when the page loads.
+    const checkRedirect = async () => {
+      try {
+        console.log("DIAG PAGE: Initializing temporary Firebase app for diagnostics...");
+        // Initialize a temporary, unique app instance for this test to avoid conflicts
+        const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        console.log("DIAG PAGE: Calling getRedirectResult...");
+        
+        const credential = await getRedirectResult(auth);
+        
+        console.log("DIAG PAGE: getRedirectResult finished. Result:", credential);
 
+        if (credential && credential.user) {
+          // Success! We got a user from the redirect.
+          setStatus('success');
+          setResult(credential.user);
+        } else {
+          // This means the page loaded, but there was no pending redirect.
+          setStatus('no_redirect');
+        }
+      } catch (err: any) {
+        // An error occurred while processing the redirect.
+        console.error("DIAG PAGE: Error from getRedirectResult:", err);
+        setStatus('error');
+        setError({ code: err.code, message: err.message });
+      }
+    };
 
-type TestStatus = 'idle' | 'running' | 'success' | 'error';
-
-
-export default function DiagnosticPage() {
-  const { toast } = useToast();
-  
-  // Test states
-  const [test1Status, setTest1Status] = useState<TestStatus>('idle');
-  const [test2Status, setTest2Status] = useState<TestStatus>('idle');
-  const [test3Status, setTest3Status] = useState<TestStatus>('idle');
-  const [test3bStatus, setTest3bStatus] = useState<TestStatus>('idle');
-  
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  
-  const resetAllTests = () => {
-      setTest1Status('idle');
-      setTest2Status('idle');
-      setTest3Status('idle');
-      setTest3bStatus('idle');
-      setErrorMessage(null);
-  }
-
-  // --- Test Implementations ---
-  const runSignInTest = async (providerName: 'google' | 'microsoft', statusSetter: React.Dispatch<React.SetStateAction<TestStatus>>) => {
-    statusSetter('running');
-    setErrorMessage(null);
-    try {
-      const appName = `diag-test-app-${providerName}-${Date.now()}`;
-      const app = initializeApp(testFirebaseConfig, appName);
-      const auth = initializeAuth(app, {
-        persistence: indexedDBLocalPersistence
-      });
-      const provider = providerName === 'google' ? new GoogleAuthProvider() : new OAuthProvider('microsoft.com');
-
-      await signInWithRedirect(auth, provider);
-      // On success, the browser will navigate away. We won't see a 'success' status here.
-    } catch (error: any) {
-      statusSetter('error');
-      setErrorMessage(`Sign-In Failed: ${error.code} - ${error.message}`);
-    }
-  };
-
-
-  const renderStatus = (status: TestStatus) => {
-    if (status === 'running') return <Loader2 className="h-4 w-4 animate-spin text-orange-500" />;
-    if (status === 'success') return <CheckCircle className="h-4 w-4 text-green-500" />;
-    if (status === 'error') return <AlertTriangle className="h-4 w-4 text-destructive" />;
-    return null;
-  };
+    checkRedirect();
+  }, []); // Empty dependency array ensures this runs only once.
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-secondary/30 p-4">
       <Card className="w-full max-w-2xl shadow-xl">
         <CardHeader>
-          <CardTitle className="text-2xl font-bold text-primary flex items-center">
-            <Radio className="mr-3 h-6 w-6" />
-            Auth Diagnostic (Now with `udry-app-test-2`)
+          <CardTitle className="text-2xl font-bold text-primary">
+            Firebase Redirect Diagnostic
           </CardTitle>
           <CardDescription>
-            This page now points to the new, clean Firebase project to confirm if the issue is project-specific.
+            This page tests if Firebase can successfully process a sign-in redirect.
           </CardDescription>
         </CardHeader>
-        <CardContent className="space-y-4">
-           
-           <Card className="border-blue-500 border-2">
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center justify-between">
-                <span>Test 3: Attempt Google Sign-In with Redirect</span>
-                {renderStatus(test3Status)}
-              </CardTitle>
-               <CardDescription className="text-xs pt-1">
-                This test uses the recommended `signInWithRedirect` method with `indexedDB` persistence on the new, clean project.
-              </CardDescription>
-            </CardHeader>
-            <CardFooter>
-               <Button onClick={() => runSignInTest('google', setTest3Status)} disabled={test3Status === 'running'} size="sm">
-                 <PlayCircle className="mr-2 h-4 w-4" /> Run Google Test
-              </Button>
-            </CardFooter>
-          </Card>
-
-          <Card>
-            <CardHeader className="pb-4">
-              <CardTitle className="text-lg flex items-center justify-between">
-                <span>Test 3b: Attempt Microsoft Sign-In with Redirect</span>
-                {renderStatus(test3bStatus)}
-              </CardTitle>
-               <CardDescription className="text-xs pt-1">
-                This confirms if the issue is specific to the Google provider or a general auth problem.
-              </CardDescription>
-            </CardHeader>
-            <CardFooter>
-               <Button onClick={() => runSignInTest('microsoft', setTest3bStatus)} disabled={test3bStatus === 'running'} size="sm">
-                 <PlayCircle className="mr-2 h-4 w-4" /> Run Microsoft Test
-              </Button>
-            </CardFooter>
-          </Card>
-          
-          {errorMessage && (
-             <Alert variant="destructive">
-              <AlertTriangle className="h-4 w-4" />
-              <AlertTitle>Last Error Received</AlertTitle>
-              <AlertDescription className="font-mono text-xs break-all">
-                {errorMessage}
-              </AlertDescription>
-            </Alert>
+        <CardContent>
+          {status === 'loading' && (
+            <div className="flex flex-col items-center justify-center p-8 space-y-3">
+              <Loader2 className="h-10 w-10 animate-spin text-primary" />
+              <p className="text-muted-foreground">Checking for redirect result...</p>
+            </div>
           )}
-
+          {status === 'no_redirect' && (
+            <div className="text-center p-8 space-y-3">
+              <UserCheck className="h-10 w-10 text-muted-foreground mx-auto" />
+              <p className="font-semibold">No Pending Redirect</p>
+              <p className="text-sm text-muted-foreground">This page loaded directly. To run the test, you must sign in from the main sign-in page after configuring the redirect URL in your Firebase Console.</p>
+            </div>
+          )}
+          {status === 'success' && result && (
+            <div className="space-y-4">
+              <div className="flex flex-col items-center justify-center p-6 space-y-3 bg-green-50 rounded-lg border border-green-200">
+                <UserCheck className="h-12 w-12 text-green-600" />
+                <p className="text-lg font-bold text-green-700">SUCCESS!</p>
+                <p className="text-sm text-green-600">Firebase successfully received the user credential from the redirect.</p>
+              </div>
+              <Card>
+                <CardHeader><CardTitle className="text-base">User Data Received:</CardTitle></CardHeader>
+                <CardContent className="text-xs space-y-1 break-all">
+                  <p><strong>UID:</strong> {result.uid}</p>
+                  <p><strong>Email:</strong> {result.email}</p>
+                  <p><strong>Display Name:</strong> {result.displayName}</p>
+                </CardContent>
+              </Card>
+               <p className="text-center text-xs text-muted-foreground pt-4">This confirms the Firebase redirect works correctly. The login loop issue is therefore located within the application's `AuthProvider` or its routing logic.</p>
+            </div>
+          )}
+          {status === 'error' && (
+            <div className="space-y-4">
+              <div className="flex flex-col items-center justify-center p-6 space-y-3 bg-red-50 rounded-lg border border-red-200">
+                <ServerCrash className="h-12 w-12 text-destructive" />
+                <p className="text-lg font-bold text-destructive">FAILURE</p>
+                <p className="text-sm text-destructive">Firebase could NOT process the redirect. The session was likely lost.</p>
+              </div>
+               <Card>
+                <CardHeader><CardTitle className="text-base">Error Details:</CardTitle></CardHeader>
+                <CardContent className="text-xs space-y-1 break-all font-mono">
+                  <p><strong>Code:</strong> {error?.code || 'N/A'}</p>
+                  <p><strong>Message:</strong> {error?.message || 'No error message.'}</p>
+                </CardContent>
+              </Card>
+              <p className="text-center text-xs text-muted-foreground pt-4">This confirms the hypothesis that the authentication data is not surviving the redirect. This is likely due to a misconfiguration in Firebase, the hosting environment, or Capacitor.</p>
+            </div>
+          )}
         </CardContent>
-         <CardFooter>
-          <Button onClick={resetAllTests} variant="outline">Reset All Tests</Button>
+        <CardFooter>
+            <Button variant="outline" asChild>
+                <Link href="/auth/signin">Go to Sign-In Page</Link>
+            </Button>
         </CardFooter>
       </Card>
     </div>
