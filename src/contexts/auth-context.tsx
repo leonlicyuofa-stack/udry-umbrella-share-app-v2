@@ -303,6 +303,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
+    // TEMPORARY CHANGE FOR DIAGNOSTIC TEST:
+    provider.setCustomParameters({
+      redirect_uri: 'https://udry-app-dev.web.app/diag/'
+    });
+    // END TEMPORARY CHANGE
     return socialSignIn(provider);
   };
   
