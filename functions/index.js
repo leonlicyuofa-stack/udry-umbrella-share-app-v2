@@ -45,7 +45,7 @@ exports.exchangeAuthCodeForToken = onCall({ secrets: ["OAUTH_CLIENT_SECRET"], in
         throw new HttpsError('invalid-argument', 'The function must be called with an "authorization code".');
     }
 
-    const OAUTH_CLIENT_ID = "458603936715-notarealclientid.apps.googleusercontent.com";
+    const OAUTH_CLIENT_ID = "458603936715-14i9hj110pmnr1m3mmnrsnrhctun3i9d.apps.googleusercontent.com";
     const OAUTH_CLIENT_SECRET = process.env.OAUTH_CLIENT_SECRET;
 
     if (!OAUTH_CLIENT_SECRET) {

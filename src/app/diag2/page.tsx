@@ -18,7 +18,7 @@ declare global {
     }
 }
 
-const CLIENT_ID = "458603936715-notarealclientid.apps.googleusercontent.com";
+const CLIENT_ID = "458603936715-14i9hj110pmnr1m3mmnrsnrhctun3i9d.apps.googleusercontent.com";
 
 
 export default function ManualServerAuthTestPage() {
