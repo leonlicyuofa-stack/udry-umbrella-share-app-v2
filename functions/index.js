@@ -34,14 +34,28 @@ const getStripe = () => {
     return stripe;
 };
 
-// --- NEW SERVER-SIDE AUTH FUNCTION ---
-exports.exchangeAuthCodeForToken = onCall({ secrets: ["OAUTH_CLIENT_SECRET"], invoker: "public", cors: true }, async (request) => {
-    logger.info("[exchangeAuthCode] Function triggered.");
+// --- MODIFIED SERVER-SIDE AUTH FUNCTION (onRequest with Manual CORS) ---
+exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_SECRET"] }).https.onRequest(async (req, res) => {
+    // Manually set CORS headers
+    res.set('Access-Control-Allow-Origin', '*');
+    res.set('Access-Control-Allow-Methods', 'GET, POST');
+    res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+
+    if (req.method === 'OPTIONS') {
+        // Handle preflight request
+        res.status(204).send('');
+        return;
+    }
+
+    logger.info("[exchangeAuthCode - onRequest] Function triggered.");
     const admin = getAdminApp();
 
-    const { code } = request.data;
+    // For onRequest, the data is in req.body.data
+    const code = req.body?.data?.code;
     if (!code) {
-        throw new HttpsError('invalid-argument', 'The function must be called with an "authorization code".');
+        logger.error("[exchangeAuthCode] Invalid argument: 'code' is missing from the request body.", { body: req.body });
+        res.status(400).send({ error: { message: 'The function must be called with an "authorization code".' } });
+        return;
     }
 
     const OAUTH_CLIENT_ID = "458603936715-14i9hj110pmnr1m3mmnrsnrhctun3i9d.apps.googleusercontent.com";
@@ -49,7 +63,8 @@ exports.exchangeAuthCodeForToken = onCall({ secrets: ["OAUTH_CLIENT_SECRET"], in
 
     if (!OAUTH_CLIENT_SECRET) {
         logger.error("[exchangeAuthCode] CRITICAL: OAUTH_CLIENT_SECRET is not set in environment.");
-        throw new HttpsError('internal', 'Server is missing critical authentication configuration.');
+        res.status(500).send({ error: { message: 'Server is missing critical authentication configuration.' } });
+        return;
     }
 
     try {
@@ -59,12 +74,10 @@ exports.exchangeAuthCodeForToken = onCall({ secrets: ["OAUTH_CLIENT_SECRET"], in
             'postmessage' // IMPORTANT: This must be 'postmessage' for this flow
         );
 
-        // Step 1: Exchange authorization code for tokens
         logger.info("[exchangeAuthCode] Step 1: Exchanging auth code for tokens...");
         const { tokens } = await oauth2Client.getToken(code);
         logger.info("[exchangeAuthCode] Step 1 SUCCESS: Received tokens from Google.");
         
-        // Step 2: Get user profile info from Google
         oauth2Client.setCredentials(tokens);
         const people = google.people({ version: 'v1', auth: oauth2Client });
         logger.info("[exchangeAuthCode] Step 2: Fetching user profile from Google People API...");
@@ -81,10 +94,10 @@ exports.exchangeAuthCodeForToken = onCall({ secrets: ["OAUTH_CLIENT_SECRET"], in
         const photoURL = googleUser.photos?.[0]?.url;
 
         if (!email) {
-            throw new HttpsError('internal', 'Could not retrieve email from Google profile.');
+            res.status(500).send({ error: { message: 'Could not retrieve email from Google profile.' } });
+            return;
         }
 
-        // Step 3: Update or create user in Firebase Auth
         logger.info(`[exchangeAuthCode] Step 3: Updating/creating Firebase user for UID: ${uid}`);
         try {
             await admin.auth().updateUser(uid, { email, displayName, photoURL });
@@ -93,24 +106,21 @@ exports.exchangeAuthCodeForToken = onCall({ secrets: ["OAUTH_CLIENT_SECRET"], in
                 logger.info(`[exchangeAuthCode] User not found, creating new Firebase Auth user for UID: ${uid}`);
                 await admin.auth().createUser({ uid, email, displayName, photoURL });
             } else {
-                throw error; // Re-throw other errors
+                throw error;
             }
         }
         logger.info("[exchangeAuthCode] Step 3 SUCCESS: Firebase Auth user is synced.");
 
-        // Step 4: Create a custom token for the client to sign in
         logger.info(`[exchangeAuthCode] Step 4: Creating custom token for UID: ${uid}`);
         const customToken = await admin.auth().createCustomToken(uid);
         logger.info("[exchangeAuthCode] Step 4 SUCCESS: Custom token created.");
         
-        return { success: true, token: customToken };
+        // onRequest requires sending a response back with data nested under a 'data' property
+        res.status(200).send({ data: { success: true, token: customToken } });
 
     } catch (error) {
         logger.error(`[exchangeAuthCode] --- CRITICAL ERROR --- : ${error.message}`, { error });
-        if (error instanceof HttpsError) {
-            throw error;
-        }
-        throw new HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
+        res.status(500).send({ error: { message: `An unexpected server error occurred: ${error.message}` } });
     }
 });
 
@@ -789,3 +799,4 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
 
 
     
+
