@@ -38,7 +38,7 @@ const getStripe = () => {
 exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_SECRET"] }).https.onRequest(async (req, res) => {
     // Manually set CORS headers
     res.set('Access-Control-Allow-Origin', '*');
-    res.set('Access-Control-Allow-Methods', 'GET, POST');
+    res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     if (req.method === 'OPTIONS') {
@@ -799,4 +799,5 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
 
 
     
+
 

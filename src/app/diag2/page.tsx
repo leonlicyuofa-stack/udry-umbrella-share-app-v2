@@ -48,7 +48,7 @@ export default function ManualServerAuthTestPage() {
                 client_id: CLIENT_ID,
                 scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
                 ux_mode: 'redirect', // CHANGED to redirect
-                // redirect_uri is not needed here as it defaults to the current page
+                redirect_uri: window.location.href.split('?')[0], // Use the current URL without query params
             });
             client.requestCode();
         } catch (err: any) {
