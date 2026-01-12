@@ -1,6 +1,7 @@
 // functions/index.js
 const functions = require("firebase-functions");
-const { HttpsError, onCall } = require("firebase-functions/v2/https"); // Keep onCall for existing v2 functions
+// Correctly use only v1 HttpsError and logger for consistency.
+const { HttpsError } = require("firebase-functions/v1/https");
 const { logger } = require("firebase-functions");
 const fetch = require("node-fetch");
 const { google } = require("googleapis");
@@ -34,7 +35,8 @@ const getStripe = () => {
     return stripe;
 };
 
-// --- CORRECTED SERVER-SIDE AUTH FUNCTION (v1 Syntax for Compatibility) ---
+
+// --- CORRECTED SERVER-SIDE AUTH FUNCTION (v1 onRequest Syntax) ---
 exports.exchangeAuthCodeForToken = functions
   .runWith({ secrets: ["OAUTH_CLIENT_SECRET"] })
   .https.onRequest(async (req, res) => {
@@ -126,8 +128,10 @@ exports.exchangeAuthCodeForToken = functions
 });
 
 
-// --- UNLOCK MACHINE FUNCTION (v2 onCall) ---
-exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (request) => {
+// --- UNLOCK MACHINE FUNCTION (v1 https.onCall) ---
+exports.unlockPhysicalMachine = functions
+  .runWith({ secrets: ["UTEK_API_KEY"] })
+  .https.onCall(async (data, context) => {
     logger.info("--- unlockPhysicalMachine function triggered ---");
 
     const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
@@ -136,15 +140,15 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
 
     if (!UTEK_KEY) {
         logger.error("Server is missing critical machine API configuration (UTEK_API_KEY).");
-        throw new HttpsError('internal', 'Server is missing critical machine API configuration.');
+        throw new functions.https.HttpsError('internal', 'Server is missing critical machine API configuration.');
     }
 
-    const { dvid, tok, parm } = request.data;
+    const { dvid, tok, parm } = data;
     const cmd_type = '1';
 
     if (!dvid || !tok || !parm) {
         logger.error("Invalid request: Missing required parameters.", { dvid, tok, parm });
-        throw new HttpsError('invalid-argument', 'Invalid request: Missing required parameters.');
+        throw new functions.https.HttpsError('invalid-argument', 'Invalid request: Missing required parameters.');
     }
     logger.info(`Step 1: Received data - DVID: ${dvid}, Token: ${tok}, Param: ${parm}, CmdType: ${cmd_type}`);
 
@@ -172,7 +176,7 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
         if (!isSuccess) {
             const detailedErrorMessage = `Machine API Error: ${responseData.msg} (Code: ${responseData.ret})`;
             logger.error(`Vendor API returned an error: ${detailedErrorMessage}`);
-            throw new HttpsError('internal', detailedErrorMessage);
+            throw new functions.https.HttpsError('internal', detailedErrorMessage);
         }
 
         const unlockDataString = responseData.data;
@@ -181,14 +185,15 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
 
     } catch (error) {
         logger.error(`--- CRITICAL ERROR in unlockPhysicalMachine --- : ${error.message}`);
-        if (error instanceof HttpsError) {
+        if (error instanceof functions.https.HttpsError) {
             throw error;
         }
-        throw new HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
+        throw new functions.https.HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
     }
 });
 
-// --- MAKE ADMIN FUNCTION (v1 https.onCall for consistency) ---
+
+// --- MAKE ADMIN FUNCTION (v1 https.onCall) ---
 exports.makeAdmin = functions.https.onCall(async (data, context) => {
     const admin = require("firebase-admin");
     getAdminApp(); // Ensure admin is initialized
@@ -219,34 +224,34 @@ exports.makeAdmin = functions.https.onCall(async (data, context) => {
 });
 
 
-// --- STRIPE CHECKOUT FUNCTION (v2 onCall) ---
-exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
+// --- STRIPE CHECKOUT FUNCTION (v1 https.onCall) ---
+exports.createStripeCheckoutSession = functions.runWith({ secrets: ["STRIPE_SECRET_KEY"] }).https.onCall(async (data, context) => {
     logger.info("--- createStripeCheckoutSession function triggered ---");
     const stripeInstance = getStripe();
 
     if (!stripeInstance) {
         logger.error("STEP 1 FAILED: Stripe SDK could not be initialized. Ensure STRIPE_SECRET_KEY is set and valid.");
-        throw new HttpsError('internal', 'The server is missing critical payment processing configuration.');
+        throw new functions.https.HttpsError('internal', 'The server is missing critical payment processing configuration.');
     }
     logger.info("Step 1 SUCCESS: Stripe SDK appears to be initialized.");
 
-    if (!request.auth) {
+    if (!context.auth) {
         logger.warn("STEP 2 FAILED: User is not authenticated.");
-        throw new HttpsError('unauthenticated', 'The function must be called while authenticated.');
+        throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
     }
-    logger.info(`Step 2 SUCCESS: Authentication check passed for user UID: ${request.auth.uid}`);
+    logger.info(`Step 2 SUCCESS: Authentication check passed for user UID: ${context.auth.uid}`);
 
-    const { amount, paymentType } = request.data;
-    const userId = request.auth.uid;
+    const { amount, paymentType } = data;
+    const userId = context.auth.uid;
     logger.info(`Step 3: Received data - UserID: ${userId}, Amount: ${amount}, PaymentType: ${paymentType}`);
 
     if (!amount || typeof amount !== 'number' || amount <= 0) {
         logger.error(`STEP 4 FAILED: Invalid amount provided: ${amount}`);
-        throw new HttpsError('invalid-argument', 'A valid amount must be provided.');
+        throw new functions.https.HttpsError('invalid-argument', 'A valid amount must be provided.');
     }
     if (!paymentType || !['deposit', 'balance'].includes(paymentType)) {
         logger.error(`STEP 4 FAILED: Invalid paymentType provided: ${paymentType}`);
-        throw new HttpsError('invalid-argument', 'A valid paymentType must be provided.');
+        throw new functions.https.HttpsError('invalid-argument', 'A valid paymentType must be provided.');
     }
     logger.info("Step 4 SUCCESS: Input data validation passed.");
     
@@ -288,12 +293,13 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
         logger.error(`--- CRITICAL ERROR in createStripeCheckoutSession at Step 6/7 ---`);
         logger.error(`Error message: ${error.message}`);
         logger.error(`Error stack: ${error.stack}`);
-        throw new HttpsError('internal', `An error occurred while creating the payment session: ${error.message}`);
+        throw new functions.https.HttpsError('internal', `An error occurred while creating the payment session: ${error.message}`);
     }
 });
 
-// --- PAYME PAYMENT FUNCTION (v2 onCall) ---
-exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRET"], invoker: "public", cors: true }, async (request) => {
+
+// --- PAYME PAYMENT FUNCTION (v1 https.onCall) ---
+exports.createPaymePayment = functions.runWith({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRET"] }).https.onCall(async (data, context) => {
     logger.info("--- createPaymePayment function triggered ---");
 
     const PAYME_SANDBOX_BASE_URL = 'https://sandbox.api.payme.hsbc.com.hk';
@@ -303,20 +309,20 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
 
     if (!PAYME_APP_ID || !PAYME_APP_SECRET) {
         logger.error("Server is missing critical PayMe API configuration (PAYME_APP_ID or PAYME_APP_SECRET).");
-        throw new HttpsError('internal', 'Server is missing PayMe API configuration.');
+        throw new functions.https.HttpsError('internal', 'Server is missing PayMe API configuration.');
     }
 
-    if (!request.auth) {
-        throw new HttpsError('unauthenticated', 'The function must be called while authenticated.');
+    if (!context.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'The function must be called while authenticated.');
     }
-    const { amount, paymentType } = request.data;
+    const { amount, paymentType } = data;
     if (!amount || typeof amount !== 'number' || amount <= 0) {
-        throw new HttpsError('invalid-argument', 'A valid amount must be provided.');
+        throw new functions.https.HttpsError('invalid-argument', 'A valid amount must be provided.');
     }
      if (!paymentType || !['deposit', 'balance'].includes(paymentType)) {
-        throw new HttpsError('invalid-argument', 'A valid paymentType must be provided.');
+        throw new functions.https.HttpsError('invalid-argument', 'A valid paymentType must be provided.');
     }
-    logger.info("PayMe Step 1: Received and validated data.", { amount, paymentType, userId: request.auth.uid });
+    logger.info("PayMe Step 1: Received and validated data.", { amount, paymentType, userId: context.auth.uid });
 
     try {
         logger.info("PayMe Step 2: Requesting access token...");
@@ -332,12 +338,12 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
         const tokenData = await tokenResponse.json();
         if (!tokenResponse.ok || !tokenData.access_token) {
             logger.error('Failed to get PayMe access token.', { status: tokenResponse.status, body: tokenData });
-            throw new HttpsError('internal', `Could not authenticate with PayMe. Error: ${tokenData.error_description || 'Unknown error'}`);
+            throw new functions.https.HttpsError('internal', `Could not authenticate with PayMe. Error: ${tokenData.error_description || 'Unknown error'}`);
         }
         const accessToken = tokenData.access_token;
         logger.info("PayMe Step 3: Successfully obtained access token.");
 
-        const merchantReference = `UDRY-${paymentType}-${request.auth.uid}-${Date.now()}`;
+        const merchantReference = `UDRY-${paymentType}-${context.auth.uid}-${Date.now()}`;
         const paymentRequestBody = {
             totalAmount: amount.toFixed(2),
             currencyCode: 'HKD',
@@ -361,7 +367,7 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
         if (!paymentResponse.ok || !paymentResponseData.paymeLink) {
             const errorMessage = `PayMe API Error: ${paymentResponseData.message || 'Unknown error'} (Code: ${paymentResponseData.code})`;
             logger.error(errorMessage, { responseData: paymentResponseData });
-            throw new HttpsError('internal', errorMessage);
+            throw new functions.https.HttpsError('internal', errorMessage);
         }
 
         logger.info(`PayMe Step 5 SUCCESS: Received paymeLink for ${merchantReference}.`);
@@ -370,16 +376,16 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
 
     } catch (error) {
         logger.error(`--- CRITICAL ERROR in createPaymePayment --- : ${error.message}`);
-        if (error instanceof HttpsError) {
+        if (error instanceof functions.https.HttpsError) {
             throw error;
         }
-        throw new HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
+        throw new functions.https.HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
     }
 });
 
 
-// --- FINALIZE STRIPE PAYMENT (v2 onCall) ---
-exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public", cors: true }, async (request) => {
+// --- FINALIZE STRIPE PAYMENT (v1 https.onCall) ---
+exports.finalizeStripePayment = functions.runWith({ secrets: ["STRIPE_SECRET_KEY"] }).https.onCall(async (data, context) => {
     logger.info("--- finalizeStripePayment function triggered ---");
     const admin = require("firebase-admin");
     getAdminApp();
@@ -388,17 +394,17 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
 
     if (!stripeInstance) {
         logger.error("Step 1 FAILED: Stripe SDK is not initialized.");
-        throw new HttpsError('internal', 'The server is missing critical payment processing configuration.');
+        throw new functions.https.HttpsError('internal', 'The server is missing critical payment processing configuration.');
     }
     logger.info("Step 1 SUCCESS: Services appear to be initialized.");
 
     try {
-        const { sessionId, uid } = request.data;
+        const { sessionId, uid } = data;
         logger.info(`Step 2: Received data - SessionID: ${sessionId}, UID: ${uid}`);
 
         if (!sessionId || !uid) {
             logger.error(`Step 2 FAILED: Missing sessionId or uid.`);
-            throw new HttpsError('invalid-argument', 'The function must be called with a "sessionId" and "uid".');
+            throw new functions.https.HttpsError('invalid-argument', 'The function must be called with a "sessionId" and "uid".');
         }
 
         logger.info("Step 3: Checking for prior processing of this payment...");
@@ -418,10 +424,10 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
         } catch (stripeError) {
             if (stripeError.type === 'StripeInvalidRequestError') {
                 logger.error(`Step 4 FAILED: Stripe session not found: ${stripeError.message}`);
-                throw new HttpsError('not-found', 'Stripe session not found.');
+                throw new functions.https.HttpsError('not-found', 'Stripe session not found.');
             }
             logger.error(`Step 4 FAILED: A Stripe error occurred: ${stripeError.message}`);
-            throw new HttpsError('internal', `A Stripe error occurred: ${stripeError.message}`);
+            throw new functions.https.HttpsError('internal', `A Stripe error occurred: ${stripeError.message}`);
         }
         
         logger.info("Step 5: Validating retrieved session data and performing security check...");
@@ -429,19 +435,19 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
         const amountNum = parseFloat(amount);
         
         if (session.payment_status !== 'paid') {
-            throw new HttpsError('failed-precondition', 'Stripe session not paid.');
+            throw new functions.https.HttpsError('failed-precondition', 'Stripe session not paid.');
         }
 
         if (metadataUserId !== uid) {
             logger.error(`CRITICAL SECURITY CHECK FAILED: URL UID (${uid}) does not match Stripe metadata UID (${metadataUserId}).`);
-            throw new HttpsError('permission-denied', 'User ID does not match session metadata.');
+            throw new functions.https.HttpsError('permission-denied', 'User ID does not match session metadata.');
         }
         
         if (!paymentType || !['deposit', 'balance'].includes(paymentType)) {
-            throw new HttpsError('invalid-argument', 'Invalid paymentType in session metadata.');
+            throw new functions.https.HttpsError('invalid-argument', 'Invalid paymentType in session metadata.');
         }
         if (isNaN(amountNum) || amountNum <= 0) {
-            throw new HttpsError('invalid-argument', 'Invalid amount in session metadata.');
+            throw new functions.https.HttpsError('invalid-argument', 'Invalid amount in session metadata.');
         }
         logger.info(`Step 5 SUCCESS: Session data and security check passed.`);
 
@@ -457,12 +463,12 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
             
             const userDoc = await transaction.get(userDocRef);
             if (!userDoc.exists) {
-                throw new HttpsError('not-found', 'User document not found.');
+                throw new functions.https.HttpsError('not-found', 'User document not found.');
             }
 
             if (paymentType === 'deposit') {
                 if (!session.payment_intent) {
-                    throw new HttpsError('internal', 'Payment Intent ID is missing from the successful Stripe session.');
+                    throw new functions.https.HttpsError('internal', 'Payment Intent ID is missing from the successful Stripe session.');
                 }
                 logger.info(`Recording Payment Intent ID: ${session.payment_intent} for deposit.`);
                 transaction.update(userDocRef, { 
@@ -489,40 +495,40 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
 
     } catch (error) {
         logger.error(`--- CRITICAL ERROR in finalizeStripePayment --- : ${error.message}`);
-        if (error instanceof HttpsError) {
+        if (error instanceof functions.https.HttpsError) {
             throw error;
         }
-        throw new HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
+        throw new functions.https.HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
     }
 });
 
 
-// --- END RENTAL (v2 onCall) ---
-exports.endRentalTransaction = onCall(async (request) => {
+// --- END RENTAL (v1 https.onCall) ---
+exports.endRentalTransaction = functions.https.onCall(async (data, context) => {
     const admin = require("firebase-admin");
     const db = getAdminApp().firestore();
 
-    if (!request.auth) {
+    if (!context.auth) {
         logger.error("[Cloud Function] Authentication check failed: No auth context.");
-        throw new HttpsError('unauthenticated', 'You must be logged in to end a rental.');
+        throw new functions.https.HttpsError('unauthenticated', 'You must be logged in to end a rental.');
     }
-    const userId = request.auth.uid;
+    const userId = context.auth.uid;
     logger.info(`[Cloud Function] Starting endRental for user: ${userId}`);
 
-    const { returnedToStallId, activeRentalData } = request.data;
+    const { returnedToStallId, activeRentalData } = data;
     logger.info("[Cloud Function] Received data:", { returnedToStallId, hasActiveRental: !!activeRentalData });
 
     if (!returnedToStallId) {
         logger.error(`[Cloud Function] Validation failed for user ${userId}: returnedToStallId is missing.`);
-        throw new HttpsError('invalid-argument', 'Missing returnedToStallId.');
+        throw new functions.https.HttpsError('invalid-argument', 'Missing returnedToStallId.');
     }
     if (!activeRentalData || typeof activeRentalData !== 'object') {
         logger.error(`[Cloud Function] Validation failed for user ${userId}: activeRentalData is missing or not an object.`);
-        throw new HttpsError('invalid-argument', 'Missing or invalid activeRentalData.');
+        throw new functions.https.HttpsError('invalid-argument', 'Missing or invalid activeRentalData.');
     }
     if (typeof activeRentalData.startTime !== 'number' || typeof activeRentalData.stallId !== 'string') {
         logger.error(`[Cloud Function] Validation failed for user ${userId}: activeRentalData is malformed.`);
-        throw new HttpsError('invalid-argument', 'Malformed activeRentalData.');
+        throw new functions.https.HttpsError('invalid-argument', 'Malformed activeRentalData.');
     }
     
     try {
@@ -530,7 +536,7 @@ exports.endRentalTransaction = onCall(async (request) => {
         const returnedStallSnap = await returnedStallDocRef.get();
         if (!returnedStallSnap.exists) {
             logger.error(`[Cloud Function] Stall lookup failed for user ${userId}: Stall ${returnedToStallId} not found.`);
-            throw new HttpsError('not-found', 'Return stall not found.');
+            throw new functions.https.HttpsError('not-found', 'Return stall not found.');
         }
         const returnedStall = returnedStallSnap.data();
         logger.info(`[Cloud Function] Successfully fetched return stall data for ${returnedStall.name}`);
@@ -592,29 +598,30 @@ exports.endRentalTransaction = onCall(async (request) => {
 
     } catch (error) {
         logger.error(`[Cloud Function] CRITICAL ERROR in endRentalTransaction for user ${userId}:`, error);
-        if (error instanceof HttpsError) {
+        if (error instanceof functions.https.HttpsError) {
             throw error;
         }
-        throw new HttpsError('internal', 'An unexpected server error occurred while ending the rental.');
+        throw new functions.https.HttpsError('internal', 'An unexpected server error occurred while ending the rental.');
     }
 });
 
-// --- DEPOSIT REFUND (v2 onCall) ---
-exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public", cors: true }, async (request) => {
+
+// --- DEPOSIT REFUND (v1 https.onCall) ---
+exports.requestDepositRefund = functions.runWith({ secrets: ["STRIPE_SECRET_KEY"] }).https.onCall(async (data, context) => {
     logger.info("--- requestDepositRefund function triggered ---");
     const admin = require("firebase-admin");
     const db = getAdminApp().firestore();
     const stripeInstance = getStripe();
 
-    if (!request.auth) {
+    if (!context.auth) {
         logger.error("[requestDepositRefund] Auth check failed: No auth context.");
-        throw new HttpsError('unauthenticated', 'You must be logged in to request a refund.');
+        throw new functions.https.HttpsError('unauthenticated', 'You must be logged in to request a refund.');
     }
     if (!stripeInstance) {
         logger.error("[requestDepositRefund] Stripe SDK is not initialized.");
-        throw new HttpsError('internal', 'The server is missing critical payment processing configuration.');
+        throw new functions.https.HttpsError('internal', 'The server is missing critical payment processing configuration.');
     }
-    const userId = request.auth.uid;
+    const userId = context.auth.uid;
     logger.info(`[requestDepositRefund] User ${userId} initiated refund request.`);
 
     try {
@@ -624,23 +631,23 @@ exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker:
         await db.runTransaction(async (transaction) => {
             const userDoc = await transaction.get(userDocRef);
             if (!userDoc.exists) {
-                throw new HttpsError('not-found', 'User data not found.');
+                throw new functions.https.HttpsError('not-found', 'User data not found.');
             }
             const userData = userDoc.data();
             logger.info(`[requestDepositRefund] Fetched user data inside transaction.`, { balance: userData.balance });
             
             if (userData.activeRental) {
-                throw new HttpsError('failed-precondition', 'Cannot refund deposit with an active rental.');
+                throw new functions.https.HttpsError('failed-precondition', 'Cannot refund deposit with an active rental.');
             }
             if (userData.balance < 0) {
                 const message = `Refund denied. You must clear your negative balance of HK$${Math.abs(userData.balance).toFixed(2)} before requesting a deposit refund.`;
-                throw new HttpsError('failed-precondition', message);
+                throw new functions.https.HttpsError('failed-precondition', message);
             }
             if (!userData.deposit || userData.deposit <= 0) {
-                throw new HttpsError('failed-precondition', 'No deposit found to refund.');
+                throw new functions.https.HttpsError('failed-precondition', 'No deposit found to refund.');
             }
             if (!userData.depositPaymentIntentId) {
-                throw new HttpsError('failed-precondition', 'Original deposit transaction ID not found. Please contact support.');
+                throw new functions.https.HttpsError('failed-precondition', 'Original deposit transaction ID not found. Please contact support.');
             }
 
             logger.info(`[requestDepositRefund] All pre-flight checks passed for user ${userId}.`);
@@ -671,12 +678,13 @@ exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker:
 
     } catch (error) {
         logger.error(`[requestDepositRefund] CRITICAL ERROR for user ${userId}:`, error);
-        if (error instanceof HttpsError) {
+        if (error instanceof functions.https.HttpsError) {
             throw error;
         }
-        throw new HttpsError('internal', `An unexpected error occurred while processing your refund request.`);
+        throw new functions.https.HttpsError('internal', `An unexpected error occurred while processing your refund request.`);
     }
 });
+
 
 // --- WEBHOOKS (v1 https.onRequest) ---
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
@@ -762,3 +770,5 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
         logger.error('[PayMe Webhook] CRITICAL ERROR while processing notification:', error);
     }
 });
+
+    
