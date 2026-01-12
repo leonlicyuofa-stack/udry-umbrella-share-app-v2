@@ -1,9 +1,10 @@
+
 // functions/index.js
 const functions = require("firebase-functions");
 const { onCall, HttpsError } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions");
 const fetch = require("node-fetch");
-const { URLSearchParams } = require("url");
+const { google } = require("googleapis");
 
 // --- Safe, Global Initialization ---
 let adminApp; // Will be initialized lazily
@@ -33,6 +34,87 @@ const getStripe = () => {
     }
     return stripe;
 };
+
+// --- NEW SERVER-SIDE AUTH FUNCTION ---
+exports.exchangeAuthCodeForToken = onCall({ secrets: ["OAUTH_CLIENT_SECRET"], invoker: "public", cors: true }, async (request) => {
+    logger.info("[exchangeAuthCode] Function triggered.");
+    const admin = getAdminApp();
+
+    const { code } = request.data;
+    if (!code) {
+        throw new HttpsError('invalid-argument', 'The function must be called with an "authorization code".');
+    }
+
+    const OAUTH_CLIENT_ID = "458603936715-notarealclientid.apps.googleusercontent.com";
+    const OAUTH_CLIENT_SECRET = process.env.OAUTH_CLIENT_SECRET;
+
+    if (!OAUTH_CLIENT_SECRET) {
+        logger.error("[exchangeAuthCode] CRITICAL: OAUTH_CLIENT_SECRET is not set in environment.");
+        throw new HttpsError('internal', 'Server is missing critical authentication configuration.');
+    }
+
+    try {
+        const oauth2Client = new google.auth.OAuth2(
+            OAUTH_CLIENT_ID,
+            OAUTH_CLIENT_SECRET,
+            'postmessage' // IMPORTANT: This must be 'postmessage' for this flow
+        );
+
+        // Step 1: Exchange authorization code for tokens
+        logger.info("[exchangeAuthCode] Step 1: Exchanging auth code for tokens...");
+        const { tokens } = await oauth2Client.getToken(code);
+        logger.info("[exchangeAuthCode] Step 1 SUCCESS: Received tokens from Google.");
+        
+        // Step 2: Get user profile info from Google
+        oauth2Client.setCredentials(tokens);
+        const people = google.people({ version: 'v1', auth: oauth2Client });
+        logger.info("[exchangeAuthCode] Step 2: Fetching user profile from Google People API...");
+        const me = await people.people.get({
+            resourceName: 'people/me',
+            personFields: 'emailAddresses,names,photos',
+        });
+        logger.info("[exchangeAuthCode] Step 2 SUCCESS: Fetched user profile.");
+
+        const googleUser = me.data;
+        const uid = `google:${googleUser.resourceName.split('/')[1]}`;
+        const email = googleUser.emailAddresses?.[0]?.value;
+        const displayName = googleUser.names?.[0]?.displayName;
+        const photoURL = googleUser.photos?.[0]?.url;
+
+        if (!email) {
+            throw new HttpsError('internal', 'Could not retrieve email from Google profile.');
+        }
+
+        // Step 3: Update or create user in Firebase Auth
+        logger.info(`[exchangeAuthCode] Step 3: Updating/creating Firebase user for UID: ${uid}`);
+        try {
+            await admin.auth().updateUser(uid, { email, displayName, photoURL });
+        } catch (error) {
+            if (error.code === 'auth/user-not-found') {
+                logger.info(`[exchangeAuthCode] User not found, creating new Firebase Auth user for UID: ${uid}`);
+                await admin.auth().createUser({ uid, email, displayName, photoURL });
+            } else {
+                throw error; // Re-throw other errors
+            }
+        }
+        logger.info("[exchangeAuthCode] Step 3 SUCCESS: Firebase Auth user is synced.");
+
+        // Step 4: Create a custom token for the client to sign in
+        logger.info(`[exchangeAuthCode] Step 4: Creating custom token for UID: ${uid}`);
+        const customToken = await admin.auth().createCustomToken(uid);
+        logger.info("[exchangeAuthCode] Step 4 SUCCESS: Custom token created.");
+        
+        return { success: true, token: customToken };
+
+    } catch (error) {
+        logger.error(`[exchangeAuthCode] --- CRITICAL ERROR --- : ${error.message}`, { error });
+        if (error instanceof HttpsError) {
+            throw error;
+        }
+        throw new HttpsError('internal', `An unexpected server error occurred: ${error.message}`);
+    }
+});
+
 
 // --- CORRECTED UNLOCK MACHINE FUNCTION ---
 exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (request) => {

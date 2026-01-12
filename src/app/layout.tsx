@@ -22,6 +22,7 @@ export default function RootLayout({
         <meta name="apple-mobile-web-app-status-bar-style" content="default" />
         <meta name="apple-mobile-web-app-title" content="U-Dry" />
         <meta name="theme-color" content="#3F51B5" />
+        <script src="https://accounts.google.com/gsi/client" async defer></script>
       </head>
       <body>
         <Providers>
