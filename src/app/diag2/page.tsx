@@ -2,21 +2,20 @@
 // src/app/diag2/page.tsx
 "use client";
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Loader2, UserCheck, ServerCrash, KeyRound, LogIn } from 'lucide-react';
-import { initializeApp, getApps, getApp } from 'firebase/app';
-import { getAuth, GoogleAuthProvider, signInWithPopup, signInWithCredential, type User } from 'firebase/auth';
-import { firebaseConfig } from '@/lib/firebase';
+import { initializeFirebaseServices } from '@/lib/firebase';
+import { GoogleAuthProvider, signInWithPopup, signInWithCredential, type User, type Auth } from 'firebase/auth';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Textarea } from '@/components/ui/textarea';
 
-// Initialize a temporary Firebase app instance for this diagnostic page
-const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
-const auth = getAuth(app);
-
-type Step = 'initial' | 'token_received' | 'success' | 'error';
+// This function now safely gets the auth instance from the singleton initializer.
+function getSafeAuth(): Auth | null {
+    const services = initializeFirebaseServices();
+    return services ? services.auth : null;
+}
 
 export default function ManualAuthTestPage() {
   const [step, setStep] = useState<Step>('initial');
@@ -24,13 +23,26 @@ export default function ManualAuthTestPage() {
   const [error, setError] = useState<any>(null);
   const [user, setUser] = useState<User | null>(null);
   const [idToken, setIdToken] = useState<string | null>(null);
+  const [authInstance, setAuthInstance] = useState<Auth | null>(null);
+
+  useEffect(() => {
+    // Set the auth instance on component mount.
+    setAuthInstance(getSafeAuth());
+  }, []);
+
+  type Step = 'initial' | 'token_received' | 'success' | 'error';
 
   const handleStep1_GetToken = async () => {
+    if (!authInstance) {
+        setError({ message: "Firebase Auth is not initialized."});
+        setStep('error');
+        return;
+    }
     setIsLoading(true);
     setError(null);
     try {
       const provider = new GoogleAuthProvider();
-      const result = await signInWithPopup(auth, provider);
+      const result = await signInWithPopup(authInstance, provider);
       
       const credential = GoogleAuthProvider.credentialFromResult(result);
       if (credential?.idToken) {
@@ -49,12 +61,12 @@ export default function ManualAuthTestPage() {
   };
 
   const handleStep2_CompleteSignIn = async () => {
-    if (!idToken) return;
+    if (!idToken || !authInstance) return;
     setIsLoading(true);
     setError(null);
     try {
         const credential = GoogleAuthProvider.credential(idToken);
-        const userCredential = await signInWithCredential(auth, credential);
+        const userCredential = await signInWithCredential(authInstance, credential);
         setUser(userCredential.user);
         setStep('success');
     } catch (err: any) {
