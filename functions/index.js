@@ -1,6 +1,6 @@
 // functions/index.js
 const functions = require("firebase-functions");
-const { onCall, HttpsError } = require("firebase-functions/v2/https");
+const { HttpsError, onCall } = require("firebase-functions/v2/https"); // Keep onCall for existing v2 functions
 const { logger } = require("firebase-functions");
 const fetch = require("node-fetch");
 const { google } = require("googleapis");
@@ -34,8 +34,10 @@ const getStripe = () => {
     return stripe;
 };
 
-// --- MODIFIED SERVER-SIDE AUTH FUNCTION (v1 Syntax for Compatibility) ---
-exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_SECRET"] }).https.onRequest(async (req, res) => {
+// --- CORRECTED SERVER-SIDE AUTH FUNCTION (v1 Syntax for Compatibility) ---
+exports.exchangeAuthCodeForToken = functions
+  .runWith({ secrets: ["OAUTH_CLIENT_SECRET"] })
+  .https.onRequest(async (req, res) => {
     // Manually set CORS headers for all responses
     res.set('Access-Control-Allow-Origin', '*');
     res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
@@ -51,7 +53,6 @@ exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_S
     logger.info("[exchangeAuthCode - onRequest] Function triggered for POST request.");
     const admin = getAdminApp();
 
-    // For onRequest, the data is in req.body
     const code = req.body?.code;
     if (!code) {
         logger.error("[exchangeAuthCode] Invalid argument: 'code' is missing from the request body.", { body: req.body });
@@ -72,7 +73,7 @@ exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_S
         const oauth2Client = new google.auth.OAuth2(
             OAUTH_CLIENT_ID,
             OAUTH_CLIENT_SECRET,
-            'postmessage' // IMPORTANT: This must match the GSI client's redirect_uri for this flow
+            'postmessage' 
         );
 
         logger.info("[exchangeAuthCode] Step 1: Exchanging auth code for tokens...");
@@ -116,7 +117,6 @@ exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_S
         const customToken = await admin.auth().createCustomToken(uid);
         logger.info("[exchangeAuthCode] Step 4 SUCCESS: Custom token created.");
         
-        // For 'onRequest' functions, we send the response directly.
         res.status(200).send({ success: true, token: customToken });
 
     } catch (error) {
@@ -126,7 +126,7 @@ exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_S
 });
 
 
-// --- CORRECTED UNLOCK MACHINE FUNCTION ---
+// --- UNLOCK MACHINE FUNCTION (v2 onCall) ---
 exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (request) => {
     logger.info("--- unlockPhysicalMachine function triggered ---");
 
@@ -140,7 +140,6 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
     }
 
     const { dvid, tok, parm } = request.data;
-    // The cmd_type is always '1' for both rent and return operations per your instruction.
     const cmd_type = '1';
 
     if (!dvid || !tok || !parm) {
@@ -189,37 +188,38 @@ exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (req
     }
 });
 
-
-exports.makeAdmin = onCall(async (request) => {
+// --- MAKE ADMIN FUNCTION (v1 https.onCall for consistency) ---
+exports.makeAdmin = functions.https.onCall(async (data, context) => {
     const admin = require("firebase-admin");
     getAdminApp(); // Ensure admin is initialized
 
-    if (!request.auth) {
-        throw new HttpsError('unauthenticated', 'You must be logged in to call this function.');
+    if (!context.auth) {
+        throw new functions.https.HttpsError('unauthenticated', 'You must be logged in to call this function.');
     }
     
-    if (request.auth.token.email !== 'admin@u-dry.com') {
-        throw new HttpsError('permission-denied', 'Only the primary admin user can call this function.');
+    if (context.auth.token.email !== 'admin@u-dry.com') {
+        throw new functions.https.HttpsError('permission-denied', 'Only the primary admin user can call this function.');
     }
 
-    const adminUid = request.auth.uid;
+    const adminUid = context.auth.uid;
     const db = admin.firestore();
     const adminRef = db.collection('admins').doc(adminUid);
 
     try {
         await adminRef.set({
-            email: request.auth.token.email,
+            email: context.auth.token.email,
             addedAt: admin.firestore.FieldValue.serverTimestamp()
         });
         logger.info(`Successfully added ${adminUid} to the admins collection.`);
         return { success: true, message: `User ${adminUid} is now an administrator. Please sign out and sign back in.` };
     } catch (error) {
         logger.error(`Error adding admin record for UID ${adminUid}:`, error);
-        throw new HttpsError('internal', `An error occurred while setting admin permissions: ${error.message}`);
+        throw new functions.https.HttpsError('internal', `An error occurred while setting admin permissions: ${error.message}`);
     }
 });
 
 
+// --- STRIPE CHECKOUT FUNCTION (v2 onCall) ---
 exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] }, async (request) => {
     logger.info("--- createStripeCheckoutSession function triggered ---");
     const stripeInstance = getStripe();
@@ -292,7 +292,7 @@ exports.createStripeCheckoutSession = onCall({ secrets: ["STRIPE_SECRET_KEY"] },
     }
 });
 
-
+// --- PAYME PAYMENT FUNCTION (v2 onCall) ---
 exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRET"], invoker: "public", cors: true }, async (request) => {
     logger.info("--- createPaymePayment function triggered ---");
 
@@ -301,13 +301,11 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
     const PAYME_APP_SECRET = process.env.PAYME_APP_SECRET;
     const NOTIFICATION_URI = 'https://us-central1-udry-app-dev.cloudfunctions.net/paymeWebhook';
 
-    // Step 1: Validate Secrets
     if (!PAYME_APP_ID || !PAYME_APP_SECRET) {
         logger.error("Server is missing critical PayMe API configuration (PAYME_APP_ID or PAYME_APP_SECRET).");
         throw new HttpsError('internal', 'Server is missing PayMe API configuration.');
     }
 
-    // Step 2: Validate Request Data
     if (!request.auth) {
         throw new HttpsError('unauthenticated', 'The function must be called while authenticated.');
     }
@@ -321,7 +319,6 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
     logger.info("PayMe Step 1: Received and validated data.", { amount, paymentType, userId: request.auth.uid });
 
     try {
-        // --- STEP 1: GET ACCESS TOKEN ---
         logger.info("PayMe Step 2: Requesting access token...");
         const tokenParams = new URLSearchParams();
         tokenParams.append('client_id', PAYME_APP_ID);
@@ -340,7 +337,6 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
         const accessToken = tokenData.access_token;
         logger.info("PayMe Step 3: Successfully obtained access token.");
 
-        // --- STEP 2: CREATE PAYMENT REQUEST ---
         const merchantReference = `UDRY-${paymentType}-${request.auth.uid}-${Date.now()}`;
         const paymentRequestBody = {
             totalAmount: amount.toFixed(2),
@@ -355,14 +351,13 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
             headers: {
                 'Content-Type': 'application/json',
                 'Authorization': `Bearer ${accessToken}`,
-                'Api-Version': '1.0', // As per documentation, it's good practice to include version
+                'Api-Version': '1.0', 
             },
             body: JSON.stringify(paymentRequestBody),
         });
         
         const paymentResponseData = await paymentResponse.json();
 
-        // Step 5: Handle PayMe Response
         if (!paymentResponse.ok || !paymentResponseData.paymeLink) {
             const errorMessage = `PayMe API Error: ${paymentResponseData.message || 'Unknown error'} (Code: ${paymentResponseData.code})`;
             logger.error(errorMessage, { responseData: paymentResponseData });
@@ -383,6 +378,7 @@ exports.createPaymePayment = onCall({ secrets: ["PAYME_APP_ID", "PAYME_APP_SECRE
 });
 
 
+// --- FINALIZE STRIPE PAYMENT (v2 onCall) ---
 exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public", cors: true }, async (request) => {
     logger.info("--- finalizeStripePayment function triggered ---");
     const admin = require("firebase-admin");
@@ -449,7 +445,7 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
         }
         logger.info(`Step 5 SUCCESS: Session data and security check passed.`);
 
-        const userDocRef = db.collection('users').doc(uid); // Use uid from URL
+        const userDocRef = db.collection('users').doc(uid); 
         
         logger.info(`Step 6: Starting Firestore transaction to update user balance...`);
         await db.runTransaction(async (transaction) => {
@@ -501,11 +497,11 @@ exports.finalizeStripePayment = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker
 });
 
 
+// --- END RENTAL (v2 onCall) ---
 exports.endRentalTransaction = onCall(async (request) => {
     const admin = require("firebase-admin");
     const db = getAdminApp().firestore();
 
-    // Step 1: Authentication Check
     if (!request.auth) {
         logger.error("[Cloud Function] Authentication check failed: No auth context.");
         throw new HttpsError('unauthenticated', 'You must be logged in to end a rental.');
@@ -513,7 +509,6 @@ exports.endRentalTransaction = onCall(async (request) => {
     const userId = request.auth.uid;
     logger.info(`[Cloud Function] Starting endRental for user: ${userId}`);
 
-    // Step 2: Input Validation
     const { returnedToStallId, activeRentalData } = request.data;
     logger.info("[Cloud Function] Received data:", { returnedToStallId, hasActiveRental: !!activeRentalData });
 
@@ -531,7 +526,6 @@ exports.endRentalTransaction = onCall(async (request) => {
     }
     
     try {
-        // Step 3: Fetch Stall Information
         const returnedStallDocRef = db.collection('stalls').doc(returnedToStallId);
         const returnedStallSnap = await returnedStallDocRef.get();
         if (!returnedStallSnap.exists) {
@@ -541,7 +535,6 @@ exports.endRentalTransaction = onCall(async (request) => {
         const returnedStall = returnedStallSnap.data();
         logger.info(`[Cloud Function] Successfully fetched return stall data for ${returnedStall.name}`);
 
-        // Step 4: Cost Calculation
         const endTime = Date.now();
         const durationHours = (endTime - activeRentalData.startTime) / (1000 * 60 * 60);
 
@@ -549,7 +542,7 @@ exports.endRentalTransaction = onCall(async (request) => {
         const DAILY_CAP = 25;
         let calculatedCost = 0;
 
-        if (activeRentalData.isFree === true) { // Explicitly check for true
+        if (activeRentalData.isFree === true) { 
             calculatedCost = 0;
         } else if (durationHours > 72) {
             calculatedCost = 100; // Forfeit deposit
@@ -562,7 +555,6 @@ exports.endRentalTransaction = onCall(async (request) => {
         const finalCost = Math.min(calculatedCost, 100);
         logger.info(`[Cloud Function] Calculated final cost for user ${userId}: ${finalCost} (Duration: ${durationHours.toFixed(2)} hours)`);
 
-        // Step 5: Prepare Database Documents
         const userDocRef = db.collection('users').doc(userId);
         const newRentalHistoryDocRef = db.collection('rentals').doc();
         
@@ -581,7 +573,6 @@ exports.endRentalTransaction = onCall(async (request) => {
             logs: activeRentalData.logs || [],
         };
         
-        // Step 6: Execute Atomic Batch Write
         logger.info(`[Cloud Function] Preparing to commit batch write for user ${userId}.`);
         const batch = db.batch();
         batch.set(newRentalHistoryDocRef, rentalHistory);
@@ -602,21 +593,19 @@ exports.endRentalTransaction = onCall(async (request) => {
     } catch (error) {
         logger.error(`[Cloud Function] CRITICAL ERROR in endRentalTransaction for user ${userId}:`, error);
         if (error instanceof HttpsError) {
-            throw error; // Re-throw HttpsError directly
+            throw error;
         }
-        // For unexpected errors, wrap them in a generic internal error
         throw new HttpsError('internal', 'An unexpected server error occurred while ending the rental.');
     }
 });
 
-
+// --- DEPOSIT REFUND (v2 onCall) ---
 exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker: "public", cors: true }, async (request) => {
     logger.info("--- requestDepositRefund function triggered ---");
     const admin = require("firebase-admin");
     const db = getAdminApp().firestore();
     const stripeInstance = getStripe();
 
-    // Step 1: Authentication & Service Check
     if (!request.auth) {
         logger.error("[requestDepositRefund] Auth check failed: No auth context.");
         throw new HttpsError('unauthenticated', 'You must be logged in to request a refund.');
@@ -632,7 +621,6 @@ exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker:
         const userDocRef = db.collection('users').doc(userId);
         const refundRecordRef = db.collection('refunds').doc();
         
-        // Step 2: Use a transaction for safety
         await db.runTransaction(async (transaction) => {
             const userDoc = await transaction.get(userDocRef);
             if (!userDoc.exists) {
@@ -641,7 +629,6 @@ exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker:
             const userData = userDoc.data();
             logger.info(`[requestDepositRefund] Fetched user data inside transaction.`, { balance: userData.balance });
             
-            // Step 3: Critical Business Logic Checks
             if (userData.activeRental) {
                 throw new HttpsError('failed-precondition', 'Cannot refund deposit with an active rental.');
             }
@@ -658,20 +645,17 @@ exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker:
 
             logger.info(`[requestDepositRefund] All pre-flight checks passed for user ${userId}.`);
 
-            // Step 4: Perform Stripe Refund
             logger.info(`[requestDepositRefund] Attempting to refund Stripe Payment Intent: ${userData.depositPaymentIntentId}`);
             await stripeInstance.refunds.create({
                 payment_intent: userData.depositPaymentIntentId,
             });
             logger.info(`[requestDepositRefund] Stripe refund successful.`);
 
-            // Step 5: Update Firestore database
             transaction.update(userDocRef, {
                 deposit: 0,
                 depositPaymentIntentId: null 
             });
 
-            // Step 6: Create an audit record
             transaction.set(refundRecordRef, {
                 userId: userId,
                 refundedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -694,7 +678,7 @@ exports.requestDepositRefund = onCall({ secrets: ["STRIPE_SECRET_KEY"], invoker:
     }
 });
 
-
+// --- WEBHOOKS (v1 https.onRequest) ---
 exports.stripeWebhook = functions.https.onRequest(async (req, res) => {
      logger.info('[WEBHOOK] Received a Stripe request.');
      res.status(200).send({ received: true });
@@ -705,7 +689,6 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
     const admin = require("firebase-admin");
     const db = getAdminApp().firestore();
 
-    // Respond to PayMe immediately to acknowledge receipt.
     res.status(200).send({ success: true });
 
     try {
@@ -717,7 +700,6 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
             return;
         }
 
-        // Use merchantReference for idempotency check
         const paymentRef = db.collection('processed_payme_payments').doc(merchantReference);
         const paymentDoc = await paymentRef.get();
         if (paymentDoc.exists) {
@@ -726,13 +708,12 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
         }
         logger.info(`[PayMe Webhook] New payment notification for ${merchantReference}.`);
 
-        // Parse merchantReference to get user UID and payment type
         const parts = merchantReference.split('-');
         if (parts.length < 4 || parts[0] !== 'UDRY') {
             logger.error(`[PayMe Webhook] Invalid merchantReference format: ${merchantReference}`);
             return;
         }
-        const paymentType = parts[1]; // 'deposit' or 'balance'
+        const paymentType = parts[1];
         const userId = parts[2];
         const amountNum = parseFloat(totalAmount);
 
@@ -753,7 +734,7 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
             const userDoc = await transaction.get(userDocRef);
             if (!userDoc.exists) {
                  logger.error(`[PayMe Webhook] User document not found for UID: ${userId}`);
-                 return; // Do not throw error, just log and exit
+                 return;
             }
 
             if (paymentType === 'deposit') {
@@ -766,7 +747,6 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
                 });
             }
 
-            // Mark this transaction as processed
             transaction.set(paymentRef, {
                 userId: userId,
                 processedAt: admin.firestore.FieldValue.serverTimestamp(),
@@ -782,29 +762,3 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
         logger.error('[PayMe Webhook] CRITICAL ERROR while processing notification:', error);
     }
 });
-    
-    
-
-    
-
-
-
-
-
-
-
-
-
-
-
-
-
-    
-
-
-
-
-
-    
-
-    
