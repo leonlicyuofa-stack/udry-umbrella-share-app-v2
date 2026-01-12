@@ -47,8 +47,10 @@ export default function ManualServerAuthTestPage() {
             const client = window.google.accounts.oauth2.initCodeClient({
                 client_id: CLIENT_ID,
                 scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
-                ux_mode: 'redirect', // CHANGED to redirect
-                redirect_uri: window.location.href.split('?')[0], // Use the current URL without query params
+                // This 'redirect_uri' MUST exactly match one of the URIs in the Google Cloud Console.
+                // We use 'postmessage' because it's a special value for web apps using this flow.
+                redirect_uri: 'postmessage',
+                ux_mode: 'popup', // We are back to popup, but the server-side exchange is key.
             });
             client.requestCode();
         } catch (err: any) {
@@ -70,8 +72,13 @@ export default function ManualServerAuthTestPage() {
         setError(null);
         let receivedToken: string | null = null;
         try {
+            // Note: The function name must exactly match the exported name in index.js
             const exchangeFunction = httpsCallable(firebaseServices.functions, 'exchangeAuthCodeForToken');
+            
+            // The data payload for an onRequest function is sent directly, not nested under a 'data' property in the client.
             const result = await exchangeFunction({ code });
+            
+            // For an onRequest function, the response data is nested under a 'data' property.
             const data = result.data as { success: boolean; token?: string; message?: string };
 
             if (!data.success || !data.token) {
