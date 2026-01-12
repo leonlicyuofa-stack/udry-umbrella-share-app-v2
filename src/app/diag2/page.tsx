@@ -48,9 +48,8 @@ export default function ManualServerAuthTestPage() {
                 client_id: CLIENT_ID,
                 scope: 'https://www.googleapis.com/auth/userinfo.profile https://www.googleapis.com/auth/userinfo.email',
                 // This 'redirect_uri' MUST exactly match one of the URIs in the Google Cloud Console.
-                // We use 'postmessage' because it's a special value for web apps using this flow.
-                redirect_uri: 'postmessage',
-                ux_mode: 'popup', // We are back to popup, but the server-side exchange is key.
+                redirect_uri: window.location.href, // Use the current page URL
+                ux_mode: 'redirect', 
             });
             client.requestCode();
         } catch (err: any) {
@@ -72,13 +71,12 @@ export default function ManualServerAuthTestPage() {
         setError(null);
         let receivedToken: string | null = null;
         try {
-            // Note: The function name must exactly match the exported name in index.js
             const exchangeFunction = httpsCallable(firebaseServices.functions, 'exchangeAuthCodeForToken');
             
-            // The data payload for an onRequest function is sent directly, not nested under a 'data' property in the client.
+            // With an onRequest function, we now send a simple object
             const result = await exchangeFunction({ code });
             
-            // For an onRequest function, the response data is nested under a 'data' property.
+            // The raw response from an onRequest function is the data itself
             const data = result.data as { success: boolean; token?: string; message?: string };
 
             if (!data.success || !data.token) {
@@ -212,3 +210,5 @@ export default function ManualServerAuthTestPage() {
     );
 }
 
+
+    

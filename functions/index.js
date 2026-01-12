@@ -36,22 +36,25 @@ const getStripe = () => {
 
 // --- MODIFIED SERVER-SIDE AUTH FUNCTION (onRequest with Manual CORS) ---
 exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_SECRET"] }).https.onRequest(async (req, res) => {
-    // Manually set CORS headers
+    // Manually set CORS headers for all responses
     res.set('Access-Control-Allow-Origin', '*');
     res.set('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
     res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
+    // --- STEP 1: Handle Preflight OPTIONS Request ---
+    // This is the crucial step to resolve the CORS preflight error.
     if (req.method === 'OPTIONS') {
-        // Handle preflight request
+        // End the function execution here and send a success response for the preflight.
         res.status(204).send('');
         return;
     }
 
-    logger.info("[exchangeAuthCode - onRequest] Function triggered.");
+    // --- STEP 2: Proceed with the actual function logic for POST requests ---
+    logger.info("[exchangeAuthCode - onRequest] Function triggered for POST request.");
     const admin = getAdminApp();
 
-    // For onRequest, the data is in req.body.data
-    const code = req.body?.data?.code;
+    // For onRequest, the data is in req.body, NOT req.body.data
+    const code = req.body?.code;
     if (!code) {
         logger.error("[exchangeAuthCode] Invalid argument: 'code' is missing from the request body.", { body: req.body });
         res.status(400).send({ error: { message: 'The function must be called with an "authorization code".' } });
@@ -71,7 +74,7 @@ exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_S
         const oauth2Client = new google.auth.OAuth2(
             OAUTH_CLIENT_ID,
             OAUTH_CLIENT_SECRET,
-            'postmessage' // IMPORTANT: This must be 'postmessage' for this flow
+            'postmessage' // IMPORTANT: This must match the GSI client's redirect_uri for this flow
         );
 
         logger.info("[exchangeAuthCode] Step 1: Exchanging auth code for tokens...");
@@ -115,8 +118,9 @@ exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_S
         const customToken = await admin.auth().createCustomToken(uid);
         logger.info("[exchangeAuthCode] Step 4 SUCCESS: Custom token created.");
         
-        // onRequest requires sending a response back with data nested under a 'data' property
-        res.status(200).send({ data: { success: true, token: customToken } });
+        // For 'onRequest' functions, we send the response directly.
+        // It's the client's job to handle the { data: ... } wrapper if needed.
+        res.status(200).send({ success: true, token: customToken });
 
     } catch (error) {
         logger.error(`[exchangeAuthCode] --- CRITICAL ERROR --- : ${error.message}`, { error });
@@ -801,3 +805,7 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
     
 
 
+
+
+
+    
