@@ -21,7 +21,7 @@ import {
   GoogleAuthProvider,
   signInWithRedirect,
   OAuthProvider,
-  getRedirectResult, // ADDED: Import getRedirectResult
+  getRedirectResult,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, onSnapshot, updateDoc as firestoreUpdateDoc, query, writeBatch, type Firestore, addDoc, GeoPoint, arrayUnion, orderBy, limit, getDocs, increment } from 'firebase/firestore';
 import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase';
@@ -147,7 +147,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isVerified, setIsVerified] = useState(false);
   const [isSendingVerification, setIsSendingVerification] = useState(false);
   
-  // --- ADDED: State flags for the race condition fix ---
   const isAuthReady = useRef(false);
   const isRedirectReady = useRef(false);
 
@@ -160,17 +159,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setFirebaseServices(services);
     
-    // --- REFACTORED: Split auth logic ---
     const checkInitialState = () => {
       if (isAuthReady.current && isRedirectReady.current) {
         setIsLoading(false);
       }
     };
     
-    // Check #1: Handle the redirect result
     getRedirectResult(services.auth)
       .catch((error) => {
-        // Handle redirect-specific errors if necessary
         console.error("Error from getRedirectResult:", error);
         toast({ variant: 'destructive', title: 'Sign-in Error', description: 'Could not process sign-in from provider.' });
       })
@@ -179,7 +175,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         checkInitialState();
       });
 
-    // Check #2: Listen for auth state changes
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
       setFirebaseUser(user);
       if (!user) {
@@ -192,10 +187,9 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     });
 
     return () => unsubscribeAuth();
-  }, []);
+  }, [toast]);
   
   useEffect(() => {
-    // This is the key change: only run redirection logic AFTER loading is fully complete.
     if (isLoading) {
       return;
     }
@@ -204,12 +198,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
     
     if (firebaseUser) {
-      // A user is logged in.
       if (isVerified && isAuthPage) {
         router.replace('/home');
       }
     } else {
-      // No user is logged in.
       if (isProtectedRoute) {
         router.replace('/auth/signin');
       }
@@ -219,7 +211,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (!firebaseServices || !firebaseUser) {
-      // If we are logged out, there is no user data to load.
       if (!firebaseUser) setIsLoading(false);
       return;
     }
@@ -285,29 +276,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       await signInWithRedirect(firebaseServices.auth, provider);
     } catch (error: any) {
-      let title = "Sign-in Failed";
-      let description = "An unknown error occurred.";
-      
-      if (error.code === 'auth/popup-closed-by-user') {
-        title = "Sign-in Cancelled";
-        description = "The sign-in window was closed before completion.";
-      } else if (error.code === 'auth/account-exists-with-different-credential') {
-        title = "Account Exists";
-        description = "An account with this email already exists. Please sign in with your original method to link your account.";
-      }
-      
-      toast({ variant: 'destructive', title, description });
+      console.error("signInWithRedirect call failed:", error);
+      toast({
+        variant: "destructive",
+        title: "Sign-In Initialization Failed",
+        description: `Could not start the sign-in process. Error: ${error.code} - ${error.message}`,
+        duration: 9000,
+      });
       throw error;
     }
   };
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    // TEMPORARY CHANGE FOR DIAGNOSTIC TEST:
-    provider.setCustomParameters({
-      redirect_uri: 'https://udry-app-dev.web.app/diag/'
-    });
-    // END TEMPORARY CHANGE
     return socialSignIn(provider);
   };
   
