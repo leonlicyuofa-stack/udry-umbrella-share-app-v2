@@ -34,7 +34,7 @@ const getStripe = () => {
     return stripe;
 };
 
-// --- MODIFIED SERVER-SIDE AUTH FUNCTION (onRequest with Manual CORS) ---
+// --- MODIFIED SERVER-SIDE AUTH FUNCTION (v1 Syntax for Compatibility) ---
 exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_SECRET"] }).https.onRequest(async (req, res) => {
     // Manually set CORS headers for all responses
     res.set('Access-Control-Allow-Origin', '*');
@@ -42,9 +42,7 @@ exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_S
     res.set('Access-Control-Allow-Headers', 'Content-Type, Authorization');
 
     // --- STEP 1: Handle Preflight OPTIONS Request ---
-    // This is the crucial step to resolve the CORS preflight error.
     if (req.method === 'OPTIONS') {
-        // End the function execution here and send a success response for the preflight.
         res.status(204).send('');
         return;
     }
@@ -53,7 +51,7 @@ exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_S
     logger.info("[exchangeAuthCode - onRequest] Function triggered for POST request.");
     const admin = getAdminApp();
 
-    // For onRequest, the data is in req.body, NOT req.body.data
+    // For onRequest, the data is in req.body
     const code = req.body?.code;
     if (!code) {
         logger.error("[exchangeAuthCode] Invalid argument: 'code' is missing from the request body.", { body: req.body });
@@ -119,7 +117,6 @@ exports.exchangeAuthCodeForToken = functions.runWith({ secrets: ["OAUTH_CLIENT_S
         logger.info("[exchangeAuthCode] Step 4 SUCCESS: Custom token created.");
         
         // For 'onRequest' functions, we send the response directly.
-        // It's the client's job to handle the { data: ... } wrapper if needed.
         res.status(200).send({ success: true, token: customToken });
 
     } catch (error) {
@@ -807,5 +804,7 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
 
 
 
+
+    
 
     
