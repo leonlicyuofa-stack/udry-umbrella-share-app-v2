@@ -4,7 +4,7 @@
 import { useState, useEffect, useRef, useCallback } from 'react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription, DialogFooter, DialogClose } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
-import { AlertTriangle, Camera, ShieldAlert, CheckCircle, Loader2, ArrowLeft, Phone } from 'lucide-react';
+import { AlertTriangle, Camera, ShieldAlert, CheckCircle, Loader2, ArrowLeft, Phone, Bot, Info } from 'lucide-react';
 import { useAuth } from '@/contexts/auth-context';
 import { useStalls } from '@/contexts/stalls-context';
 import { useToast } from '@/hooks/use-toast';
@@ -12,6 +12,8 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Card, CardContent } from '@/components/ui/card';
 import { useLanguage } from '@/contexts/language-context'; // Added
 import { Camera as CapacitorCamera, CameraResultType, CameraSource } from '@capacitor/camera';
+import { AIChatbot } from '@/components/report/ai-chatbot';
+import { Separator } from '@/components/ui/separator';
 
 // Custom WhatsApp Icon
 const WhatsAppIcon = (props: React.SVGProps<SVGSVGElement>) => (
@@ -328,37 +330,42 @@ export function ReportIssueDialog({ isOpen, onOpenChange }: ReportIssueDialogPro
           <ArrowLeft className="mr-1 h-4 w-4" /> {translate('back_button')}
         </Button>
         <DialogTitle className="flex items-center text-xl text-primary justify-center pt-8">
-          <Phone className="mr-2 h-6 w-6" />
+          <Bot className="mr-2 h-6 w-6" />
           {translate('report_issue_contact_support_step_title')}
         </DialogTitle>
       </DialogHeader>
-      <div className="py-6 space-y-4">
+      <div className="py-4 space-y-4">
         <Alert>
-          <Phone className="h-4 w-4" />
+          <Info className="h-4 w-4" />
           <AlertTitle>{translate('report_issue_need_assistance_title')}</AlertTitle>
           <AlertDescription>
-            {translate('report_issue_need_assistance_desc')}
+            Try asking our new AI assistant first. If it can't help, you can still call or use WhatsApp.
           </AlertDescription>
         </Alert>
-        
+        <AIChatbot />
       </div>
-      <DialogFooter className="mt-2 flex flex-col sm:flex-row gap-2">
-        <Button 
-          onClick={() => {
-            window.location.href = `tel:${CUSTOMER_SERVICE_NUMBER}`;
-          }} 
-          className="w-full sm:w-auto"
-        >
-          <Phone className="mr-2 h-4 w-4" /> {translate('report_issue_call_customer_service_button')}
-        </Button>
-        <Button 
-          onClick={() => {
-            window.open(`https://wa.me/852${CUSTOMER_SERVICE_NUMBER}`, '_blank');
-          }} 
-          className="w-full sm:w-auto bg-green-600 hover:bg-green-700 text-white"
-        >
-          <WhatsAppIcon className="mr-2 h-4 w-4" /> WhatsApp
-        </Button>
+      <DialogFooter className="mt-2 flex flex-col gap-2">
+        <Separator className="my-2" />
+        <p className="text-xs text-center text-muted-foreground">Still need help?</p>
+        <div className="flex flex-col sm:flex-row gap-2">
+          <Button
+            onClick={() => {
+              window.location.href = `tel:${CUSTOMER_SERVICE_NUMBER}`;
+            }}
+            className="w-full sm:flex-1"
+            variant="outline"
+          >
+            <Phone className="mr-2 h-4 w-4" /> {translate('report_issue_call_customer_service_button')}
+          </Button>
+          <Button
+            onClick={() => {
+              window.open(`https://wa.me/852${CUSTOMER_SERVICE_NUMBER}`, '_blank');
+            }}
+            className="w-full sm:flex-1 bg-green-600 hover:bg-green-700 text-white"
+          >
+            <WhatsAppIcon className="mr-2 h-4 w-4" /> WhatsApp
+          </Button>
+        </div>
       </DialogFooter>
     </>
   );
@@ -391,3 +398,5 @@ export function ReportIssueDialog({ isOpen, onOpenChange }: ReportIssueDialogPro
     </Dialog>
   );
 }
+
+    
