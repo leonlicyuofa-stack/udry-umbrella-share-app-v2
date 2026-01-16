@@ -17,7 +17,7 @@ type Message = {
 };
 
 export function AIChatbot() {
-  const { translate } = useLanguage();
+  const { language } = useLanguage();
   const [messages, setMessages] = useState<Message[]>([
     {
       role: 'bot',
@@ -45,7 +45,7 @@ export function AIChatbot() {
     setIsLoading(true);
 
     try {
-      const response = await askSupport({ question: input });
+      const response = await askSupport({ question: input, language: language });
       const botMessage: Message = { role: 'bot', content: response.answer };
       setMessages(prev => [...prev, botMessage]);
     } catch (error) {

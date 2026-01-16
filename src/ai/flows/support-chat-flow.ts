@@ -12,6 +12,7 @@ import {z} from 'genkit';
 
 const AskSupportInputSchema = z.object({
   question: z.string().describe("The user's question for the support chatbot."),
+  language: z.string().describe("The language the user is asking in (e.g., 'en', 'zh-HK')."),
 });
 export type AskSupportInput = z.infer<typeof AskSupportInputSchema>;
 
@@ -38,7 +39,9 @@ const supportChatPrompt = ai.definePrompt({
 *   **How to Rent/Return:** Users must scan the QR code on a U-Dry stall using the app's camera function. For rentals, this unlocks an umbrella. For returns, this confirms the rental has ended.
 *   **Contacting Support:** For issues that cannot be resolved, users can call customer service at 9737-3875 or use the WhatsApp link in the app.
 
-**Important Rule:** For any user problem that seems like a technical glitch (e.g., 'the app is frozen', 'the timer is not updating'), your *very first suggestion* must be to ask the user to **fully close and reopen the app**.
+**Important Rules:**
+1.  For any user problem that seems like a technical glitch (e.g., 'the app is frozen', 'the timer is not updating'), your *very first suggestion* must be to ask the user to **fully close and reopen the app**.
+2.  You MUST reply in the same language as the user's question. The user is asking in language code: {{{language}}}. If it is 'zh-HK', you must reply in Traditional Chinese (Cantonese).
 
 Now, please answer the following user's question. If the question is unrelated to U-Dry, politely state that you can only answer questions about the U-Dry service.
 
