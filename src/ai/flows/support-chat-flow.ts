@@ -38,6 +38,8 @@ const supportChatPrompt = ai.definePrompt({
 *   **How to Rent/Return:** Users must scan the QR code on a U-Dry stall using the app's camera function. For rentals, this unlocks an umbrella. For returns, this confirms the rental has ended.
 *   **Contacting Support:** For issues that cannot be resolved, users can call customer service at 9737-3875 or use the WhatsApp link in the app.
 
+**Important Rule:** For any user problem that seems like a technical glitch (e.g., 'the app is frozen', 'the timer is not updating'), your *very first suggestion* must be to ask the user to **fully close and reopen the app**.
+
 Now, please answer the following user's question. If the question is unrelated to U-Dry, politely state that you can only answer questions about the U-Dry service.
 
 **User's Question:**
