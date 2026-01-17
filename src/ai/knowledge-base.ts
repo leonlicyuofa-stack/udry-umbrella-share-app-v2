@@ -41,6 +41,7 @@ The U-Dry experience is a four-stage process: Discovery, Rental, Usage, and Retu
     1. Check if the umbrella is slotted into the rail completely.
     2. Restart the app.
     3. If the timer is still active, contact U-Dry support immediately.
+    4. **A note on billing:** If you cannot reach support immediately, please don't worry. We will investigate any timer discrepancies and ensure you are only charged the correct amount for your rental.
 
 ---
 
@@ -70,7 +71,7 @@ The U-Dry experience is a four-stage process: Discovery, Rental, Usage, and Retu
 - **Question:** The QR code won't scan.
 - **Answer:** Close the app completely and reopen it to reset the camera.
 - **Question:** The timer is still running after return.
-- **Answer:** Ensure the umbrella is fully slotted into the rail, then restart the app. If the timer stays active, contact us.
+- **Answer:** Ensure the umbrella is fully slotted into the rail, then restart the app. If the timer stays active, contact us. If you cannot reach support right away, rest assured that we will investigate and ensure you are only charged the correct amount.
 
 **Category: Time Limit**
 - **Question:** How long can I keep it?
