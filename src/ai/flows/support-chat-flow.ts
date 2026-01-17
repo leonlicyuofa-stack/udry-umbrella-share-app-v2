@@ -9,10 +9,12 @@
 
 import {ai} from '@/ai/genkit';
 import {z} from 'genkit';
+import { UDRY_KNOWLEDGE_BASE } from '../knowledge-base';
 
 const AskSupportInputSchema = z.object({
   question: z.string().describe("The user's question for the support chatbot."),
   language: z.string().describe("The language the user is asking in (e.g., 'en', 'zh-HK')."),
+  knowledgeBase: z.string().describe("The knowledge base for the chatbot."),
 });
 export type AskSupportInput = z.infer<typeof AskSupportInputSchema>;
 
@@ -21,30 +23,26 @@ const AskSupportOutputSchema = z.object({
 });
 export type AskSupportOutput = z.infer<typeof AskSupportOutputSchema>;
 
-export async function askSupport(input: AskSupportInput): Promise<AskSupportOutput> {
-  return supportChatFlow(input);
+export async function askSupport(input: { question: string, language: string }): Promise<AskSupportOutput> {
+  return supportChatFlow({ ...input, knowledgeBase: UDRY_KNOWLEDGE_BASE });
 }
 
 const supportChatPrompt = ai.definePrompt({
   name: 'supportChatPrompt',
   input: {schema: AskSupportInputSchema},
   output: {schema: AskSupportOutputSchema},
-  prompt: `You are a helpful and friendly customer support chatbot for 'U-Dry', a smart umbrella sharing app. Your purpose is to answer user questions about the service concisely and accurately based on the information provided below.
+  prompt: `You are a helpful and friendly customer support chatbot for 'U-Dry', a smart umbrella sharing app. Your purpose is to answer user questions about the service concisely and accurately based on the information provided in the U-DRY KNOWLEDGE BASE below.
 
-**Key U-Dry Information:**
-*   **Rental Cost:** The first rental for a new user is free. After that, it is HK$5 per hour.
-*   **Daily Cap:** The rental charge is capped at HK$25 for every 24-hour period.
-*   **Security Deposit:** A refundable security deposit of HK$100 is required to rent an umbrella. This deposit can be refunded at any time through the app, as long as the user has no active rentals and no negative balance.
-*   **Lost/Overdue Umbrella:** If an umbrella is not returned within 72 hours, it is considered lost. The HK$100 security deposit will be forfeited as a penalty.
-*   **How to Rent/Return:** Users must scan the QR code on a U-Dry stall using the app's camera function. For rentals, this unlocks an umbrella. For returns, this confirms the rental has ended.
-*   **Contacting Support:** For issues that cannot be resolved, users can call customer service at 9737-3875 or use the WhatsApp link in the app.
+**U-DRY KNOWLEDGE BASE:**
+{{{knowledgeBase}}}
+---
 
 **Important Rules:**
 1.  Before providing any solution, always start by briefly acknowledging the user's specific problem and showing empathy. For example, if a user says, 'My payment isn't showing up,' start with something like, 'I'm sorry to hear you're having trouble with your payment. I understand that can be worrying,' before you suggest a solution.
 2.  For any user problem that seems like a technical glitch (e.g., 'the app is frozen', 'the timer is not updating'), your *very first suggestion* must be to ask the user to **fully close and reopen the app**.
 3.  You MUST reply in the same language as the user's question. The user is asking in language code: {{{language}}}. If it is 'zh-HK', you must reply in Traditional Chinese.
 
-Now, please answer the following user's question. If the question is unrelated to U-Dry, politely state that you can only answer questions about the U-Dry service.
+Now, please answer the following user's question. If the question is unrelated to U-Dry or the knowledge base, politely state that you can only answer questions about the U-Dry service.
 
 **User's Question:**
 {{{question}}}
