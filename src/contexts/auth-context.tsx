@@ -190,7 +190,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   // ── Redirect logic ─────────────────────────────────────────────────────────
   useEffect(() => {
-    if (isLoading) return;
+    if (isLoading && !firebaseUser) return;
 
     const isAuthPage = pathname.startsWith('/auth');
     const isProtectedRoute =
