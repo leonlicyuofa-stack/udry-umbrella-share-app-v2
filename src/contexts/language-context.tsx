@@ -89,6 +89,8 @@ const translations: Record<Language, Record<string, string>> = {
     'auth_error_signin_email_failed': 'Sign-in failed',
     'auth_error_invalid_credential_desc': "The email or password you entered is incorrect. Please check your credentials and try again.",
     'auth_error_signout_failed': 'Sign-out failed',
+    'auth_consistency_warning_title': 'Important Notice',
+    'auth_consistency_warning_desc': 'To access the same account and wallet, please always use the login method you first signed up with.',
 
     // Main Page (Map)
     'find_an_umbrella_title': 'Find Your Umbrella',
@@ -475,6 +477,8 @@ const translations: Record<Language, Record<string, string>> = {
     'auth_error_signin_email_failed': '登入失敗',
     'auth_error_invalid_credential_desc': '您輸入的電子郵件或密碼不正確。請檢查您的憑證後再試一次。',
     'auth_error_signout_failed': '登出失敗',
+    'auth_consistency_warning_title': '重要提示',
+    'auth_consistency_warning_desc': '為確保您能存取同一帳戶及錢包，請務必使用您初次註冊時所選擇的登入方式。',
 
     // Main Page (Map)
     'find_an_umbrella_title': '尋找您的雨傘',

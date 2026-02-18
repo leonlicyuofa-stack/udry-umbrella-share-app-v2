@@ -15,13 +15,14 @@ import {
 import { Input } from "@/components/ui/input";
 import { useAuth } from "@/contexts/auth-context";
 import { signInSchema, type SignInFormData } from "@/lib/types";
-import { Loader2 } from "lucide-react";
+import { Loader2, Info } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
 import { Separator } from "@/components/ui/separator";
 import { useToast } from "@/hooks/use-toast";
 import { useLanguage } from "@/contexts/language-context";
 import { SocialLoginButtons } from "./social-login-buttons";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 export function SignInForm() {
   const { signInWithEmail, loading: authLoading } = useAuth();
@@ -66,6 +67,14 @@ export function SignInForm() {
 
   return (
     <div className="space-y-6">
+      <Alert>
+        <Info className="h-4 w-4" />
+        <AlertTitle>{translate('auth_consistency_warning_title')}</AlertTitle>
+        <AlertDescription>
+          {translate('auth_consistency_warning_desc')}
+        </AlertDescription>
+      </Alert>
+
       <SocialLoginButtons />
 
       <div className="relative">
@@ -74,7 +83,7 @@ export function SignInForm() {
         </div>
         <div className="relative flex justify-center text-xs uppercase">
           <span className="bg-background px-2 text-muted-foreground">
-            Or continue with
+            {translate('or_continue_with')}
           </span>
         </div>
       </div>
@@ -86,9 +95,9 @@ export function SignInForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{translate('email_label')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="your@email.com" {...field} type="email" disabled={isLoading} />
+                  <Input placeholder={translate('email_placeholder')} {...field} type="email" disabled={isLoading} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -100,7 +109,7 @@ export function SignInForm() {
             render={({ field }) => (
               <FormItem>
                 <div className="flex items-center justify-between">
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel>{translate('password_label')}</FormLabel>
                   <Button variant="link" asChild className="px-0.5 h-auto text-xs">
                     <Link href="/auth/forgot-password">
                       Forgot password?
@@ -116,15 +125,15 @@ export function SignInForm() {
           />
           <Button type="submit" className="w-full" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Sign In
+            {translate('signin_button')}
           </Button>
         </form>
       </Form>
 
       <p className="text-center text-sm text-muted-foreground pt-4">
-        Don&apos;t have an account?{' '}
+        {translate('dont_have_account_prompt')}{' '}
         <Button variant="link" asChild className="px-0.5">
-          <Link href="/auth/signup">Sign up</Link>
+          <Link href="/auth/signup">{translate('signup')}</Link>
         </Button>
       </p>
     </div>
