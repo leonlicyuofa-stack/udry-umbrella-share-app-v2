@@ -1,6 +1,6 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { initializeAuth, indexedDBLocalPersistence, browserPopupRedirectResolver, type Auth } from 'firebase/auth';
+import { initializeAuth, getAuth, indexedDBLocalPersistence, browserLocalPersistence, browserPopupRedirectResolver, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
 
@@ -47,11 +47,20 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     
     const db = getFirestore(app);
     
-    // Use initializeAuth with indexedDBLocalPersistence for Capacitor compatibility
-    const auth = initializeAuth(app, {
-      persistence: indexedDBLocalPersistence,
-      popupRedirectResolver: browserPopupRedirectResolver // ADDED: Fix for Capacitor redirects
-    });
+    // Use initializeAuth with a persistence array for robustness.
+    // This tries IndexedDB first and falls back to localStorage if needed.
+    let auth: Auth;
+    try {
+      auth = initializeAuth(app, {
+        persistence: [indexedDBLocalPersistence, browserLocalPersistence],
+        popupRedirectResolver: browserPopupRedirectResolver,
+      });
+    } catch (error) {
+      // This can happen during hot-reloads in Next.js.
+      // If initialization fails because it's already been done, just get the existing instance.
+      console.warn("Firebase auth already initialized, getting existing instance. Error:", error);
+      auth = getAuth(app);
+    }
 
     const functions = getFunctions(app);
 
