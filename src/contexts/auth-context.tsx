@@ -3,7 +3,7 @@
 "use client";
 
 import type React from 'react';
-import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect, useRef } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   onAuthStateChanged,
@@ -21,6 +21,7 @@ import {
   GoogleAuthProvider,
   OAuthProvider,
   signInWithPopup,
+  linkWithPopup,
 } from 'firebase/auth';
 import {
   doc,
@@ -48,6 +49,7 @@ import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle }
 import { Button } from '@/components/ui/button';
 import { httpsCallable } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
+import { LinkAccountsDialog } from '@/components/auth/link-accounts-dialog';
 
 // --- GRANDFATHER CLAUSE ---
 const GRANDFATHER_CLAUSE_TIMESTAMP = 1732492800000; // Nov 25, 2025
@@ -164,6 +166,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isFirebaseError, setIsFirebaseError] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [isSendingVerification, setIsSendingVerification] = useState(false);
+  
+  // New state for account linking flow
+  const [showLinkAccountsDialog, setShowLinkAccountsDialog] = useState(false);
+  const [isLinking, setIsLinking] = useState(false);
+  const previousFirestoreUser = useRef<User | null>(null);
 
   // ── Firebase init & auth listener ──────────────────────────────────────────
   useEffect(() => {
@@ -223,7 +230,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       let userData: User | null = null;
 
       if (docSnap.exists()) {
-        userData = docSnap.data() as User;
+        userData = { uid: docSnap.id, ...docSnap.data() } as User;
         setFirestoreUser(userData);
         setActiveRental(userData.activeRental || null);
       } else {
@@ -247,6 +254,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           setShowSignUpSuccess(true);
         }
       }
+
+      // Logic to trigger the "Link Account" dialog
+      if (previousFirestoreUser.current && userData) {
+        const oldDeposit = previousFirestoreUser.current.deposit || 0;
+        const newDeposit = userData.deposit || 0;
+        if (oldDeposit < 100 && newDeposit >= 100) {
+            const providerId = firebaseUser.providerData?.[0]?.providerId;
+            if (providerId === 'password') {
+                setShowLinkAccountsDialog(true);
+            }
+        }
+      }
+      previousFirestoreUser.current = userData;
+
 
       const creationTime = firebaseUser.metadata?.creationTime
         ? new Date(firebaseUser.metadata.creationTime).getTime()
@@ -287,14 +308,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     return signInWithEmailAndPassword(firebaseServices.auth, email, password);
   };
 
-  // ── Social sign-in — same pattern as the working standalone test ───────────
   const socialSignIn = async (provider: GoogleAuthProvider | OAuthProvider) => {
     if (!firebaseServices?.auth) {
       throw new Error("Auth service not available.");
     }
     try {
-      // On native Capacitor, redirect flow is needed.
-      // On web (including Firebase Hosting), popup works reliably.
       if (Capacitor.isNativePlatform()) {
         const { signInWithRedirect } = await import('firebase/auth');
         await signInWithRedirect(firebaseServices.auth, provider);
@@ -331,6 +349,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     provider.addScope('name');
     await socialSignIn(provider);
   };
+  
+  const linkAccount = async (provider: GoogleAuthProvider | OAuthProvider) => {
+    if (!firebaseServices?.auth.currentUser) {
+        toast({ variant: 'destructive', title: 'Error', description: 'You must be signed in to link an account.'});
+        return;
+    }
+    setIsLinking(true);
+    try {
+        await linkWithPopup(firebaseServices.auth.currentUser, provider);
+        toast({ title: 'Success', description: 'Your account has been successfully linked.'});
+        setShowLinkAccountsDialog(false);
+    } catch (error: any) {
+        let description = 'An unknown error occurred.';
+        if (error.code === 'auth/credential-already-in-use') {
+            description = 'This social account is already linked to another U-Dry account. Please sign in with that account instead.';
+        } else if (error.code === 'auth/popup-closed-by-user' || error.code === 'auth/cancelled-popup-request') {
+            description = 'The linking process was cancelled.';
+        }
+        toast({ variant: 'destructive', title: 'Linking Failed', description });
+    } finally {
+        setIsLinking(false);
+    }
+  }
+
+  const linkGoogleAccount = async () => {
+      const provider = new GoogleAuthProvider();
+      await linkAccount(provider);
+  };
+
+  const linkAppleAccount = async () => {
+      const provider = new OAuthProvider('apple.com');
+      await linkAccount(provider);
+  };
+
 
   const signOut = async () => {
     if (!firebaseServices?.auth) return;
@@ -495,6 +547,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   return (
     <AuthContext.Provider value={value}>
       {children}
+      <LinkAccountsDialog 
+        isOpen={showLinkAccountsDialog}
+        onOpenChange={setShowLinkAccountsDialog}
+        onLinkGoogle={linkGoogleAccount}
+        onLinkApple={linkAppleAccount}
+        isLinking={isLinking}
+      />
     </AuthContext.Provider>
   );
 }
