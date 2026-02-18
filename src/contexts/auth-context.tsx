@@ -21,6 +21,7 @@ import {
   signInWithRedirect,
   OAuthProvider,
   getRedirectResult,
+  signInWithPopup,
 } from 'firebase/auth';
 import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, onSnapshot, updateDoc as firestoreUpdateDoc, query, writeBatch, type Firestore, addDoc, GeoPoint, arrayUnion, orderBy, limit, getDocs, increment } from 'firebase/firestore';
 import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase';
@@ -32,6 +33,7 @@ import { AlertTriangle, Loader2, MailCheck, ShieldAlert, LogOut, ArrowRightCircl
 import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { httpsCallable } from 'firebase/functions';
+import { Capacitor } from '@capacitor/core';
 
 // --- IMPORTANT: GRANDFATHER CLAUSE ---
 const GRANDFATHER_CLAUSE_TIMESTAMP = 1732492800000; // Corresponds to Nov 25, 2025
@@ -290,27 +292,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       throw new Error("Auth service not available.");
     }
     try {
-      await signInWithRedirect(firebaseServices.auth, provider);
+      if (Capacitor.isNativePlatform()) {
+        await signInWithRedirect(firebaseServices.auth, provider);
+      } else {
+        await signInWithPopup(firebaseServices.auth, provider);
+      }
     } catch (error: any) {
-      console.error("signInWithRedirect call failed:", error);
-      toast({
-        variant: "destructive",
-        title: "Sign-In Initialization Failed",
-        description: `Could not start the sign-in process. Error: ${error.code} - ${error.message}`,
-        duration: 9000,
-      });
+      console.error("Social sign-in failed:", error);
+      if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+        toast({
+          variant: "destructive",
+          title: "Sign-In Failed",
+          description: `Could not complete sign-in. (${error.code})`,
+          duration: 9000,
+        });
+      }
       throw error;
     }
   };
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
-    return socialSignIn(provider);
+    await socialSignIn(provider);
   };
   
   const signInWithApple = async () => {
     const provider = new OAuthProvider('apple.com');
-    return socialSignIn(provider);
+    await socialSignIn(provider);
   };
   
   const dismissSignUpSuccess = () => setShowSignUpSuccess(false);
