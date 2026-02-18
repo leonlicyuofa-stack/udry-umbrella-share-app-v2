@@ -1,4 +1,3 @@
-
 // src/contexts/auth-context.tsx
 "use client";
 
@@ -166,9 +165,22 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     };
     
     getRedirectResult(services.auth)
+      .then((result) => {
+        if (result?.user) {
+          // Redirect result was successfully captured.
+          // onAuthStateChanged will also fire, but explicitly logging helps debugging.
+          console.log("getRedirectResult: Social sign-in successful for", result.user.email);
+        }
+      })
       .catch((error) => {
         console.error("Error from getRedirectResult:", error);
-        toast({ variant: 'destructive', title: 'Sign-in Error', description: 'Could not process sign-in from provider.' });
+        if (error.code !== 'auth/cancelled-popup-request') {
+          toast({ 
+            variant: 'destructive', 
+            title: 'Sign-in Error', 
+            description: 'Could not process sign-in from provider.' 
+          });
+        }
       })
       .finally(() => {
         isRedirectReady.current = true;
@@ -190,16 +202,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [toast]);
   
   useEffect(() => {
-    if (isLoading) {
-      return;
-    }
+    if (isLoading) return;
 
     const isAuthPage = pathname.startsWith('/auth');
     const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
-    
+
     if (firebaseUser) {
-      if (isVerified && isAuthPage) {
-        router.replace('/home');
+      if (isAuthPage) {
+        // Social login users: redirect immediately, no email verification needed
+        // Email users: only redirect if verified
+        const provider = firebaseUser.providerData?.[0]?.providerId;
+        const isSocialUser = provider === 'google.com' || provider === 'apple.com';
+        if (isSocialUser || isVerified) {
+          router.replace('/home');
+        }
       }
     } else {
       if (isProtectedRoute) {
