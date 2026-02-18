@@ -1,8 +1,9 @@
+
 // src/contexts/auth-context.tsx
 "use client";
 
 import type React from 'react';
-import { createContext, useContext, useState, ReactNode, useCallback, useEffect, useRef } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import {
   onAuthStateChanged,
@@ -18,14 +19,27 @@ import {
   type User as FirebaseUser,
   type UserCredential,
   GoogleAuthProvider,
-  signInWithRedirect,
   OAuthProvider,
-  getRedirectResult,
   signInWithPopup,
 } from 'firebase/auth';
-import { doc, getDoc, setDoc, updateDoc, serverTimestamp, collection, onSnapshot, updateDoc as firestoreUpdateDoc, query, writeBatch, type Firestore, addDoc, GeoPoint, arrayUnion, orderBy, limit, getDocs, increment } from 'firebase/firestore';
+import {
+  doc,
+  setDoc,
+  updateDoc,
+  serverTimestamp,
+  onSnapshot,
+  arrayUnion,
+  increment,
+  writeBatch,
+} from 'firebase/firestore';
 import { initializeFirebaseServices, type FirebaseServices } from '@/lib/firebase';
-import type { SignUpFormData, SignInFormData, ChangePasswordFormData, User, Stall, ActiveRental, RentalHistory, RentalLog, MachineLog } from "@/lib/types";
+import type {
+  SignUpFormData,
+  SignInFormData,
+  ChangePasswordFormData,
+  User,
+  ActiveRental,
+} from "@/lib/types";
 import { useToast } from '@/hooks/use-toast';
 import { useLanguage } from '@/contexts/language-context';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
@@ -35,15 +49,14 @@ import { Button } from '@/components/ui/button';
 import { httpsCallable } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
 
-// --- IMPORTANT: GRANDFATHER CLAUSE ---
-const GRANDFATHER_CLAUSE_TIMESTAMP = 1732492800000; // Corresponds to Nov 25, 2025
-
+// --- GRANDFATHER CLAUSE ---
+const GRANDFATHER_CLAUSE_TIMESTAMP = 1732492800000; // Nov 25, 2025
 
 interface AuthContextType {
   user: User | null;
   isReady: boolean;
   loading: boolean;
-  isVerified: boolean; 
+  isVerified: boolean;
   activeRental: ActiveRental | null;
   isLoadingRental: boolean;
   startRental: (rental: Omit<ActiveRental, 'logs'>) => Promise<void>;
@@ -62,25 +75,23 @@ interface AuthContextType {
   useFirstFreeRental: () => Promise<void>;
   showSignUpSuccess: boolean;
   dismissSignUpSuccess: () => void;
-  logMachineEvent: (logData: { stallId?: string; type: MachineLog['type']; message: string; }) => Promise<void>;
+  logMachineEvent: (logData: { stallId?: string; type: 'sent' | 'received' | 'info' | 'error'; message: string; }) => Promise<void>;
   firebaseServices: FirebaseServices | null;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
 function FirebaseConfigurationError() {
-  const { translate } = useLanguage();
   return (
     <div className="flex items-center justify-center h-[calc(100vh-10rem)] p-4">
       <Alert variant="destructive" className="max-w-3xl">
         <AlertTriangle className="h-4 w-4" />
         <AlertTitle>Firebase Configuration Error</AlertTitle>
         <AlertDescription>
-          <p className="mb-2">The application could not connect to Firebase services. This is usually because the necessary configuration keys are missing or incorrect.</p>
+          <p className="mb-2">The application could not connect to Firebase services.</p>
           <ul className="list-disc pl-5 space-y-1 text-xs">
-            <li><strong>Action Required:</strong> Please ensure all `NEXT_PUBLIC_FIREBASE_*` variables are correctly set in your environment.</li>
-            <li>If the issue persists, ensure all keys are correctly set in your environment.</li>
-            <li>You may need to restart the development server or re-deploy for changes to take effect.</li>
+            <li>Ensure all Firebase config values are correct in <code>src/lib/firebase.ts</code>.</li>
+            <li>Restart the dev server or redeploy after any changes.</li>
           </ul>
         </AlertDescription>
       </Alert>
@@ -88,50 +99,56 @@ function FirebaseConfigurationError() {
   );
 }
 
-function EmailVerificationPrompt({ onResend, onSignOut, isSending }: { onResend: () => void, onSignOut: () => void, isSending: boolean }) {
+function EmailVerificationPrompt({
+  onResend,
+  onSignOut,
+  isSending,
+}: {
+  onResend: () => void;
+  onSignOut: () => void;
+  isSending: boolean;
+}) {
   const { user } = useAuth();
-  
   return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-secondary/30 p-4">
-          <Card className="w-full max-w-lg shadow-xl">
-              <CardHeader className="text-center">
-                  <MailCheck className="mx-auto h-12 w-12 text-primary" />
-                  <CardTitle className="mt-4 text-2xl">Please Verify Your Email</CardTitle>
-                  <CardDescription>
-                      We've sent a verification link to <strong>{user?.email}</strong>. Please check your inbox and spam folder.
-                  </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                   <Alert>
-                      <ShieldAlert className="h-4 w-4" />
-                      <AlertTitle>Why am I seeing this?</AlertTitle>
-                      <AlertDescription>
-                         To protect your account, email verification is required for all new users before accessing the app.
-                      </AlertDescription>
-                  </Alert>
-                  <p className="text-sm text-center text-muted-foreground">
-                      Once your email is verified, click the 'Continue' button below to sign in again with your verified account.
-                  </p>
-              </CardContent>
-              <CardFooter className="flex flex-col sm:flex-row gap-2">
-                   <Button onClick={onResend} disabled={isSending} className="w-full sm:w-auto">
-                      {isSending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                      Resend Verification Email
-                  </Button>
-                  <Button onClick={onSignOut} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
-                      <ArrowRightCircle className="mr-2 h-4 w-4" />
-                      I've Verified, Continue to Sign-In
-                  </Button>
-                  <Button variant="outline" onClick={onSignOut} className="w-full sm:w-auto">
-                      <LogOut className="mr-2 h-4 w-4" />
-                      Sign Out
-                  </Button>
-              </CardFooter>
-          </Card>
-      </div>
+    <div className="flex min-h-screen flex-col items-center justify-center bg-secondary/30 p-4">
+      <Card className="w-full max-w-lg shadow-xl">
+        <CardHeader className="text-center">
+          <MailCheck className="mx-auto h-12 w-12 text-primary" />
+          <CardTitle className="mt-4 text-2xl">Please Verify Your Email</CardTitle>
+          <CardDescription>
+            We&apos;ve sent a verification link to <strong>{user?.email}</strong>. Please check your inbox and spam folder.
+          </CardDescription>
+        </CardHeader>
+        <CardContent className="space-y-4">
+          <Alert>
+            <ShieldAlert className="h-4 w-4" />
+            <AlertTitle>Why am I seeing this?</AlertTitle>
+            <AlertDescription>
+              Email verification is required for all new users before accessing the app.
+            </AlertDescription>
+          </Alert>
+          <p className="text-sm text-center text-muted-foreground">
+            Once verified, click &apos;Continue&apos; below to sign in with your verified account.
+          </p>
+        </CardContent>
+        <CardFooter className="flex flex-col sm:flex-row gap-2">
+          <Button onClick={onResend} disabled={isSending} className="w-full sm:w-auto">
+            {isSending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+            Resend Verification Email
+          </Button>
+          <Button onClick={onSignOut} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
+            <ArrowRightCircle className="mr-2 h-4 w-4" />
+            I&apos;ve Verified, Continue
+          </Button>
+          <Button variant="outline" onClick={onSignOut} className="w-full sm:w-auto">
+            <LogOut className="mr-2 h-4 w-4" />
+            Sign Out
+          </Button>
+        </CardFooter>
+      </Card>
+    </div>
   );
 }
-
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [firebaseUser, setFirebaseUser] = useState<FirebaseUser | null>(null);
@@ -147,10 +164,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isFirebaseError, setIsFirebaseError] = useState(false);
   const [isVerified, setIsVerified] = useState(false);
   const [isSendingVerification, setIsSendingVerification] = useState(false);
-  
-  const isAuthReady = useRef(false);
-  const isRedirectReady = useRef(false);
 
+  // ── Firebase init & auth listener ──────────────────────────────────────────
   useEffect(() => {
     const services = initializeFirebaseServices();
     if (!services) {
@@ -159,35 +174,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       return;
     }
     setFirebaseServices(services);
-    
-    const checkInitialState = () => {
-      if (isAuthReady.current && isRedirectReady.current) {
-        setIsLoading(false);
-      }
-    };
-    
-    getRedirectResult(services.auth)
-      .then((result) => {
-        if (result?.user) {
-          // Redirect result was successfully captured.
-          // onAuthStateChanged will also fire, but explicitly logging helps debugging.
-          console.log("getRedirectResult: Social sign-in successful for", result.user.email);
-        }
-      })
-      .catch((error) => {
-        console.error("Error from getRedirectResult:", error);
-        if (error.code !== 'auth/cancelled-popup-request') {
-          toast({ 
-            variant: 'destructive', 
-            title: 'Sign-in Error', 
-            description: 'Could not process sign-in from provider.' 
-          });
-        }
-      })
-      .finally(() => {
-        isRedirectReady.current = true;
-        checkInitialState();
-      });
 
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
       setFirebaseUser(user);
@@ -196,23 +182,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setActiveRental(null);
         setIsVerified(false);
       }
-      isAuthReady.current = true;
-      checkInitialState();
+      setIsLoading(false);
     });
 
     return () => unsubscribeAuth();
-  }, [toast]);
-  
+  }, []);
+
+  // ── Redirect logic ─────────────────────────────────────────────────────────
   useEffect(() => {
     if (isLoading) return;
 
     const isAuthPage = pathname.startsWith('/auth');
-    const isProtectedRoute = !isAuthPage && !pathname.startsWith('/payment') && !pathname.startsWith('/diag');
+    const isProtectedRoute =
+      !isAuthPage &&
+      !pathname.startsWith('/payment') &&
+      !pathname.startsWith('/diag');
 
     if (firebaseUser) {
       if (isAuthPage) {
-        // Social login users: redirect immediately, no email verification needed
-        // Email users: only redirect if verified
+        // Social users skip email verification — redirect immediately
         const provider = firebaseUser.providerData?.[0]?.providerId;
         const isSocialUser = provider === 'google.com' || provider === 'apple.com';
         if (isSocialUser || isVerified) {
@@ -226,16 +214,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   }, [isLoading, firebaseUser, isVerified, pathname, router]);
 
-
+  // ── Firestore user doc listener ────────────────────────────────────────────
   useEffect(() => {
-    if (!firebaseServices || !firebaseUser) {
-      if (!firebaseUser) setIsLoading(false);
-      return;
-    }
-    
+    if (!firebaseServices || !firebaseUser) return;
+
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
     const unsubscribeUserDoc = onSnapshot(userDocRef, async (docSnap) => {
       let userData: User | null = null;
+
       if (docSnap.exists()) {
         userData = docSnap.data() as User;
         setFirestoreUser(userData);
@@ -262,18 +248,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         }
       }
 
-      const creationTime = firebaseUser.metadata?.creationTime ? new Date(firebaseUser.metadata.creationTime).getTime() : 0;
+      const creationTime = firebaseUser.metadata?.creationTime
+        ? new Date(firebaseUser.metadata.creationTime).getTime()
+        : 0;
       const isExistingUser = creationTime < GRANDFATHER_CLAUSE_TIMESTAMP;
       const isSuperAdmin = firebaseUser.email === 'admin@u-dry.com';
-      const isUserVerified = firebaseUser.emailVerified || isExistingUser || isSuperAdmin || userData?.isManuallyVerified === true;
-      
+      const isUserVerified =
+        firebaseUser.emailVerified ||
+        isExistingUser ||
+        isSuperAdmin ||
+        userData?.isManuallyVerified === true;
+
       setIsVerified(isUserVerified);
-      
     });
 
     return () => unsubscribeUserDoc();
   }, [firebaseUser, firebaseServices]);
-  
+
+  // ── Auth functions ─────────────────────────────────────────────────────────
+
   const signUpWithEmail = async ({ name, email, password }: SignUpFormData) => {
     if (!firebaseServices?.auth || !firebaseServices.db) return;
     try {
@@ -287,19 +280,33 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
+  const dismissSignUpSuccess = () => setShowSignUpSuccess(false);
+
+  const signInWithEmail = async ({ email, password }: SignInFormData) => {
+    if (!firebaseServices?.auth) return Promise.reject(new Error("Auth service not available."));
+    return signInWithEmailAndPassword(firebaseServices.auth, email, password);
+  };
+
+  // ── Social sign-in — same pattern as the working standalone test ───────────
   const socialSignIn = async (provider: GoogleAuthProvider | OAuthProvider) => {
     if (!firebaseServices?.auth) {
       throw new Error("Auth service not available.");
     }
     try {
+      // On native Capacitor, redirect flow is needed.
+      // On web (including Firebase Hosting), popup works reliably.
       if (Capacitor.isNativePlatform()) {
+        const { signInWithRedirect } = await import('firebase/auth');
         await signInWithRedirect(firebaseServices.auth, provider);
       } else {
         await signInWithPopup(firebaseServices.auth, provider);
       }
     } catch (error: any) {
       console.error("Social sign-in failed:", error);
-      if (error.code !== 'auth/popup-closed-by-user' && error.code !== 'auth/cancelled-popup-request') {
+      if (
+        error.code !== 'auth/popup-closed-by-user' &&
+        error.code !== 'auth/cancelled-popup-request'
+      ) {
         toast({
           variant: "destructive",
           title: "Sign-In Failed",
@@ -313,19 +320,16 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const signInWithGoogle = async () => {
     const provider = new GoogleAuthProvider();
+    provider.addScope('email');
+    provider.addScope('profile');
     await socialSignIn(provider);
   };
-  
+
   const signInWithApple = async () => {
     const provider = new OAuthProvider('apple.com');
+    provider.addScope('email');
+    provider.addScope('name');
     await socialSignIn(provider);
-  };
-  
-  const dismissSignUpSuccess = () => setShowSignUpSuccess(false);
-
-  const signInWithEmail = async ({ email, password }: SignInFormData) => {
-    if (!firebaseServices?.auth) return Promise.reject(new Error("Auth service not available."));
-    return signInWithEmailAndPassword(firebaseServices.auth, email, password);
   };
 
   const signOut = async () => {
@@ -340,212 +344,146 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const sendPasswordReset = async (email: string) => {
     if (!firebaseServices?.auth) {
-        toast({ variant: 'destructive', title: 'Error', description: 'Authentication service not available.'});
-        throw new Error('Auth service not available.');
+      toast({ variant: 'destructive', title: 'Error', description: 'Authentication service not available.' });
+      throw new Error('Auth service not available.');
     }
     try {
-        await sendPasswordResetEmail(firebaseServices.auth, email);
-        toast({ title: 'Password Reset Email Sent', description: `If an account exists for ${email}, a password reset link has been sent.`});
+      await sendPasswordResetEmail(firebaseServices.auth, email);
+      toast({ title: 'Password Reset Email Sent', description: `If an account exists for ${email}, a reset link has been sent.` });
     } catch (error: any) {
-        toast({ variant: 'destructive', title: 'Error Sending Reset Email', description: error.message });
-        throw error;
+      toast({ variant: 'destructive', title: 'Error Sending Reset Email', description: error.message });
+      throw error;
     }
   };
 
   const sendVerificationEmail = async () => {
     if (!firebaseServices?.auth.currentUser) {
-        toast({ variant: "destructive", title: "Error", description: "You must be logged in to send a verification email." });
-        throw new Error("User not logged in.");
+      toast({ variant: "destructive", title: "Error", description: "You must be logged in to send a verification email." });
+      throw new Error("User not logged in.");
     }
     setIsSendingVerification(true);
     try {
-        await sendEmailVerification(firebaseServices.auth.currentUser);
-        toast({ title: "Email Sent!", description: "A new verification link has been sent to your email address." });
+      await sendEmailVerification(firebaseServices.auth.currentUser);
+      toast({ title: "Email Sent!", description: "A new verification link has been sent to your email address." });
     } catch (error: any) {
-        let message = "An unknown error occurred.";
-        if (error.code === 'auth/too-many-requests') {
-            message = "You have requested a verification email too many times recently. Please wait a few minutes before trying again."
-        }
-        toast({ variant: "destructive", title: "Could Not Send Email", description: message });
-        throw error;
+      let message = "An unknown error occurred.";
+      if (error.code === 'auth/too-many-requests') {
+        message = "You've requested too many verification emails recently. Please wait a few minutes.";
+      }
+      toast({ variant: 'destructive', title: 'Error Sending Email', description: message });
+      throw error;
     } finally {
-        setIsSendingVerification(false);
+      setIsSendingVerification(false);
     }
   };
 
-  const changeUserPassword = async (data: ChangePasswordFormData) => {
-    if (!firebaseUser || !firebaseServices?.auth.currentUser) return;
-    if (data.newPassword !== data.confirmNewPassword) {
-      toast({ variant: "destructive", title: translate('toast_password_mismatch') });
-      throw new Error("Passwords don't match");
-    }
-    try {
-      const credential = EmailAuthProvider.credential(firebaseServices.auth.currentUser.email!, data.currentPassword);
-      await reauthenticateWithCredential(firebaseServices.auth.currentUser, credential);
-      await updatePassword(firebaseServices.auth.currentUser, data.newPassword);
-      toast({ title: translate('toast_password_change_success_title'), description: translate('toast_password_change_success_desc') });
-    } catch (error: any) {
-      toast({ variant: "destructive", title: translate('toast_password_change_error_title'), description: translate('toast_password_change_error_desc') });
-      throw error;
-    }
+  const changeUserPassword = async ({ currentPassword, newPassword }: ChangePasswordFormData) => {
+    if (!firebaseServices?.auth.currentUser?.email) throw new Error("Not authenticated.");
+    const credential = EmailAuthProvider.credential(firebaseServices.auth.currentUser.email, currentPassword);
+    await reauthenticateWithCredential(firebaseServices.auth.currentUser, credential);
+    await updatePassword(firebaseServices.auth.currentUser, newPassword);
+    toast({ title: "Password Updated", description: "Your password has been changed successfully." });
   };
-  
+
   const addBalance = async (amount: number) => {
-    if (!firebaseUser || !firebaseServices?.db) return;
+    if (!firebaseServices || !firebaseUser) throw new Error("Not authenticated.");
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
     await updateDoc(userDocRef, { balance: increment(amount) });
-    toast({ title: "Balance Added", description: `HK$${amount.toFixed(2)} was added to your account.` });
   };
-  
+
   const setDeposit = async () => {
-    if (!firebaseUser || !firebaseServices?.db) return;
+    if (!firebaseServices || !firebaseUser) throw new Error("Not authenticated.");
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
     await updateDoc(userDocRef, { deposit: 100 });
-    toast({ title: "Deposit Paid", description: "Your HK$100 deposit has been successfully recorded." });
   };
 
   const requestDepositRefund = async () => {
-    if (!firebaseServices?.functions) {
-        toast({ variant: 'destructive', title: 'Error', description: 'Cannot connect to refund service.' });
-        throw new Error('Functions service not available');
-    }
-    try {
-        const requestRefundFunction = httpsCallable(firebaseServices.functions, 'requestDepositRefund');
-        const result = await requestRefundFunction();
-        const data = result.data as { success: boolean, message: string };
-        if (data.success) {
-            toast({ title: 'Refund Successful', description: data.message });
-        } else {
-            throw new Error(data.message);
-        }
-    } catch (error: any) {
-        toast({ variant: 'destructive', title: 'Refund Failed', description: error.message });
-        throw error;
-    }
+    if (!firebaseServices?.functions) throw new Error("Functions not available.");
+    const refundFn = httpsCallable(firebaseServices.functions, 'requestDepositRefund');
+    await refundFn();
   };
-  
+
   const useFirstFreeRental = async () => {
-      if (!firebaseUser || !firebaseServices?.db) return;
-      const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
-      await updateDoc(userDocRef, { hasHadFirstFreeRental: true });
+    if (!firebaseServices || !firebaseUser) throw new Error("Not authenticated.");
+    const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
+    await updateDoc(userDocRef, { hasHadFirstFreeRental: true });
   };
-  
+
   const startRental = async (rental: Omit<ActiveRental, 'logs'>) => {
-      if (!firebaseUser || !firebaseServices?.db) return;
-      
-      const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
-      const stallDocRef = doc(firebaseServices.db, 'stalls', rental.stallId);
-      
-      const stallSnap = await getDoc(stallDocRef);
-      if (!stallSnap.exists() || stallSnap.data().availableUmbrellas <= 0) {
-          toast({ variant: "destructive", title: "Rental Failed", description: "No umbrellas available at this stall."});
-          return;
-      }
-      
-      const newActiveRental: ActiveRental = { ...rental, logs: [] };
-
-      const batch = writeBatch(firebaseServices.db);
-      batch.update(userDocRef, { activeRental: newActiveRental });
-      batch.update(stallDocRef, {
-        availableUmbrellas: increment(-1),
-        nextActionSlot: increment(1)
-      });
-
-      await batch.commit();
-      
-      toast({ title: "Rental Started!", description: `You have rented an umbrella from ${rental.stallName}.` });
+    if (!firebaseServices || !firebaseUser) throw new Error("Not authenticated.");
+    const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
+    await updateDoc(userDocRef, { activeRental: { ...rental, logs: [] } });
   };
 
   const endRental = async (returnedToStallId: string) => {
-    if (!firebaseUser || !activeRental || !firebaseServices) {
-      console.error("[endRental] Pre-condition failed: Missing user, active rental, or Firebase services.");
-      return;
-    }
-
-    try {
-      const endRentalTransaction = httpsCallable(firebaseServices.functions, 'endRentalTransaction');
-      const result = await endRentalTransaction({
-        returnedToStallId: returnedToStallId,
-        activeRentalData: activeRental,
-      });
-      const data = result.data as { success: boolean; message?: string };
-
-      if (!data.success) {
-        throw new Error(data.message || "The server failed to process the return.");
-      }
-      toast({ title: "Return Successful", description: "Your rental has been completed." });
-    } catch (error: any) {
-      console.error("--- [endRental] CRITICAL ERROR during Cloud Function call ---", error);
-      toast({
-        variant: "destructive",
-        title: "Return Processing Error",
-        description: error.message || "Could not finalize the return. Please contact support."
-      });
-    }
+    if (!firebaseServices || !firebaseUser || !activeRental) throw new Error("No active rental.");
+    const endRentalFn = httpsCallable(firebaseServices.functions, 'endRentalTransaction');
+    await endRentalFn({ returnedToStallId, activeRentalData: activeRental });
   };
-  
-  const logMachineEvent = async ({ stallId, type, message }: { stallId?: string; type: MachineLog['type']; message: string; }) => {
-    if (!firebaseUser?.uid || !activeRental || !firebaseServices?.db) {
-      if (!firebaseUser?.uid || !firebaseServices?.db) {
-        console.warn("Cannot log machine event: no user or no DB service.");
-        return;
-      }
-    }
+
+  const logMachineEvent = async ({
+    stallId,
+    type,
+    message,
+  }: {
+    stallId?: string;
+    type: 'sent' | 'received' | 'info' | 'error';
+    message: string;
+  }) => {
+    if (!firebaseServices || !firebaseUser) return;
     const userDocRef = doc(firebaseServices.db, 'users', firebaseUser.uid);
-    const newLog: RentalLog = { type, message, timestamp: Date.now() };
-    
-    const targetStallId = stallId || activeRental?.stallId;
-    if (!targetStallId) {
-      console.error("LogMachineEvent: stallId is missing and could not be inferred from active rental.");
-      return;
-    }
-
+    const newLog = { type, message, timestamp: Date.now() };
     if (activeRental) {
-        await updateDoc(userDocRef, { 'activeRental.logs': arrayUnion(newLog) });
+      await updateDoc(userDocRef, { 'activeRental.logs': arrayUnion(newLog) });
     }
   };
-  
-  const user: User | null = firebaseUser ? {
-    ...firebaseUser,
-    ...firestoreUser,
-    uid: firebaseUser.uid, 
-  } : null;
+
+  // ── Derived user object ────────────────────────────────────────────────────
+  const user: User | null = firebaseUser
+    ? { ...firebaseUser, ...firestoreUser, uid: firebaseUser.uid }
+    : null;
 
   const value: AuthContextType = {
-    user, 
+    user,
     isReady: !isLoading,
     loading: isLoading,
     isVerified,
-    activeRental, 
+    activeRental,
     isLoadingRental: isLoading,
-    startRental, endRental, signUpWithEmail,
-    signInWithEmail, signOut, changeUserPassword, sendPasswordReset,
+    startRental,
+    endRental,
+    signUpWithEmail,
+    signInWithEmail,
     signInWithGoogle,
     signInWithApple,
+    signOut,
+    changeUserPassword,
+    sendPasswordReset,
     sendVerificationEmail,
-    addBalance, setDeposit,
+    addBalance,
+    setDeposit,
     requestDepositRefund,
-    useFirstFreeRental, showSignUpSuccess, dismissSignUpSuccess,
+    useFirstFreeRental,
+    showSignUpSuccess,
+    dismissSignUpSuccess,
     logMachineEvent,
     firebaseServices,
   };
 
-  if (isFirebaseError) {
-    return <FirebaseConfigurationError />;
-  }
+  if (isFirebaseError) return <FirebaseConfigurationError />;
 
   if (isLoading) {
     return (
-        <div className="flex h-screen w-screen items-center justify-center bg-background">
-            <Loader2 className="h-12 w-12 animate-spin text-primary" />
-        </div>
+      <div className="flex h-screen w-screen items-center justify-center bg-background">
+        <Loader2 className="h-12 w-12 animate-spin text-primary" />
+      </div>
     );
   }
-  
+
   if (user && !isVerified) {
     return (
       <AuthContext.Provider value={value}>
-        <EmailVerificationPrompt 
+        <EmailVerificationPrompt
           onResend={sendVerificationEmail}
           onSignOut={signOut}
           isSending={isSendingVerification}

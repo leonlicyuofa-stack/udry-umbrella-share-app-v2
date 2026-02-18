@@ -1,6 +1,6 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { initializeAuth, getAuth, indexedDBLocalPersistence, browserLocalPersistence, browserPopupRedirectResolver, type Auth } from 'firebase/auth';
+import { getAuth, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
 
@@ -45,23 +45,10 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     // Get the existing app instance or initialize a new one.
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     
+    // Simple getAuth — exactly what worked in the standalone test.
+    // No initializeAuth, no custom persistence, no popupRedirectResolver.
+    const auth = getAuth(app);
     const db = getFirestore(app);
-    
-    // Use initializeAuth with a persistence array for robustness.
-    // This tries IndexedDB first and falls back to localStorage if needed.
-    let auth: Auth;
-    try {
-      auth = initializeAuth(app, {
-        persistence: [indexedDBLocalPersistence, browserLocalPersistence],
-        popupRedirectResolver: browserPopupRedirectResolver,
-      });
-    } catch (error) {
-      // This can happen during hot-reloads in Next.js.
-      // If initialization fails because it's already been done, just get the existing instance.
-      console.warn("Firebase auth already initialized, getting existing instance. Error:", error);
-      auth = getAuth(app);
-    }
-
     const functions = getFunctions(app);
 
     console.log("Connecting to LIVE Production Firebase services.");

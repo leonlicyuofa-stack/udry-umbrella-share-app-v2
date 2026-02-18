@@ -1,4 +1,4 @@
-'use server';
+// 'use server' — disabled for static export
 /**
  * @fileOverview A customer support chatbot flow for the U-Dry app.
  *
