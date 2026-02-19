@@ -3,6 +3,7 @@
 const functions = require("firebase-functions");
 // Correctly use only v1 HttpsError and logger for consistency.
 const { HttpsError } = require("firebase-functions/v1/https");
+const { onCall } = require("firebase-functions/v2/https");
 const { logger } = require("firebase-functions");
 const fetch = require("node-fetch");
 const { google } = require("googleapis");
@@ -632,23 +633,23 @@ exports.requestDepositRefund = functions.runWith({ secrets: ["STRIPE_SECRET_KEY"
         await db.runTransaction(async (transaction) => {
             const userDoc = await transaction.get(userDocRef);
             if (!userDoc.exists) {
-                throw new functions.https.HttpsError('not-found', 'User data not found.');
+                throw new HttpsError('not-found', 'User data not found.');
             }
             const userData = userDoc.data();
             logger.info(`[requestDepositRefund] Fetched user data inside transaction.`, { balance: userData.balance });
             
             if (userData.activeRental) {
-                throw new functions.https.HttpsError('failed-precondition', 'Cannot refund deposit with an active rental.');
+                throw new HttpsError('failed-precondition', 'Cannot refund deposit with an active rental.');
             }
             if (userData.balance < 0) {
                 const message = `Refund denied. You must clear your negative balance of HK$${Math.abs(userData.balance).toFixed(2)} before requesting a deposit refund.`;
-                throw new functions.https.HttpsError('failed-precondition', message);
+                throw new HttpsError('failed-precondition', message);
             }
             if (!userData.deposit || userData.deposit <= 0) {
-                throw new functions.https.HttpsError('failed-precondition', 'No deposit found to refund.');
+                throw new HttpsError('failed-precondition', 'No deposit found to refund.');
             }
             if (!userData.depositPaymentIntentId) {
-                throw new functions.https.HttpsError('failed-precondition', 'Original deposit transaction ID not found. Please contact support.');
+                throw new HttpsError('failed-precondition', 'Original deposit transaction ID not found. Please contact support.');
             }
 
             logger.info(`[requestDepositRefund] All pre-flight checks passed for user ${userId}.`);
@@ -679,10 +680,10 @@ exports.requestDepositRefund = functions.runWith({ secrets: ["STRIPE_SECRET_KEY"
 
     } catch (error) {
         logger.error(`[requestDepositRefund] CRITICAL ERROR for user ${userId}:`, error);
-        if (error instanceof functions.https.HttpsError) {
+        if (error instanceof HttpsError) {
             throw error;
         }
-        throw new functions.https.HttpsError('internal', `An unexpected error occurred while processing your refund request.`);
+        throw new HttpsError('internal', `An unexpected error occurred while processing your refund request.`);
     }
 });
 
@@ -772,7 +773,7 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
     }
 });
 
-// --- AI SUPPORT CHATBOT (v1 onCall) ---
+// --- AI SUPPORT CHATBOT (v2 onCall) ---
 // Requires: GOOGLE_AI_API_KEY set as a Firebase secret
 // Set with: firebase functions:secrets:set GOOGLE_AI_API_KEY
 const UDRY_KNOWLEDGE_BASE = `
@@ -813,10 +814,10 @@ const UDRY_KNOWLEDGE_BASE = `
 - Android: yes, available on Google Play Store
 `;
 
-exports.askSupport = functions.runWith({ secrets: ["GOOGLE_AI_API_KEY"] }).https.onCall(async (data, context) => {
+exports.askSupport = onCall({ secrets: ["GOOGLE_AI_API_KEY"], invoker: "public", cors: true }, async (request) => {
     logger.info("[askSupport] Function triggered.");
 
-    const { question, language } = data;
+    const { question, language } = request.data;
 
     if (!question || typeof question !== 'string' || question.trim() === '') {
         throw new HttpsError('invalid-argument', 'A valid question is required.');
@@ -865,8 +866,8 @@ User's Question: ${question}`;
             throw new HttpsError('internal', 'AI service returned an error.');
         }
 
-        const responseData = await response.json();
-        const answer = responseData?.candidates?.[0]?.content?.parts?.[0]?.text;
+        const data = await response.json();
+        const answer = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
         if (!answer) {
             throw new HttpsError('internal', 'Empty response from AI service.');
