@@ -1,3 +1,4 @@
+
 // functions/index.js
 const functions = require("firebase-functions");
 // Correctly use only v1 HttpsError and logger for consistency.
@@ -771,4 +772,112 @@ exports.paymeWebhook = functions.https.onRequest(async (req, res) => {
     }
 });
 
-    
+// --- AI SUPPORT CHATBOT (v1 onCall) ---
+// Requires: GOOGLE_AI_API_KEY set as a Firebase secret
+// Set with: firebase functions:secrets:set GOOGLE_AI_API_KEY
+const UDRY_KNOWLEDGE_BASE = `
+**Account & Wallet**
+- App available on Apple App Store and Google Play Store.
+- Sign up with email. HK$100 deposit required to begin renting.
+- Use "Request Deposit" in Account Wallet to refund deposit.
+- If balance doesn't update, restart the app.
+
+**Finding & Renting**
+- Use the map to find nearby stations.
+- Tap "Scan & Rent" and scan the QR code on the machine.
+- If QR won't scan, close and reopen the app.
+- Select the correct machine code (e.g., "CDKJ") in the pop-up.
+- IMPORTANT: Never pull the umbrella downwards. Slide it sideways along the rail to the exit opening.
+- If the machine times out, retry the rental process.
+
+**Pricing**
+- HK$5 per hour, capped at HK$25 per 24-hour period.
+- Must return within 72 hours or HK$100 deposit is forfeited.
+- Track usage with the Active Rental timer in the app.
+
+**Returning**
+- Return to any U-Dry station with an available empty slot.
+- Scan QR code → select machine code → slide umbrella fully into rail → confirm "Return Confirmed."
+- If timer keeps running: check umbrella is fully slotted, restart app, then contact support.
+- We will investigate any timer discrepancies and only charge the correct amount.
+
+**Q&A**
+- Cost: HK$5/hr, max HK$25/day
+- Deposit: HK$100, refundable via Account Wallet
+- To remove umbrella: slide sideways along rail, never pull down
+- Machine timeout: retry rental in app
+- Balance not updated: restart app
+- QR won't scan: close and reopen app
+- Return to different station: yes, any available U-Dry station
+- Time limit: 72 hours before deposit forfeited
+- Android: yes, available on Google Play Store
+`;
+
+exports.askSupport = functions.runWith({ secrets: ["GOOGLE_AI_API_KEY"] }).https.onCall(async (data, context) => {
+    logger.info("[askSupport] Function triggered.");
+
+    const { question, language } = data;
+
+    if (!question || typeof question !== 'string' || question.trim() === '') {
+        throw new HttpsError('invalid-argument', 'A valid question is required.');
+    }
+
+    const apiKey = process.env.GOOGLE_AI_API_KEY;
+    if (!apiKey) {
+        logger.error("[askSupport] GOOGLE_AI_API_KEY is not set.");
+        throw new HttpsError('internal', 'AI service is not configured.');
+    }
+
+    const lang = language || 'en';
+    const languageInstruction = lang === 'zh-HK'
+        ? 'You MUST reply in Traditional Chinese (繁體中文).'
+        : 'Reply in English.';
+
+    const prompt = `You are a helpful and friendly customer support chatbot for 'U-Dry', a smart umbrella sharing app in Hong Kong. Answer questions concisely and accurately using only the knowledge base below.
+
+U-DRY KNOWLEDGE BASE:
+${UDRY_KNOWLEDGE_BASE}
+
+Important Rules:
+1. Always briefly acknowledge the user's problem with empathy before giving a solution.
+2. For technical glitches (frozen app, timer not updating), always suggest closing and reopening the app first.
+3. ${languageInstruction}
+4. If the question is unrelated to U-Dry, politely say you can only answer U-Dry questions.
+
+User's Question: ${question}`;
+
+    try {
+        const response = await fetch(
+            `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`,
+            {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    contents: [{ parts: [{ text: prompt }] }],
+                    generationConfig: { maxOutputTokens: 500, temperature: 0.4 },
+                }),
+            }
+        );
+
+        if (!response.ok) {
+            const errText = await response.text();
+            logger.error("[askSupport] Gemini API error:", errText);
+            throw new HttpsError('internal', 'AI service returned an error.');
+        }
+
+        const responseData = await response.json();
+        const answer = responseData?.candidates?.[0]?.content?.parts?.[0]?.text;
+
+        if (!answer) {
+            throw new HttpsError('internal', 'Empty response from AI service.');
+        }
+
+        logger.info("[askSupport] Successfully generated answer.");
+        return { answer };
+
+    } catch (err) {
+        if (err instanceof HttpsError) throw err;
+        logger.error("[askSupport] Unexpected error:", err);
+        throw new HttpsError('internal', 'An unexpected error occurred.');
+    }
+});
