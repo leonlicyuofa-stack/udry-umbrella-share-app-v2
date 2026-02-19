@@ -130,10 +130,8 @@ exports.exchangeAuthCodeForToken = functions
 });
 
 
-// --- UNLOCK MACHINE FUNCTION (v1 https.onCall) ---
-exports.unlockPhysicalMachine = functions
-  .runWith({ secrets: ["UTEK_API_KEY"] })
-  .https.onCall(async (data, context) => {
+// --- UNLOCK MACHINE FUNCTION (v2 onCall) ---
+exports.unlockPhysicalMachine = onCall({ secrets: ["UTEK_API_KEY"] }, async (request) => {
     logger.info("--- unlockPhysicalMachine function triggered ---");
 
     const UTEK_API_ENDPOINT = 'https://ttj.mjyun.com/api/v2/cmd';
@@ -145,7 +143,7 @@ exports.unlockPhysicalMachine = functions
         throw new functions.https.HttpsError('internal', 'Server is missing critical machine API configuration.');
     }
 
-    const { dvid, tok, parm } = data;
+    const { dvid, tok, parm } = request.data;
     const cmd_type = '1';
 
     if (!dvid || !tok || !parm) {
