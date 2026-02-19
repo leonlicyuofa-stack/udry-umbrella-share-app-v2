@@ -36,7 +36,7 @@ const getStripe = () => {
 
 // --- SERVER-SIDE AUTH FUNCTION (v2 onCall) ---
 // This was converted from onRequest to onCall to match the client-side implementation.
-exports.exchangeAuthCodeForToken = onCall({ secrets: ["OAUTH_CLIENT_SECRET"], cors: true }, async (request) => {
+exports.exchangeAuthCodeForToken = onCall({ secrets: ["OAUTH_CLIENT_SECRET"] }, async (request) => {
     logger.info("[exchangeAuthCode] Function triggered.");
     const admin = getAdminApp();
 
@@ -792,7 +792,7 @@ const UDRY_KNOWLEDGE_BASE = `
 - Android: yes, available on Google Play Store
 `;
 
-exports.askSupport = onCall({ secrets: ["GOOGLE_AI_API_KEY"], invoker: "public", cors: true }, async (request) => {
+exports.askSupport = onCall({ secrets: ["GOOGLE_AI_API_KEY"] }, async (request) => {
     logger.info("[askSupport] Function triggered.");
 
     const { question, language } = request.data;
