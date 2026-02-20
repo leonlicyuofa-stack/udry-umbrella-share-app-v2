@@ -863,7 +863,7 @@ User's Question: ${question}`;
 });
 
 // --- WATCHDOG: Monitor user document changes ---
-exports.walletWatchdog = onDocumentWritten(
+exports.userWalletMonitor = onDocumentWritten(
   "users/{userId}",
   async (event) => {
     const db = getAdminApp().firestore();
