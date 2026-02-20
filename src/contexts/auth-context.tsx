@@ -1,4 +1,3 @@
-
 // src/contexts/auth-context.tsx
 "use client";
 
@@ -234,24 +233,40 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         setFirestoreUser(userData);
         setActiveRental(userData.activeRental || null);
       } else {
-        const newUserDoc: Omit<User, 'uid'> = {
-          email: firebaseUser.email,
-          displayName: firebaseUser.displayName,
-          photoURL: firebaseUser.photoURL,
-          deposit: 0,
-          balance: 0,
-          hasHadFirstFreeRental: false,
-          createdAt: serverTimestamp(),
-          activeRental: null,
-          depositPaymentIntentId: null,
-          isManuallyVerified: false,
-        };
-        await setDoc(userDocRef, newUserDoc);
-        userData = { uid: firebaseUser.uid, ...newUserDoc };
-        setFirestoreUser(userData);
-        setActiveRental(null);
-        if (!firebaseUser.isAnonymous) {
-          setShowSignUpSuccess(true);
+        // FIXED: Only create new document for genuinely new accounts
+        const createdAt = firebaseUser.metadata?.creationTime;
+        const accountAgeMs = createdAt
+          ? Date.now() - new Date(createdAt).getTime()
+          : 999999;
+
+        if (accountAgeMs < 60000) {
+          // New account under 60 seconds old — safe to create document
+          const newUserDoc: Omit<User, 'uid'> = {
+            email: firebaseUser.email,
+            displayName: firebaseUser.displayName,
+            photoURL: firebaseUser.photoURL,
+            deposit: 0,
+            balance: 0,
+            hasHadFirstFreeRental: false,
+            createdAt: serverTimestamp(),
+            activeRental: null,
+            depositPaymentIntentId: null,
+            isManuallyVerified: false,
+          };
+          await setDoc(userDocRef, newUserDoc);
+          userData = { uid: firebaseUser.uid, ...newUserDoc };
+          setFirestoreUser(userData);
+          setActiveRental(null);
+          if (!firebaseUser.isAnonymous) {
+            setShowSignUpSuccess(true);
+          }
+        } else {
+          // Existing user — Firestore temporarily returned not-found
+          // DO NOT overwrite — their data will reappear when connectivity restores
+          console.error(
+            "CRITICAL: Existing user document temporarily missing for uid:", 
+            firebaseUser.uid
+          );
         }
       }
 
