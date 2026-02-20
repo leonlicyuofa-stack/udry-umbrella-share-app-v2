@@ -768,7 +768,7 @@ const UDRY_KNOWLEDGE_BASE = `
 - If QR won't scan, close and reopen the app.
 - Select the correct machine code (e.g., "CDKJ") in the pop-up.
 - IMPORTANT: Never pull the umbrella downwards. Slide it sideways along the rail to the exit opening.
-- If the machine times out, retry the rental process.
+- If the machine times out, retry the rental process in the app.
 
 **Pricing**
 - HK$5 per hour, capped at HK$25 per 24-hour period.
@@ -863,7 +863,7 @@ User's Question: ${question}`;
 });
 
 // --- WATCHDOG: Monitor user document changes ---
-exports.userDocumentWatchdog = onDocumentWritten(
+exports.walletWatchdog = onDocumentWritten(
   "users/{userId}",
   async (event) => {
     const db = getAdminApp().firestore();
