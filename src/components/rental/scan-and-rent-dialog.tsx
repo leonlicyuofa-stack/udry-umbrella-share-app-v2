@@ -10,6 +10,7 @@ import { Alert, AlertTitle, AlertDescription } from '@/components/ui/alert';
 import { Html5Qrcode } from "html5-qrcode";
 import type { Stall } from '@/lib/types';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/contexts/language-context';
 
 const QR_READER_REGION_ID_RENT = "qr-reader-region-rent-dialog";
 
@@ -50,6 +51,7 @@ const extractDvid = (scannedText: string): string | null => {
 
 export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned }: ScanAndRentDialogProps) {
   const { toast } = useToast();
+  const { translate } = useLanguage();
   const html5QrCodeRef = useRef<Html5Qrcode | null>(null);
   
   const [scanState, setScanState] = useState<ScanState>('idle');
@@ -78,7 +80,7 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
     const dvid = extractDvid(decodedText);
     
     if (!dvid) {
-        toast({ variant: "destructive", title: "Invalid QR Code", description: `Could not understand the scanned code.` });
+        toast({ variant: "destructive", title: translate('toast_invalid_qr'), description: translate('toast_invalid_qr_desc') });
         setScanState('idle');
         isProcessingScan.current = false;
         return;
@@ -88,15 +90,15 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
     
     if (foundStall) {
       setScanState('complete');
-      toast({ title: "Stall Identified!", description: `Preparing to rent from ${foundStall.name}.`});
+      toast({ title: translate('toast_stall_identified'), description: translate('toast_stall_identified_desc', { stallName: foundStall.name })});
       onStallScanned(foundStall);
     } else {
-      toast({ variant: "destructive", title: "Stall Not Found", description: `Scanned code did not match a known stall. Scanned ID: ${dvid}` });
+      toast({ variant: "destructive", title: translate('toast_stall_not_found'), description: translate('toast_stall_not_found_desc', { dvid }) });
       setScanState('error');
-      setScanError(`No stall found with the ID "${dvid}". Please scan a valid U-Dry QR code.`);
+      setScanError(translate('toast_stall_not_found_desc', { dvid }));
       isProcessingScan.current = false;
     }
-  }, [stopScanner, stalls, toast, onStallScanned]);
+  }, [stopScanner, stalls, toast, onStallScanned, translate]);
 
 
   const startScanner = useCallback(async () => {
@@ -119,11 +121,11 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
       setHasCameraPermission(true);
 
     } catch (err: any) {
-        let message = "An error occurred while accessing the camera.";
+        let message = translate('report_issue_camera_error_desc_generic');
         if (err.name === "NotAllowedError") {
-            message = "Camera permission denied. Please enable camera access in your browser settings.";
+            message = translate('report_issue_camera_permission_denied');
         } else if (err.name === "NotFoundError") {
-            message = "No camera found on this device.";
+            message = translate('report_issue_camera_not_found');
         }
         setScanError(message);
         setScanState('error');
@@ -142,11 +144,11 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
           onScanSuccess,
           () => { /* Ignore non-match errors */ }
         ).catch(err => {
-          setScanError("Failed to start QR scanner. Please ensure camera permissions are enabled for this site.");
+          setScanError(translate('report_issue_camera_error_desc_generic'));
           setScanState('error');
         });
     }, 100);
-  }, [onScanSuccess]);
+  }, [onScanSuccess, translate]);
 
 
   useEffect(() => {
@@ -169,8 +171,8 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
     <Dialog open={isOpen} onOpenChange={handleClose}>
       <DialogContent className="sm:max-w-md">
         <DialogHeader>
-          <DialogTitle className="flex items-center"><QrCode className="mr-2 h-5 w-5"/> Scan to Rent</DialogTitle>
-          <DialogDescription>Point your camera at the QR code on any U-Dry machine to begin.</DialogDescription>
+          <DialogTitle className="flex items-center"><QrCode className="mr-2 h-5 w-5"/> {translate('scan_rent_dialog_title')}</DialogTitle>
+          <DialogDescription>{translate('scan_rent_dialog_desc')}</DialogDescription>
         </DialogHeader>
         
         <div className="py-4 space-y-4">
@@ -181,25 +183,25 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
                {scanState === 'initializing' && (
                   <div>
                     <Loader2 className="h-8 w-8 mx-auto animate-spin mb-2" />
-                    <p>Requesting camera access...</p>
+                    <p>{translate('scan_rent_dialog_initializing')}</p>
                   </div>
                 )}
                 {scanState === 'complete' && (
                   <div>
                     <CheckCircle className="h-10 w-10 mx-auto text-green-500 mb-2" />
-                    <p>Scan successful, opening rental screen...</p>
+                    <p>{translate('scan_rent_dialog_success')}</p>
                   </div>
                 )}
                 {scanState === 'error' && (
                   <Alert variant="destructive">
                     <CameraOff className="h-4 w-4" />
-                    <AlertTitle>Camera Error</AlertTitle>
+                    <AlertTitle>{translate('scan_rent_dialog_error_title')}</AlertTitle>
                     <AlertDescription>{scanError}</AlertDescription>
                   </Alert>
                 )}
                 {scanState === 'idle' && (
                   <div className="text-muted-foreground">
-                    <p>Scanner is idle.</p>
+                    <p>{translate('scan_rent_dialog_idle')}</p>
                   </div>
                 )}
              </div>
@@ -208,9 +210,9 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
         
         <DialogFooter>
           {scanState === 'error' && (
-            <Button type="button" variant="outline" onClick={startScanner}>Try Again</Button>
+            <Button type="button" variant="outline" onClick={startScanner}>{translate('scan_rent_dialog_try_again')}</Button>
           )}
-          <Button type="button" variant="secondary" onClick={handleClose}>Cancel</Button>
+          <Button type="button" variant="secondary" onClick={handleClose}>{translate('cancel_button')}</Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>

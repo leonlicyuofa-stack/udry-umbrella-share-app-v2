@@ -29,17 +29,17 @@ type BluetoothState = 'idle' | 'initializing' | 'scanning' | 'requesting_device'
 type ConnectionStep = 'pre_confirmation' | 'connecting' | 'error';
 
 const getBluetoothStateMessages = (stall: Stall | null, translate: (key: string) => string): Record<BluetoothState, string> => ({
-  idle: "Ready to connect.",
-  initializing: "Initializing Bluetooth...",
-  scanning: "Scanning for the rental machine...",
-  requesting_device: `Searching for the machine. In the system pop-up, please select the device with the name:`,
-  connecting: "Connecting to the machine...",
-  getting_token: "Connected. Authenticating...",
-  getting_command: "Authenticated. Getting unlock command...",
-  sending_command: "Sending unlock command to machine...",
-  awaiting_final_confirmation: "Your umbrella is unlocked. Please remove it from the stall to begin your rental.",
-  success: "Command sent! Your umbrella should unlock.",
-  error: "An error occurred."
+  idle: translate('bt_state_idle'),
+  initializing: translate('bt_state_initializing'),
+  scanning: translate('bt_state_scanning'),
+  requesting_device: translate('bt_state_requesting_device'),
+  connecting: translate('bt_state_connecting'),
+  getting_token: translate('bt_state_getting_token'),
+  getting_command: translate('bt_state_getting_command'),
+  sending_command: translate('bt_state_sending_command'),
+  awaiting_final_confirmation: translate('bt_state_awaiting_confirmation'),
+  success: translate('bt_state_success'),
+  error: translate('bt_state_error')
 });
 
 interface RentalInitiationDialogProps {
@@ -183,12 +183,12 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
          setConnectionStep('error');
       }
     } else if (receivedString.startsWith("REPET:")) {
-      const errorMsg = "Machine Error: This rental action has already been processed. Please try again or select a different slot if possible.";
+      const errorMsg = translate('return_error_repet');
       setBluetoothError(errorMsg);
       setBluetoothState('error');
       setConnectionStep('error');
     }
-  }, [stall, firebaseServices, startRental, logMachineEvent]);
+  }, [stall, firebaseServices, startRental, logMachineEvent, translate]);
 
   const connectToDevice = async (deviceId: string) => {
     isIntentionalDisconnect.current = false;
@@ -255,11 +255,11 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         await connectToDevice(device.deviceId);
       }
     } catch (error: any) {
-      let errorMsg = error.message || "An unknown Bluetooth error occurred.";
+      let errorMsg = error.message || translate('bt_state_error');
        if (error.message && error.message.includes('cancelled')) {
-        errorMsg = "Device selection was cancelled.";
+        errorMsg = translate('bt_error_cancelled');
       } else if (error.message && error.message.includes('disabled')) {
-        errorMsg = "Bluetooth is disabled. Please turn it on and try again.";
+        errorMsg = translate('bt_error_disabled');
       }
       setBluetoothError(errorMsg);
       setBluetoothState('error');
@@ -275,21 +275,21 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
   const canRent = hasUmbrellas && hasDeposit && hasBalance;
 
   let cannotRentReason = '';
-  if (!user) cannotRentReason = "You must be signed in to rent.";
-  else if (!hasUmbrellas) cannotRentReason = "No umbrellas are available at this stall.";
-  else if (!hasDeposit) cannotRentReason = "A HK$100 refundable deposit is required to rent.";
-  else if (!hasBalance) cannotRentReason = "Your account balance is empty. Please add funds to rent.";
+  if (!user) cannotRentReason = translate('rent_dialog_no_user');
+  else if (!hasUmbrellas) cannotRentReason = translate('rent_dialog_no_umbrellas');
+  else if (!hasDeposit) cannotRentReason = translate('rent_dialog_no_deposit');
+  else if (!hasBalance) cannotRentReason = translate('rent_dialog_no_balance');
   
   const renderPreConfirmation = () => (
     <>
         <Alert>
-            <AlertTitle>Connection Instructions</AlertTitle>
+            <AlertTitle>{translate('rent_dialog_connection_instructions_title')}</AlertTitle>
             <AlertDescription></AlertDescription>
         </Alert>
 
         {Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'android' && (
           <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
-            <p className="text-xs font-semibold mb-2">For Android, select your device from a list that looks like this:</p>
+            <p className="text-xs font-semibold mb-2">{translate('rent_dialog_connection_instructions_android')}</p>
             <Image 
               src={imageData.android_ble_instructions.src} 
               alt={imageData.android_ble_instructions.alt}
@@ -303,7 +303,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
 
         {Capacitor.isNativePlatform() && Capacitor.getPlatform() === 'ios' && (
           <div className="mt-4 p-2 bg-secondary rounded-md flex flex-col items-center">
-            <p className="text-xs font-semibold mb-2">For iOS, select your device from a pop-up like this:</p>
+            <p className="text-xs font-semibold mb-2">{translate('rent_dialog_connection_instructions_ios')}</p>
             <Image 
               src={imageData.ios_ble_instructions.src}
               alt={imageData.ios_ble_instructions.alt}
@@ -316,9 +316,9 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         )}
 
          <p className="text-xs text-center text-muted-foreground pt-2">
-            By proceeding, you agree to our{' '}
+            {translate('rent_dialog_agree_terms')}
             <Link href="/account/terms" className="underline hover:text-primary">
-                Terms and Conditions
+                {translate('rent_dialog_terms_link')}
             </Link>.
         </p>
         <DialogFooter>
@@ -326,7 +326,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                 setConnectionStep('connecting');
                 handleConnectAndRent();
             }} disabled={!canRent} className="w-full">
-               Continue to Connection <ArrowRight className="ml-2 h-4 w-4"/>
+               {translate('rent_dialog_continue_connection')} <ArrowRight className="ml-2 h-4 w-4"/>
             </Button>
         </DialogFooter>
     </>
@@ -343,13 +343,13 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       {connectionStep === 'error' && bluetoothError && (
         <Alert variant="destructive">
           <XCircle className="h-4 w-4" />
-          <AlertTitle>Connection Failed</AlertTitle>
+          <AlertTitle>{translate('rent_dialog_connection_failed')}</AlertTitle>
           <AlertDescription>{bluetoothError}</AlertDescription>
         </Alert>
       )}
       <DialogFooter>
         <Button variant="outline" onClick={() => onOpenChange(false)}>
-            Cancel
+            {translate('rent_dialog_cancel')}
         </Button>
       </DialogFooter>
     </>
@@ -361,7 +361,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         <DialogContent>
           <DialogHeader>
             <DialogTitle className="text-2xl font-bold text-primary flex items-center">
-              <Umbrella className="h-6 w-6 mr-2" /> Rent from {stall.name}
+              <Umbrella className="h-6 w-6 mr-2" /> {translate('rent_dialog_title', { stallName: stall.name })}
             </DialogTitle>
             <DialogDescription className="flex items-center pt-2">
               <MapPin className="h-4 w-4 mr-1 text-muted-foreground" /> {stall.address}
@@ -372,10 +372,10 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
             {!canRent && (
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
-                <AlertTitle>Cannot Rent</AlertTitle>
+                <AlertTitle>{translate('rent_dialog_cannot_rent')}</AlertTitle>
                 <AlertDescription>
                   {cannotRentReason} 
-                  {user && (!hasDeposit || !hasBalance) && <Button variant="link" className="p-0 h-auto" asChild><Link href="/deposit"> Go to Wallet</Link></Button>}
+                  {user && (!hasDeposit || !hasBalance) && <Button variant="link" className="p-0 h-auto" asChild><Link href="/deposit"> {translate('rent_dialog_go_to_wallet')}</Link></Button>}
                 </AlertDescription>
               </Alert>
             )}
@@ -383,15 +383,15 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
             {canRent && (
               <Card>
                   <CardContent className="pt-4 space-y-2">
-                  <p className="font-semibold">Availability: <span className={hasUmbrellas ? "text-green-600" : "text-destructive"}>{stall.availableUmbrellas} / {stall.totalUmbrellas} available</span></p>
+                  <p className="font-semibold">{translate('rent_dialog_availability')} <span className={hasUmbrellas ? "text-green-600" : "text-destructive"}>{translate('rent_dialog_availability_text', { available: stall.availableUmbrellas, total: stall.totalUmbrellas })}</span></p>
                   <Alert>
                       <AlertTriangle className="h-4 w-4" />
-                      <AlertTitle>Rental Terms</AlertTitle>
+                      <AlertTitle>{translate('rent_dialog_terms_title')}</AlertTitle>
                       <AlertDescription className="text-xs">
                           {user?.hasHadFirstFreeRental === false 
-                            ? "Your first rental is free!" 
-                            : "HK$5/hr, capped at HK$25 per 24-hour period."
-                          } Return within 72 hours to avoid forfeiting your deposit.
+                            ? translate('rent_dialog_first_free')
+                            : translate('rent_dialog_terms_pricing')
+                          } {translate('rent_dialog_terms_return')}
                       </AlertDescription>
                   </Alert>
                   </CardContent>
@@ -409,7 +409,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
             <AlertDialogTitle className="flex items-center text-xl text-primary">
-              <Umbrella className="mr-2 h-6 w-6" /> Action Required
+              <Umbrella className="mr-2 h-6 w-6" /> {translate('rent_dialog_waiting_title')}
             </AlertDialogTitle>
              <div className="flex flex-col items-center gap-4 py-4">
                 <Image
@@ -430,7 +430,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                 />
             </div>
             <AlertDialogDescription className="text-lg text-center pb-4 text-foreground">
-              Your umbrella is unlocked. Please remove it from the stall to begin your rental.
+              {translate('rent_dialog_waiting_desc')}
             </AlertDialogDescription>
           </AlertDialogHeader>
         </AlertDialogContent>
@@ -440,10 +440,10 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         <AlertDialogContent>
           <AlertDialogHeader className="items-center">
             <AlertDialogTitle className="flex items-center text-xl text-primary">
-              <Umbrella className="mr-2 h-8 w-8" /> Rental Started!
+              <Umbrella className="mr-2 h-8 w-8" /> {translate('rent_dialog_success_title')}
             </AlertDialogTitle>
             <AlertDialogDescription className="text-lg text-center py-4 text-foreground">
-              Your rental is active. You can close this window. Enjoy your day!
+              {translate('rent_dialog_success_desc')}
             </AlertDialogDescription>
           </AlertDialogHeader>
         </AlertDialogContent>
@@ -452,8 +452,8 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
       <AlertDialog open={showDeviceListDialog} onOpenChange={setShowDeviceListDialog}>
           <AlertDialogContent>
               <AlertDialogHeader>
-                  <AlertDialogTitle>Choose machine's ID (CDJK) below to connect to machines</AlertDialogTitle>
-                  <AlertDialogDescription>Please ensure your bluetooth is on</AlertDialogDescription>
+                  <AlertDialogTitle>{translate('rent_dialog_device_list_title')}</AlertDialogTitle>
+                  <AlertDialogDescription>{translate('rent_dialog_device_list_desc')}</AlertDialogDescription>
               </AlertDialogHeader>
               <div className="max-h-60 overflow-y-auto space-y-2">
                   {foundDevices.length > 0 ? (
@@ -475,12 +475,12 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                   ) : (
                       <div className="text-center text-muted-foreground p-4">
                         <Loader2 className="mx-auto h-6 w-6 animate-spin" />
-                        <p>Scanning...</p>
+                        <p>{translate('rent_dialog_scanning')}</p>
                       </div>
                   )}
               </div>
               <AlertDialogFooter>
-                  <AlertDialogCancel onClick={resetAllState}>Cancel</AlertDialogCancel>
+                  <AlertDialogCancel onClick={resetAllState}>{translate('cancel_button')}</AlertDialogCancel>
               </AlertDialogFooter>
           </AlertDialogContent>
       </AlertDialog>

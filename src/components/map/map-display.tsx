@@ -13,6 +13,7 @@ import { ScanAndRentDialog } from '@/components/rental/scan-and-rent-dialog';
 import { useStalls } from '@/contexts/stalls-context';
 import { defaultMapCenter } from '@/lib/mock-data';
 import { RentalInitiationDialog } from '@/components/rental/rental-initiation-dialog';
+import { useLanguage } from '@/contexts/language-context';
 
 // --- User-provided SVG Icon ---
 const UmbrellaMapIcon = () => (
@@ -73,6 +74,7 @@ const UmbrellaMapIcon = () => (
 
 export function MapDisplay() {
   const { toast } = useToast();
+  const { translate } = useLanguage();
   const { stalls, isLoadingStalls } = useStalls();
 
   const [selectedMapStall, setSelectedMapStall] = useState<Stall | null>(null);
@@ -115,9 +117,9 @@ export function MapDisplay() {
     setUserPosition(null); 
 
     if (!navigator.geolocation) {
-      const errorMsg = "Geolocation is not supported by your browser.";
+      const errorMsg = translate('map_locate_me_error_generic');
       setGeolocationError(errorMsg);
-      toast({ title: "Location Error", description: errorMsg, variant: "destructive" });
+      toast({ title: translate('map_locate_me_error_title'), description: errorMsg, variant: "destructive" });
       setIsLocating(false);
       return;
     }
@@ -131,27 +133,27 @@ export function MapDisplay() {
         setCurrentMapCenter(newPos); 
         setUserPosition(newPos);    
         setMapZoom(15);             
-        toast({ title: "Location Found!", description: "Map centered on your current location." });
+        toast({ title: translate('map_locate_me_success') });
         setIsLocating(false);
       },
       (error) => {
-        let errorMsg = "Could not retrieve your location.";
+        let errorMsg = '';
         switch (error.code) {
           case error.PERMISSION_DENIED:
-            errorMsg = "Location permission denied. Please enable it in your browser settings.";
+            errorMsg = translate('map_locate_me_error_denied');
             break;
           case error.POSITION_UNAVAILABLE:
-            errorMsg = "Location information is unavailable.";
+            errorMsg = translate('map_locate_me_error_unavailable');
             break;
           case error.TIMEOUT:
-            errorMsg = "The request to get user location timed out.";
+            errorMsg = translate('map_locate_me_error_timeout');
             break;
           default:
-            errorMsg = "An unknown error occurred while trying to get your location.";
+            errorMsg = translate('map_locate_me_error_unknown');
             break;
         }
         setGeolocationError(errorMsg);
-        toast({ title: "Location Error", description: errorMsg, variant: "destructive" });
+        toast({ title: translate('map_locate_me_error_title'), description: errorMsg, variant: "destructive" });
         setIsLocating(false);
       },
       { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
@@ -162,7 +164,7 @@ export function MapDisplay() {
     return (
       <div className="flex flex-col items-center justify-center h-[70vh] text-center p-4 bg-muted/20 rounded-md">
         <Loader2 className="h-8 w-8 animate-spin text-primary mb-3" />
-        <p className="text-sm text-muted-foreground">Loading map data...</p>
+        <p className="text-sm text-muted-foreground">{translate('map_loading_data')}</p>
       </div>
     );
   }
@@ -225,7 +227,7 @@ export function MapDisplay() {
                   <div>
                     <p className="text-sm font-medium flex items-center">
                       <Umbrella className="h-4 w-4 mr-2 text-green-600" />
-                      Available Umbrellas:
+                      {translate('map_stall_info_available_umbrellas')}
                       <span className={`font-bold ml-1 ${selectedMapStall.availableUmbrellas > 0 ? 'text-green-600' : 'text-red-600'}`}>
                         {selectedMapStall.availableUmbrellas} / {selectedMapStall.totalUmbrellas}
                       </span>
@@ -234,7 +236,7 @@ export function MapDisplay() {
                   <div>
                     <p className="text-sm font-medium flex items-center">
                        <CornerDownLeft className="h-4 w-4 mr-2 text-blue-600" />
-                      Available Return Slots:
+                       {translate('map_stall_info_available_slots')}
                       <span className={`font-bold ml-1 ${selectedMapStall.totalUmbrellas - selectedMapStall.availableUmbrellas > 0 ? 'text-blue-600' : 'text-orange-600'}`}>
                         {selectedMapStall.totalUmbrellas - selectedMapStall.availableUmbrellas} / {selectedMapStall.totalUmbrellas}
                       </span>
@@ -249,11 +251,11 @@ export function MapDisplay() {
                     size="sm"
                     disabled={selectedMapStall.availableUmbrellas === 0}
                   >
-                    Rent Umbrella
+                    {translate('map_stall_info_rent_button')}
                     <Umbrella className="ml-2 h-4 w-4" />
                   </Button>
-                  {selectedMapStall.availableUmbrellas === 0 && <p className="text-xs text-destructive mt-1 text-center">No umbrellas available to rent at this stall.</p>}
-                  {selectedMapStall.totalUmbrellas - selectedMapStall.availableUmbrellas === 0 && <p className="text-xs text-orange-600 mt-1 text-center">No empty slots to return an umbrella.</p>}
+                  {selectedMapStall.availableUmbrellas === 0 && <p className="text-xs text-destructive mt-1 text-center">{translate('map_stall_info_no_umbrellas_to_rent')}</p>}
+                  {selectedMapStall.totalUmbrellas - selectedMapStall.availableUmbrellas === 0 && <p className="text-xs text-orange-600 mt-1 text-center">{translate('map_stall_info_no_slots_to_return')}</p>}
                 </CardContent>
               </Card>
             </InfoWindow>
@@ -264,10 +266,10 @@ export function MapDisplay() {
               onClick={() => setIsScanDialogOpen(true)}
               size="lg"
               className="shadow-lg rounded-full"
-              aria-label="Scan and Rent"
+              aria-label={translate('scan_and_rent_button')}
             >
               <QrCode className="h-5 w-5 mr-2" />
-              Scan & Rent
+              {translate('scan_and_rent_button')}
           </Button>
         </div>
         {geolocationError && (
