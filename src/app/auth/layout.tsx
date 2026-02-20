@@ -4,6 +4,7 @@ import { Suspense } from 'react';
 import Link from 'next/link';
 import { Loader2 } from 'lucide-react';
 import { AppLogo } from '@/components/layout/app-logo';
+import { LanguageSwitcher } from '@/components/layout/language-switcher';
 
 // This is a Server Component layout. It handles the static parts of the page.
 // AuthProvider and DeepLinkHandler are now handled by the root layout.
@@ -20,6 +21,9 @@ export default function AuthLayout({
         <Link href="/" aria-label="U-Dry Home">
            <AppLogo />
         </Link>
+      </div>
+      <div className="absolute top-4 right-4">
+        <LanguageSwitcher />
       </div>
       <div className="w-full max-w-md">
           {/* Suspense boundary is crucial for components that use client-side hooks like useSearchParams */}
