@@ -659,7 +659,6 @@ const translations: Record<Language, Record<string, string>> = {
     'add_balance_button': '增值餘額',
     'pay_deposit_button': '支付按金',
 
-
     // Report Issue Dialog
     'report_issue_dialog_title': '報告問題',
     'report_issue_dialog_select_description': '請選擇您遇到的問題類型。',
@@ -707,13 +706,13 @@ const translations: Record<Language, Record<string, string>> = {
 
     // Admin Page
     'admin_page_title': '管理員面板 - U-Dry',
-    'admin_page_description': '管理 U-Dry 租借站和營運。',
+    'admin_page_description': '管理 U-Dry 租借站及營運。',
     'admin_verifying_access': '正在驗證權限...',
     'admin_access_denied_title': '權限不足',
     'admin_access_denied_desc': '您沒有權限瀏覽此頁面。此區域僅限管理員存取。',
     'admin_go_to_homepage_button': '前往主頁',
     'admin_panel_main_title': 'U-Dry 管理員面板',
-    'admin_welcome_message': '歡迎，{userName}。管理您的 U-Dry 營運。',
+    'admin_welcome_message': '歡迎，{userName}。請在此管理您的 U-Dry 營運。',
     'admin_dashboard_overview_title': '儀表板概覽',
     'admin_dashboard_overview_desc': '快速查看營運數據及分析。',
     'admin_stat_total_stalls': '總租借站數量',
@@ -742,11 +741,11 @@ const translations: Record<Language, Record<string, string>> = {
     'admin_stall_unlock_button': '解鎖',
     'admin_stall_manage_features_soon': '更多租借站管理功能即將推出。',
     'admin_machine_reg_title': '機器註冊',
-    'admin_machine_reg_desc': '將新的雨傘機加入系統。(預留位置)',
+    'admin_machine_reg_desc': '將新的雨傘機加入系統。（此為佔位符）',
     'admin_machine_reg_placeholder_text': '新增機器、指定其 ID、位置和初始雨傘數量的介面將在此處。',
     'admin_machine_reg_add_button': '新增機器',
     'admin_stall_available_umbrellas_label': '可用雨傘數量:',
-    
+
     // Profile Settings Page
     'profile_settings_page_title': '個人設定 - U-Dry',
     'profile_settings_page_description': '查看並更新您的個人資料。',
@@ -773,7 +772,7 @@ const translations: Record<Language, Record<string, string>> = {
     'toast_password_change_error_desc': '無法更改密碼。請確保您目前的密碼正確無誤，然後再試一次。',
     'toast_password_mismatch': "新密碼不符。",
     'toast_reauth_required': "為安全起見，請先重新登入再更改密碼。",
-    
+
     // Terms and Conditions Page
     'terms_page_title': '服務條款 - U-Dry',
     'terms_page_description': '閱讀使用 U-Dry 服務的服務條款。',
