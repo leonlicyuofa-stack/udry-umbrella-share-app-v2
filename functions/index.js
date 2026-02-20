@@ -1,5 +1,6 @@
 // functions/index.js
 const { onCall, onRequest, HttpsError } = require("firebase-functions/v2/https");
+const { onDocumentWritten } = require("firebase-functions/v2/firestore");
 const { logger } = require("firebase-functions");
 const fetch = require("node-fetch");
 const { google } = require("googleapis");
@@ -860,3 +861,59 @@ User's Question: ${question}`;
         throw new HttpsError('internal', 'An unexpected error occurred.');
     }
 });
+
+// --- WATCHDOG: Monitor user document changes ---
+exports.userDocumentWatchdog = onDocumentWritten(
+  "users/{userId}",
+  async (event) => {
+    const db = getAdminApp().firestore();
+    const beforeData = event.data?.before?.data();
+    const afterData = event.data?.after?.data();
+    const userId = event.params.userId;
+
+    // SCENARIO 1: NEW USER SIGNUP
+    if (!beforeData && afterData) {
+      logger.info(`[Watchdog] New user signed up: ${userId}`);
+      await db.collection('mail').add({
+        to: ["leonlicyuofa@gmail.com", "udryhk@gmail.com"],
+        message: {
+          subject: `👋 New U-Dry User Signed Up`,
+          text: `A new user just signed up!\n\nUID: ${userId}\nEmail: ${afterData.email || 'unknown'}\nName: ${afterData.displayName || 'unknown'}\nTime: ${new Date().toISOString()}`,
+        }
+      });
+      return;
+    }
+
+    // SCENARIO 2: DOCUMENT COMPLETELY DELETED
+    if (beforeData && !afterData) {
+      logger.error(`[Watchdog] CRITICAL: User document DELETED for ${userId}`);
+      await db.collection('mail').add({
+        to: ["leonlicyuofa@gmail.com", "udryhk@gmail.com"],
+        message: {
+          subject: `🚨 CRITICAL: User Document Deleted - ${userId}`,
+          text: `A user document was completely deleted!\n\nUID: ${userId}\nEmail: ${beforeData.email || 'unknown'}\nPrevious deposit: HK$${beforeData.deposit || 0}\nPrevious balance: HK$${beforeData.balance || 0}\nTime: ${new Date().toISOString()}\n\nImmediate action required!`,
+        }
+      });
+      return;
+    }
+    
+    // SCENARIO 3: BOTH BALANCE AND DEPOSIT HIT 0 SIMULTANEOUSLY
+    if (beforeData && afterData) {
+        const depositWasPositive = (beforeData.deposit || 0) > 0;
+        const balanceWasPositive = (beforeData.balance || 0) > 0;
+        const depositNowZero = (afterData.deposit || 0) === 0;
+        const balanceNowZero = (afterData.balance || 0) === 0;
+
+        if (depositWasPositive && balanceWasPositive && depositNowZero && balanceNowZero) {
+          logger.error(`[Watchdog] CRITICAL: Both balance and deposit zeroed for user ${userId}`);
+          await db.collection('mail').add({
+            to: ["leonlicyuofa@gmail.com", "udryhk@gmail.com"],
+            message: {
+              subject: `🚨 CRITICAL: User Wallet Wiped - ${afterData.email || userId}`,
+              text: `URGENT: A user's wallet was zeroed out suspiciously!\n\nUID: ${userId}\nEmail: ${afterData.email || 'unknown'}\nName: ${afterData.displayName || 'unknown'}\n\nBEFORE:\nDeposit: HK$${beforeData.deposit || 0}\nBalance: HK$${beforeData.balance || 0}\n\nAFTER:\nDeposit: HK$${afterData.deposit || 0}\nBalance: HK$${afterData.balance || 0}\n\nTime: ${new Date().toISOString()}\n\nThis matches the Rocky incident pattern. Check immediately!`,
+            }
+          });
+        }
+    }
+  }
+);
