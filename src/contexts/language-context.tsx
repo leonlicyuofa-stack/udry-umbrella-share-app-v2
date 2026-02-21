@@ -61,6 +61,7 @@ const translations: Record<Language, Record<string, string>> = {
     'signup_page_description': 'Create a new U-Dry account.',
     'welcome_back_title': 'Welcome Back!',
     'signin_form_description': 'Sign in to access your account and manage your U-Dry rentals.',
+    'forgot_password_link': 'Forgot password?',
     'create_account_title': 'Create an Account',
     'signup_form_description': 'Join U-Dry to easily rent and return umbrellas.',
     'email_label': 'Email',
@@ -280,6 +281,11 @@ const translations: Record<Language, Record<string, string>> = {
     'balance_deposit_desc': 'Refundable. Required to rent.',
     'add_balance_button': 'Add Balance',
     'pay_deposit_button': 'Pay Deposit',
+    'request_deposit_refund_button': "Request Deposit Refund",
+    'refund_dialog_title': "Are you sure you want to refund your deposit?",
+    'refund_dialog_description': "This will refund your HK$100.00 deposit. You will need to pay it again to rent umbrellas in the future. This action cannot be undone. It may take 5-10 business days for the refund to appear on your statement.",
+    'refund_dialog_cancel_button': "Cancel",
+    'refund_dialog_confirm_button': "Yes, Refund My Deposit",
 
     // Report Issue Dialog
     'report_issue_dialog_title': 'Report an Issue',
@@ -356,7 +362,7 @@ const translations: Record<Language, Record<string, string>> = {
     'profile_settings_update_error': '個人資料更新失敗。',
     'profile_settings_loading': '正在載入個人資料...',
     'profile_settings_login_required': '您需要登入才能查看個人設定。',
-    'profile_settings_email_unchangeable': '電子郵件地址無法在此處更改。如需協助，請聯絡支援人員。',
+    'profile_settings_email_unchangeable': "電子郵件地址無法在此處更改。如需協助，請聯絡支援人員。",
     
     // Change Password Section (within Profile Settings)
     'change_password_title': '更改密碼',
@@ -388,6 +394,16 @@ const translations: Record<Language, Record<string, string>> = {
     'terms_section_5_content': "本條款應受香港特別行政區法律管轄並依其解釋，不考慮其法律衝突規定。",
     'terms_section_6_title': '條款變更',
     'terms_section_6_content': "我們保留自行決定隨時修改或替換這些條款的權利。如果修訂是重大的，我們將在任何新條款生效前至少提前30天發出通知。何為重大變更將由我們自行決定。在任何修訂生效後繼續存取或使用我們的服務，即表示您同意受修訂條款的約束。",
+
+    // Email Verification Page
+    'verify_email_title': "請驗證您的電子郵件",
+    'verify_email_description': "我們已向 {email} 發送了驗證連結。請檢查您的收件箱和垃圾郵件文件夾。",
+    'verify_email_why_title': "為什麼我會看到這個？",
+    'verify_email_why_description': "所有新用戶在存取應用程式前都必須進行電子郵件驗證。",
+    'verify_email_instruction': "驗證後，請點擊下方的「繼續」以使用您已驗證的帳戶登入。",
+    'verify_email_resend_button': "重發驗證郵件",
+    'verify_email_continue_button': "我已驗證，繼續",
+    'sign_out_button': "登出",
   },
   'zh-HK': {
     // General
@@ -433,6 +449,7 @@ const translations: Record<Language, Record<string, string>> = {
     'signup_page_description': '建立一個新的 U-Dry 帳戶。',
     'welcome_back_title': '歡迎回來！',
     'signin_form_description': '登入以存取您的帳戶並管理您的 U-Dry 租借。',
+    'forgot_password_link': '忘記密碼？',
     'create_account_title': '建立帳戶',
     'signup_form_description': '加入 U-Dry，輕鬆租借和歸還雨傘。',
     'email_label': '電子郵件',
@@ -652,6 +669,11 @@ const translations: Record<Language, Record<string, string>> = {
     'balance_deposit_desc': '可退還。租借必需。',
     'add_balance_button': '增值餘額',
     'pay_deposit_button': '支付按金',
+    'request_deposit_refund_button': '申請退還按金',
+    'refund_dialog_title': '您確定要退還按金嗎？',
+    'refund_dialog_description': '這將退還您的 HK$100.00 按金。將來如需再次租借雨傘，您需要重新支付按金。此操作無法撤銷。退款可能需要 5-10 個工作日才會顯示在您的結單上。',
+    'refund_dialog_cancel_button': '取消',
+    'refund_dialog_confirm_button': '是的，退還我的按金',
 
     // Report Issue Dialog
     'report_issue_dialog_title': '報告問題',
@@ -728,7 +750,7 @@ const translations: Record<Language, Record<string, string>> = {
     'profile_settings_update_error': '個人資料更新失敗。',
     'profile_settings_loading': '正在載入個人資料...',
     'profile_settings_login_required': '您需要登入才能查看個人設定。',
-    'profile_settings_email_unchangeable': '電子郵件地址無法在此處更改。如需協助，請聯絡支援人員。',
+    'profile_settings_email_unchangeable': "電子郵件地址無法在此處更改。如需協助，請聯絡支援人員。",
     
     // Change Password Section (within Profile Settings)
     'change_password_title': '更改密碼',
@@ -760,6 +782,16 @@ const translations: Record<Language, Record<string, string>> = {
     'terms_section_5_content': "本條款應受香港特別行政區法律管轄並依其解釋，不考慮其法律衝突規定。",
     'terms_section_6_title': '條款變更',
     'terms_section_6_content': "我們保留自行決定隨時修改或替換這些條款的權利。如果修訂是重大的，我們將在任何新條款生效前至少提前30天發出通知。何為重大變更將由我們自行決定。在任何修訂生效後繼續存取或使用我們的服務，即表示您同意受修訂條款的約束。",
+
+    // Email Verification Page
+    'verify_email_title': "請驗證您的電子郵件",
+    'verify_email_description': "我們已向 {email} 發送了驗證連結。請檢查您的收件箱和垃圾郵件文件夾。",
+    'verify_email_why_title': "為什麼我會看到這個？",
+    'verify_email_why_description': "所有新用戶在存取應用程式前都必須進行電子郵件驗證。",
+    'verify_email_instruction': "驗證後，請點擊下方的「繼續」以使用您已驗證的帳戶登入。",
+    'verify_email_resend_button': "重發驗證郵件",
+    'verify_email_continue_button': "我已驗證，繼續",
+    'sign_out_button': "登出",
   }
 };
 

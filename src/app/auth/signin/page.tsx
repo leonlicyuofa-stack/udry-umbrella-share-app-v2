@@ -2,6 +2,7 @@
 
 import { SignInForm } from "@/components/auth/sign-in-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/language-context";
 
 // Note: Metadata export is fine in a client component, Next.js handles it.
 // Removed static metadata export as it conflicts with "use client"
@@ -11,11 +12,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 // };
 
 export default function SignInPage() {
+  const { translate } = useLanguage();
   return (
     <Card className="shadow-xl">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Welcome Back!</CardTitle>
-        <CardDescription>Sign in to access your account and manage your U-Dry rentals.</CardDescription>
+        <CardTitle className="text-2xl">{translate('welcome_back_title')}</CardTitle>
+        <CardDescription>{translate('signin_form_description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <SignInForm />

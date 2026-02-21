@@ -129,21 +129,21 @@ export default function AccountBalancePage() {
                   <AlertDialogTrigger asChild>
                     <Button variant="outline" disabled={hasActiveRental || hasNegativeBalance}>
                       <RefreshCw className="mr-2 h-4 w-4" />
-                      Request Deposit Refund
+                      {translate('request_deposit_refund_button')}
                     </Button>
                   </AlertDialogTrigger>
                   <AlertDialogContent>
                     <AlertDialogHeader>
-                      <AlertDialogTitle>Are you sure you want to refund your deposit?</AlertDialogTitle>
+                      <AlertDialogTitle>{translate('refund_dialog_title')}</AlertDialogTitle>
                       <AlertDialogDescription>
-                        This will refund your HK$100.00 deposit. You will need to pay it again to rent umbrellas in the future. This action cannot be undone. It may take 5-10 business days for the refund to appear on your statement.
+                        {translate('refund_dialog_description')}
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter>
-                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                      <AlertDialogCancel>{translate('refund_dialog_cancel_button')}</AlertDialogCancel>
                       <AlertDialogAction onClick={handleRefund} disabled={isRefunding}>
                         {isRefunding ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-                        Yes, Refund My Deposit
+                        {translate('refund_dialog_confirm_button')}
                       </AlertDialogAction>
                     </AlertDialogFooter>
                   </AlertDialogContent>

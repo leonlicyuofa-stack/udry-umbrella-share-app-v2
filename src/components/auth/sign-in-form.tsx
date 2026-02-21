@@ -112,7 +112,7 @@ export function SignInForm() {
                   <FormLabel>{translate('password_label')}</FormLabel>
                   <Button variant="link" asChild className="px-0.5 h-auto text-xs">
                     <Link href="/auth/forgot-password">
-                      Forgot password?
+                      {translate('forgot_password_link')}
                     </Link>
                   </Button>
                 </div>

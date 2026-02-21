@@ -3,6 +3,7 @@
 
 import { Button } from "@/components/ui/button";
 import { useAuth } from "@/contexts/auth-context";
+import { useLanguage } from "@/contexts/language-context";
 import { Loader2 } from "lucide-react";
 import { useState } from "react";
 
@@ -50,6 +51,7 @@ function AppleIcon() {
 
 export function SocialLoginButtons() {
   const { signInWithGoogle, signInWithApple, loading: authLoading } = useAuth();
+  const { translate } = useLanguage();
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isAppleLoading, setIsAppleLoading] = useState(false);
 
@@ -89,7 +91,7 @@ export function SocialLoginButtons() {
         ) : (
           <GoogleIcon />
         )}
-        Continue with Google
+        {translate('continue_with_google')}
       </Button>
 
       {/* Apple button — strictly follows Apple HIG:
@@ -127,7 +129,7 @@ export function SocialLoginButtons() {
             <path d="M788.1 340.9c-5.8 4.5-108.2 62.2-108.2 190.5 0 148.4 130.3 200.9 134.2 202.2-.6 3.2-20.7 71.9-68.7 141.9-42.8 61.6-87.5 123.1-155.5 123.1s-85.5-39.5-164-39.5c-76 0-103.7 40.8-165.9 40.8s-105-57.8-155.5-127.4C46 790.7 0 663 0 541.8c0-207.5 135.4-317.3 269-317.3 70.1 0 128.4 46.4 172.5 46.4 42.8 0 109.6-49.2 189.3-49.2 30.2 0 108.2 2.6 168.3 75.4zm-165.9-151.3c30.8-36.7 52.7-87.5 52.7-138.3 0-7.1-.6-14.3-1.9-20.1-49.9 1.9-109.3 33.3-145.4 75.4-28.2 32.4-55.4 83.2-55.4 134.7 0 8.3 1.3 16.6 1.9 19.2 3.2.6 8.4 1.3 13.6 1.3 44.6 0 100.5-29.5 134.5-72.2z" />
           </svg>
         )}
-        Continue with Apple
+        {translate('continue_with_apple')}
       </button>
     </div>
   );

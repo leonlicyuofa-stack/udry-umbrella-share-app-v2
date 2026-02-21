@@ -110,40 +110,41 @@ function EmailVerificationPrompt({
   isSending: boolean;
 }) {
   const { user } = useAuth();
+  const { translate } = useLanguage();
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-secondary/30 p-4">
       <Card className="w-full max-w-lg shadow-xl">
         <CardHeader className="text-center">
           <MailCheck className="mx-auto h-12 w-12 text-primary" />
-          <CardTitle className="mt-4 text-2xl">Please Verify Your Email</CardTitle>
+          <CardTitle className="mt-4 text-2xl">{translate('verify_email_title')}</CardTitle>
           <CardDescription>
-            We&apos;ve sent a verification link to <strong>{user?.email}</strong>. Please check your inbox and spam folder.
+            {translate('verify_email_description', { email: user?.email || 'your email' })}
           </CardDescription>
         </CardHeader>
         <CardContent className="space-y-4">
           <Alert>
             <ShieldAlert className="h-4 w-4" />
-            <AlertTitle>Why am I seeing this?</AlertTitle>
+            <AlertTitle>{translate('verify_email_why_title')}</AlertTitle>
             <AlertDescription>
-              Email verification is required for all new users before accessing the app.
+              {translate('verify_email_why_description')}
             </AlertDescription>
           </Alert>
           <p className="text-sm text-center text-muted-foreground">
-            Once verified, click &apos;Continue&apos; below to sign in with your verified account.
+            {translate('verify_email_instruction')}
           </p>
         </CardContent>
         <CardFooter className="flex flex-col sm:flex-row gap-2">
           <Button onClick={onResend} disabled={isSending} className="w-full sm:w-auto">
             {isSending ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
-            Resend Verification Email
+            {translate('verify_email_resend_button')}
           </Button>
           <Button onClick={onSignOut} className="w-full sm:w-auto bg-accent text-accent-foreground hover:bg-accent/90">
             <ArrowRightCircle className="mr-2 h-4 w-4" />
-            I&apos;ve Verified, Continue
+            {translate('verify_email_continue_button')}
           </Button>
           <Button variant="outline" onClick={onSignOut} className="w-full sm:w-auto">
             <LogOut className="mr-2 h-4 w-4" />
-            Sign Out
+            {translate('sign_out_button')}
           </Button>
         </CardFooter>
       </Card>

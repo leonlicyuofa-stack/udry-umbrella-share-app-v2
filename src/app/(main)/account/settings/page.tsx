@@ -154,7 +154,7 @@ export default function ProfileSettingsPage() {
                 disabled
                 readOnly
               />
-               <p className="text-xs text-muted-foreground">Email address cannot be changed here. Contact support for assistance.</p>
+               <p className="text-xs text-muted-foreground">{translate('profile_settings_email_unchangeable')}</p>
             </div>
           </CardContent>
           <CardFooter>
