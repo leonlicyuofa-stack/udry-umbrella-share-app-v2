@@ -1,4 +1,3 @@
-
 // PASTE THIS ENTIRE BLOCK INTO /src/contexts/language-context.tsx
 
 "use client";
@@ -669,7 +668,7 @@ const translations: Record<Language, Record<string, string>> = {
     'balance_deposit_desc': '可退還。租借必需。',
     'add_balance_button': '增值餘額',
     'pay_deposit_button': '支付按金',
-    'request_deposit_refund_button': '申請退還按金',
+    'request_deposit_refund_button': "申請退還按金",
     'refund_dialog_title': '您確定要退還按金嗎？',
     'refund_dialog_description': '這將退還您的 HK$100.00 按金。將來如需再次租借雨傘，您需要重新支付按金。此操作無法撤銷。退款可能需要 5-10 個工作日才會顯示在您的結單上。',
     'refund_dialog_cancel_button': '取消',

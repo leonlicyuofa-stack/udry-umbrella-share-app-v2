@@ -3,6 +3,7 @@
 
 import { SignUpForm } from "@/components/auth/sign-up-form";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { useLanguage } from "@/contexts/language-context";
 
 // Note: Metadata export is fine in a client component, Next.js handles it.
 // Removed static metadata export as it conflicts with "use client"
@@ -12,11 +13,12 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 // };
 
 export default function SignUpPage() {
+  const { translate } = useLanguage();
   return (
     <Card className="shadow-xl">
       <CardHeader className="text-center">
-        <CardTitle className="text-2xl">Create an Account</CardTitle>
-        <CardDescription>Join U-Dry to easily rent and return umbrellas.</CardDescription>
+        <CardTitle className="text-2xl">{translate('create_account_title')}</CardTitle>
+        <CardDescription>{translate('signup_form_description')}</CardDescription>
       </CardHeader>
       <CardContent>
         <SignUpForm />
