@@ -1,4 +1,3 @@
-
 // src/components/rental/rental-initiation-dialog.tsx
 "use client";
 
@@ -321,14 +320,6 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                 {translate('rent_dialog_terms_link')}
             </Link>.
         </p>
-        <DialogFooter>
-            <Button onClick={() => {
-                setConnectionStep('connecting');
-                handleConnectAndRent();
-            }} disabled={!canRent} className="w-full">
-               {translate('rent_dialog_continue_connection')} <ArrowRight className="ml-2 h-4 w-4"/>
-            </Button>
-        </DialogFooter>
     </>
   );
 
@@ -347,19 +338,14 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
           <AlertDescription>{bluetoothError}</AlertDescription>
         </Alert>
       )}
-      <DialogFooter>
-        <Button variant="outline" onClick={() => onOpenChange(false)}>
-            {translate('rent_dialog_cancel')}
-        </Button>
-      </DialogFooter>
     </>
   );
 
   return (
     <>
       <Dialog open={isOpen && !showSuccessDialog && !showWaitingDialog && !showDeviceListDialog} onOpenChange={onOpenChange}>
-        <DialogContent>
-          <DialogHeader>
+        <DialogContent className="flex flex-col max-h-[90dvh]">
+          <DialogHeader className="flex-shrink-0">
             <DialogTitle className="text-2xl font-bold text-primary flex items-center">
               <Umbrella className="h-6 w-6 mr-2" /> {translate('rent_dialog_title', { stallName: stall.name })}
             </DialogTitle>
@@ -368,7 +354,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
             </DialogDescription>
           </DialogHeader>
 
-          <div className="py-4 space-y-6">
+          <div className="py-4 space-y-6 overflow-y-auto flex-1">
             {!canRent && (
               <Alert variant="destructive">
                 <AlertTriangle className="h-4 w-4" />
@@ -397,11 +383,26 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
                   </CardContent>
               </Card>
             )}
-          </div>
           
-          {canRent && connectionStep === 'pre_confirmation' && renderPreConfirmation()}
-          {canRent && connectionStep !== 'pre_confirmation' && renderConnecting()}
+            {canRent && connectionStep === 'pre_confirmation' && renderPreConfirmation()}
+            {canRent && connectionStep !== 'pre_confirmation' && renderConnecting()}
+          </div>
 
+          <DialogFooter className="flex-shrink-0">
+            {canRent && connectionStep === 'pre_confirmation' && (
+               <Button onClick={() => {
+                  setConnectionStep('connecting');
+                  handleConnectAndRent();
+               }} disabled={!canRent} className="w-full">
+                 {translate('rent_dialog_continue_connection')} <ArrowRight className="ml-2 h-4 w-4"/>
+               </Button>
+            )}
+            {canRent && connectionStep !== 'pre_confirmation' && (
+              <Button variant="outline" onClick={() => onOpenChange(false)}>
+                  {translate('rent_dialog_cancel')}
+              </Button>
+            )}
+          </DialogFooter>
         </DialogContent>
       </Dialog>
       

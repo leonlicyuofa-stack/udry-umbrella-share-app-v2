@@ -108,46 +108,32 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
     setHasCameraPermission(null);
 
     try {
-      // Check for camera permissions first
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const hasCamera = devices.some(device => device.kind === 'videoinput');
-      if (!hasCamera) {
-        throw new Error("No camera found on this device.");
+      if (!html5QrCodeRef.current) {
+        html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID_RENT, { verbose: false });
       }
-      
-      // Attempt to get a stream to trigger the permission prompt
-      const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-      stream.getTracks().forEach(track => track.stop()); // Stop the stream immediately, we just needed the permission
+      setScanState('scanning');
+      await html5QrCodeRef.current.start(
+        { facingMode: "environment" },
+        { 
+          fps: 24,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+        },
+        onScanSuccess,
+        () => {}
+      );
       setHasCameraPermission(true);
-
     } catch (err: any) {
-        let message = translate('report_issue_camera_error_desc_generic');
-        if (err.name === "NotAllowedError") {
-            message = translate('report_issue_camera_permission_denied');
-        } else if (err.name === "NotFoundError") {
-            message = translate('report_issue_camera_not_found');
-        }
-        setScanError(message);
-        setScanState('error');
-        setHasCameraPermission(false);
-        return; // Stop execution if we don't have permission
+      let message = translate('report_issue_camera_error_desc_generic');
+      if (err?.name === "NotAllowedError" || err?.toString().includes("NotAllowedError")) {
+        message = translate('report_issue_camera_permission_denied');
+      } else if (err?.name === "NotFoundError" || err?.toString().includes("NotFoundError")) {
+        message = translate('report_issue_camera_not_found');
+      }
+      setScanError(message);
+      setScanState('error');
+      setHasCameraPermission(false);
     }
-    
-    setTimeout(() => {
-        if (!html5QrCodeRef.current) {
-          html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID_RENT, { verbose: false });
-        }
-        setScanState('scanning');
-        html5QrCodeRef.current.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          onScanSuccess,
-          () => { /* Ignore non-match errors */ }
-        ).catch(err => {
-          setScanError(translate('report_issue_camera_error_desc_generic'));
-          setScanState('error');
-        });
-    }, 100);
   }, [onScanSuccess, translate]);
 
 

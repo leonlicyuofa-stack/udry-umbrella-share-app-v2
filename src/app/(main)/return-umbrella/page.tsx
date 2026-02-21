@@ -20,6 +20,7 @@ import { httpsCallable } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
 import Image from 'next/image';
 import imageData from '@/app/lib/placeholder-images.json';
+import { useLanguage } from "@/contexts/language-context";
 
 const QR_READER_REGION_ID = "qr-reader-region-return";
 const UTEK_SERVICE_UUID = "0000ffe0-0000-1000-8000-00805f9b34fb";
@@ -49,6 +50,7 @@ export default function ReturnUmbrellaPage() {
   const { stalls, isLoadingStalls } = useStalls();
   const router = useRouter();
   const { toast } = useToast();
+  const { translate } = useLanguage();
 
   const [returnStep, setReturnStep] = useState<ReturnStep>('idle');
   const [scannedStall, setScannedStall] = useState<Stall | null>(null);
@@ -144,36 +146,33 @@ export default function ReturnUmbrellaPage() {
     setHasCameraPermission(null);
 
     try {
-        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
-        stream.getTracks().forEach(track => track.stop());
-        setHasCameraPermission(true);
+      if (!html5QrCodeRef.current) {
+        html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID, { verbose: false });
+      }
+      setReturnStep('scanning');
+      await html5QrCodeRef.current.start(
+        { facingMode: "environment" },
+        { 
+          fps: 24,
+          qrbox: { width: 250, height: 250 },
+          aspectRatio: 1.0,
+        },
+        onScanSuccess,
+        (errorMessage) => { /* Ignore errors */ }
+      );
+      setHasCameraPermission(true);
     } catch (err: any) {
-        let message = "An error occurred while accessing the camera.";
-        if (err.name === "NotAllowedError") {
-            message = "Camera permission denied. Please enable camera access in your browser settings.";
+        let message = translate('report_issue_camera_error_desc_generic');
+        if (err?.name === "NotAllowedError" || err?.toString().includes("NotAllowedError")) {
+          message = translate('report_issue_camera_permission_denied');
+        } else if (err?.name === "NotFoundError" || err?.toString().includes("NotFoundError")) {
+          message = translate('report_issue_camera_not_found');
         }
         setQrError(message);
         setReturnStep('idle');
         setHasCameraPermission(false);
-        return;
     }
-
-    setTimeout(() => {
-        if (!html5QrCodeRef.current) {
-          html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID, { verbose: false });
-        }
-        setReturnStep('scanning');
-        html5QrCodeRef.current.start(
-          { facingMode: "environment" },
-          { fps: 10, qrbox: { width: 250, height: 250 } },
-          onScanSuccess,
-          (errorMessage) => { /* Ignore errors */ }
-        ).catch(err => {
-          setQrError("Failed to start QR scanner. Please ensure camera permissions are enabled for this site.");
-          setReturnStep('idle');
-        });
-    }, 100);
-  }, [onScanSuccess, returnStep]);
+  }, [onScanSuccess, returnStep, translate]);
 
   const disconnectFromDevice = useCallback(async () => {
     try { await BleClient.stopLEScan(); } catch(e) {}
