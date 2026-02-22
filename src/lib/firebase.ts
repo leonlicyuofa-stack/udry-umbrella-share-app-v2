@@ -8,7 +8,7 @@ import { getFunctions, type Functions } from 'firebase/functions';
 // These are public keys and are safe to be included here. Security is enforced by Firestore rules.
 export const firebaseConfig = {
   apiKey: "AIzaSyDk8gmZb-azt0fndBG80zrYXEma7NsUdL0",
-  authDomain: "udry-app-dev.firebaseapp.com",
+  authDomain: "udry-app-dev.web.app",
   projectId: "udry-app-dev",
   storageBucket: "udry-app-dev.firebasestorage.app",
   messagingSenderId: "458603936715",
