@@ -1,14 +1,15 @@
 
 import { initializeApp, getApps, getApp, type FirebaseApp } from 'firebase/app';
-import { getAuth, type Auth } from 'firebase/auth';
+import { getAuth, initializeAuth, indexedDBLocalPersistence, type Auth } from 'firebase/auth';
 import { getFirestore, type Firestore } from 'firebase/firestore';
 import { getFunctions, type Functions } from 'firebase/functions';
+import { Capacitor } from '@capacitor/core';
 
 // This configuration is now hardcoded to ensure it works reliably in all environments.
 // These are public keys and are safe to be included here. Security is enforced by Firestore rules.
 export const firebaseConfig = {
   apiKey: "AIzaSyDk8gmZb-azt0fndBG80zrYXEma7NsUdL0",
-  authDomain: "udry-app-dev.web.app",
+  authDomain: "udry-app-dev.firebaseapp.com",
   projectId: "udry-app-dev",
   storageBucket: "udry-app-dev.firebasestorage.app",
   messagingSenderId: "458603936715",
@@ -45,9 +46,19 @@ export function initializeFirebaseServices(): FirebaseServices | null {
     // Get the existing app instance or initialize a new one.
     const app = getApps().length > 0 ? getApp() : initializeApp(firebaseConfig);
     
-    // Simple getAuth — exactly what worked in the standalone test.
-    // No initializeAuth, no custom persistence, no popupRedirectResolver.
-    const auth = getAuth(app);
+    let auth: Auth;
+    if (Capacitor.isNativePlatform()) {
+      // On native iOS/Android, bypass the Google OAuth iframe mechanism
+      // which causes CORS errors with capacitor://localhost origin.
+      // indexedDBLocalPersistence is the correct persistence for Capacitor.
+      auth = initializeAuth(app, {
+        persistence: indexedDBLocalPersistence,
+      });
+    } else {
+      // Standard browser initialization unchanged
+      auth = getAuth(app);
+    }
+
     const db = getFirestore(app);
     const functions = getFunctions(app);
 
