@@ -1,3 +1,4 @@
+
 // src/contexts/auth-context.tsx
 "use client";
 
@@ -182,7 +183,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     setFirebaseServices(services);
 
+    // Safety timeout — if onAuthStateChanged doesn't fire within 5 seconds
+    // (e.g. due to gapi iframe CORS block on Capacitor), force loading to end
+    const authTimeoutId = setTimeout(() => {
+      setIsLoading(false);
+    }, 5000);
+
     const unsubscribeAuth = onAuthStateChanged(services.auth, (user) => {
+      clearTimeout(authTimeoutId); // Cancel timeout if auth resolves normally
       setFirebaseUser(user);
       if (!user) {
         setFirestoreUser(null);
@@ -192,7 +200,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       setIsLoading(false);
     });
 
-    return () => unsubscribeAuth();
+    return () => {
+      clearTimeout(authTimeoutId);
+      unsubscribeAuth();
+    };
   }, []);
 
   // ── Redirect logic ─────────────────────────────────────────────────────────
