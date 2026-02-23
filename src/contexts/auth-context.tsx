@@ -50,8 +50,8 @@ import { Button } from '@/components/ui/button';
 import { httpsCallable } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
 import { LinkAccountsDialog } from '@/components/auth/link-accounts-dialog';
-import { SocialLogin } from '@capgo/capacitor-social-login';
-
+import { SocialLogin } from ;
+'@capgo/capacitor-social-login'
 // --- NONCE HELPERS FOR APPLE SIGN IN ---
 function generateNonce(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
