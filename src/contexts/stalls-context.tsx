@@ -7,7 +7,6 @@ import { createContext, useContext, useState, useEffect, ReactNode } from 'react
 import { collection, onSnapshot } from 'firebase/firestore';
 import { initializeFirebaseServices } from '@/lib/firebase';
 import type { Stall } from "@/lib/types";
-import { useToast } from '@/hooks/use-toast';
 
 interface StallsContextType {
   stalls: Stall[];
@@ -19,7 +18,6 @@ const StallsContext = createContext<StallsContextType | undefined>(undefined);
 export function StallsProvider({ children }: { children: ReactNode }) {
   const [stalls, setStalls] = useState<Stall[]>([]);
   const [isLoadingStalls, setIsLoadingStalls] = useState(true);
-  const { toast } = useToast();
   // Call initializeFirebaseServices without the log function.
   // A default, empty function is now provided in firebase.ts to prevent crashes.
   const services = initializeFirebaseServices();
@@ -38,12 +36,11 @@ export function StallsProvider({ children }: { children: ReactNode }) {
       setIsLoadingStalls(false);
     }, (error) => {
       console.error("Error fetching stalls:", error);
-      toast({ variant: 'destructive', title: 'Error', description: 'Could not load stall locations.' });
       setIsLoadingStalls(false);
     });
 
     return () => unsubscribeStalls();
-  }, [services, toast]);
+  }, [services]);
 
   const value = { stalls, isLoadingStalls };
 

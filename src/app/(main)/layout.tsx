@@ -42,7 +42,7 @@ export default function MainLayout({
         ref={layoutRef}
         className={cn(
           "min-h-screen flex flex-col",
-          "pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)]"
+          "pl-[env(safe-area-inset-left)] pr-[env(safe-area-inset-right)] pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]"
         )}
       >
         <DeepLinkHandler />

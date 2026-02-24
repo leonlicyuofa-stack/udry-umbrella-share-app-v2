@@ -25,7 +25,7 @@ export default function AuthLayout({
       <div className="absolute top-4 right-4">
         <LanguageSwitcher />
       </div>
-      <div className="w-full max-w-md">
+      <div className="w-full max-w-md pt-16">
           {/* Suspense boundary is crucial for components that use client-side hooks like useSearchParams */}
           <Suspense fallback={
             <div className="flex items-center justify-center min-h-[300px]">

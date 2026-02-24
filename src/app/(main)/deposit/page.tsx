@@ -45,7 +45,6 @@ export default function DepositPage() {
     { id: 'stripe', nameKey: 'payment_method_credit_card' },
     { id: 'apple_pay', nameKey: 'payment_method_apple_pay' },
     { id: 'alipay', nameKey: 'payment_method_alipay' },
-    { id: 'payme', nameKey: 'payment_method_payme' },
     { id: 'alipay_cn', nameKey: 'payment_method_alipay_cn' },
   ];
   const paymentMethods = paymentMethodsRaw.map(pm => ({...pm, name: translate(pm.nameKey)}));
