@@ -45,6 +45,7 @@ export default function DepositPage() {
     { id: 'stripe', nameKey: 'payment_method_credit_card' },
     { id: 'apple_pay', nameKey: 'payment_method_apple_pay' },
     { id: 'alipay', nameKey: 'payment_method_alipay' },
+    { id: 'payme', nameKey: 'payment_method_payme' },
     { id: 'alipay_cn', nameKey: 'payment_method_alipay_cn' },
   ];
   const paymentMethods = paymentMethodsRaw.map(pm => ({...pm, name: translate(pm.nameKey)}));
@@ -179,7 +180,7 @@ export default function DepositPage() {
               <h3 className="text-lg font-semibold">{translate('deposit_payment_method_label')}</h3>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {paymentMethods.map((method) => {
-                  const isComingSoon = method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn';
+                  const isComingSoon = method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn' || method.nameKey === 'payment_method_payme';
                   return (
                     <Button
                       key={method.nameKey}
@@ -247,7 +248,7 @@ export default function DepositPage() {
             <h3 className="text-lg font-semibold">{translate('deposit_payment_method_label')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {paymentMethods.map((method) => {
-                  const isComingSoon = method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn';
+                  const isComingSoon = method.nameKey === 'payment_method_alipay' || method.nameKey === 'payment_method_alipay_cn' || method.nameKey === 'payment_method_payme';
                   return (
                     <Button
                       key={method.nameKey}
