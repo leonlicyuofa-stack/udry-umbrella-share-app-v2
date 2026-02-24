@@ -278,6 +278,31 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
     return () => unsubscribeUserDoc();
   }, [firebaseUser, firebaseServices]);
+  
+  // ── Redirect after login / logout ─────────────────────────────────────────
+  const previousFirebaseUserRef = useRef<FirebaseUser | null | undefined>(undefined);
+
+  useEffect(() => {
+    if (isLoading) return;
+
+    if (previousFirebaseUserRef.current === undefined) {
+      // First run after app loads — just record state, never redirect
+      previousFirebaseUserRef.current = firebaseUser;
+      return;
+    }
+
+    const wasLoggedIn = !!previousFirebaseUserRef.current;
+    const isNowLoggedIn = !!firebaseUser;
+    previousFirebaseUserRef.current = firebaseUser;
+
+    if (!wasLoggedIn && isNowLoggedIn) {
+      // Just logged in → always go home
+      router.replace('/home');
+    } else if (wasLoggedIn && !isNowLoggedIn) {
+      // Just logged out → always go to sign in
+      router.replace('/auth/signin');
+    }
+  }, [firebaseUser, isLoading, router]);
 
   // ── Auth functions ─────────────────────────────────────────────────────────
 
