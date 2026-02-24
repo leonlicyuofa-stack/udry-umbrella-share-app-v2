@@ -347,10 +347,10 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
         <DialogContent className="flex flex-col max-h-[90dvh]">
           <DialogHeader className="flex-shrink-0">
             <DialogTitle className="text-2xl font-bold text-primary flex items-center">
-              <Umbrella className="h-6 w-6 mr-2" /> {translate('rent_dialog_title', { stallName: stall.name })}
+              <Umbrella className="h-6 w-6 mr-2" /> {translate('rent_dialog_rent_title_simple')}
             </DialogTitle>
-            <DialogDescription className="flex items-center pt-2">
-              <MapPin className="h-4 w-4 mr-1 text-muted-foreground" /> {stall.address}
+            <DialogDescription className="flex items-center pt-1">
+              <MapPin className="h-4 w-4 mr-1 flex-shrink-0 text-muted-foreground" /> {stall.name}
             </DialogDescription>
           </DialogHeader>
 
@@ -388,7 +388,7 @@ export function RentalInitiationDialog({ stall, isOpen, onOpenChange }: RentalIn
             {canRent && connectionStep !== 'pre_confirmation' && renderConnecting()}
           </div>
 
-          <DialogFooter className="flex-shrink-0">
+          <DialogFooter className="flex-shrink-0 border-t pt-4 bg-background">
             {canRent && connectionStep === 'pre_confirmation' && (
                <Button onClick={() => {
                   setConnectionStep('connecting');
