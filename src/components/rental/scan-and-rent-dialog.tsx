@@ -11,6 +11,8 @@ import { Html5Qrcode } from "html5-qrcode";
 import type { Stall } from '@/lib/types';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/contexts/language-context';
+import { Capacitor } from '@capacitor/core';
+import { Camera as CapacitorCamera } from '@capacitor/camera';
 
 const QR_READER_REGION_ID_RENT = "qr-reader-region-rent-dialog";
 
@@ -108,6 +110,19 @@ export function ScanAndRentDialog({ isOpen, onOpenChange, stalls, onStallScanned
     setHasCameraPermission(null);
 
     try {
+      if (Capacitor.isNativePlatform()) {
+        const permStatus = await CapacitorCamera.checkPermissions();
+        if (permStatus.camera !== 'granted') {
+          const requested = await CapacitorCamera.requestPermissions({ permissions: ['camera'] });
+          if (requested.camera !== 'granted') {
+            setScanError(translate('report_issue_camera_permission_denied'));
+            setScanState('error');
+            setHasCameraPermission(false);
+            return;
+          }
+        }
+      }
+
       if (!html5QrCodeRef.current) {
         html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID_RENT, { verbose: false });
       }

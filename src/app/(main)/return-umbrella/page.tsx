@@ -18,6 +18,7 @@ import { cn } from "@/lib/utils";
 import { BleClient, numbersToDataView, dataViewToText, type ScanResult } from '@capacitor-community/bluetooth-le';
 import { httpsCallable } from 'firebase/functions';
 import { Capacitor } from '@capacitor/core';
+import { Camera } from '@capacitor/camera';
 import Image from 'next/image';
 import imageData from '@/app/lib/placeholder-images.json';
 import { useLanguage } from "@/contexts/language-context";
@@ -146,6 +147,19 @@ export default function ReturnUmbrellaPage() {
     setHasCameraPermission(null);
 
     try {
+      if (Capacitor.isNativePlatform()) {
+        const permStatus = await Camera.checkPermissions();
+        if (permStatus.camera !== 'granted') {
+          const requested = await Camera.requestPermissions({ permissions: ['camera'] });
+          if (requested.camera !== 'granted') {
+            setQrError(translate('report_issue_camera_permission_denied'));
+            setReturnStep('idle');
+            setHasCameraPermission(false);
+            return;
+          }
+        }
+      }
+
       if (!html5QrCodeRef.current) {
         html5QrCodeRef.current = new Html5Qrcode(QR_READER_REGION_ID, { verbose: false });
       }
