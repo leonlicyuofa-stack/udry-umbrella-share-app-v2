@@ -1,3 +1,4 @@
+
 // src/contexts/auth-context.tsx
 "use client";
 
@@ -578,7 +579,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     );
   }
 
-  if (user && !isVerified) {
+  if (user && !isVerified && firestoreUser !== null) {
     return (
       <AuthContext.Provider value={value}>
         <EmailVerificationPrompt
