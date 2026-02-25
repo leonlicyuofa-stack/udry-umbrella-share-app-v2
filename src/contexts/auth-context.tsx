@@ -358,7 +358,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     try {
       if (Capacitor.isNativePlatform()) {
         await SocialLogin.initialize({ google: { iOSClientId: '458603936715-utr4bvdbhek9jb6ob4ul1dl5n3ojltf1.apps.googleusercontent.com' } });
-        const result = await SocialLogin.login({ provider: 'google', options: { scopes: ['profile', 'email'], forceCodeForRefreshToken: true } });
+        const result = await SocialLogin.login({ provider: 'google', options: { scopes: ['profile', 'email'], forceRefreshToken: true } });
         const idToken = (result.result as any).idToken ?? (result.result as any).authentication?.idToken;
         if (!idToken) throw new Error('No idToken from Google');
         const credential = GoogleAuthProvider.credential(idToken);
