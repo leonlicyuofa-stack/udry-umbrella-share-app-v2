@@ -84,6 +84,28 @@ try {
   }
   console.log('✅ Photo Library permission configuration is correct.');
 
+  // --- 5. Ensure Google Sign-In URL Scheme ---
+  console.log('Ensuring Google Sign-In URL scheme is present...');
+  const existingUrlTypes = infoPlistJson.CFBundleURLTypes || [];
+  const googleScheme = 'com.googleusercontent.apps.458603936715-utr4bvdbhek9jb6ob4ul1dl5n3ojltf1';
+
+  const alreadyAdded = existingUrlTypes.some(entry =>
+    Array.isArray(entry.CFBundleURLSchemes) &&
+    entry.CFBundleURLSchemes.includes(googleScheme)
+  );
+
+  if (!alreadyAdded) {
+    existingUrlTypes.push({
+      CFBundleTypeRole: 'Editor',
+      CFBundleURLSchemes: [googleScheme]
+    });
+    infoPlistJson.CFBundleURLTypes = existingUrlTypes;
+    console.log(`Added Google Sign-In URL scheme: ${googleScheme}`);
+  } else {
+    console.log('Google Sign-In URL scheme already exists. No changes needed.');
+  }
+  console.log('✅ Google Sign-In configuration is correct.');
+
 
   // Convert back to XML and write to the file
   const updatedInfoPlistXml = plist.build(infoPlistJson);
