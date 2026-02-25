@@ -1,10 +1,9 @@
-
 // src/contexts/stalls-context.tsx
 "use client";
 
 import type React from 'react';
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import { collection, onSnapshot } from 'firebase/firestore';
+import { collection, onSnapshot, type Unsubscribe } from 'firebase/firestore';
 import { initializeFirebaseServices } from '@/lib/firebase';
 import type { Stall } from "@/lib/types";
 
@@ -18,28 +17,37 @@ const StallsContext = createContext<StallsContextType | undefined>(undefined);
 export function StallsProvider({ children }: { children: ReactNode }) {
   const [stalls, setStalls] = useState<Stall[]>([]);
   const [isLoadingStalls, setIsLoadingStalls] = useState(true);
-  // Call initializeFirebaseServices without the log function.
-  // A default, empty function is now provided in firebase.ts to prevent crashes.
   const services = initializeFirebaseServices();
 
   useEffect(() => {
     if (!services?.db) {
       setIsLoadingStalls(false);
-      // Don't toast here, as AuthProvider will handle the main Firebase connection error.
       return;
     }
 
-    const stallsCollectionRef = collection(services.db, 'stalls');
-    const unsubscribeStalls = onSnapshot(stallsCollectionRef, (snapshot) => {
-      const stallsData = snapshot.docs.map(doc => ({ ...doc.data(), dvid: doc.id, id: doc.id } as Stall));
-      setStalls(stallsData);
-      setIsLoadingStalls(false);
-    }, (error) => {
-      console.error("Error fetching stalls:", error);
-      setIsLoadingStalls(false);
-    });
+    let unsubscribe: Unsubscribe | null = null;
 
-    return () => unsubscribeStalls();
+    // Small delay to allow Firebase Auth to restore session before subscribing.
+    // Without this, Stripe redirects can cause a permission error because the Firestore
+    // subscription fires before the auth token is available, showing a false error toast.
+    const subscriptionTimer = setTimeout(() => {
+      const stallsCollectionRef = collection(services.db, 'stalls');
+      unsubscribe = onSnapshot(stallsCollectionRef, (snapshot) => {
+        const stallsData = snapshot.docs.map(doc => ({ ...doc.data(), dvid: doc.id, id: doc.id } as Stall));
+        setStalls(stallsData);
+        setIsLoadingStalls(false);
+      }, (error) => {
+        console.error("Error fetching stalls:", error);
+        setIsLoadingStalls(false);
+      });
+    }, 600);
+
+    return () => {
+      clearTimeout(subscriptionTimer);
+      if (unsubscribe) {
+        unsubscribe();
+      }
+    };
   }, [services]);
 
   const value = { stalls, isLoadingStalls };
