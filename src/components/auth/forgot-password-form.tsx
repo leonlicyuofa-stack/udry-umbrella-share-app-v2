@@ -1,4 +1,3 @@
-
 "use client";
 
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -13,7 +12,8 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { useAuth } from "@/contexts/auth-context"; // Import useAuth
+import { useAuth } from "@/contexts/auth-context";
+import { useLanguage } from "@/contexts/language-context";
 import { Loader2, Mail } from "lucide-react";
 import { useState } from "react";
 import Link from "next/link";
@@ -26,7 +26,8 @@ const forgotPasswordSchema = z.object({
 type ForgotPasswordFormData = z.infer<typeof forgotPasswordSchema>;
 
 export function ForgotPasswordForm() {
-  const { sendPasswordReset } = useAuth(); // Get the function from context
+  const { sendPasswordReset } = useAuth();
+  const { translate } = useLanguage();
   const [formLoading, setFormLoading] = useState(false);
   const [isSubmitted, setIsSubmitted] = useState(false);
 
@@ -55,10 +56,10 @@ export function ForgotPasswordForm() {
     return (
         <div className="text-center space-y-4">
             <Mail className="mx-auto h-12 w-12 text-primary" />
-            <h3 className="text-xl font-semibold">Request Sent</h3>
-            <p className="text-muted-foreground">Please check your inbox for a link to reset your password. If you don't see it, check your spam folder.</p>
+            <h3 className="text-xl font-semibold">{translate('forgot_password_sent_title')}</h3>
+            <p className="text-muted-foreground">{translate('forgot_password_sent_desc')}</p>
             <Button variant="outline" asChild>
-                <Link href="/auth/signin">Back to Sign In</Link>
+                <Link href="/auth/signin">{translate('forgot_password_back_to_signin')}</Link>
             </Button>
         </div>
     );
@@ -73,9 +74,9 @@ export function ForgotPasswordForm() {
             name="email"
             render={({ field }) => (
               <FormItem>
-                <FormLabel>Email</FormLabel>
+                <FormLabel>{translate('email_label')}</FormLabel>
                 <FormControl>
-                  <Input placeholder="your@email.com" {...field} type="email" disabled={formLoading} />
+                  <Input placeholder={translate('email_placeholder')} {...field} type="email" disabled={formLoading} />
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -83,14 +84,14 @@ export function ForgotPasswordForm() {
           />
           <Button type="submit" className="w-full" disabled={formLoading}>
             {formLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-            Send Reset Link
+            {translate('forgot_password_submit_button')}
           </Button>
         </form>
       </Form>
       <p className="text-center text-sm text-muted-foreground pt-4">
-        Remembered your password?{' '}
+        {translate('forgot_password_remembered')}{' '}
         <Button variant="link" asChild className="px-0.5">
-          <Link href="/auth/signin">Sign in</Link>
+          <Link href="/auth/signin">{translate('signin_button')}</Link>
         </Button>
       </p>
     </div>

@@ -314,7 +314,10 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       await sendEmailVerification(userCredential.user);
       toast({ title: translate('auth_success_signup_email') });
     } catch (error: any) {
-      toast({ variant: 'destructive', title: translate('auth_error_signup_email_failed'), description: error.message });
+      const description = error.code === 'auth/email-already-in-use'
+        ? translate('auth_error_email_already_in_use')
+        : error.message;
+      toast({ variant: 'destructive', title: translate('auth_error_signup_email_failed'), description });
       throw error;
     }
   };
