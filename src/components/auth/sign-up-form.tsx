@@ -42,9 +42,13 @@ export function SignUpForm() {
     setFormLoading(true);
     try {
       await signUpWithEmail(values);
-      // Redirect is handled by AuthLayout or page
-    } catch (error) {
-      // Error is handled by toast in AuthContext
+    } catch (error: any) {
+      if (error.code === 'auth/email-already-in-use') {
+        form.setError("email", {
+          type: "manual",
+          message: translate('auth_error_email_already_in_use_inline'),
+        });
+      }
     } finally {
       setFormLoading(false);
     }

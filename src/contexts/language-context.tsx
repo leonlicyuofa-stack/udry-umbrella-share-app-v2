@@ -100,6 +100,7 @@ const translations: Record<Language, Record<string, string>> = {
     'forgot_password_submit_button': 'Send Reset Link',
     'forgot_password_remembered': 'Remembered your password?',
     'auth_error_email_already_in_use': 'An account with this email already exists. Sign in with your existing method (Google/Apple), then add a password via Profile Settings if needed.',
+    'auth_error_email_already_in_use_inline': 'An account with this email already exists. Try signing in instead.',
     
     // Main Page (Map)
     'find_an_umbrella_title': 'Find Your Umbrella',
@@ -501,6 +502,7 @@ const translations: Record<Language, Record<string, string>> = {
     'forgot_password_submit_button': '發送重設連結',
     'forgot_password_remembered': '記起密碼了？',
     'auth_error_email_already_in_use': '此電郵地址已有帳戶。請用原有方式登入（Google/Apple），如需設定密碼登入，可在個人設定中新增。',
+    'auth_error_email_already_in_use_inline': '此電郵已有帳戶。請直接登入。',
     
     // Main Page (Map)
     'find_an_umbrella_title': '尋找您的雨傘',
