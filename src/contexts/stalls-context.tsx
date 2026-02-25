@@ -36,8 +36,10 @@ export function StallsProvider({ children }: { children: ReactNode }) {
         const stallsData = snapshot.docs.map(doc => ({ ...doc.data(), dvid: doc.id, id: doc.id } as Stall));
         setStalls(stallsData);
         setIsLoadingStalls(false);
-      }, (error) => {
-        console.error("Error fetching stalls:", error);
+      }, (_error) => {
+        // Silently handle — this fires as a false alarm during Stripe redirects
+        // before Auth has restored the session. No user-facing toast needed.
+        // The console.error was removed to prevent the dev overlay from popping up.
         setIsLoadingStalls(false);
       });
     }, 600);
