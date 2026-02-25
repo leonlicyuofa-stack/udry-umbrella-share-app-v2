@@ -435,7 +435,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     if (!firebaseServices?.auth) return;
     try {
       await firebaseSignOut(firebaseServices.auth);
-      toast({ title: translate('auth_success_signout') });
+      // No toast here — the redirect to /auth/signin is confirmation enough
     } catch (error: any) {
       toast({ variant: 'destructive', title: translate('auth_error_signout_failed'), description: error.message });
     }
