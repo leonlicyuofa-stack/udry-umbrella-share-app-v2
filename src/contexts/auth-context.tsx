@@ -500,8 +500,18 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const requestDepositRefund = async () => {
     if (!firebaseServices?.functions) throw new Error("Functions not available.");
-    const refundFn = httpsCallable(firebaseServices.functions, 'requestDepositRefund');
-    await refundFn();
+    try {
+      const refundFn = httpsCallable(firebaseServices.functions, 'requestDepositRefund');
+      await refundFn();
+      toast({ title: translate('refund_success_title'), description: translate('refund_success_desc') });
+    } catch (error: any) {
+      const isTransactionIdMissing = error?.message?.includes('transaction ID not found');
+      const description = isTransactionIdMissing
+        ? translate('refund_error_no_transaction_id')
+        : error.message;
+      toast({ variant: 'destructive', title: translate('refund_error_title'), description });
+      throw error;
+    }
   };
 
   const useFirstFreeRental = async () => {
@@ -614,5 +624,3 @@ export function useAuth() {
   }
   return context;
 }
-
-    
