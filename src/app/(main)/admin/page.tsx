@@ -62,6 +62,37 @@ type UserSearchResult = {
   rentalHistory: RentalHistory[];
 } | null;
 
+// Helper component for active rental row with timer
+function ActiveRentalRow({ user }: { user: User }) {
+  const [elapsed, setElapsed] = useState<string>('');
+
+  useEffect(() => {
+    const startTime = user.activeRental?.startTime;
+    if (!startTime) return;
+
+    const updateTimer = () => {
+      const now = Date.now();
+      const diff = now - startTime;
+      const hours = Math.floor(diff / 3600000);
+      const minutes = Math.floor((diff % 3600000) / 60000);
+      const seconds = Math.floor((diff % 60000) / 1000);
+      setElapsed(`${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`);
+    };
+
+    updateTimer();
+    const intervalId = setInterval(updateTimer, 1000);
+    return () => clearInterval(intervalId);
+  }, [user.activeRental?.startTime]);
+
+  return (
+    <TableRow>
+      <TableCell className="font-medium text-xs sm:text-sm break-all">{user.email || 'Anonymous'}</TableCell>
+      <TableCell className="text-xs sm:text-sm">{user.activeRental?.stallName || 'Unknown Stall'}</TableCell>
+      <TableCell className="text-right font-mono text-xs sm:text-sm">{elapsed}</TableCell>
+    </TableRow>
+  );
+}
+
 
 export default function AdminPage() {
   const { user, isReady, firebaseServices } = useAuth();
@@ -574,6 +605,58 @@ export default function AdminPage() {
                     {adminDataError && <p className="text-xs text-destructive mt-1">{adminDataError}</p>}
                 </CardContent>
             </Card>
+          </CardContent>
+        </Card>
+      </section>
+
+      <section>
+        <Card className="shadow-lg border-primary/20">
+          <CardHeader className="bg-primary/5 rounded-t-lg">
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle className="text-2xl flex items-center"><Clock className="mr-2 h-6 w-6 text-primary" /> Active Rentals List</CardTitle>
+                <CardDescription>Real-time view of all umbrellas currently in use.</CardDescription>
+              </div>
+              <Badge variant="outline" className="text-lg px-3 py-1">
+                {isLoadingAdminData ? <Loader2 className="h-4 w-4 animate-spin"/> : allUsers.filter(u => u.activeRental).length}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[400px]">
+              <Table>
+                <TableHeader className="sticky top-0 bg-background z-10 shadow-sm">
+                  <TableRow>
+                    <TableHead>User Email</TableHead>
+                    <TableHead>Stall</TableHead>
+                    <TableHead className="text-right">Duration</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoadingAdminData ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-24 text-center">
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                        <p className="text-xs text-muted-foreground mt-2">Loading active sessions...</p>
+                      </TableCell>
+                    </TableRow>
+                  ) : allUsers.filter(u => u.activeRental).length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={3} className="h-24 text-center text-muted-foreground">
+                        No active rentals at the moment.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    allUsers
+                      .filter(u => u.activeRental)
+                      .sort((a, b) => (b.activeRental?.startTime || 0) - (a.activeRental?.startTime || 0))
+                      .map(u => (
+                        <ActiveRentalRow key={u.uid} user={u} />
+                      ))
+                  )}
+                </TableBody>
+              </Table>
+            </ScrollArea>
           </CardContent>
         </Card>
       </section>
