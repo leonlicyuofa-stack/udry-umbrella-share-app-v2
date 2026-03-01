@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useEffect, useState, useCallback } from 'react';
@@ -652,6 +651,78 @@ export default function AdminPage() {
                       .sort((a, b) => (b.activeRental?.startTime || 0) - (a.activeRental?.startTime || 0))
                       .map(u => (
                         <ActiveRentalRow key={u.uid} user={u} />
+                      ))
+                  )}
+                </TableBody>
+              </Table>
+            </ScrollArea>
+          </CardContent>
+        </Card>
+      </section>
+
+      <section>
+        <Card className="shadow-lg border-primary/20">
+          <CardHeader className="bg-primary/5 rounded-t-lg">
+            <div className="flex justify-between items-center">
+              <div>
+                <CardTitle className="text-2xl flex items-center"><NotebookText className="mr-2 h-6 w-6 text-primary" /> Recent Completed Rentals</CardTitle>
+                <CardDescription>View the last 20 completed umbrella rentals.</CardDescription>
+              </div>
+              <Badge variant="outline" className="text-lg px-3 py-1">
+                {isLoadingAdminData ? <Loader2 className="h-4 w-4 animate-spin"/> : rentalHistories.length}
+              </Badge>
+            </div>
+          </CardHeader>
+          <CardContent className="p-0">
+            <ScrollArea className="h-[500px]">
+              <Table>
+                <TableHeader className="sticky top-0 bg-background z-10 shadow-sm">
+                  <TableRow>
+                    <TableHead>User Email</TableHead>
+                    <TableHead>Route</TableHead>
+                    <TableHead>Timing</TableHead>
+                    <TableHead className="text-right">Cost</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {isLoadingAdminData ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-24 text-center">
+                        <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                        <p className="text-xs text-muted-foreground mt-2">Loading history...</p>
+                      </TableCell>
+                    </TableRow>
+                  ) : rentalHistories.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={4} className="h-24 text-center text-muted-foreground">
+                        No completed rentals yet.
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    [...rentalHistories]
+                      .sort((a, b) => b.endTime - a.endTime)
+                      .slice(0, 20)
+                      .map(rental => (
+                        <TableRow key={rental.rentalId}>
+                          <TableCell className="font-medium text-xs sm:text-sm break-all">
+                            {allUsers.find(u => u.uid === rental.userId)?.email || 'Unknown'}
+                          </TableCell>
+                          <TableCell className="text-xs sm:text-sm">
+                            <div className="flex flex-col">
+                              <span className="font-medium">{rental.stallName}</span>
+                              <span className="text-muted-foreground text-[10px]">to {rental.returnedToStallName}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-xs sm:text-sm">
+                            <div className="flex flex-col">
+                              <span>{new Date(rental.startTime).toLocaleString([], { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                              <span className="text-muted-foreground text-[10px]">{new Date(rental.endTime).toLocaleString([], { month: 'numeric', day: 'numeric', hour: '2-digit', minute: '2-digit' })}</span>
+                            </div>
+                          </TableCell>
+                          <TableCell className="text-right text-xs sm:text-sm font-bold">
+                            HK${rental.finalCost.toFixed(2)}
+                          </TableCell>
+                        </TableRow>
                       ))
                   )}
                 </TableBody>
